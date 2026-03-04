@@ -130,4 +130,4 @@ analysis.to_csv(
 )
 
 print("\nHasil analisis (20 teratas):")
-print(analysis)
+print(analysis.head(20))
