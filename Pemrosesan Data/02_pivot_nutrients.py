@@ -1,6 +1,6 @@
 import pandas as pd
 
-data = pd.read_csv("Data Processed/hc_sc_filtered.csv")
+data = pd.read_csv("Data Processed/01_hc_sc_filtered.csv")
 
 pivot = data.pivot_table(
     index=["fdc_id", "food_name", "food_group"],
@@ -9,7 +9,7 @@ pivot = data.pivot_table(
 ).reset_index()
 
 pivot.to_csv(
-    "Data Processed/pivot_food_nutrients.csv",
+    "Data Processed/02_pivot_food_nutrients.csv",
     index=False
 )
 

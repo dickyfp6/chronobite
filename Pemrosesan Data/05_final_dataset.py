@@ -3,7 +3,7 @@ import pandas as pd
 # ======================
 # LOAD DATASET
 # ======================
-data = pd.read_csv("Data Processed/03_dataset_no_haram.csv")
+data = pd.read_csv("Data Processed/03_dataset_halal.csv")
 
 print("Jumlah data awal:", len(data))
 
@@ -43,8 +43,8 @@ data["SC_count"] = data[SC].notna().sum(axis=1)
 # FILTER DATASET
 # ======================
 filtered = data[
-    (data["HC_count"] == 19) &
-    (data["SC_count"] >= 11)
+    (data["HC_count"] >= 18) &
+    (data["SC_count"] >= 9)
 ].copy()
 
 print("Jumlah dataset setelah filter:", len(filtered))

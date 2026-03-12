@@ -1,6 +1,6 @@
 import pandas as pd
 
-data = pd.read_csv("Data Processed/dataset_no_haram.csv")
+data = pd.read_csv("Data Processed/03_dataset_halal.csv")
 
 print("Jumlah kolom dataset:", len(data.columns))
 print("Jumlah total makanan:", len(data))
@@ -125,7 +125,7 @@ if jumlah_all_null > 0:
 # ======================
 
 analysis.to_csv(
-    "Data Processed/hc_sc_analysis.csv",
+    "Data Processed/04_hc_sc_analysis.csv",
     index=False
 )
 

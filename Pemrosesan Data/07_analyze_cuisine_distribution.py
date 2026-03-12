@@ -5,7 +5,7 @@ import pandas as pd
 # LOAD DATASET
 # ==============================
 
-data = pd.read_csv("./Data Processed/06_final_dataset_with_cuisine.csv")
+data = pd.read_csv("./Data Processed/06_final_cek_cuisine_manual.csv")
 
 print("Jumlah data:", len(data))
 
@@ -45,8 +45,8 @@ print(table)
 # ==============================
 
 table.to_csv(
-"./Data Processed/cuisine_foodtype_distribution.csv"
+"./Data Processed/07_cuisine_foodtype_distribution.csv"
 )
 
 print("\nTabel distribusi disimpan di:")
-print("Data Processed/cuisine_foodtype_distribution.csv")
+print("Data Processed/07_cuisine_foodtype_distribution.csv")
