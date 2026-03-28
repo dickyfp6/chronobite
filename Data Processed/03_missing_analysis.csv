@@ -9,6 +9,7 @@ Cholesterol,312
 "Copper, Cu",388
 Energy,0
 "Fatty acids, total saturated",262
+"Fatty acids, total trans",2598
 "Fiber, total dietary",394
 "Fluoride, F",5187
 "Folate, DFE",924
@@ -30,7 +31,7 @@ Total lipid (fat),0
 Vitamin B-12,539
 Vitamin B-6,390
 "Vitamin C, total ascorbic acid",313
-Vitamin D (D2 + D3),1742
+"Vitamin D (D2 + D3), International Units",1745
 Vitamin E (alpha-tocopherol),1620
 Vitamin K (phylloquinone),1978
 Water,0

@@ -30,6 +30,7 @@ HC = [
 "Vitamin B-6",
 "Vitamin C, total ascorbic acid",
 "Iron, Fe",
+"Fatty acids, total trans"
 ]
 
 
@@ -39,7 +40,6 @@ HC = [
 
 SC = [
 "Sugars, Total",
-"Biotin",
 "Fluoride, F",
 "Folate, DFE",
 "Choline, total",

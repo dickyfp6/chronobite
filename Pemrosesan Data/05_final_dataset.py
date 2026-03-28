@@ -3,7 +3,7 @@ import pandas as pd
 # ======================
 # LOAD DATASET
 # ======================
-data = pd.read_csv("Data Processed/03_dataset_halal.csv")
+data = pd.read_csv("../Data Processed/03_dataset_halal.csv")
 
 print("Jumlah data awal:", len(data))
 
@@ -12,9 +12,9 @@ print("Jumlah data awal:", len(data))
 # HARD CONSTRAINT
 # ======================
 HC = [
-"Water","Energy","Sugars, Total","Potassium, K","Calcium, Ca",
-"Carbohydrate, by difference","Cholesterol","Fatty acids, total saturated",
-"Total lipid (fat)","Magnesium, Mg","Sodium, Na","Protein","Zinc, Zn",
+"Water","Energy","Potassium, K","Calcium, Ca",
+"Carbohydrate, by difference","Cholesterol","Fatty acids, total saturated", 
+"Fatty acids, total trans", "Total lipid (fat)","Magnesium, Mg","Sodium, Na","Protein","Zinc, Zn",
 "Fiber, total dietary","Vitamin A, RAE","Vitamin B-12","Vitamin B-6",
 "Vitamin C, total ascorbic acid","Iron, Fe","Phosphorus, P"
 ]
@@ -25,7 +25,7 @@ HC = [
 SC = [
 "Sugars, Total","Fluoride, F","Folate, DFE","Choline, total","Manganese, Mn",
 "Selenium, Se","Copper, Cu","Thiamin","Riboflavin","Niacin",
-"Pantothenic acid","Vitamin D (D2 + D3)",
+"Pantothenic acid","Vitamin D (D2 + D3), International Units",
 "Vitamin E (alpha-tocopherol)",
 "Vitamin K (phylloquinone)"
 ]
@@ -118,7 +118,7 @@ print(filtered["food_type"].value_counts())
 # SIMPAN DATASET FINAL
 # ======================
 filtered.to_csv(
-    "Data Processed/05_final_dataset.csv",
+    "../Data Processed/05_final_dataset.csv",
     index=False
 )
 
