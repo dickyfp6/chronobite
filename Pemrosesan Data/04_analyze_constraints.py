@@ -13,7 +13,6 @@ print("Jumlah total makanan:", len(data))
 HC = [
 "Water",
 "Energy",
-"Sugars, Total",
 "Potassium, K",
 "Calcium, Ca",
 "Carbohydrate, by difference",
@@ -24,12 +23,13 @@ HC = [
 "Sodium, Na",
 "Protein",
 "Zinc, Zn",
+"Phosphorus, P",
 "Fiber, total dietary",
 "Vitamin A, RAE",
 "Vitamin B-12",
 "Vitamin B-6",
 "Vitamin C, total ascorbic acid",
-"Iron, Fe"
+"Iron, Fe",
 ]
 
 
@@ -38,6 +38,7 @@ HC = [
 # ======================
 
 SC = [
+"Sugars, Total",
 "Biotin",
 "Fluoride, F",
 "Folate, DFE",
@@ -51,8 +52,7 @@ SC = [
 "Pantothenic acid",
 "Vitamin D (D2 + D3)",
 "Vitamin E (alpha-tocopherol)",
-"Vitamin K (phylloquinone)",
-"Phosphorus, P"
+"Vitamin K (phylloquinone)"
 ]
 
 

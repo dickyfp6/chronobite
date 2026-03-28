@@ -16,19 +16,18 @@ HC = [
 "Carbohydrate, by difference","Cholesterol","Fatty acids, total saturated",
 "Total lipid (fat)","Magnesium, Mg","Sodium, Na","Protein","Zinc, Zn",
 "Fiber, total dietary","Vitamin A, RAE","Vitamin B-12","Vitamin B-6",
-"Vitamin C, total ascorbic acid","Iron, Fe"
+"Vitamin C, total ascorbic acid","Iron, Fe","Phosphorus, P"
 ]
 
 # ======================
 # SOFT CONSTRAINT
 # ======================
 SC = [
-"Fluoride, F","Folate, DFE","Choline, total","Manganese, Mn",
+"Sugars, Total","Fluoride, F","Folate, DFE","Choline, total","Manganese, Mn",
 "Selenium, Se","Copper, Cu","Thiamin","Riboflavin","Niacin",
 "Pantothenic acid","Vitamin D (D2 + D3)",
 "Vitamin E (alpha-tocopherol)",
-"Vitamin K (phylloquinone)",
-"Phosphorus, P"
+"Vitamin K (phylloquinone)"
 ]
 
 

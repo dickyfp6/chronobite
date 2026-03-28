@@ -54,19 +54,18 @@ df.rename(columns={
 nutrient_ids = [
 
 # HC
-1003,1004,1005,1008,1051,
-1079,1087,1089,1090,1091,
-1092,1093,1095,
-1106,1114,1109,
-1162,1178,1175,
-1253,1258,
-2000,
+1008, 1005, 1003, 1004, # Makro Nutrien
+1079, 1051, 1106, 1253, # Fiber, Water, Vit A, Cholesterol
+1258, 1257, 1091, 1092, # Saturated Fat, Trans fat, Phosphorus, Potassium
+1093, 1095, 1087, 1089, # Sodium, Zinc, Calcium, Iron
+1090, 1178, 1175, 1162, # Magnesium, Vit B12, Vit B6, Vit C
 
 # SC
-1176,1099,1190,1180,
-1101,1103,1098,
-1165,1166,1167,1170,
-1185
+1099, 1180, 1190, # Fluoride, Choline, Folate DFE
+1101, 1103, 1098, # Manganese, Selenium, Copper
+1165, 1166, 1167, 1170, # Thiamin, Riboflavin, Niacin, Pantothenic acid
+1110, 1109, 1185, 2000, # Vit D, Vit E, Vit K, Sugars Total
+
 ]
 
 filtered = df[df["nutrient_id"].isin(nutrient_ids)]
