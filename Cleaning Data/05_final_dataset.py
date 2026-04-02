@@ -1,11 +1,45 @@
 import pandas as pd
+from pathlib import Path
+import sys
 
 # ======================
-# LOAD DATASET
+# STEP 05: APPLY ML + FINAL DATASET
 # ======================
-data = pd.read_csv("../Data Processed/03_dataset_halal.csv")
+# This step combines:
+# - ML classification (from previous step 04)
+# - HC/SC filtering
+# - Deduplication and normalization
 
-print("Jumlah data awal:", len(data))
+# Import classifier
+ml_path = Path(__file__).parent / 'ML Klasifikasi'
+sys.path.insert(0, str(ml_path))
+from food_classifier import FoodClassifier  # type: ignore
+
+
+# ======================
+# APPLY ML CLASSIFICATION
+# ======================
+print("\n" + "="*70)
+print("STEP 05: Apply ML Classification + Final Dataset")
+print("="*70)
+
+print("\n[1/4] Loading ML classifier...")
+model_path = Path(__file__).parent / 'ML Klasifikasi/food_classifier_model.pkl'
+classifier = FoodClassifier.load(str(model_path))
+print(f"✓ Model loaded: {model_path}")
+
+print(f"\n[2/4] Loading raw data (03_dataset_halal.csv)...")
+input_file = Path(__file__).parent.parent / 'Data Processed/03_dataset_halal.csv'
+data = pd.read_csv(input_file)
+print(f"✓ Loaded {len(data)} items")
+
+print(f"\n[3/4] Predicting consumption labels...")
+data['consumption_label'] = classifier.predict(data)
+print(f"✓ Labels predicted")
+print("\nLabel Distribution (before HC/SC filter):")
+print(data['consumption_label'].value_counts())
+
+print(f"\nJumlah data awal: {len(data)}")
 
 
 # ======================
@@ -74,53 +108,58 @@ filtered.drop(columns=["HC_count","SC_count"], inplace=True)
 
 
 # ======================
-# FOOD TYPE MAPPING
+# FOOD TYPE MAPPING (via ML)
 # ======================
-food_type_map = {
 
-"Baked Products": "Snack",
-"Snacks": "Snack",
-"Sweets": "Dessert",
-"Vegetables and Vegetable Products": "Side Dish",
-"American Indian/Alaska Native Foods": "Main Course",
-"Restaurant Foods": "Main Course",
-"Beverages": "Drink",
-"Fats and Oils": "Side Dish",
-"Dairy and Egg Products": "Drink",
-"Baby Foods": "Snack",
-"Sausages and Luncheon Meats": "Main Course",
-"Poultry Products": "Main Course",
-"Breakfast Cereals": "Snack",
-"Legumes and Legume Products": "Main Course",
-"Finfish and Shellfish Products": "Main Course",
-"Fruits and Fruit Juices": "Dessert",
-"Cereal Grains and Pasta": "Main Course",
-"Nut and Seed Products": "Snack",
-"Beef Products": "Main Course",
-"Meals, Entrees, and Side Dishes": "Main Course",
-"Fast Foods": "Main Course",
-"Spices and Herbs": "Side Dish",
-"Soups, Sauces, and Gravies": "Side Dish",
-"Lamb, Veal, and Game Products": "Main Course"
-}
-
-filtered["food_type"] = filtered["food_group"].map(food_type_map)
+# consumption_label sudah ada dari ML classification
+if 'consumption_label' not in filtered.columns:
+    print("\nWarning: consumption_label tidak ditemukan, menggunakan fallback mapping...")
+    
+    food_type_map = {
+        "Baked Products": "Snack",
+        "Snacks": "Snack",
+        "Sweets": "Dessert",
+        "Vegetables and Vegetable Products": "Side Dish",
+        "American Indian/Alaska Native Foods": "Main Course",
+        "Restaurant Foods": "Main Course",
+        "Beverages": "Drink",
+        "Fats and Oils": "Side Dish",
+        "Dairy and Egg Products": "Drink",
+        "Baby Foods": "Snack",
+        "Sausages and Luncheon Meats": "Main Course",
+        "Poultry Products": "Main Course",
+        "Breakfast Cereals": "Snack",
+        "Legumes and Legume Products": "Main Course",
+        "Finfish and Shellfish Products": "Main Course",
+        "Fruits and Fruit Juices": "Dessert",
+        "Cereal Grains and Pasta": "Main Course",
+        "Nut and Seed Products": "Snack",
+        "Beef Products": "Main Course",
+        "Meals, Entrees, and Side Dishes": "Main Course",
+        "Fast Foods": "Main Course",
+        "Spices and Herbs": "Side Dish",
+        "Soups, Sauces, and Gravies": "Side Dish",
+        "Lamb, Veal, and Game Products": "Main Course"
+    }
+    
+    filtered["consumption_label"] = filtered["food_group"].map(food_type_map)
 
 
 # ======================
-# CEK DISTRIBUSI
+# CEK DISTRIBUSI FINAL
 # ======================
-print("\nDistribusi food_type:")
-print(filtered["food_type"].value_counts())
+print("\n[4/4] Final distribution after HC/SC filtering:")
+print(filtered["consumption_label"].value_counts())
 
 
 # ======================
 # SIMPAN DATASET FINAL
 # ======================
-filtered.to_csv(
-    "../Data Processed/05_final_dataset.csv",
-    index=False
-)
+output_file = Path(__file__).parent.parent / 'Data Processed/05_final_dataset.csv'
+filtered.to_csv(output_file, index=False)
 
-print("\nDataset berhasil disimpan.")
-print("Total makanan:", len(filtered))
+print("\n" + "="*70)
+print("✓ COMPLETE - Dataset berhasil disimpan")
+print("="*70)
+print(f"Total items final: {len(filtered)}")
+print(f"Distribution: {dict(filtered['consumption_label'].value_counts())}")
