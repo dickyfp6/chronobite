@@ -3,7 +3,7 @@ import pandas as pd
 
 from step1_load_data import load_food_dataset
 from step3_user_nutrition_needs import build_user_profile
-from step6_fitness_function import calculate_menu_nutrition, NUTRIENT_MAP
+from Trash.Preprocess.step6_fitness_function import calculate_menu_nutrition, NUTRIENT_MAP
 
 
 # ======================================================

@@ -2,8 +2,8 @@ import random
 import json
 
 from step4_prepare_food_candidates import build_food_pool
-from step5_generate_initial_population import generate_population
-from step6_fitness_function import fitness_function
+from Trash.Preprocess.step5_generate_initial_population import generate_population
+from Trash.Preprocess.step6_fitness_function import fitness_function
 
 
 # ======================================================

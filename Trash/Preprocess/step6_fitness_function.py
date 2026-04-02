@@ -215,7 +215,7 @@ def fitness_function(chromosome):
 
 if __name__ == "__main__":
 
-    from step5_generate_initial_population import generate_population
+    from Trash.Preprocess.step5_generate_initial_population import generate_population
     from step4_prepare_food_candidates import build_food_pool
 
     food_pool, preference = build_food_pool()
