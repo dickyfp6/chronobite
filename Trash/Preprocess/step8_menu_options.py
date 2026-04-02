@@ -1,129 +1,129 @@
-import json
+# import json
 
-from step1_load_data import load_food_dataset
-
-
-# ======================================================
-# LOAD DATA
-# ======================================================
-
-food_df = load_food_dataset()
+# from step1_load_data import load_food_dataset
 
 
-# ======================================================
-# LOAD HASIL STEP7 (GA + LS)
-# ======================================================
+# # ======================================================
+# # LOAD DATA
+# # ======================================================
 
-with open("Algoritma/Genetic Algorithm/File/best_menu_result.json", "r") as f:
-    result = json.load(f)
-
-option1 = result["option1"]
-option2 = result["option2"]
+# food_df = load_food_dataset()
 
 
-# ======================================================
-# AMBIL DATA MAKANAN
-# ======================================================
+# # ======================================================
+# # LOAD HASIL STEP7 (GA + LS)
+# # ======================================================
 
-def get_food(fid):
+# with open("Algoritma/Genetic Algorithm/File/best_menu_result.json", "r") as f:
+#     result = json.load(f)
 
-    row = food_df[food_df["fdc_id"] == fid]
-
-    if row.empty:
-        return None
-
-    return row.iloc[0]
+# option1 = result["option1"]
+# option2 = result["option2"]
 
 
-# ======================================================
-# TAMPILKAN MENU
-# ======================================================
+# # ======================================================
+# # AMBIL DATA MAKANAN
+# # ======================================================
 
-def show_menu(chromosome, label):
+# def get_food(fid):
 
-    meals = ["Breakfast", "Lunch", "Dinner"]
+#     row = food_df[food_df["fdc_id"] == fid]
 
-    idx = 0
+#     if row.empty:
+#         return None
 
-    print("\n==============================")
-    print(f"        OPTION {label}")
-    print("==============================")
-
-    for meal in meals:
-
-        main = get_food(chromosome[idx])
-        side = get_food(chromosome[idx+1])
-        drink = get_food(chromosome[idx+2])
-        snack = get_food(chromosome[idx+3])
-
-        print(f"\n{meal}")
-
-        print("Main  :", main["food_name"])
-        print("Side  :", side["food_name"])
-        print("Drink :", drink["food_name"])
-        print("Snack :", snack["food_name"])
-
-        idx += 4
+#     return row.iloc[0]
 
 
-# ======================================================
-# VALIDASI INPUT
-# ======================================================
+# # ======================================================
+# # TAMPILKAN MENU
+# # ======================================================
 
-def ask_choice(text):
+# def show_menu(chromosome, label):
 
-    while True:
+#     meals = ["Breakfast", "Lunch", "Dinner"]
 
-        val = input(text)
+#     idx = 0
 
-        if val in ["1","2"]:
-            return int(val)
+#     print("\n==============================")
+#     print(f"        OPTION {label}")
+#     print("==============================")
 
-        print("Input harus 1 atau 2")
+#     for meal in meals:
 
+#         main = get_food(chromosome[idx])
+#         side = get_food(chromosome[idx+1])
+#         drink = get_food(chromosome[idx+2])
+#         snack = get_food(chromosome[idx+3])
 
-# ======================================================
-# GABUNGKAN PILIHAN USER
-# ======================================================
+#         print(f"\n{meal}")
 
-def build_final_menu(opt1, opt2, b, l, d):
+#         print("Main  :", main["food_name"])
+#         print("Side  :", side["food_name"])
+#         print("Drink :", drink["food_name"])
+#         print("Snack :", snack["food_name"])
 
-    final_menu = []
-
-    choices = [
-        (b,0),
-        (l,4),
-        (d,8)
-    ]
-
-    for choice,start in choices:
-
-        if choice == 1:
-            final_menu.extend(opt1[start:start+4])
-        else:
-            final_menu.extend(opt2[start:start+4])
-
-    return final_menu
+#         idx += 4
 
 
-# ======================================================
-# MAIN
-# ======================================================
+# # ======================================================
+# # VALIDASI INPUT
+# # ======================================================
 
-if __name__ == "__main__":
+# def ask_choice(text):
 
-    show_menu(option1,1)
-    show_menu(option2,2)
+#     while True:
 
-    print("\n===== USER MENU SELECTION =====")
+#         val = input(text)
 
-    b = ask_choice("Breakfast option (1/2): ")
-    l = ask_choice("Lunch option (1/2): ")
-    d = ask_choice("Dinner option (1/2): ")
+#         if val in ["1","2"]:
+#             return int(val)
 
-    final_menu = build_final_menu(option1, option2, b, l, d)
+#         print("Input harus 1 atau 2")
 
-    with open("Algoritma/Genetic Algorithm/File/user_selected_menu.json", "w") as f:
-        json.dump(final_menu, f)
 
-    print("\nMenu pilihan user disimpan ke user_selected_menu.json")
+# # ======================================================
+# # GABUNGKAN PILIHAN USER
+# # ======================================================
+
+# def build_final_menu(opt1, opt2, b, l, d):
+
+#     final_menu = []
+
+#     choices = [
+#         (b,0),
+#         (l,4),
+#         (d,8)
+#     ]
+
+#     for choice,start in choices:
+
+#         if choice == 1:
+#             final_menu.extend(opt1[start:start+4])
+#         else:
+#             final_menu.extend(opt2[start:start+4])
+
+#     return final_menu
+
+
+# # ======================================================
+# # MAIN
+# # ======================================================
+
+# if __name__ == "__main__":
+
+#     show_menu(option1,1)
+#     show_menu(option2,2)
+
+#     print("\n===== USER MENU SELECTION =====")
+
+#     b = ask_choice("Breakfast option (1/2): ")
+#     l = ask_choice("Lunch option (1/2): ")
+#     d = ask_choice("Dinner option (1/2): ")
+
+#     final_menu = build_final_menu(option1, option2, b, l, d)
+
+#     with open("Algoritma/Genetic Algorithm/File/user_selected_menu.json", "w") as f:
+#         json.dump(final_menu, f)
+
+#     print("\nMenu pilihan user disimpan ke user_selected_menu.json")
