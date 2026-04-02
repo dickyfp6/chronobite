@@ -172,18 +172,18 @@ class FoodClassifier:
 
 
 # =====================================================================
-# MAIN - Training dari Label Makanan.csv
-# =====================================================================
+# MAIN - Training dari label_makanan.csv (Data Raw)
+# =======================================================================
 
 if __name__ == "__main__":
     
-    # Train model dari seed data (Label Makanan.csv)
+    # Train model dari seed data (label_makanan.csv dari Data Raw)
     print("\n" + "="*70)
     print("STEP: Train ML Model")
     print("="*70)
     
     # Load seed data
-    seed_data = pd.read_csv("../../Data Processed/Label Makanan.csv", sep=';')
+    seed_data = pd.read_csv("../../Data Raw/label_makanan.csv", sep=';')
     print(f"✓ Loaded seed data: {len(seed_data)} items")
     
     # Train classifier

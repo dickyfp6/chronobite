@@ -30,7 +30,7 @@ Algoritma/ (Ready to use)
   - `FoodClassifier` class dengan `.train()`, `.predict()`, `.save()`, `.load()`
   - Random Forest model (150 estimators)
   - NLP + numeric feature extraction
-  - Model sudah di-train dari Label Makanan.csv
+  - Model sudah di-train dari Data Raw/label_makanan.csv
 
 - **food_classifier_model.pkl** - Trained model
   - Accuracy: ~95%
@@ -50,7 +50,7 @@ Algoritma/ (Ready to use)
 ## Results
 
 ### ML Model Performance
-- Trained on: Label Makanan.csv (4,263 items)
+- Trained on: Data Raw/label_makanan.csv (4,263 items)
 - Accuracy: ~95% on test set
 - Classes: Drink, Main Course, Side Dish, Snack
 
