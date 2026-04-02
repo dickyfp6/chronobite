@@ -64,7 +64,7 @@ nutrient_ids = [
 1099, 1180, 1190, # Fluoride, Choline, Folate DFE
 1101, 1103, 1098, # Manganese, Selenium, Copper
 1165, 1166, 1167, 1170, # Thiamin, Riboflavin, Niacin, Pantothenic acid
-1110, 1109, 1185, 2000, # Vit D, Vit E, Vit K, Sugars Total
+1114, 1109, 1185, 2000, # Vit D, Vit E, Vit K, Sugars Total
 
 ]
 

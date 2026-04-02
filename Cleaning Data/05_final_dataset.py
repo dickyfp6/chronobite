@@ -42,7 +42,7 @@ data["SC_count"] = data[SC].notna().sum(axis=1)
 # FILTER DATASET
 # ======================
 filtered = data[
-    (data["HC_count"] >= 18) &
+    (data["HC_count"] >= 19) &
     (data["SC_count"] >= 9)
 ].copy()
 
