@@ -5,10 +5,10 @@ import os
 # LOAD DATA
 # ======================
 
-food = pd.read_csv("Data Raw/food.csv")
-nutrient = pd.read_csv("Data Raw/nutrient.csv")
-food_nutrient = pd.read_csv("Data Raw/food_nutrient.csv")
-food_category = pd.read_csv("Data Raw/food_category.csv")
+food = pd.read_csv("A. Data/Data Raw/food.csv")
+nutrient = pd.read_csv("A. Data/Data Raw/nutrient.csv")
+food_nutrient = pd.read_csv("A. Data/Data Raw/food_nutrient.csv")
+food_category = pd.read_csv("A. Data/Data Raw/food_category.csv")
 
 print("Food:", food.shape)
 print("Nutrient:", nutrient.shape)
@@ -75,10 +75,10 @@ filtered = df[df["nutrient_id"].isin(nutrient_ids)]
 # SAVE
 # ======================
 
-os.makedirs("Data Processed", exist_ok=True)
+os.makedirs("A. Data/Data Processed", exist_ok=True)
 
 filtered.to_csv(
-    "Data Processed/01_hc_sc_filtered.csv",
+    "A. Data/Data Processed/01_hc_sc_filtered.csv",
     index=False
 )
 
