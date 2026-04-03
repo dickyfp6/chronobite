@@ -2,37 +2,37 @@
 fdc_id,0
 food_name,0
 food_group,0
-"Calcium, Ca",46
+"Calcium, Ca",52
 "Carbohydrate, by difference",0
-Cholesterol,312
-"Choline, total",2295
-"Copper, Cu",388
+Cholesterol,304
+"Choline, total",2714
+"Copper, Cu",425
 Energy,0
-"Fatty acids, total saturated",262
-"Fatty acids, total trans",2598
-"Fiber, total dietary",394
-"Fluoride, F",5187
-"Folate, DFE",924
-"Iron, Fe",45
-"Magnesium, Mg",280
-"Manganese, Mn",999
-Niacin,294
-Pantothenic acid,1042
-"Phosphorus, P",252
-"Potassium, K",193
+"Fatty acids, total saturated",256
+"Fatty acids, total trans",2862
+"Fiber, total dietary",453
+"Fluoride, F",5911
+"Folate, DFE",1116
+"Iron, Fe",48
+"Magnesium, Mg",314
+"Manganese, Mn",947
+Niacin,322
+Pantothenic acid,1120
+"Phosphorus, P",273
+"Potassium, K",222
 Protein,0
-Riboflavin,279
-"Selenium, Se",753
-"Sodium, Na",31
-"Sugars, Total",1293
-Thiamin,295
+Riboflavin,305
+"Selenium, Se",789
+"Sodium, Na",42
+"Sugars, Total",1538
+Thiamin,322
 Total lipid (fat),0
-"Vitamin A, RAE",666
-Vitamin B-12,539
-Vitamin B-6,390
-"Vitamin C, total ascorbic acid",313
-Vitamin D (D2 + D3),1742
-Vitamin E (alpha-tocopherol),1620
-Vitamin K (phylloquinone),1978
+"Vitamin A, RAE",737
+Vitamin B-12,587
+Vitamin B-6,441
+"Vitamin C, total ascorbic acid",371
+Vitamin D (D2 + D3),2153
+Vitamin E (alpha-tocopherol),1893
+Vitamin K (phylloquinone),2342
 Water,0
-"Zinc, Zn",293
+"Zinc, Zn",328
