@@ -1,6 +1,6 @@
 import pandas as pd
 
-data = pd.read_csv("Data Processed/02_pivot_food_nutrients.csv")
+data = pd.read_csv("A. Data/Data Processed/02_pivot_food_nutrients.csv")
 
 print("Dataset awal:", data.shape)
 
@@ -109,11 +109,11 @@ print("Dataset setelah filter haram:", data_no_haram.shape)
 missing = data_no_haram.isnull().sum()
 
 missing.to_csv(
-"Data Processed/03_missing_analysis.csv"
+"A. Data/Data Processed/03_missing_analysis.csv"
 )
 
 data_no_haram.to_csv(
-"Data Processed/03_dataset_halal.csv",
+"A. Data/Data Processed/03_dataset_halal.csv",
 index=False
 )
 

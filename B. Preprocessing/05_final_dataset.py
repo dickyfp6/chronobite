@@ -29,7 +29,7 @@ classifier = FoodClassifier.load(str(model_path))
 print(f"✓ Model loaded: {model_path}")
 
 print(f"\n[2/4] Loading raw data (03_dataset_halal.csv)...")
-input_file = Path(__file__).parent.parent / 'Data Processed/03_dataset_halal.csv'
+input_file = Path(__file__).parent.parent / 'A. Data/Data Processed/03_dataset_halal.csv'
 data = pd.read_csv(input_file)
 print(f"✓ Loaded {len(data)} items")
 
@@ -45,23 +45,20 @@ print(f"\nJumlah data awal: {len(data)}")
 # ======================
 # HARD CONSTRAINT
 # ======================
-HC = [
-"Water","Energy","Potassium, K","Calcium, Ca",
-"Carbohydrate, by difference","Cholesterol","Fatty acids, total saturated", 
-"Fatty acids, total trans", "Total lipid (fat)","Magnesium, Mg","Sodium, Na","Protein","Zinc, Zn",
-"Fiber, total dietary","Vitamin A, RAE","Vitamin B-12","Vitamin B-6",
-"Vitamin C, total ascorbic acid","Iron, Fe","Phosphorus, P"
+HC = [ "Water","Energy", "Potassium, K", "Calcium, Ca",
+"Carbohydrate, by difference", "Cholesterol", "Fatty acids, total saturated",
+"Total lipid (fat)", "Magnesium, Mg", "Sodium, Na", "Protein", "Zinc, Zn", 
+"Phosphorus, P", "Fiber, total dietary", "Vitamin A, RAE", "Vitamin B-12",
+"Vitamin B-6", "Vitamin C, total ascorbic acid", "Iron, Fe", "Fatty acids, total trans"
 ]
 
 # ======================
 # SOFT CONSTRAINT
 # ======================
-SC = [
-"Sugars, Total","Fluoride, F","Folate, DFE","Choline, total","Manganese, Mn",
-"Selenium, Se","Copper, Cu","Thiamin","Riboflavin","Niacin",
-"Pantothenic acid","Vitamin D (D2 + D3), International Units",
-"Vitamin E (alpha-tocopherol)",
-"Vitamin K (phylloquinone)"
+SC = [ "Sugars, Total", "Fluoride, F", "Folate, DFE", "Choline, total",
+"Manganese, Mn", "Selenium, Se", "Copper, Cu", "Thiamin", "Riboflavin",
+"Niacin", "Pantothenic acid", "Vitamin D (D2 + D3)",
+"Vitamin E (alpha-tocopherol)", "Vitamin K (phylloquinone)"
 ]
 
 
@@ -77,7 +74,7 @@ data["SC_count"] = data[SC].notna().sum(axis=1)
 # ======================
 filtered = data[
     (data["HC_count"] >= 19) &
-    (data["SC_count"] >= 9)
+    (data["SC_count"] >= 8)
 ].copy()
 
 print("Jumlah dataset setelah filter:", len(filtered))
@@ -155,7 +152,7 @@ print(filtered["consumption_label"].value_counts())
 # ======================
 # SIMPAN DATASET FINAL
 # ======================
-output_file = Path(__file__).parent.parent / 'Data Processed/05_final_dataset.csv'
+output_file = Path(__file__).parent.parent / 'A. Data/Data Processed/05_final_dataset.csv'
 filtered.to_csv(output_file, index=False)
 
 print("\n" + "="*70)
