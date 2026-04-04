@@ -183,7 +183,7 @@ if __name__ == "__main__":
     print("="*70)
     
     # Load seed data
-    seed_data = pd.read_csv("../../Data Raw/label_makanan.csv", sep=';')
+    seed_data = pd.read_csv("../../A. Data/Data Raw/label_makanan.csv", sep=';')
     print(f"✓ Loaded seed data: {len(seed_data)} items")
     
     # Train classifier
