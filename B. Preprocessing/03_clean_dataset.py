@@ -115,6 +115,25 @@ data_cleaned = data_no_haram[
 print("Dataset setelah hapus kategori:", data_cleaned.shape)
 
 # =====================
+# FILTER NUTRISI UTAMA (ADVANCED)
+# =====================
+
+before_filter = len(data_cleaned)
+
+data_cleaned = data_cleaned[
+    (data_cleaned["protein_g"] > 0) &
+    (data_cleaned["carbohydrate_g"] > 0) &
+    (data_cleaned["fat_g"] > 0)
+]
+
+after_filter = len(data_cleaned)
+
+print("\nFilter nutrisi (protein>0, carbo>0, fat>0)")
+print(f"Data sebelum: {before_filter}")
+print(f"Data setelah: {after_filter}")
+print(f"Data terhapus: {before_filter - after_filter}")
+
+# =====================
 # ANALISIS MISSING
 # =====================
 
