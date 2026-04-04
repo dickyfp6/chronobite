@@ -41,26 +41,26 @@ print(data['consumption_label'].value_counts())
 
 print(f"\nJumlah data awal: {len(data)}")
 
-
 # ======================
-# HARD CONSTRAINT
+# HARD CONSTRAINT (UPDATED)
 # ======================
-HC = [ "Water","Energy", "Potassium, K", "Calcium, Ca",
-"Carbohydrate, by difference", "Cholesterol", "Fatty acids, total saturated",
-"Total lipid (fat)", "Magnesium, Mg", "Sodium, Na", "Protein", "Zinc, Zn", 
-"Phosphorus, P", "Fiber, total dietary", "Vitamin A, RAE", "Vitamin B-12",
-"Vitamin B-6", "Vitamin C, total ascorbic acid", "Iron, Fe", "Fatty acids, total trans"
+HC = [
+    "water_g","energy_kcal","potassium_mg","calcium_mg",
+    "carbohydrate_g","cholesterol_mg","saturated_fat_g",
+    "fat_g","magnesium_mg","sodium_mg","protein_g","zinc_mg",
+    "phosphorus_mg","fiber_g","vitamin_a_rae_mg","vitamin_b12_mg",
+    "vitamin_b6_mg","vitamin_c_mg","iron_mg","trans_fat_g"
 ]
 
 # ======================
-# SOFT CONSTRAINT
+# SOFT CONSTRAINT (UPDATED)
 # ======================
-SC = [ "Sugars, Total", "Fluoride, F", "Folate, DFE", "Choline, total",
-"Manganese, Mn", "Selenium, Se", "Copper, Cu", "Thiamin", "Riboflavin",
-"Niacin", "Pantothenic acid", "Vitamin D (D2 + D3)",
-"Vitamin E (alpha-tocopherol)", "Vitamin K (phylloquinone)"
+SC = [
+    "sugar_g","fluoride_mg","folate_mg","choline_mg",
+    "manganese_mg","selenium_mg","copper_mg","vitamin_b1_thiamin_mg","vitamin_b2_riboflavin_mg",
+    "vitamin_b3_niacin_mg","vitamin_b5_pantothenic_acid_mg","vitamin_d_mg",
+    "vitamin_e_mg","vitamin_k_mg"
 ]
-
 
 # ======================
 # HITUNG HC SC
