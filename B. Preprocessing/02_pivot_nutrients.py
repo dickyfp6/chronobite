@@ -56,6 +56,23 @@ rename_map = {
 
 pivot = pivot.rename(columns=rename_map)
 
+# ================= KONVERSI µg → mg =================
+micro_to_mg_cols = [
+    "vitamin_a_rae_mg",
+    "vitamin_b12_mg",
+    "fluoride_mg",
+    "folate_mg",
+    "selenium_mg",
+    "vitamin_d_mg",
+    "vitamin_k_mg"
+]
+
+for col in micro_to_mg_cols:
+    if col in pivot.columns:
+        pivot[col] = pivot[col] * 0.001
+
+print("\nKonversi µg ke mg selesai untuk:", micro_to_mg_cols)
+
 # ================= VALIDASI (penting buat debug) =================
 expected_columns = list(rename_map.values())
 missing_cols = [col for col in expected_columns if col not in pivot.columns]
