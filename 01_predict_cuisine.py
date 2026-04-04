@@ -51,37 +51,78 @@ mediterranean_keywords = [
 # PREDICTION FUNCTION
 # ======================
 
-def predict_cuisine(row):
-    """Predict cuisine based on food_name and food_group"""
+def predict_cuisine_with_confidence(row):
+    """Predict cuisine based on food_name and food_group with confidence score"""
     
     text = f"{row['food_name']} {row['food_group']}".lower()
     
-    # Check Asian
-    if any(re.search(kw, text) for kw in asian_keywords):
-        return 'Asian'
+    # Count matches for each cuisine
+    asian_matches = sum(1 for kw in asian_keywords if re.search(kw, text))
+    mediterranean_matches = sum(1 for kw in mediterranean_keywords if re.search(kw, text))
+    western_matches = sum(1 for kw in western_keywords if re.search(kw, text))
     
-    # Check Mediterranean
-    if any(re.search(kw, text) for kw in mediterranean_keywords):
-        return 'Mediterranean'
+    # Find max matches
+    max_matches = max(asian_matches, mediterranean_matches, western_matches)
     
-    # Check Western
-    if any(re.search(kw, text) for kw in western_keywords):
-        return 'Western'
+    # Determine cuisine and calculate base confidence
+    if max_matches == 0:
+        cuisine = 'International'
+        base_confidence = 0.0
+    elif asian_matches == max_matches:
+        cuisine = 'Asian'
+        # Base: 30% + (5% per match), capped at 95%
+        base_confidence = min(95.0, 30 + (asian_matches * 12))
+    elif mediterranean_matches == max_matches:
+        cuisine = 'Mediterranean'
+        base_confidence = min(95.0, 30 + (mediterranean_matches * 12))
+    elif western_matches == max_matches:
+        cuisine = 'Western'
+        base_confidence = min(95.0, 30 + (western_matches * 12))
     
-    # Default: International
-    return 'International'
+    # Adjust confidence based on ambiguity
+    if max_matches > 0:
+        # Count how many cuisines have matches
+        cuisines_with_matches = sum([asian_matches > 0, mediterranean_matches > 0, western_matches > 0])
+        
+        # If multiple cuisines have strong matches, reduce confidence
+        match_list = sorted([asian_matches, mediterranean_matches, western_matches], reverse=True)
+        if len([x for x in match_list if x > 0]) > 1:
+            # Multiple cuisines have matches - reduce confidence
+            if match_list[0] - match_list[1] <= 1:
+                base_confidence *= 0.5  # Very ambiguous
+            elif match_list[0] - match_list[1] <= 2:
+                base_confidence *= 0.7  # Somewhat ambiguous
+            else:
+                base_confidence *= 0.85  # Small ambiguity
+    
+    confidence = round(max(5, base_confidence), 2)  # Minimum 5% for default predictions
+    return pd.Series({'cuisine_prediction': cuisine, 'confidence': confidence})
 
 # ======================
 # APPLY PREDICTION
 # ======================
-print(f"\n[2/3] Predicting cuisine labels...")
-data['cuisine_prediction'] = data.apply(predict_cuisine, axis=1)
+print(f"\n[2/3] Predicting cuisine labels with confidence...")
+prediction_result = data.apply(predict_cuisine_with_confidence, axis=1)
+data['cuisine_prediction'] = prediction_result['cuisine_prediction']
+data['confidence'] = prediction_result['confidence']
 
 # ======================
 # DISTRIBUTION
 # ======================
 print(f"\n[3/3] Distribution hasil prediksi:")
 print(data['cuisine_prediction'].value_counts())
+
+print(f"\n📊 Confidence Summary (per cuisine):")
+for cuisine in data['cuisine_prediction'].unique():
+    subset = data[data['cuisine_prediction'] == cuisine]['confidence']
+    print(f"\n  {cuisine}:")
+    print(f"    Count: {len(subset)}")
+    print(f"    Avg Confidence: {subset.mean():.2f}%")
+    print(f"    Min Confidence: {subset.min():.2f}%")
+    print(f"    Max Confidence: {subset.max():.2f}%")
+    low_confidence = (subset < 30).sum()
+    if low_confidence > 0:
+        print(f"    ⚠️  Low Confidence (<30%): {low_confidence} items")
 
 # ======================
 # SAVE
@@ -90,7 +131,12 @@ output_file = Path("A. Data/Data Raw/03_dataset_cuisine_prediction.csv")
 data.to_csv(output_file, index=False)
 print(f"\n✓ Saved: {output_file}")
 print("\n" + "="*70)
-print("Ready untuk manual validation!")
+print("🔍 VALIDATION GUIDE:")
 print("="*70)
-print("\nNext step: Validasi hasil prediksi, kemudian upload file yang sudah")
-print("di-validate untuk training cuisine_classifier")
+print(f"\nTotal items to validate: {len(data)}")
+print(f"Priority checks (Low Confidence < 30%): {(data['confidence'] < 30).sum()} items")
+print(f"\nFilter dalam CSV dengan confidence < 30% untuk validasi lebih detail.")
+print("\nColumn baru tersedia:")
+print("  - confidence: Tingkat keyakinan model (0-100%)")
+print("                Semakin tinggi = semakin yakin prediksinya benar")
+print("\n" + "="*70)
