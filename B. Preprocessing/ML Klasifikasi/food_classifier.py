@@ -11,8 +11,15 @@ import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import accuracy_score, f1_score, classification_report
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report
+try:
+    from xgboost import XGBClassifier
+    USE_XGBOOST = True
+    print("[INFO] XGBoost available, will use XGBClassifier")
+except ImportError:
+    USE_XGBOOST = False
+    print("[INFO] XGBoost not found, falling back to RandomForestClassifier")
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -36,11 +43,11 @@ class FoodClassifier:
         self.encoders = {}  # for categorical features
         
     def train(self, df, verbose=True):
-        """Train models from labeled data"""
+        """Train models with XGBoost, class balancing, and stratified split"""
         
         if verbose:
             print("\n" + "="*70)
-            print("TRAINING FOOD CLASSIFIER")
+            print("TRAINING FOOD CLASSIFIER (XGBoost + Stratified Split)")
             print("="*70)
         
         X = df.copy()
@@ -56,36 +63,71 @@ class FoodClassifier:
             # Extract features
             X_features = self._extract_features(X, fit=True)
             
+            # Stratified train/test split (maintain class proportion)
+            X_train, X_test, y_train, y_test = train_test_split(
+                X_features, y_consumption,
+                test_size=0.2,
+                random_state=42,
+                stratify=y_consumption
+            )
+            
             # Scale
             self.consumption_scaler = StandardScaler()
-            X_consumption_scaled = self.consumption_scaler.fit_transform(X_features)
+            X_train_scaled = self.consumption_scaler.fit_transform(X_train)
+            X_test_scaled = self.consumption_scaler.transform(X_test)
             
-            # Train model
-            self.consumption_model = RandomForestClassifier(
-                n_estimators=150,
-                max_depth=15,
-                random_state=42,
-                n_jobs=-1
-            )
-            self.consumption_model.fit(X_consumption_scaled, y_consumption)
+            # Calculate class weights for balancing
+            class_weights = len(y_train) / (len(np.unique(y_train)) * np.bincount(y_train))
+            sample_weights = np.array([class_weights[y] for y in y_train])
+            
+            # Train model with class balancing
+            if USE_XGBOOST:
+                self.consumption_model = XGBClassifier(
+                    n_estimators=200,
+                    max_depth=7,
+                    learning_rate=0.1,
+                    subsample=0.8,
+                    colsample_bytree=0.8,
+                    random_state=42,
+                    n_jobs=-1,
+                    verbosity=0
+                )
+            else:
+                self.consumption_model = RandomForestClassifier(
+                    n_estimators=200,
+                    max_depth=7,
+                    class_weight='balanced',
+                    random_state=42,
+                    n_jobs=-1
+                )
+            
+            self.consumption_model.fit(X_train_scaled, y_train, sample_weight=sample_weights if USE_XGBOOST else None)
+            
+            # Evaluate
+            y_pred = self.consumption_model.predict(X_test_scaled)
+            acc = accuracy_score(y_test, y_pred)
+            f1_weighted = f1_score(y_test, y_pred, average='weighted')
+            f1_macro = f1_score(y_test, y_pred, average='macro')
             
             if verbose:
-                print(f"✓ Consumption model trained on {len(df)} items")
+                print(f"\n✓ Consumption model trained")
+                print(f"  Training samples: {len(X_train)} | Test samples: {len(X_test)}")
+                print(f"  Test Accuracy: {acc:.4f}")
+                print(f"  F1-score (weighted): {f1_weighted:.4f}")
+                print(f"  F1-score (macro): {f1_macro:.4f}")
                 print(f"  Labels: {list(self.consumption_label_encoder.classes_)}")
         
         # ===== TRAIN CUISINE MODEL =====
         if 'cuisine_manual' in X.columns or 'cuisine_auto' in X.columns:
             # Use cuisine_manual if available, else cuisine_auto
             if 'cuisine_manual' in X.columns:
-                cuisine_col = 'cuisine_manual'
-                # Fill NaN with auto predictions
                 X['cuisine_label'] = X['cuisine_manual'].fillna(X.get('cuisine_auto', 'Generic'))
             else:
-                cuisine_col = 'cuisine_auto'
-                X['cuisine_label'] = X[cuisine_col]
+                X['cuisine_label'] = X.get('cuisine_auto', 'Generic')
             
             # Remove rows with no cuisine label
             X_cuisine = X.dropna(subset=['cuisine_label']).copy()
+            X_cuisine['cuisine_label'] = X_cuisine['cuisine_label'].astype(str).str.strip()
             
             y_cuisine_labels = X_cuisine['cuisine_label'].values
             
@@ -93,25 +135,68 @@ class FoodClassifier:
             self.cuisine_label_encoder = LabelEncoder()
             y_cuisine = self.cuisine_label_encoder.fit_transform(y_cuisine_labels)
             
-            # Extract features
+            # Extract features (reuse fitted tfidf from consumption)
             X_cuisine_features = self._extract_features(X_cuisine, fit=False)
+            
+            # Stratified split (important for minority classes!)
+            X_train, X_test, y_train, y_test = train_test_split(
+                X_cuisine_features, y_cuisine,
+                test_size=0.2,
+                random_state=42,
+                stratify=y_cuisine
+            )
             
             # Scale
             self.cuisine_scaler = StandardScaler()
-            X_cuisine_scaled = self.cuisine_scaler.fit_transform(X_cuisine_features)
+            X_train_scaled = self.cuisine_scaler.fit_transform(X_train)
+            X_test_scaled = self.cuisine_scaler.transform(X_test)
             
-            # Train model
-            self.cuisine_model = RandomForestClassifier(
-                n_estimators=150,
-                max_depth=15,
-                random_state=42,
-                n_jobs=-1
-            )
-            self.cuisine_model.fit(X_cuisine_scaled, y_cuisine)
+            # Calculate class weights (crucial for imbalanced data like Asian/Mediterranean)
+            class_weights = len(y_train) / (len(np.unique(y_train)) * np.bincount(y_train))
+            sample_weights = np.array([class_weights[y] for y in y_train])
+            
+            # Train model with class balancing
+            if USE_XGBOOST:
+                self.cuisine_model = XGBClassifier(
+                    n_estimators=200,
+                    max_depth=7,
+                    learning_rate=0.1,
+                    subsample=0.8,
+                    colsample_bytree=0.8,
+                    random_state=42,
+                    n_jobs=-1,
+                    verbosity=0
+                )
+            else:
+                self.cuisine_model = RandomForestClassifier(
+                    n_estimators=200,
+                    max_depth=7,
+                    class_weight='balanced',
+                    random_state=42,
+                    n_jobs=-1
+                )
+            
+            self.cuisine_model.fit(X_train_scaled, y_train, sample_weight=sample_weights if USE_XGBOOST else None)
+            
+            # Evaluate
+            y_pred = self.cuisine_model.predict(X_test_scaled)
+            acc = accuracy_score(y_test, y_pred)
+            f1_weighted = f1_score(y_test, y_pred, average='weighted')
+            f1_macro = f1_score(y_test, y_pred, average='macro')
             
             if verbose:
-                print(f"\n✓ Cuisine model trained on {len(X_cuisine)} items")
+                print(f"\n✓ Cuisine model trained (with IMBALANCE handling)")
+                print(f"  Training samples: {len(X_train)} | Test samples: {len(X_test)}")
+                print(f"  Test Accuracy: {acc:.4f}")
+                print(f"  F1-score (weighted): {f1_weighted:.4f}")
+                print(f"  F1-score (macro): {f1_macro:.4f} ◄── Better for minority classes")
                 print(f"  Labels: {list(self.cuisine_label_encoder.classes_)}")
+                print(f"\n  Class weights applied (to handle imbalance):")
+                for label_idx, label_name in enumerate(self.cuisine_label_encoder.classes_):
+                    count = (y_train == label_idx).sum()
+                    weight = class_weights[label_idx]
+                    pct = (count / len(y_train)) * 100
+                    print(f"    {label_name:15s}: {count:4d} ({pct:5.1f}%) → weight: {weight:.2f}x")
         
         return self
     

@@ -78,8 +78,8 @@ data["SC_count"] = data[SC].notna().sum(axis=1)
 # FILTER DATASET
 # ======================
 filtered = data[
-    (data["HC_count"] >= 18) &
-    (data["SC_count"] >= 8)
+    (data["HC_count"] >= 16) &
+    (data["SC_count"] >= 7)
 ].copy()
 
 print("Jumlah dataset setelah filter:", len(filtered))
@@ -119,20 +119,37 @@ filtered.drop(columns=["HC_count","SC_count"], inplace=True)
 # CEK DISTRIBUSI FINAL
 # ======================
 print("\n[4/4] Final distribution after HC/SC filtering:")
-print("\n" + "-"*70)
-print("CONSUMPTION DISTRIBUTION:")
-print("-"*70)
-for label, count in filtered["consumption_label"].value_counts().items():
-    pct = (count / len(filtered)) * 100
-    print(f"  {label:15s}: {count:5d} ({pct:5.1f}%)")
 
-print("\n" + "-"*70)
-print("CUISINE DISTRIBUTION:")
-print("-"*70)
-for label, count in filtered["cuisine_label"].value_counts().items():
+# 1. CONSUMPTION DISTRIBUTION
+print("\n" + "="*70)
+print("CONSUMPTION DISTRIBUTION (LABEL):")
+print("="*70)
+consumption_dist = filtered["consumption_label"].value_counts().sort_values(ascending=False)
+for label, count in consumption_dist.items():
     pct = (count / len(filtered)) * 100
-    print(f"  {label:15s}: {count:5d} ({pct:5.1f}%)")
-print("-"*70)
+    print(f"  {label:20s}: {count:5d} ({pct:5.1f}%)")
+
+# 2. CUISINE DISTRIBUTION
+print("\n" + "="*70)
+print("CUISINE DISTRIBUTION (LABEL):")
+print("="*70)
+cuisine_dist = filtered["cuisine_label"].value_counts().sort_values(ascending=False)
+for label, count in cuisine_dist.items():
+    pct = (count / len(filtered)) * 100
+    print(f"  {label:20s}: {count:5d} ({pct:5.1f}%)")
+
+# 3. CROSS-TABULATION: CONSUMPTION x CUISINE
+print("\n" + "="*70)
+print("CROSS-TABULATION: CONSUMPTION × CUISINE:")
+print("="*70)
+crosstab = pd.crosstab(
+    filtered["consumption_label"], 
+    filtered["cuisine_label"],
+    margins=True
+)
+print(crosstab)
+
+print("\n" + "="*70)
 
 
 # ======================
