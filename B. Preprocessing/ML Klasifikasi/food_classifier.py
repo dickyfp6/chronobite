@@ -68,16 +68,29 @@ class FoodClassifier:
     def _extract_features(self, df, fit=False):
         """Extract numeric, categorical, dan text features"""
         
-        # Numeric features
-        numeric_cols = [
-            'Calcium, Ca', 'Carbohydrate, by difference', 'Cholesterol',
-            'Protein', 'Total lipid (fat)', 'Energy', 'Sodium, Na',
-            'Sugars, Total', 'Fiber, total dietary', 'Water'
-        ]
+        # Numeric features - mapped untuk dua format column names
+        numeric_mappings = {
+            'Calcium, Ca': 'calcium_mg',
+            'Carbohydrate, by difference': 'carbohydrate_g',
+            'Cholesterol': 'cholesterol_mg',
+            'Protein': 'protein_g',
+            'Total lipid (fat)': 'fat_g',
+            'Energy': 'energy_kcal',
+            'Sodium, Na': 'sodium_mg',
+            'Sugars, Total': 'sugar_g',
+            'Fiber, total dietary': 'fiber_g',
+            'Water': 'water_g'
+        }
         
-        # Get available numeric columns
-        numeric_cols = [col for col in numeric_cols if col in df.columns]
-        numeric_X = df[numeric_cols].fillna(0).values
+        # Extract numeric columns (try both naming conventions)
+        numeric_cols = []
+        for old_name, new_name in numeric_mappings.items():
+            if old_name in df.columns:
+                numeric_cols.append(old_name)
+            elif new_name in df.columns:
+                numeric_cols.append(new_name)
+        
+        numeric_X = df[numeric_cols].fillna(0).values if numeric_cols else np.zeros((len(df), 0))
         
         # Categorical: food_group
         cat_X = np.zeros((len(df), 1))
