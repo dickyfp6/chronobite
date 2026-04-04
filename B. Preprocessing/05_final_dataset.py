@@ -33,11 +33,20 @@ input_file = Path(__file__).parent.parent / 'A. Data/Data Processed/03_dataset_h
 data = pd.read_csv(input_file)
 print(f"✓ Loaded {len(data)} items")
 
-print(f"\n[3/4] Predicting consumption labels...")
-data['consumption_label'] = classifier.predict(data)
+print(f"\n[3/4] Predicting consumption and cuisine labels...")
+predictions = classifier.predict(data, return_both=True)
+data['consumption_label'] = predictions.get('consumption_label', 'Snack')
+data['cuisine_label'] = predictions.get('cuisine_label', 'Generic')
+
+# Clean up cuisine labels (remove leading/trailing spaces)
+if 'cuisine_label' in data.columns:
+    data['cuisine_label'] = data['cuisine_label'].str.strip()
+
 print(f"✓ Labels predicted")
-print("\nLabel Distribution (before HC/SC filter):")
+print("\nConsumption Distribution:")
 print(data['consumption_label'].value_counts())
+print("\nCuisine Distribution:")
+print(data['cuisine_label'].value_counts())
 
 print(f"\nJumlah data awal: {len(data)}")
 
@@ -105,48 +114,19 @@ filtered.drop(columns=["HC_count","SC_count"], inplace=True)
 
 
 # ======================
-# FOOD TYPE MAPPING (via ML)
+# CUISINE LABEL (from ML)
 # ======================
-
-# consumption_label sudah ada dari ML classification
-if 'consumption_label' not in filtered.columns:
-    print("\nWarning: consumption_label tidak ditemukan, menggunakan fallback mapping...")
-    
-    food_type_map = {
-        "Baked Products": "Snack",
-        "Snacks": "Snack",
-        "Sweets": "Dessert",
-        "Vegetables and Vegetable Products": "Side Dish",
-        "American Indian/Alaska Native Foods": "Main Course",
-        "Restaurant Foods": "Main Course",
-        "Beverages": "Drink",
-        "Fats and Oils": "Side Dish",
-        "Dairy and Egg Products": "Drink",
-        "Baby Foods": "Snack",
-        "Sausages and Luncheon Meats": "Main Course",
-        "Poultry Products": "Main Course",
-        "Breakfast Cereals": "Snack",
-        "Legumes and Legume Products": "Main Course",
-        "Finfish and Shellfish Products": "Main Course",
-        "Fruits and Fruit Juices": "Dessert",
-        "Cereal Grains and Pasta": "Main Course",
-        "Nut and Seed Products": "Snack",
-        "Beef Products": "Main Course",
-        "Meals, Entrees, and Side Dishes": "Main Course",
-        "Fast Foods": "Main Course",
-        "Spices and Herbs": "Side Dish",
-        "Soups, Sauces, and Gravies": "Side Dish",
-        "Lamb, Veal, and Game Products": "Main Course"
-    }
-    
-    filtered["consumption_label"] = filtered["food_group"].map(food_type_map)
+# Cuisine label sudah ada dari ML prediction
 
 
 # ======================
 # CEK DISTRIBUSI FINAL
 # ======================
 print("\n[4/4] Final distribution after HC/SC filtering:")
+print("\nConsumption:")
 print(filtered["consumption_label"].value_counts())
+print("\nCuisine:")
+print(filtered["cuisine_label"].value_counts())
 
 
 # ======================
