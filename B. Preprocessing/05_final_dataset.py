@@ -43,10 +43,6 @@ if 'cuisine_label' in data.columns:
     data['cuisine_label'] = data['cuisine_label'].str.strip()
 
 print(f"✓ Labels predicted")
-print("\nConsumption Distribution:")
-print(data['consumption_label'].value_counts())
-print("\nCuisine Distribution:")
-print(data['cuisine_label'].value_counts())
 
 print(f"\nJumlah data awal: {len(data)}")
 
@@ -123,10 +119,20 @@ filtered.drop(columns=["HC_count","SC_count"], inplace=True)
 # CEK DISTRIBUSI FINAL
 # ======================
 print("\n[4/4] Final distribution after HC/SC filtering:")
-print("\nConsumption:")
-print(filtered["consumption_label"].value_counts())
-print("\nCuisine:")
-print(filtered["cuisine_label"].value_counts())
+print("\n" + "-"*70)
+print("CONSUMPTION DISTRIBUTION:")
+print("-"*70)
+for label, count in filtered["consumption_label"].value_counts().items():
+    pct = (count / len(filtered)) * 100
+    print(f"  {label:15s}: {count:5d} ({pct:5.1f}%)")
+
+print("\n" + "-"*70)
+print("CUISINE DISTRIBUTION:")
+print("-"*70)
+for label, count in filtered["cuisine_label"].value_counts().items():
+    pct = (count / len(filtered)) * 100
+    print(f"  {label:15s}: {count:5d} ({pct:5.1f}%)")
+print("-"*70)
 
 
 # ======================
@@ -138,5 +144,7 @@ filtered.to_csv(output_file, index=False)
 print("\n" + "="*70)
 print("✓ COMPLETE - Dataset berhasil disimpan")
 print("="*70)
-print(f"Total items final: {len(filtered)}")
-print(f"Distribution: {dict(filtered['consumption_label'].value_counts())}")
+print(f"\n📊 SUMMARY:")
+print(f"  Total items: {len(filtered)}")
+print(f"  Output file: {output_file}")
+print("\n" + "="*70)
