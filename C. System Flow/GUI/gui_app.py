@@ -166,12 +166,12 @@ class NutritionCalculatorGUI:
             ).pack(anchor=tk.W, pady=2)
         
         # Disease
-        disease_frame = ttk.LabelFrame(parent, text="Kondisi Kesehatan", padding=8)
+        disease_frame = ttk.LabelFrame(parent, text="Kondisi Kesehatan (Multi-Select)", padding=8)
         disease_frame.pack(fill=tk.X, pady=10)
         
-        ttk.Label(disease_frame, text="Pilih Kondisi:").pack(anchor=tk.W, pady=(0, 5))
+        ttk.Label(disease_frame, text="Pilih Kondisi (boleh lebih dari 1):").pack(anchor=tk.W, pady=(0, 5))
         
-        self.disease_var = tk.StringVar(value="normal")
+        self.disease_vars = {}
         diseases = [
             ("Normal", "normal"),
             ("Diabetes Tipe 2 (DM2)", "dm2"),
@@ -182,21 +182,39 @@ class NutritionCalculatorGUI:
         ]
         
         for label, value in diseases:
-            ttk.Radiobutton(
+            var = tk.BooleanVar(value=False)
+            self.disease_vars[value] = var
+            ttk.Checkbutton(
                 disease_frame,
                 text=label,
-                variable=self.disease_var,
-                value=value
+                variable=var
             ).pack(anchor=tk.W, pady=2)
         
+        # Default: select normal
+        self.disease_vars['normal'].set(True)
+        
         # Food Preferences
-        pref_frame = ttk.Frame(parent)
-        pref_frame.pack(fill=tk.X, pady=8)
-        ttk.Label(pref_frame, text="Preferensi Makanan:", width=15).pack(side=tk.LEFT)
-        self.pref_var = tk.StringVar()
-        pref_entry = ttk.Entry(pref_frame, textvariable=self.pref_var, width=25)
-        pref_entry.pack(side=tk.LEFT, padx=5)
-        ttk.Label(pref_frame, text="(Western, Asian, Other)").pack(side=tk.LEFT, padx=5)
+        pref_frame = ttk.LabelFrame(parent, text="Preferensi Makanan (Multi-Select)", padding=8)
+        pref_frame.pack(fill=tk.X, pady=10)
+        
+        ttk.Label(pref_frame, text="Pilih Preferensi (boleh lebih dari 1):").pack(anchor=tk.W, pady=(0, 5))
+        
+        self.pref_vars = {}
+        preferences = [
+            ("Western", "Western"),
+            ("Asian", "Asian"),
+            ("Mediterranean", "Mediterranean"),
+            ("Generic", "Generic")
+        ]
+        
+        for label, value in preferences:
+            var = tk.BooleanVar(value=False)
+            self.pref_vars[value] = var
+            ttk.Checkbutton(
+                pref_frame,
+                text=label,
+                variable=var
+            ).pack(anchor=tk.W, pady=2)
     
     def _on_calculate(self):
         """Handle Calculate button click"""
@@ -208,11 +226,15 @@ class NutritionCalculatorGUI:
             weight = float(self.weight_var.get())
             height = float(self.height_var.get())
             activity_factor = float(self.activity_var.get())
-            disease = self.disease_var.get()
             
-            # Parse food preferences
-            pref_text = self.pref_var.get().strip()
-            food_preferences = [p.strip() for p in pref_text.split(',')] if pref_text else []
+            # Get selected diseases (multiple)
+            diseases = [d for d, var in self.disease_vars.items() if var.get()]
+            if not diseases:
+                messagebox.showwarning("Warning", "Harus pilih minimal 1 kondisi kesehatan!")
+                return
+            
+            # Get selected food preferences (multiple)
+            food_preferences = [p for p, var in self.pref_vars.items() if var.get()]
             
             self.user_data = {
                 'gender': gender,
@@ -220,8 +242,8 @@ class NutritionCalculatorGUI:
                 'weight': weight,
                 'height': height,
                 'activity_factor': activity_factor,
-                'disease': disease,
-                'food_preferences': food_preferences
+                'disease': diseases,  # Now list
+                'food_preferences': food_preferences  # Now list
             }
             
             # Validate
@@ -251,8 +273,15 @@ class NutritionCalculatorGUI:
         self.weight_var.set("70")
         self.height_var.set("170")
         self.activity_var.set("1.375")
-        self.disease_var.set("normal")
-        self.pref_var.set("")
+        
+        # Reset disease checkboxes
+        for var in self.disease_vars.values():
+            var.set(False)
+        self.disease_vars['normal'].set(True)
+        
+        # Reset food preference checkboxes
+        for var in self.pref_vars.values():
+            var.set(False)
         
         self.user_data = None
         self.nutrition_results = None

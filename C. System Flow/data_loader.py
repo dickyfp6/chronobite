@@ -132,6 +132,74 @@ class GuidelineLoader:
         
         return filtered
     
+    def merge_disease_guidelines(self, diseases, age, gender='all'):
+        """
+        Merge multiple disease guidelines dengan logic:
+        - min value: minimum dari semua disease
+        - max value: maximum dari semua disease
+        
+        Args:
+            diseases: list of str (e.g., ['dm2', 'hypertension'])
+            age: int (usia user)
+            gender: str ('M', 'F', 'all')
+        
+        Returns:
+            dict: merged nutrients
+        """
+        if not diseases:
+            raise ValueError("diseases list cannot be empty")
+        
+        all_nutrients = {}
+        
+        for disease in diseases:
+            guideline_df = self.get_guideline_by_disease(disease, age, gender)
+            
+            if guideline_df.empty:
+                continue
+            
+            for idx, row in guideline_df.iterrows():
+                nutrient = row['nutrient']
+                min_val = row['min']
+                max_val = row['max']
+                basis = row['basis']
+                
+                try:
+                    min_val = float(min_val) if pd.notna(min_val) else None
+                    max_val = float(max_val) if pd.notna(max_val) else None
+                except (ValueError, TypeError):
+                    min_val = None
+                    max_val = None
+                
+                if nutrient not in all_nutrients:
+                    all_nutrients[nutrient] = {
+                        'min': min_val,
+                        'max': max_val,
+                        'basis': basis,
+                        'diseases': [disease]
+                    }
+                else:
+                    if min_val is not None:
+                        if all_nutrients[nutrient]['min'] is None:
+                            all_nutrients[nutrient]['min'] = min_val
+                        else:
+                            all_nutrients[nutrient]['min'] = min(
+                                all_nutrients[nutrient]['min'], 
+                                min_val
+                            )
+                    
+                    if max_val is not None:
+                        if all_nutrients[nutrient]['max'] is None:
+                            all_nutrients[nutrient]['max'] = max_val
+                        else:
+                            all_nutrients[nutrient]['max'] = max(
+                                all_nutrients[nutrient]['max'], 
+                                max_val
+                            )
+                    
+                    all_nutrients[nutrient]['diseases'].append(disease)
+        
+        return all_nutrients
+    
     def load_food_data(self, food_path=None):
         """
         Load data makanan (untuk nanti dipakai GA)

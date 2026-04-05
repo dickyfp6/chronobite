@@ -3,6 +3,25 @@ Integration Guide: Genetic Algorithm & Greedy Algorithm
 Bagaimana cara meng-integrate GA dan Greedy dengan NutritionService
 
 =============================================================================
+MULTIPLE DISEASE MERGE
+=============================================================================
+
+NutritionService SEKARANG support MULTIPLE DISEASE selection dengan merge logic:
+
+Jika user punya 2+ diseases, guideline merges dengan:
+  - min value: MINIMUM dari semua diseases (most restrictive)
+  - max value: MAXIMUM dari semua diseases (most permissive)
+
+Contoh: DM2 + Hypertension
+  DM2 energy: 1800-2200
+  Hypertension energy: 1995-2205
+  → Merged: 1800-2205 (min dari 1800 vs 1995, max dari 2200 vs 2205)
+
+Kenapa ini logic? Agar user yang punya multiple conditions dapat:
+  - Minimum range terendah untuk semua diseases (safer)
+  - Maximum range tertinggi untuk flexibility
+
+=============================================================================
 DRI MICRONUTRIENT FALLBACK LOGIC
 =============================================================================
 
@@ -12,7 +31,7 @@ NutritionService menggunakan strategy "Guideline Override with DRI Fallback":
    - Gunakan DRI micronutrient lengkap sebagai constraint
 
 2. For SICK patients (dm2, hypertension, etc):
-   - Load guideline specifik untuk disease tersebut
+   - Load guideline specifik untuk disease tersebut (atau merged jika multiple)
    - Jika nutrient ada di guideline → gunakan guideline value
    - Jika nutrient TIDAK ada di guideline → fallback ke DRI micronutrient
    - Result: Merged constraints = disease guideline + DRI fallback
@@ -24,7 +43,8 @@ Example hasil merge untuk DM2:
         'max': 2200.0,
         'basis': '1',
         'constraint_type': 'absolute',
-        'source': 'guideline'  # ← dari DM2 guideline
+        'source': 'guideline',  # ← dari DM2 guideline
+        'diseases': ['dm2']
     },
     'vitamin_d_mg': {
         'min': 15.0,
@@ -45,18 +65,18 @@ from nutrition_service import NutritionService
 # Step 2: Initialize service
 service = NutritionService()
 
-# Step 3: Get user data
+# Step 3: Get user data (disease dapat string ATAU list)
 user_input = {
     'gender': 'M',
     'age': 25,
     'weight': 70,
     'height': 175,
     'activity_factor': 1.55,
-    'disease': 'dm2',
-    'food_preferences': ['Western', 'Asian']
+    'disease': ['dm2', 'hypertension'],  # ← Multiple diseases! (atau string 'dm2' untuk single)
+    'food_preferences': ['Western', 'Asian', 'Mediterranean', 'Generic']  # ← Multiple preferences!
 }
 
-# Step 4: Calculate nutrition needs (sudah include DRI fallback!)
+# Step 4: Calculate nutrition needs (include DRI fallback + multi-disease merge!)
 result = service.calculate_nutrition_needs(user_input)
 
 # Step 5: Extract data untuk algorithm
@@ -79,19 +99,21 @@ Result['guidelines']['nutrients']:
 {
     'energy_kcal': {
         'min': 1800.0,                  # Minimum daily energy
-        'max': 2200.0,                  # Maximum daily energy
+        'max': 2205.0,                  # Maximum daily energy (merged from multiple diseases)
         'basis': '1',                   # Basis type (1=absolute, TDEE, BB, BBI, DRI)
         'constraint_type': 'absolute',  # How to interpret the value
         'unit': 'kcal',
-        'source': 'guideline'           # ← NEW: indicator dari mana constraint ini berasal
+        'source': 'guideline',          # ← Indicator dari mana constraint: 'guideline' atau 'DRI fallback'
+        'diseases': ['dm2', 'hypertension']  # ← NEW: Track which diseases contributed (untuk multiple diseases)
     },
     'carbohydrate_g': {
-        'min': 1336.1,
-        'max': 1469.8,
+        'min': 998.75,                  # Merged: min dari DM2 vs Hypertension
+        'max': 1445.56,                 # Merged: max dari DM2 vs Hypertension
         'basis': 'TDEE',
         'constraint_type': 'tdee_based',
         'unit': 'g',
-        'source': 'guideline'
+        'source': 'guideline',
+        'diseases': ['dm2', 'hypertension']
     },
     'vitamin_d_mg': {
         'min': 15.0,
@@ -99,29 +121,29 @@ Result['guidelines']['nutrients']:
         'basis': 'DRI',
         'constraint_type': 'dri_micronutrient',
         'unit': 'mg',
-        'source': 'DRI fallback'  # ← NEW: dari DRI fallback karena tidak ada di disease guideline
+        'source': 'DRI fallback'  # ← Dari DRI fallback karena tidak ada di disease guideline
     },
     ...
 }
 
 Result['food_data']:
 {
-    'total_items': 4425,                    # Total food items in database
-    'filtered_items': 1200,                 # Items sesuai preference
-    'by_cuisine': {'Western': 2000, ...},   # Distribution
-    'preferences': ['Western', 'Asian'],    # User preferences
-    'dataframe': <pd.DataFrame>             # Food data dengan nutrients
+    'total_items': 4425,                        # Total food items in database
+    'filtered_items': 1200,                     # Items sesuai user preference
+    'by_cuisine': {'Western': 2000, ...},       # Distribution by cuisine
+    'preferences': ['Western', 'Asian'],        # User-selected food preferences (now multiple!)
+    'dataframe': <pd.DataFrame>                 # Food data dengan nutrients
 }
 
 Result['user_params']:
 {
-    'tdee': 2672.28,        # Daily energy expenditure
-    'weight': 70,           # Body weight
-    'bbi': 67.5,           # Ideal body weight
-    'energy_target': 2672.28,  # Target energy
+    'tdee': 2672.28,                # Daily energy expenditure
+    'weight': 70,                   # Body weight
+    'bbi': 67.5,                    # Ideal body weight
+    'energy_target': 2672.28,       # Target energy
     'age': 25,
     'gender': 'M',
-    'disease': 'dm2'
+    'disease': ['dm2', 'hypertension']  # ← Now LIST untuk support multiple diseases!
 }
 
 =============================================================================

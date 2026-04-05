@@ -48,7 +48,8 @@ class NutritionService:
                 - weight: float (kg)
                 - height: float (cm)
                 - activity_factor: float (1.2-1.9)
-                - disease: str (normal, dm2, hypertension, cvd, cholesterol, ckd)
+                - disease: str or list (normal, dm2, hypertension, cvd, cholesterol, ckd)
+                           jika list: merge semua disease guidelines (min terendah, max tertinggi)
                 - food_preferences: list (optional, default: [])
         
         Returns:
@@ -113,6 +114,19 @@ class NutritionService:
             disease = user_input.get('disease', 'normal')
             food_preferences = user_input.get('food_preferences', [])
             
+            # Convert disease to list jika string
+            if isinstance(disease, str):
+                disease = [disease] if disease else ['normal']
+            elif not isinstance(disease, list):
+                disease = ['normal']
+            
+            # Remove empty strings, strip, dan remove duplicates
+            disease = [d.strip() for d in disease if d and d.strip()]
+            disease = list(set(disease))  # Remove duplicates
+            
+            if not disease:
+                disease = ['normal']
+            
             # Validate ranges
             if not (14 <= age <= 100):
                 raise ValueError(f"Age must be 14-100, got {age}")
@@ -122,8 +136,9 @@ class NutritionService:
                 raise ValueError(f"Activity factor must be 1.2-1.9, got {activity_factor}")
             
             valid_diseases = ['normal', 'dm2', 'hypertension', 'cvd', 'cholesterol', 'ckd']
-            if disease not in valid_diseases:
-                raise ValueError(f"Disease must be one of {valid_diseases}, got {disease}")
+            for d in disease:
+                if d not in valid_diseases:
+                    raise ValueError(f"Disease must be one of {valid_diseases}, got {d}")
             
             # 2. Calculate anthropometrics
             bmi_calc = self.calculator.calculate_bmi(weight, height)
@@ -144,31 +159,31 @@ class NutritionService:
                 'tdee': tdee
             }
             
-            # 4. Load & convert guidelines
-            guideline_df = self.guideline_loader.get_guideline_by_disease(
-                disease, age, gender
-            )
-            
-            if guideline_df.empty:
-                raise ValueError(f"No guideline found for {disease}, age {age}")
-            
-            # Convert guideline values
+            # 4. Load & merge guidelines (untuk multiple diseases)
             user_params = {
                 'tdee': tdee,
                 'weight': weight,
                 'bbi': bbi
             }
             
+            # Merge disease guidelines
+            merged_guidelines = self.guideline_loader.merge_disease_guidelines(
+                disease, age, gender
+            )
+            
+            if not merged_guidelines:
+                raise ValueError(f"No guideline found for {disease}, age {age}")
+            
             # Get DRI untuk fallback
             dri_row = self.guideline_loader.get_dri_by_age_gender(age, gender)
             
-            # Process guideline nutrients (with convertion)
+            # Process merged guideline nutrients (with conversion)
             nutrients_dict = {}
-            for idx, row in guideline_df.iterrows():
-                nutrient = row['nutrient']
-                min_val = row['min']
-                max_val = row['max']
-                basis = row['basis']
+            for nutrient, guideline_data in merged_guidelines.items():
+                min_val = guideline_data['min']
+                max_val = guideline_data['max']
+                basis = guideline_data['basis']
+                diseases_list = guideline_data['diseases']
                 
                 # Convert nilai
                 converted = self.calculator.convert_guideline_value(
@@ -183,7 +198,9 @@ class NutritionService:
                     'max': converted['max_converted'],
                     'basis': basis,
                     'constraint_type': converted['constraint_type'],
-                    'unit': unit
+                    'unit': unit,
+                    'source': 'guideline',
+                    'diseases': diseases_list  # Track which diseases contributed
                 }
             
             # Add DRI fallback untuk nutrients yang tidak ada di guideline
