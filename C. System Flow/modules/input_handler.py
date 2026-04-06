@@ -150,7 +150,16 @@ def validate_user_input(user_data):
         return False
     
     valid_diseases = ['normal', 'dm2', 'hypertension', 'cvd', 'cholesterol', 'ckd']
-    if user_data['disease'] not in valid_diseases:
-        return False
+    
+    # Handle both single disease (string) and multiple diseases (list)
+    disease = user_data['disease']
+    if isinstance(disease, list):
+        # If list, all diseases must be valid
+        if not disease or not all(d in valid_diseases for d in disease):
+            return False
+    else:
+        # If string, must be valid disease
+        if disease not in valid_diseases:
+            return False
     
     return True

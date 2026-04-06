@@ -34,7 +34,9 @@ class OutputFormatter:
         print(f"Berat Badan        : {user_data['weight']} kg")
         print(f"Tinggi Badan       : {user_data['height']} cm")
         print(f"Faktor Aktivitas   : {user_data['activity_factor']}")
-        print(f"Kondisi Kesehatan  : {user_data['disease'].upper()}")
+        disease_val = user_data['disease']
+        disease_text = ", ".join(d.upper() for d in disease_val) if isinstance(disease_val, list) else disease_val.upper()
+        print(f"Kondisi Kesehatan  : {disease_text}")
         if user_data['food_preferences']:
             print(f"Preferensi Makanan : {', '.join(user_data['food_preferences'])}")
         print("="*70 + "\n")

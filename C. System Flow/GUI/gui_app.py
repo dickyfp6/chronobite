@@ -45,23 +45,45 @@ class NutritionCalculatorGUI:
         container.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         # ========== LEFT PANEL: INPUT ==========
-        left_panel = ttk.LabelFrame(container, text="Input Data", padding=15)
+        left_panel = ttk.LabelFrame(container, text="Input Data", padding=0)
         left_panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
+        
+        # Create canvas with scrollbar for left panel
+        canvas = tk.Canvas(left_panel, bg="#f0f0f0", highlightthickness=0)
+        scrollbar = ttk.Scrollbar(left_panel, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Pack scrollbar and canvas
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
+        
+        # Add mousewheel scrolling
+        def _on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        canvas.bind_all("<MouseWheel>", _on_mousewheel)
         
         # Title
         title_label = ttk.Label(
-            left_panel,
+            scrollable_frame,
             text="Nutrition Calculator",
             font=("Arial", 14, "bold")
         )
-        title_label.pack(pady=(0, 15))
+        title_label.pack(pady=(15, 15), padx=15)
         
         # Input fields
-        self._create_input_fields(left_panel)
+        self._create_input_fields(scrollable_frame)
         
         # Action buttons
-        button_frame = ttk.Frame(left_panel)
-        button_frame.pack(fill=tk.X, pady=10)
+        button_frame = ttk.Frame(scrollable_frame)
+        button_frame.pack(fill=tk.X, pady=10, padx=15)
         
         calculate_btn = ttk.Button(
             button_frame,
@@ -99,8 +121,12 @@ class NutritionCalculatorGUI:
     def _create_input_fields(self, parent):
         """Create input fields"""
         
+        # Padding for scrollable frame
+        parent_padded = ttk.Frame(parent)
+        parent_padded.pack(fill=tk.X, padx=15)
+        
         # Gender
-        gender_frame = ttk.Frame(parent)
+        gender_frame = ttk.Frame(parent_padded)
         gender_frame.pack(fill=tk.X, pady=8)
         ttk.Label(gender_frame, text="Jenis Kelamin:", width=15).pack(side=tk.LEFT)
         self.gender_var = tk.StringVar(value="M")
@@ -114,7 +140,7 @@ class NutritionCalculatorGUI:
         gender_combo.pack(side=tk.LEFT, padx=5)
         
         # Age
-        age_frame = ttk.Frame(parent)
+        age_frame = ttk.Frame(parent_padded)
         age_frame.pack(fill=tk.X, pady=8)
         ttk.Label(age_frame, text="Usia (tahun):", width=15).pack(side=tk.LEFT)
         self.age_var = tk.StringVar(value="25")
@@ -128,7 +154,7 @@ class NutritionCalculatorGUI:
         age_spin.pack(side=tk.LEFT, padx=5)
         
         # Weight
-        weight_frame = ttk.Frame(parent)
+        weight_frame = ttk.Frame(parent_padded)
         weight_frame.pack(fill=tk.X, pady=8)
         ttk.Label(weight_frame, text="Berat Badan (kg):", width=15).pack(side=tk.LEFT)
         self.weight_var = tk.StringVar(value="70")
@@ -136,7 +162,7 @@ class NutritionCalculatorGUI:
         weight_entry.pack(side=tk.LEFT, padx=5)
         
         # Height
-        height_frame = ttk.Frame(parent)
+        height_frame = ttk.Frame(parent_padded)
         height_frame.pack(fill=tk.X, pady=8)
         ttk.Label(height_frame, text="Tinggi Badan (cm):", width=15).pack(side=tk.LEFT)
         self.height_var = tk.StringVar(value="170")
@@ -144,7 +170,7 @@ class NutritionCalculatorGUI:
         height_entry.pack(side=tk.LEFT, padx=5)
         
         # Activity Factor
-        activity_frame = ttk.LabelFrame(parent, text="Tingkat Aktivitas", padding=8)
+        activity_frame = ttk.LabelFrame(parent_padded, text="Tingkat Aktivitas", padding=8)
         activity_frame.pack(fill=tk.X, pady=10)
         
         self.activity_var = tk.StringVar(value="1.375")
@@ -166,7 +192,7 @@ class NutritionCalculatorGUI:
             ).pack(anchor=tk.W, pady=2)
         
         # Disease
-        disease_frame = ttk.LabelFrame(parent, text="Kondisi Kesehatan (Multi-Select)", padding=8)
+        disease_frame = ttk.LabelFrame(parent_padded, text="Kondisi Kesehatan (Multi-Select)", padding=8)
         disease_frame.pack(fill=tk.X, pady=10)
         
         ttk.Label(disease_frame, text="Pilih Kondisi (boleh lebih dari 1):").pack(anchor=tk.W, pady=(0, 5))
@@ -194,7 +220,7 @@ class NutritionCalculatorGUI:
         self.disease_vars['normal'].set(True)
         
         # Food Preferences
-        pref_frame = ttk.LabelFrame(parent, text="Preferensi Makanan (Multi-Select)", padding=8)
+        pref_frame = ttk.LabelFrame(parent_padded, text="Preferensi Makanan (Multi-Select)", padding=8)
         pref_frame.pack(fill=tk.X, pady=10)
         
         ttk.Label(pref_frame, text="Pilih Preferensi (boleh lebih dari 1):").pack(anchor=tk.W, pady=(0, 5))
@@ -336,7 +362,8 @@ Silakan mulai dengan mengisi data Anda!
         result_text += f"Usia: {self.user_data['age']} tahun\n"
         result_text += f"Berat Badan: {self.user_data['weight']} kg\n"
         result_text += f"Tinggi Badan: {self.user_data['height']} cm\n"
-        result_text += f"Kondisi: {self.user_data['disease'].upper()}\n\n"
+        disease_str = ", ".join(d.upper() for d in self.user_data['disease']) if isinstance(self.user_data['disease'], list) else self.user_data['disease'].upper()
+        result_text += f"Kondisi: {disease_str}\n\n"
         
         # Anthropometric results
         result_text += "HASIL ANTROPOMETRI:\n"

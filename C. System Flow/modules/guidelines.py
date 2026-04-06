@@ -35,38 +35,62 @@ class GuidelineProcessor:
         disease = user_data['disease']
         age = user_data['age']
         gender = user_data['gender']
-        
-        # Get guideline dari CSV
-        guideline_df = self.loader.get_guideline_by_disease(disease, age, gender)
-        
-        if guideline_df.empty:
-            print(f"⚠ No guideline found for disease={disease}, age={age}, gender={gender}")
-            return None
-        
-        # Process setiap nutrient guideline
-        guidelines_dict = {}
         user_params = nutrition_results['user_params']
         
-        for idx, row in guideline_df.iterrows():
-            nutrient = row['nutrient']
-            min_val = row['min']
-            max_val = row['max']
-            basis = row['basis']
+        # Handle both single disease (string) and multiple diseases (list)
+        disease_list = disease if isinstance(disease, list) else [disease]
+        
+        # Aggregate guidelines from all diseases
+        guidelines_dict = {}
+        disease_names = []
+        
+        for disease_item in disease_list:
+            # Get guideline dari CSV untuk setiap disease
+            guideline_df = self.loader.get_guideline_by_disease(disease_item, age, gender)
             
-            # Convert nilai
-            converted = self.calc.convert_guideline_value(
-                min_val, max_val, basis, user_params
-            )
+            if guideline_df.empty:
+                print(f"⚠ No guideline found for disease={disease_item}, age={age}, gender={gender}")
+                continue
             
-            guidelines_dict[nutrient] = {
-                'min': converted['min_converted'],
-                'max': converted['max_converted'],
-                'basis': basis,
-                'constraint_type': converted['constraint_type']
-            }
+            disease_names.append(disease_item)
+            
+            # Process setiap nutrient guideline
+            for idx, row in guideline_df.iterrows():
+                nutrient = row['nutrient']
+                min_val = row['min']
+                max_val = row['max']
+                basis = row['basis']
+                
+                # Convert nilai
+                converted = self.calc.convert_guideline_value(
+                    min_val, max_val, basis, user_params
+                )
+                
+                if nutrient not in guidelines_dict:
+                    guidelines_dict[nutrient] = {
+                        'min': converted['min_converted'],
+                        'max': converted['max_converted'],
+                        'basis': basis,
+                        'constraint_type': converted['constraint_type'],
+                        'source': 'guideline'
+                    }
+                else:
+                    # Aggregate: take most restrictive (smallest min, largest max)
+                    guidelines_dict[nutrient]['min'] = min(
+                        guidelines_dict[nutrient]['min'],
+                        converted['min_converted']
+                    )
+                    guidelines_dict[nutrient]['max'] = max(
+                        guidelines_dict[nutrient]['max'],
+                        converted['max_converted']
+                    )
+        
+        if not guidelines_dict:
+            print(f"⚠ No guidelines found for any diseases")
+            return None
         
         return {
-            'disease': disease,
+            'disease': ', '.join(disease_names) if disease_names else str(disease),
             'guidelines': guidelines_dict,
             'total_guidelines': len(guidelines_dict)
         }
