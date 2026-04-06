@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NutriPlan DSS - Sistem Rekomendasi Nutrisi Pribadi">
+    <meta name="theme-color" content="#10b981">
+    
+    <title>NutriPlan DSS - Personalized Nutrition Recommendation</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #10b981;
+            --secondary: #f0fdfa;
+            --accent: #d1fae5;
+            --dark: #1e293b;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Glassmorphism effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Smooth transitions */
+        .slide {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-enter {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        /* Progress bar animation */
+        .progress-fill {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Card hover effect */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Badge selection */
+        .badge {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+        }
+
+        .badge.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .badge:hover {
+            border-color: var(--primary);
+        }
+
+        /* Input styling */
+        input, select {
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            outline: none;
+        }
+
+        /* Button animations */
+        .btn-primary {
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Macro progress card */
+        .macro-card {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        progress {
+            border-radius: 10px;
+        }
+
+        progress::-webkit-progress-bar {
+            background-color: #e5e7eb;
+            border-radius: 10px;
+        }
+
+        progress::-webkit-progress-value {
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 10px;
+        }
+
+        progress::-moz-progress-bar {
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 10px;
+        }
+
+        /* Hidden slide */
+        .hidden-slide {
+            display: none;
+        }
+
+        .visible-slide {
+            display: block;
+        }
+
+        /* Skeleton loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0fdfa, #d1fae5, #f0fdfa);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen">
+
+<div x-data="slideFlow()" class="w-full min-h-screen">
+    
+    <!-- Progress Bar -->
+    <div class="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-semibold text-slate-700">
+                    <span x-text="getStepLabel(currentStep)"></span>
+                </h2>
+                <span class="text-xs font-medium text-emerald-600" x-text="`${currentStep + 1} / 5`"></span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-200 rounded-full h-2">
+                <div class="progress-fill bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full" 
+                     :style="`width: ${((currentStep + 1) / 5) * 100}%`"></div>
+            </div>
+            <!-- Step indicators -->
+            <div class="flex justify-between mt-4 gap-2">
+                <template x-for="step in 5" :key="step">
+                    <div class="flex flex-col items-center flex-1">
+                        <div :class="`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${step - 1 <= currentStep ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'}`"
+                             x-text="step"></div>
+                        <span class="text-xs text-slate-600 mt-1 text-center hidden sm:inline" 
+                              x-text="['Hero', 'Profile', 'Health', 'Analysis', 'Menu'][step - 1]"></span>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto pt-32 pb-20 px-4 relative">
+
+        <!-- SLIDE 0: HERO -->
+        <div :class="`${currentStep === 0 ? 'visible-slide slide-enter' : 'hidden-slide'} transition-all duration-100`">
+            <div class="min-h-screen flex flex-col items-center justify-center text-center">
+                <div class="mb-8">
+                    <div class="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-400 mb-4 leading-tight">
+                        NutriPlan DSS
+                    </div>
+                    <p class="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto font-light">
+                        Personalized Nutrition & Diet Recommendation System
+                    </p>
+                    <p class="text-base text-slate-500 mt-3 max-w-xl mx-auto">
+                        Dapatkan rencana menu nutrisi yang disesuaikan dengan kebutuhan kesehatan dan preferensi Anda menggunakan teknologi AI terdepan.
+                    </p>
+                </div>
+
+                <!-- Hero Image -->
+                <div class="mb-12 w-full max-w-sm">
+                    <div class="glass-effect rounded-3xl p-8 border-emerald-100">
+                        <svg class="w-full h-auto text-emerald-500" viewBox="0 0 200 200" fill="none">
+                            <circle cx="100" cy="100" r="80" fill="#d1fae5" opacity="0.3"/>
+                            <circle cx="100" cy="100" r="60" fill="#a7f3d0" opacity="0.5"/>
+                            <path d="M 100 60 Q 140 100 100 140 Q 60 100 100 60" fill="#10b981"/>
+                            <circle cx="100" cy="80" r="8" fill="white"/>
+                            <circle cx="120" cy="105" r="8" fill="white"/>
+                            <circle cx="80" cy="105" r="8" fill="white"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- CTA Button -->
+                <button @click="nextSlide()" class="btn-primary px-12 py-4 rounded-full text-white font-bold text-lg shadow-lg hover:shadow-xl">
+                    Mulai Analisis Sekarang
+                    <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- SLIDE 1: PROFILE -->
+        <div :class="`${currentStep === 1 ? 'visible-slide slide-enter' : 'hidden-slide'} transition-all duration-100`">
+            <div class="min-h-screen py-12">
+                <div class="glass-effect rounded-3xl p-8 md:p-12 max-w-2xl mx-auto mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Profil Anda</h2>
+                    <p class="text-slate-600 mb-8">Masukkan informasi dasar untuk personalisasi rekomendasi nutrisi</p>
+
+                    <!-- Gender Selection -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-semibold text-slate-700 mb-4">Jenis Kelamin</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button @click="formData.gender = 'M'; $el.closest('.grid-cols-2').children[0].classList.add('selected')"
+                                    :class="`badge rounded-xl p-4 font-semibold text-center ${formData.gender === 'M' ? 'selected' : ''}`">
+                                👨 Laki-laki
+                            </button>
+                            <button @click="formData.gender = 'F'; $el.closest('.grid-cols-2').children[1].classList.add('selected')"
+                                    :class="`badge rounded-xl p-4 font-semibold text-center ${formData.gender === 'F' ? 'selected' : ''}`">
+                                👩 Perempuan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Age Input -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Usia</label>
+                        <div class="relative">
+                            <input type="number" x-model="formData.age" min="10" max="120" 
+                                   class="w-full px-6 py-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 text-lg font-semibold"
+                                   placeholder="Masukkan usia Anda">
+                            <span class="absolute right-4 top-3 text-2xl">🎂</span>
+                        </div>
+                    </div>
+
+                    <!-- Weight Input -->
+                    <div class="mb-8 grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Berat Badan</label>
+                            <div class="relative">
+                                <input type="number" x-model="formData.weight" min="20" max="300" step="0.1"
+                                       class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 font-semibold"
+                                       placeholder="Berat">
+                                <span class="absolute right-4 top-3">kg</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Tinggi Badan</label>
+                            <div class="relative">
+                                <input type="number" x-model="formData.height" min="100" max="250" step="0.1"
+                                       class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 font-semibold"
+                                       placeholder="Tinggi">
+                                <span class="absolute right-4 top-3">cm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Level -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-semibold text-slate-700 mb-4">Tingkat Aktivitas</label>
+                        <select x-model="formData.activity" class="w-full px-6 py-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 font-semibold text-base">
+                            <option value="1.2">🛋️ Sedentary (Jarang bergerak)</option>
+                            <option value="1.375">🚶 Lightly Active (Aktivitas ringan)</option>
+                            <option value="1.55" selected>🏃 Moderately Active (Cukup aktif)</option>
+                            <option value="1.725">💪 Very Active (Sangat aktif)</option>
+                            <option value="1.9">🏋️ Extremely Active (Sangat intensif)</option>
+                        </select>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="flex gap-4 mt-12">
+                        <button @click="prevSlide()" class="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition">
+                            ← Kembali
+                        </button>
+                        <button @click="nextSlide()" class="flex-1 btn-primary px-6 py-3 text-white font-bold rounded-xl">
+                            Lanjut →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: HEALTH CONDITION -->
+        <div :class="`${currentStep === 2 ? 'visible-slide slide-enter' : 'hidden-slide'} transition-all duration-100`">
+            <div class="min-h-screen py-12">
+                <div class="glass-effect rounded-3xl p-8 md:p-12 max-w-3xl mx-auto mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Kondisi Kesehatan</h2>
+                    <p class="text-slate-600 mb-8">Pilih kondisi kesehatan yang Anda alami (boleh lebih dari satu)</p>
+
+                    <!-- Health Conditions Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <template x-for="(disease, key) in allDiseases" :key="key">
+                            <button @click="toggleDisease(key)"
+                                    :class="`badge rounded-2xl p-6 text-center font-semibold text-lg transition-all ${formData.diseases.includes(key) ? 'selected bg-emerald-600 text-white' : 'text-slate-700'}`">
+                                <span x-text="disease.emoji"></span>
+                                <div x-text="disease.label" class="mt-2"></div>
+                            </button>
+                        </template>
+                    </div>
+
+                    <!-- Food Preferences -->
+                    <div class="mb-8 pt-6 border-t border-slate-200">
+                        <label class="block text-sm font-semibold text-slate-700 mb-4">Preferensi Makanan</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button @click="formData.food_preferences = ['Western']" 
+                                    :class="`badge rounded-xl p-4 font-semibold text-center ${formData.food_preferences[0] === 'Western' ? 'selected' : ''}`">
+                                🍔 Western
+                            </button>
+                            <button @click="formData.food_preferences = ['Asian']"
+                                    :class="`badge rounded-xl p-4 font-semibold text-center ${formData.food_preferences[0] === 'Asian' ? 'selected' : ''}`">
+                                🍜 Asian
+                            </button>
+                            <button @click="formData.food_preferences = ['Mediterranean']"
+                                    :class="`badge rounded-xl p-4 font-semibold text-center ${formData.food_preferences[0] === 'Mediterranean' ? 'selected' : ''}`">
+                                🫒 Mediterranean
+                            </button>
+                            <button @click="formData.food_preferences = ['Generic']"
+                                    :class="`badge rounded-xl p-4 font-semibold text-center ${formData.food_preferences[0] === 'Generic' ? 'selected' : ''}`">
+                                🍱 Generic
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="flex gap-4 mt-12">
+                        <button @click="prevSlide()" class="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition">
+                            ← Kembali
+                        </button>
+                        <button @click="nextSlide()" class="flex-1 btn-primary px-6 py-3 text-white font-bold rounded-xl">
+                            Analisis →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: ANALYSIS -->
+        <div :class="`${currentStep === 3 ? 'visible-slide slide-enter' : 'hidden-slide'} transition-all duration-100`">
+            <div class="min-h-screen py-12">
+                <div v-if="!analysisData" class="text-center">
+                    <div class="inline-block">
+                        <div class="animate-spin rounded-full h-16 w-16 border-4 border-emerald-200 border-t-emerald-600"></div>
+                    </div>
+                    <p class="mt-4 text-slate-600 font-semibold">Menganalisis kebutuhan nutrisi Anda...</p>
+                </div>
+
+                <div v-else>
+                    <!-- Header Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <!-- BMI Card -->
+                        <div class="glass-effect rounded-2xl p-6 card-hover border-emerald-100">
+                            <div class="text-sm font-semibold text-slate-600 mb-2">📊 BMI Anda</div>
+                            <div class="text-4xl font-bold text-emerald-600" x-text="analysisData.bmi"></div>
+                            <div class="text-sm text-slate-600 mt-2" x-text="analysisData.bmi_category"></div>
+                        </div>
+
+                        <!-- BMR Card -->
+                        <div class="glass-effect rounded-2xl p-6 card-hover border-emerald-100">
+                            <div class="text-sm font-semibold text-slate-600 mb-2">🔥 BMR</div>
+                            <div class="text-4xl font-bold text-emerald-600" x-text="`${analysisData.bmr} cal`"></div>
+                            <div class="text-sm text-slate-600 mt-2">Kalori Basal</div>
+                        </div>
+
+                        <!-- TDEE Card -->
+                        <div class="glass-effect rounded-2xl p-6 card-hover border-emerald-100 ring-2 ring-emerald-400">
+                            <div class="text-sm font-semibold text-emerald-700 mb-2">⭐ TDEE Anda</div>
+                            <div class="text-4xl font-bold text-emerald-600" x-text="`${analysisData.tdee} cal`"></div>
+                            <div class="text-sm text-emerald-600 mt-2 font-semibold">Target Harian</div>
+                        </div>
+                    </div>
+
+                    <!-- Macronutrient Targets -->
+                    <div class="glass-effect rounded-3xl p-8 md:p-12 mb-8 border-emerald-100">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-8">Target Makronutrisi Harian</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Carbs -->
+                            <div class="macro-card bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border-2 border-orange-200">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div>
+                                        <div class="text-sm font-semibold text-slate-700">🍞 Karbohidrat</div>
+                                        <div class="text-3xl font-bold text-orange-600 mt-1" x-text="`${analysisData.macros.carbs.gram}g`"></div>
+                                    </div>
+                                    <div class="text-4xl">🌾</div>
+                                </div>
+                                <div class="text-xs text-slate-600 mb-2" x-text="`${analysisData.macros.carbs.pct[0]}-${analysisData.macros.carbs.pct[1]}% dari TDEE`"></div>
+                                <progress class="w-full h-3" :value="analysisData.macros.carbs.gram" max="300"></progress>
+                            </div>
+
+                            <!-- Protein -->
+                            <div class="macro-card bg-gradient-to-br from-red-50 to-rose-50 p-6 rounded-2xl border-2 border-red-200">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div>
+                                        <div class="text-sm font-semibold text-slate-700">🥚 Protein</div>
+                                        <div class="text-3xl font-bold text-red-600 mt-1" x-text="`${analysisData.macros.protein.gram}g`"></div>
+                                    </div>
+                                    <div class="text-4xl">🍗</div>
+                                </div>
+                                <div class="text-xs text-slate-600 mb-2" x-text="`${analysisData.macros.protein.pct[0]}-${analysisData.macros.protein.pct[1]}% dari TDEE`"></div>
+                                <progress class="w-full h-3" :value="analysisData.macros.protein.gram" max="200"></progress>
+                            </div>
+
+                            <!-- Fat -->
+                            <div class="macro-card bg-gradient-to-br from-yellow-50 to-green-50 p-6 rounded-2xl border-2 border-yellow-200">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div>
+                                        <div class="text-sm font-semibold text-slate-700">🫒 Lemak</div>
+                                        <div class="text-3xl font-bold text-yellow-600 mt-1" x-text="`${analysisData.macros.fat.gram}g`"></div>
+                                    </div>
+                                    <div class="text-4xl">🥑</div>
+                                </div>
+                                <div class="text-xs text-slate-600 mb-2" x-text="`${analysisData.macros.fat.pct[0]}-${analysisData.macros.fat.pct[1]}% dari TDEE`"></div>
+                                <progress class="w-full h-3" :value="analysisData.macros.fat.gram" max="100"></progress>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Health Conditions Info -->
+                    <div class="glass-effect rounded-2xl p-6 mb-8 border-emerald-100">
+                        <h4 class="font-semibold text-slate-900 mb-3">Kondisi Kesehatan yang Diperhitungkan:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="condition in analysisData.diseases" :key="condition">
+                                <span class="inline-block bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold" 
+                                      x-text="condition"></span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="flex gap-4">
+                        <button @click="prevSlide()" class="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition">
+                            ← Ubah Data
+                        </button>
+                        <button @click="nextSlide()" class="flex-1 btn-primary px-6 py-3 text-white font-bold rounded-xl">
+                            Lihat Menu →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: MENU RECOMMENDATION -->
+        <div :class="`${currentStep === 4 ? 'visible-slide slide-enter' : 'hidden-slide'} transition-all duration-100`">
+            <div class="min-h-screen py-12">
+                <div class="mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Rekomendasi Menu</h2>
+                    <p class="text-slate-600">Menu yang disesuaikan dengan kebutuhan nutrisi dan preferensi Anda</p>
+                </div>
+
+                <!-- Meals Grid -->
+                <template x-for="(items, mealType) in analysisData.menu" :key="mealType">
+                    <div class="mb-12">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="text-3xl" x-text="{'breakfast': '🌅', 'lunch': '☀️', 'dinner': '🌙', 'snack': '🍿'}[mealType]"></span>
+                            <h3 class="text-2xl font-bold text-slate-900" x-text="{'breakfast': 'Sarapan', 'lunch': 'Makan Siang', 'dinner': 'Makan Malam', 'snack': 'Snack'}[mealType]"></h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <template x-for="food in items" :key="food.name">
+                                <div class="glass-effect rounded-2xl overflow-hidden card-hover border-emerald-100 hover:border-emerald-300 group">
+                                    <!-- Food Image Placeholder -->
+                                    <div class="h-32 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center text-5xl group-hover:scale-110 transition-transform">
+                                        <span x-text="food.emoji"></span>
+                                    </div>
+
+                                    <!-- Food Info -->
+                                    <div class="p-4">
+                                        <h4 class="font-bold text-slate-900 text-sm mb-2" x-text="food.name"></h4>
+                                        
+                                        <!-- Macros -->
+                                        <div class="grid grid-cols-3 gap-2 mb-3 text-xs">
+                                            <div class="text-center">
+                                                <div class="font-bold text-orange-600" x-text="`${food.carbs}g`"></div>
+                                                <div class="text-slate-500">Carbs</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="font-bold text-red-600" x-text="`${food.protein}g`"></div>
+                                                <div class="text-slate-500">Protein</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="font-bold text-yellow-600" x-text="`${food.fat}g`"></div>
+                                                <div class="text-slate-500">Fat</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Calories -->
+                                        <div class="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg p-2 text-center">
+                                            <span class="font-bold text-emerald-700 text-sm" x-text="`${food.calories} cal`"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Final Navigation -->
+                <div class="glass-effect rounded-3xl p-8 mt-12 border-emerald-100">
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Selesai! 🎉</h3>
+                    <p class="text-slate-600 mb-6">Analisis nutrisi Anda telah lengkap. Anda dapat mengulangi analisis atau menyimpan hasil ini.</p>
+                    
+                    <div class="flex gap-4">
+                        <button @click="resetForm()" class="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition">
+                            🔄 Analisis Ulang
+                        </button>
+                        <button @click="downloadResults()" class="flex-1 btn-primary px-6 py-3 text-white font-bold rounded-xl">
+                            📥 Unduh Hasil
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Alpine.js Script -->
+<script>
+function slideFlow() {
+    return {
+        currentStep: 0,
+        formData: {
+            gender: 'M',
+            age: 25,
+            weight: 70,
+            height: 170,
+            activity: '1.375',
+            diseases: ['normal'],
+            food_preferences: ['Generic'],
+        },
+        analysisData: null,
+        allDiseases: {
+            'normal': { label: 'Normal/Sehat', emoji: '✅' },
+            'dm2': { label: 'Diabetes Tipe 2', emoji: '🩺' },
+            'hypertension': { label: 'Hipertensi', emoji: '❤️‍🩹' },
+            'cvd': { label: 'Penyakit Kardiovaskular', emoji: '💔' },
+            'cholesterol': { label: 'Kolesterol Tinggi', emoji: '⚠️' },
+            'ckd': { label: 'Penyakit Ginjal Kronis', emoji: '🔬' },
+        },
+
+        getStepLabel(step) {
+            return ['Selamat Datang', 'Profil Anda', 'Kondisi Kesehatan', 'Analisis Nutrisi', 'Rekomendasi Menu'][step];
+        },
+
+        nextSlide() {
+            if (this.currentStep === 2) {
+                // Perform analysis before moving to slide 3
+                this.performAnalysis();
+                this.currentStep = 3;
+            } else if (this.currentStep < 4) {
+                this.currentStep++;
+            }
+        },
+
+        prevSlide() {
+            if (this.currentStep > 0) {
+                this.currentStep--;
+            }
+        },
+
+        toggleDisease(disease) {
+            const index = this.formData.diseases.indexOf(disease);
+            if (index > -1) {
+                this.formData.diseases.splice(index, 1);
+            } else {
+                // If selecting non-normal disease, remove 'normal' first
+                if (disease !== 'normal' && this.formData.diseases.includes('normal')) {
+                    this.formData.diseases = this.formData.diseases.filter(d => d !== 'normal');
+                }
+                // If selecting 'normal', clear all others
+                if (disease === 'normal') {
+                    this.formData.diseases = ['normal'];
+                } else {
+                    this.formData.diseases.push(disease);
+                }
+            }
+        },
+
+        performAnalysis() {
+            // Send form data to backend
+            fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    gender: this.formData.gender,
+                    age: parseInt(this.formData.age),
+                    weight: parseFloat(this.formData.weight),
+                    height: parseFloat(this.formData.height),
+                    activity: this.formData.activity,
+                    diseases: this.formData.diseases,
+                    food_preferences: this.formData.food_preferences,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.analysisData = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menganalisis. Silakan coba lagi.');
+            });
+        },
+
+        resetForm() {
+            this.currentStep = 0;
+            this.formData = {
+                gender: 'M',
+                age: 25,
+                weight: 70,
+                height: 170,
+                activity: '1.375',
+                diseases: ['normal'],
+                food_preferences: ['Generic'],
+            };
+            this.analysisData = null;
+        },
+
+        downloadResults() {
+            const data = {
+                timestamp: new Date().toLocaleString('id-ID'),
+                formData: this.formData,
+                analysisData: this.analysisData,
+            };
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `nutriplan_analysis_${new Date().getTime()}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        },
+    };
+}
+</script>
+
+<!-- Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('Service Worker registered:', registration);
+            })
+            .catch(error => {
+                console.log('Service Worker registration failed:', error);
+            });
+    });
+}
+
+// Install app prompt for PWA
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // You can show a custom "Install App" button here if desired
+});
+</script>
+
+</body>
+</html>
