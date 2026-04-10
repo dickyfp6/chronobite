@@ -73,8 +73,8 @@ def get_user_input():
             break
         print("Input tidak valid. Pilih 1-3.")
     
-    # Kondisi Kesehatan
-    print("\nKondisi Kesehatan:")
+    # Kondisi Kesehatan (Bisa Multi-Penyakit)
+    print("\nKondisi Kesehatan (Bisa pilih maksimal 3, pisahkan dengan koma):")
     print("1. Normal")
     print("2. Diabetes Tipe 2 (DM2)")
     print("3. Hipertensi")
@@ -92,17 +92,73 @@ def get_user_input():
     }
     
     while True:
-        disease_choice = input("Pilih kondisi kesehatan (1-6): ").strip()
-        if disease_choice in disease_mapping:
-            disease = disease_mapping[disease_choice]
-            break
-        print("Input tidak valid. Pilih 1-6.")
+        choices = input("Pilih kondisi kesehatan (contoh: 2 atau 2,3): ").strip()
+        
+        # 1. Pecah input jadi list (misal "2,3" jadi ["2", "3"])
+        choice_list = [c.strip() for c in choices.split(',') if c.strip()]
+        
+        # 2. Cek apakah ada input kosong
+        if not choice_list:
+            print("Input tidak boleh kosong.")
+            continue
+
+        # 3. Validasi: Apakah semua angka ada di menu 1-6?
+        if not all(c in disease_mapping for c in choice_list):
+            print("Input tidak valid. Masukkan angka 1-6.")
+            continue
+            
+        # 4. Ambil label penyakitnya
+        selected_labels = [disease_mapping[c] for c in choice_list]
+        
+        # 5. SATPAM: Cek kontradiksi 'Normal' vs Penyakit
+        if 'normal' in selected_labels:
+            if len(selected_labels) > 1:
+                print("⚠ Pilihan 'Normal' tidak bisa digabung dengan penyakit lain!")
+                continue
+            disease = 'normal' # Output string tunggal jika normal
+        
+        # 6. SATPAM: Cek jumlah maksimal
+        elif len(selected_labels) > 3:
+            print("⚠ Maksimal pilih 3 kombinasi penyakit.")
+            continue
+            
+        else:
+            disease = selected_labels # Output list jika penyakit (misal: ['dm2', 'hypertension'])
+            
+        break # Berhasil lolos semua validasi!
     
-    # Preferensi Makanan
-    print("\nPreferensi Makanan (pisahkan dengan koma):")
-    print("Contoh: Western, Asian, Other")
-    cuisine_input = input("Masukkan preferensi (atau biarkan kosong): ").strip()
-    food_preferences = [c.strip() for c in cuisine_input.split(',')] if cuisine_input else []
+    # 1. Menampilkan pilihan ke user
+    print("\nPreferensi Makanan (Pilih angka, pisahkan dengan koma):")
+    print("1. Asian")
+    print("2. Western")
+    print("3. Mediterranean")
+    
+    cuisine_mapping = {
+        '1': 'Asian',
+        '2': 'Western',
+        '3': 'Mediterranean'
+    }
+    
+    while True:
+        # 2. Mengambil input mentah (misal user ketik: "1, 2")
+        cuisine_input = input("Masukkan pilihan (contoh: 1,2 atau biarkan kosong untuk semua): ").strip()
+        
+        # 3. Handling jika user tidak memilih (Langsung Enter)
+        if not cuisine_input:
+            food_preferences = []
+            break
+            
+        # 4. MEMECAH INPUT: Mengubah "1, 2" menjadi ["1", "2"]
+        # Pakai 'cuisine_input', bukan 'choices' (tadi sempat typo di sini)
+        choice_list = [c.strip() for c in cuisine_input.split(',') if c.strip()]
+        
+        # 5. VALIDASI ANGKA: Cek apakah semua angka ada di menu (1-3)
+        if all(c in cuisine_mapping for c in choice_list):
+            # Jika valid, ubah angka jadi label teks (misal: ["Asian", "Western"])
+            food_preferences = [cuisine_mapping[c] for c in choice_list]
+            break
+        else:
+            print("⚠ Input tidak valid. Masukkan angka 1-3 saja.")
     
     user_data = {
         'gender': gender,
