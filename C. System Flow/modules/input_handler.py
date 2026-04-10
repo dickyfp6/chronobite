@@ -23,60 +23,55 @@ def get_user_input():
     
     # Input Demografis
     while True:
-        gender = input("Jenis Kelamin (M/F): ").upper().strip()
+        gender = input("Gender (M/F): ").upper().strip()
         if gender in ['M', 'F']:
             break
-        print("Input tidak valid. Pilih M atau F.")
+        print("Input invalid. Choose M or F.")
+        
+    while True:
+        try:
+            age = int(input("Age (years): "))
+            if 18 <= age <= 100: 
+                break
+            print("Age must be between 18-100 years.")
+        except ValueError:
+            print("Input must be a number.")
     
     while True:
         try:
-            age = int(input("Usia (tahun): "))
-            if 14 <= age <= 100:
+            weight = float(input("Weight (kg): "))
+            if weight > 0: 
                 break
-            print("Usia harus antara 14-100 tahun.")
+            print("Weight must be a positive number.")
         except ValueError:
-            print("Input harus berupa angka.")
-    
+            print("Input must be a number.")
     while True:
         try:
-            weight = float(input("Berat Badan (kg): "))
-            if weight > 0:
+            height = float(input("Height (cm): "))
+            if 100 <= height <= 300: 
                 break
-            print("Berat badan harus lebih dari 0.")
+            print("Height must be between 100-300 cm.")
         except ValueError:
-            print("Input harus berupa angka.")
+            print("Input must be a number.")
     
-    while True:
-        try:
-            height = float(input("Tinggi Badan (cm): "))
-            if height > 0:
-                break
-            print("Tinggi badan harus lebih dari 0.")
-        except ValueError:
-            print("Input harus berupa angka.")
-    
-    # Activity Factor
-    print("\nPilihan Aktivitas:")
-    print("1. Sedentary (jarang olahraga) - 1.2")
-    print("2. Light (olahraga 1-3 hari/minggu) - 1.375")
-    print("3. Moderate (olahraga 3-5 hari/minggu) - 1.55")
-    print("4. Very Active (olahraga 6-7 hari/minggu) - 1.725")
-    print("5. Extremely Active (olahraga setiap hari/atlet) - 1.9")
+    # Activity Factor (Updated based on FAO/WHO/UNU Guidelines)
+    print("\nPilihan Aktivitas (Berdasarkan Gaya Hidup):")
+    print("1. Sedentary or Light Activity (Contoh: Pekerja kantoran, jarang olahraga) [PAL: 1.40]")
+    print("2. Active or Moderately Active (Contoh: Konstruksi, guru, rutin jogging) [PAL: 1.70]")
+    print("3. Vigorous or Vigorously Active (Contoh: Atlet, kuli panggul, olahraga intens) [PAL: 2.00]")
     
     activity_mapping = {
-        '1': 1.2,
-        '2': 1.375,
-        '3': 1.55,
-        '4': 1.725,
-        '5': 1.9
+        '1': 1.40,  # Batas bawah kategori Sedentary/Light
+        '2': 1.70,  # Batas bawah kategori Active/Moderate
+        '3': 2.00   # Batas bawah kategori Vigorous
     }
-    
+
     while True:
-        activity_choice = input("Pilih aktivitas (1-5): ").strip()
+        activity_choice = input("Pilih aktivitas (1-3): ").strip()
         if activity_choice in activity_mapping:
             activity_factor = activity_mapping[activity_choice]
             break
-        print("Input tidak valid. Pilih 1-5.")
+        print("Input tidak valid. Pilih 1-3.")
     
     # Kondisi Kesehatan
     print("\nKondisi Kesehatan:")
