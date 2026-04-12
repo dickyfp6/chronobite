@@ -46,6 +46,9 @@ def main():
         # Display anthropometrics
         formatter.display_calculation_results(display_data)
         
+        # Display meal distribution
+        formatter.display_meal_distribution(result['meal_plan'])
+        
         # 4. Display detailed guidelines + summary with age classification
         service.print_summary(result)
         

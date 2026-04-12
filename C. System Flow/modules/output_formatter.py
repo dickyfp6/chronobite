@@ -88,6 +88,25 @@ class OutputFormatter:
         print("\n" + "="*70)
     
     @staticmethod
+    def display_meal_distribution(meal_plan):
+        """Display recommended meal distribution"""
+        print("\n" + "="*70)
+        print("REKOMENDASI PEMBAGIAN PORSI MAKANAN")
+        print("="*70)
+        
+        dist = meal_plan['distribution']
+        perc = meal_plan['percentages']
+        
+        total_tdee = meal_plan['total']
+        print(f"\nBerdasarkan TDEE {total_tdee} kcal/hari:")
+        print(f"\n  🌅 Breakfast: {dist['breakfast']:>7} kcal  ({perc['breakfast']})")  
+        print(f"  🍽️  Lunch:    {dist['lunch']:>7} kcal  ({perc['lunch']})")
+        print(f"  🌙 Dinner:   {dist['dinner']:>7} kcal  ({perc['dinner']})")
+        print(f"  🍪 Snack:    {dist['snack']:>7} kcal  ({perc['snack']})")
+        print(f"\n  📊 Total:    {total_tdee:>7} kcal  (100.00%)")
+        print("\n" + "="*70 + "\n")
+    
+    @staticmethod
     def display_error(message):
         """Display error message"""
         print(f"\n❌ ERROR: {message}\n")

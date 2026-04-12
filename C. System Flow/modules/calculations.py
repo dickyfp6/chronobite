@@ -111,6 +111,30 @@ class NutritionCalculator:
         return round(tdee, 2)
     
     @staticmethod
+    def calculate_meal_distribution(tdee):
+        """
+        Hitung pembagian porsi TDEE per waktu makan (Total 100%)
+        
+        Breakfast: 20-25% (23.75%)
+        Lunch: 30-35% (33.75%)
+        Dinner: 25-30% (28.75%)
+        Snack: 10-15% (13.75%)
+        
+        Args:
+            tdee: float (total daily energy expenditure)
+        
+        Returns:
+            dict dengan kalori untuk setiap waktu makan
+        """
+        distribution = {
+            'breakfast': round(tdee * 0.2375, 2),    # 23.75%
+            'lunch': round(tdee * 0.3375, 2),        # 33.75%
+            'dinner': round(tdee * 0.2875, 2),       # 28.75%
+            'snack': round(tdee * 0.1375, 2)         # 13.75%
+        }
+        return distribution
+    
+    @staticmethod
     def classify_age_group(age):
         """
         Klasifikasi usia berdasarkan WHO (World Health Organization) guidelines

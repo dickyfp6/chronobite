@@ -245,7 +245,7 @@ class NutritionService:
                 'total_nutrients': len(nutrients_dict)
             }
             
-            # 5. Load food data
+            # 5. Load food data (was step 5, now 6)
             food_df = self.guideline_loader.food_df
             if food_df is not None:
                 # Count by cuisine
@@ -269,7 +269,21 @@ class NutritionService:
                     'dataframe': filtered_df
                 }
             
-            # 6. Store user params untuk algorithm
+            # 6. Calculate meal distribution
+            meal_distribution = self.calculator.calculate_meal_distribution(tdee)
+            
+            result['meal_plan'] = {
+                'distribution': meal_distribution,
+                'total': tdee,
+                'percentages': {
+                    'breakfast': '23.75%',
+                    'lunch': '33.75%',
+                    'dinner': '28.75%',
+                    'snack': '13.75%'
+                }
+            }
+            
+            # 7. Store user params untuk algorithm
             result['user_params'] = {
                 'tdee': tdee,
                 'weight': weight,
@@ -277,7 +291,8 @@ class NutritionService:
                 'energy_target': tdee,
                 'age': age,
                 'gender': gender,
-                'disease': disease
+                'disease': disease,
+                'meal_distribution': meal_distribution
             }
             
             result['success'] = True
