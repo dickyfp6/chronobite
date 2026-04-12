@@ -26,11 +26,15 @@ class NutritionCalculator:
         if bmi < 18.5:
             category = "Underweight"
         elif bmi < 25:
-            category = "Normal"
+            category = "Healthy Weight" # Sesuai gambar
         elif bmi < 30:
             category = "Overweight"
+        elif bmi < 35:
+            category = "Class 1 Obesity" # Tambahan sesuai gambar
+        elif bmi < 40:
+            category = "Class 2 Obesity" # Tambahan sesuai gambar
         else:
-            category = "Obese"
+            category = "Class 3 Obesity (Severe Obesity)" # Tambahan sesuai gambar
         
         return {
             'value': round(bmi, 2),
@@ -38,48 +42,52 @@ class NutritionCalculator:
         }
     
     @staticmethod
-    def calculate_bbi(height, gender):
+    def calculate_bbi(height):
         """
-        Hitung Berat Badan Ideal menggunakan rumus Broca
-        BBI = (height - 100) * 0.9 untuk pria
-        BBI = (height - 100) * 0.85 untuk wanita
+        Hitung Berat Badan Ideal (BBI) menggunakan target BMI 22
+        Rumus: BBI = 22 * (height_in_meters ^ 2)
         
         Args:
             height: float (cm)
-            gender: 'M' atau 'F'
         
         Returns:
             float: Berat badan ideal (kg)
         """
-        height_cm = height - 100
+        # Konversi tinggi dari cm ke meter
+        height_m = height / 100
         
-        if gender == 'M':
-            bbi = height_cm * 0.9
-        else:  # gender == 'F'
-            bbi = height_cm * 0.85
+        # Hitung BBI
+        bbi = 22 * (height_m ** 2)
         
         return round(bbi, 2)
     
     @staticmethod
-    def calculate_bmr(weight, height, age, gender):
-        """
-        Hitung Basal Metabolic Rate menggunakan Harris-Benedict equation
-        
-        Args:
-            weight: float (kg)
-            height: float (cm)
-            age: int (tahun)
-            gender: 'M' atau 'F'
-        
-        Returns:
-            float: BMR (kcal/hari)
-        """
+    def calculate_bmr_harris_benedict(weight, height, age, gender):
+        """Rumus untuk orang Sehat (Normal)"""
         if gender == 'M':
             bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
-        else:  # gender == 'F'
+        else:
             bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
-        
         return round(bmr, 2)
+
+    @staticmethod
+    def calculate_bmr_mifflin_st_jeor(weight, height, age, gender):
+        """Rumus untuk orang Sakit (DM, Hipertensi, dll)"""
+        if gender == 'M':
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5
+        else:
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161
+        return round(bmr, 2)
+
+    @staticmethod
+    def calculate_bmr(weight, height, age, gender, disease_status):
+        """
+        Logika Flow: Memilih rumus berdasarkan kondisi kesehatan.
+        """
+        if disease_status.lower() == 'normal':
+            return NutritionCalculator.calculate_bmr_harris_benedict(weight, height, age, gender)
+        else:
+            return NutritionCalculator.calculate_bmr_mifflin_st_jeor(weight, height, age, gender)
     
     @staticmethod
     def calculate_tdee(bmr, activity_factor):
@@ -176,31 +184,36 @@ class NutritionCalculator:
 def calculate_user_nutrition_needs(user_data):
     """
     Main function untuk menghitung semua kebutuhan nutrisi user
-    
-    Args:
-        user_data: dict dari input_handler.get_user_input()
-    
-    Returns:
-        dict dengan semua hasil perhitungan
+    Sesuai Flow: Memilih BB vs BBI dan Rumus BMR berdasarkan kondisi user.
     """
     
     calc = NutritionCalculator()
     
-    # Hitung BMI
+    # 1. Hitung BMI (Body Mass Index)
     bmi_result = calc.calculate_bmi(user_data['weight'], user_data['height'])
     
-    # Hitung BBI
-    bbi = calc.calculate_bbi(user_data['height'], user_data['gender'])
+    # 2. Hitung BBI (Berat Badan Ideal) - Menggunakan rumus BBI = 22 * H^2
+    bbi = calc.calculate_bbi(user_data['height'])
     
-    # Hitung BMR
+    # 3. LOGIKA FLOW: Pilih BB yang akan digunakan untuk BMR
+    # Jika BMI masuk kategori 'Healthy Weight', gunakan BB Aktual.
+    # Selain itu (Underweight/Obese), gunakan BBI (Ideal Weight).
+    if bmi_result['category'] == "Healthy Weight":
+        weight_for_bmr = user_data['weight']
+    else:
+        weight_for_bmr = bbi
+    
+    # 4. Hitung BMR (Basal Metabolic Rate)
+    # Sekarang memasukkan weight_for_bmr dan status penyakit ke switcher BMR
     bmr = calc.calculate_bmr(
-        user_data['weight'],
+        weight_for_bmr,
         user_data['height'],
         user_data['age'],
-        user_data['gender']
+        user_data['gender'],
+        user_data['disease']
     )
     
-    # Hitung TDEE
+    # 5. Hitung TDEE
     tdee = calc.calculate_tdee(bmr, user_data['activity_factor'])
     
     results = {
@@ -208,6 +221,7 @@ def calculate_user_nutrition_needs(user_data):
         'bmi': bmi_result['value'],
         'bmi_category': bmi_result['category'],
         'bbi': bbi,
+        'weight_used_for_bmr': weight_for_bmr, # Catatan BB mana yang dipakai
         'bmr': bmr,
         'tdee': tdee,
         'user_params': {
