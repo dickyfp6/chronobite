@@ -128,8 +128,8 @@ class NutritionService:
                 disease = ['normal']
             
             # Validate ranges
-            if not (14 <= age <= 100):
-                raise ValueError(f"Age must be 14-100, got {age}")
+            if not (18 <= age <= 100):
+                raise ValueError(f"Age must be 18-100, got {age}")
             if weight <= 0 or height <= 0:
                 raise ValueError("Weight and height must be positive")
             if not (1.2 <= activity_factor <= 1.9):
