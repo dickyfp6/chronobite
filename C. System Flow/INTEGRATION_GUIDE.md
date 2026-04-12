@@ -9,17 +9,18 @@ MULTIPLE DISEASE MERGE
 NutritionService SEKARANG support MULTIPLE DISEASE selection dengan merge logic:
 
 Jika user punya 2+ diseases, guideline merges dengan:
-  - min value: MINIMUM dari semua diseases (most restrictive)
-  - max value: MAXIMUM dari semua diseases (most permissive)
+  - min value: MAXIMUM dari semua diseases (most restrictive)
+  - max value: MINIMUM dari semua diseases (most restrictive)
 
 Contoh: DM2 + Hypertension
   DM2 energy: 1800-2200
   Hypertension energy: 1995-2205
-  → Merged: 1800-2205 (min dari 1800 vs 1995, max dari 2200 vs 2205)
+  → Merged: 1995-2200 (max dari 1800 vs 1995, min dari 2200 vs 2205)
 
 Kenapa ini logic? Agar user yang punya multiple conditions dapat:
-  - Minimum range terendah untuk semua diseases (safer)
-  - Maximum range tertinggi untuk flexibility
+  - Memenuhi MINIMUM requirement yang paling ketat (kesehatan optimal)
+  - Tetap memiliki batas maksimal yang tidak terlalu lebar (safety)
+  - Range makin SEMPIT = LEBIH AMAN untuk multiple conditions
 
 =============================================================================
 DRI MICRONUTRIENT FALLBACK LOGIC

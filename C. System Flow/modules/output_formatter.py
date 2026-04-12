@@ -51,6 +51,7 @@ class OutputFormatter:
         print(f"\nAnthropometric Measurements:")
         print(f"  BMI (Body Mass Index)        : {nutrition_results['bmi']} ({nutrition_results['bmi_category']})")
         print(f"  BBI (Berat Badan Ideal)     : {nutrition_results['bbi']} kg")
+        print(f"  Age Classification          : {nutrition_results['age_label']} ({nutrition_results['age_range']})")
         
         print(f"\nEnergy Expenditure:")
         print(f"  BMR (Basal Metabolic Rate)  : {nutrition_results['bmr']} kcal/hari")
@@ -66,6 +67,7 @@ class OutputFormatter:
         
         print(f"\nProfil User:")
         print(f"  • Status BMI: {nutrition_results['bmi_category']}")
+        print(f"  • Klasifikasi Usia: {nutrition_results['age_label']} ({nutrition_results['age_range']})")
         print(f"  • Kebutuhan Kalori: {nutrition_results['tdee']} kcal/hari")
         
         if guidelines_result and guidelines_result['guidelines']:

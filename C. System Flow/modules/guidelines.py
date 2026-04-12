@@ -75,12 +75,14 @@ class GuidelineProcessor:
                         'source': 'guideline'
                     }
                 else:
-                    # Aggregate: take most restrictive (smallest min, largest max)
-                    guidelines_dict[nutrient]['min'] = min(
+                    # Aggregate multi-disease: take most restrictive
+                    # min: take MAXIMUM (most restrictive minimum)
+                    # max: take MINIMUM (most restrictive maximum)
+                    guidelines_dict[nutrient]['min'] = max(
                         guidelines_dict[nutrient]['min'],
                         converted['min_converted']
                     )
-                    guidelines_dict[nutrient]['max'] = max(
+                    guidelines_dict[nutrient]['max'] = min(
                         guidelines_dict[nutrient]['max'],
                         converted['max_converted']
                     )

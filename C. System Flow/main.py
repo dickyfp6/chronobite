@@ -37,10 +37,16 @@ def main():
             formatter.display_error(f"Calculation failed: {result['error']}")
             return
         
-        # Display anthropometrics
-        formatter.display_calculation_results(result)
+        # Prepare data untuk display (combine anthropometrics + energy)
+        display_data = {
+            **result['anthropometrics'],  # BMI, BBI, age_group, age_label, age_range
+            **result['energy']  # BMR, TDEE
+        }
         
-        # 4. Display detailed guidelines (with DRI fallback)
+        # Display anthropometrics
+        formatter.display_calculation_results(display_data)
+        
+        # 4. Display detailed guidelines + summary with age classification
         service.print_summary(result)
         
         print("\n✓ Process completed successfully!")

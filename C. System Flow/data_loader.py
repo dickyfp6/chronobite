@@ -135,8 +135,13 @@ class GuidelineLoader:
     def merge_disease_guidelines(self, diseases, age, gender='all'):
         """
         Merge multiple disease guidelines dengan logic:
-        - min value: minimum dari semua disease
-        - max value: maximum dari semua disease
+        - min value: MAXIMUM dari semua disease (most restrictive minimum)
+        - max value: MINIMUM dari semua disease (most restrictive maximum)
+        
+        Contoh:
+            DM2 energy: 1800-2200
+            Hypertension energy: 1995-2205
+            → Merged: 1995-2200 (max dari 1800 vs 1995, min dari 2200 vs 2205)
         
         Args:
             diseases: list of str (e.g., ['dm2', 'hypertension'])
@@ -178,20 +183,22 @@ class GuidelineLoader:
                         'diseases': [disease]
                     }
                 else:
+                    # Min: Take MAXIMUM value (most restrictive minimum)
                     if min_val is not None:
                         if all_nutrients[nutrient]['min'] is None:
                             all_nutrients[nutrient]['min'] = min_val
                         else:
-                            all_nutrients[nutrient]['min'] = min(
+                            all_nutrients[nutrient]['min'] = max(
                                 all_nutrients[nutrient]['min'], 
                                 min_val
                             )
                     
+                    # Max: Take MINIMUM value (most restrictive maximum)
                     if max_val is not None:
                         if all_nutrients[nutrient]['max'] is None:
                             all_nutrients[nutrient]['max'] = max_val
                         else:
-                            all_nutrients[nutrient]['max'] = max(
+                            all_nutrients[nutrient]['max'] = min(
                                 all_nutrients[nutrient]['max'], 
                                 max_val
                             )

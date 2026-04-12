@@ -111,6 +111,48 @@ class NutritionCalculator:
         return round(tdee, 2)
     
     @staticmethod
+    def classify_age_group(age):
+        """
+        Klasifikasi usia berdasarkan WHO (World Health Organization) guidelines
+        
+        Args:
+            age: int (usia dalam tahun)
+        
+        Returns:
+            dict dengan keys: 'group', 'label', 'age_range'
+        """
+        if age < 17 or age > 125:
+            return {
+                'group': 'invalid',
+                'label': 'Invalid Age',
+                'age_range': 'N/A'
+            }
+        elif age <= 65:
+            return {
+                'group': 'young_people',
+                'label': 'Young People',
+                'age_range': '18-65 years old'
+            }
+        elif age <= 79:
+            return {
+                'group': 'middle_aged',
+                'label': 'Middle-Aged',
+                'age_range': '66-79 years old'
+            }
+        elif age <= 99:
+            return {
+                'group': 'elderly',
+                'label': 'Elderly People',
+                'age_range': '80-99 years old'
+            }
+        else:
+            return {
+                'group': 'very_elderly',
+                'label': 'Very Elderly',
+                'age_range': '100+ years old'
+            }
+    
+    @staticmethod
     def convert_guideline_value(min_val, max_val, basis, user_params):
         """
         Konversi nilai guideline berdasarkan basis

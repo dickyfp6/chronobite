@@ -48,6 +48,20 @@ def calculate_tdee(bmr, activity):
     return round(bmr * float(activity), 0)
 
 
+def classify_age_group(age):
+    """Klasifikasi usia berdasarkan WHO guidelines"""
+    if age <= 17:
+        return {"group": "minors", "label": "Minors", "range": "0-17 years"}
+    elif age <= 65:
+        return {"group": "young_people", "label": "Young People", "range": "18-65 years"}
+    elif age <= 79:
+        return {"group": "middle_aged", "label": "Middle-Aged", "range": "66-79 years"}
+    elif age <= 99:
+        return {"group": "elderly", "label": "Elderly People", "range": "80-99 years"}
+    else:
+        return {"group": "very_elderly", "label": "Very Elderly", "range": "100+ years"}
+
+
 # ─── Disease Macro Targets (% dari TDEE) ─────────────────────────────────────
 DISEASE_MACROS = {
     "normal":       {"carbs": (45, 65), "protein": (10, 35), "fat": (20, 35)},
@@ -151,6 +165,7 @@ def analyze():
     bbi = calculate_bbi(height, gender)
     bmr = calculate_bmr(weight, height, age, gender)
     tdee = calculate_tdee(bmr, activity)
+    age_group = classify_age_group(age)
 
     # Determine macro targets (most restrictive of all selected diseases)
     macros = {"carbs": [0, 100], "protein": [0, 100], "fat": [0, 100]}
@@ -177,6 +192,7 @@ def analyze():
         "bbi": bbi,
         "bmr": int(bmr),
         "tdee": int(tdee),
+        "age_group": age_group,
         "activity_label": ACTIVITY_LABELS.get(activity, activity),
         "diseases": disease_labels,
         "macros": {

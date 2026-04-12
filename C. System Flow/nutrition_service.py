@@ -60,7 +60,10 @@ class NutritionService:
                 'anthropometrics': {
                     'bmi': float,
                     'bmi_category': str,
-                    'bbi': float
+                    'bbi': float,
+                    'age_group': str (minors/young_people/middle_aged/elderly/very_elderly),
+                    'age_label': str (WHO classification label),
+                    'age_range': str (age range description)
                 },
                 'energy': {
                     'bmr': float,
@@ -143,11 +146,15 @@ class NutritionService:
             # 2. Calculate anthropometrics
             bmi_calc = self.calculator.calculate_bmi(weight, height)
             bbi = self.calculator.calculate_bbi(height, gender)
+            age_group = self.calculator.classify_age_group(age)
             
             result['anthropometrics'] = {
                 'bmi': bmi_calc['value'],
                 'bmi_category': bmi_calc['category'],
-                'bbi': bbi
+                'bbi': bbi,
+                'age_group': age_group['group'],
+                'age_label': age_group['label'],
+                'age_range': age_group['age_range']
             }
             
             # 3. Calculate energy (BMR, TDEE)
@@ -342,6 +349,7 @@ class NutritionService:
         print(f"\nAnthropometrics:")
         print(f"  BMI: {anthro['bmi']} ({anthro['bmi_category']})")
         print(f"  BBI: {anthro['bbi']} kg")
+        print(f"  Age Group: {anthro['age_label']} ({anthro['age_range']})")
         
         # Energy
         energy = result['energy']
