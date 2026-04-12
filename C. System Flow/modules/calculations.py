@@ -145,7 +145,7 @@ class NutritionCalculator:
         Returns:
             dict dengan keys: 'group', 'label', 'age_range'
         """
-        if age < 17 or age > 125:
+        if age < 17 or age > 100:
             return {
                 'group': 'invalid',
                 'label': 'Invalid Age',
