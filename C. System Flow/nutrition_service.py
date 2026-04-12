@@ -47,7 +47,7 @@ class NutritionService:
                 - age: int (14-100)
                 - weight: float (kg)
                 - height: float (cm)
-                - activity_factor: float (1.2-1.9)
+                - activity_factor: float (1.4-2.2)
                 - disease: str or list (normal, dm2, hypertension, cvd, cholesterol, ckd)
                            jika list: merge semua disease guidelines (min terendah, max tertinggi)
                 - food_preferences: list (optional, default: [])
@@ -135,8 +135,8 @@ class NutritionService:
                 raise ValueError(f"Age must be 18-100, got {age}")
             if weight <= 0 or height <= 0:
                 raise ValueError("Weight and height must be positive")
-            if not (1.2 <= activity_factor <= 1.9):
-                raise ValueError(f"Activity factor must be 1.2-1.9, got {activity_factor}")
+            if not (1.4 <= activity_factor <= 2.2):
+                raise ValueError(f"Activity factor must be 1.4-2.2, got {activity_factor}")
             
             valid_diseases = ['normal', 'dm2', 'hypertension', 'cvd', 'cholesterol', 'ckd']
             for d in disease:
@@ -145,7 +145,7 @@ class NutritionService:
             
             # 2. Calculate anthropometrics
             bmi_calc = self.calculator.calculate_bmi(weight, height)
-            bbi = self.calculator.calculate_bbi(height, gender)
+            bbi = self.calculator.calculate_bbi(height)
             age_group = self.calculator.classify_age_group(age)
             
             result['anthropometrics'] = {
@@ -158,7 +158,8 @@ class NutritionService:
             }
             
             # 3. Calculate energy (BMR, TDEE)
-            bmr = self.calculator.calculate_bmr(weight, height, age, gender)
+            disease_status_for_bmr = 'normal' if set(disease) == {'normal'} else 'diseased'
+            bmr = self.calculator.calculate_bmr(weight, height, age, gender, disease_status_for_bmr)
             tdee = self.calculator.calculate_tdee(bmr, activity_factor)
             
             result['energy'] = {
@@ -333,8 +334,49 @@ class NutritionService:
         Returns:
             dict dengan validation result
         """
-        # TODO: Implement meal validation
-        pass
+        if not menu_items:
+            return {
+                'is_valid': False,
+                'violations': ['Menu is empty'],
+                'nutrient_totals': {}
+            }
+
+        # Build nutrient totals from menu item values.
+        nutrient_totals = {}
+        for item in menu_items:
+            if not isinstance(item, dict):
+                continue
+            for key, value in item.items():
+                if key in ['food_name', 'name', 'meal', 'index', 'fdc_id', 'cuisine', 'cuisine_label', 'food_group', 'consumption_label']:
+                    continue
+                try:
+                    nutrient_totals[key] = nutrient_totals.get(key, 0.0) + float(value)
+                except (TypeError, ValueError):
+                    continue
+
+        violations = []
+        guideline_dict = guidelines.get('nutrients', guidelines) if isinstance(guidelines, dict) else {}
+
+        for nutrient, constraint in guideline_dict.items():
+            if not isinstance(constraint, dict):
+                continue
+            if constraint.get('constraint_type') == 'unlimited':
+                continue
+
+            actual = nutrient_totals.get(nutrient, 0.0)
+            min_v = constraint.get('min', 0)
+            max_v = constraint.get('max', float('inf'))
+
+            if min_v is not None and actual < min_v:
+                violations.append(f"{nutrient}: below minimum ({actual:.2f} < {min_v:.2f})")
+            if max_v is not None and actual > max_v:
+                violations.append(f"{nutrient}: above maximum ({actual:.2f} > {max_v:.2f})")
+
+        return {
+            'is_valid': len(violations) == 0,
+            'violations': violations,
+            'nutrient_totals': nutrient_totals
+        }
     
     def get_last_result(self):
         """Get last calculation result"""

@@ -102,7 +102,7 @@ class NutritionCalculator:
         
         Args:
             bmr: float (hasil calculate_bmr)
-            activity_factor: float (1.2-1.9)
+            activity_factor: float (1.4-2.2)
         
         Returns:
             float: TDEE (kcal/hari)

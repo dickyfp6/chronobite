@@ -12,7 +12,7 @@ def get_user_input():
             - age: int (tahun)
             - weight: float (kg)
             - height: float (cm)
-            - activity_factor: float (1.2-1.9)
+            - activity_factor: float (1.4-2.2)
             - disease: str (kondisi kesehatan)
             - food_preferences: list (preferensi makanan)
     """

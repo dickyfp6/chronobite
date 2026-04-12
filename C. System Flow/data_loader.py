@@ -221,11 +221,16 @@ class GuidelineLoader:
                 base_dir,
                 "A. Data",
                 "Data Processed",
-                "06_final_cek_cuisine_manual.csv"
+                "05_final_dataset.csv"
             )
         
         try:
             self.food_df = pd.read_csv(food_path)
+
+            # Normalize cuisine column name for downstream modules.
+            if 'cuisine' not in self.food_df.columns and 'cuisine_label' in self.food_df.columns:
+                self.food_df['cuisine'] = self.food_df['cuisine_label']
+
             print(f"✓ Food data loaded: {food_path}")
         except FileNotFoundError:
             print(f"⚠ Food data not found: {food_path}")
