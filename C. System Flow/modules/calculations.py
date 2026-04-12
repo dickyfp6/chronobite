@@ -63,11 +63,16 @@ class NutritionCalculator:
     
     @staticmethod
     def calculate_bmr_harris_benedict(weight, height, age, gender):
-        """Rumus untuk orang Sehat (Normal)"""
+        """
+        Rumus Harris-Benedict untuk orang Sehat (Normal)
+        
+        Pria: BMR = 66,4730 + 13,7516 x BB + 5,0033 x TB – 6,7550 x usia
+        Wanita: BMR = 655,0955 + 9,5634 x BB + 1,8496 x TB – 4,6756 x usia
+        """
         if gender == 'M':
-            bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
+            bmr = 66.4730 + (13.7516 * weight) + (5.0033 * height) - (6.7550 * age)
         else:
-            bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
+            bmr = 655.0955 + (9.5634 * weight) + (1.8496 * height) - (4.6756 * age)
         return round(bmr, 2)
 
     @staticmethod
