@@ -1,6 +1,242 @@
 """
 INTERACTIVE DEMO - Hybrid GA+LS Meal Planning System
 
+Run: python demo.py
+Input your profile interactively -> Get optimized meal plan
+"""
+
+import sys
+import os
+import time
+import pandas as pd
+from typing import Dict, Any
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../C. System Flow'))
+
+from nutrition_service import NutritionService
+from ga_main import run_genetic_algorithm
+from ls_main import run_local_search
+
+
+def get_user_input() -> Dict[str, Any]:
+    """Interactive user profile input"""
+    print("\n" + "="*70)
+    print("MEAL PLANNING SYSTEM - USER PROFILE")
+    print("="*70 + "\n")
+    
+    try:
+        gender = input("Gender (M/F): ").strip().upper()
+        if gender not in ['M', 'F']:
+            gender = 'M'
+        
+        age = int(input("Age (years): "))
+        weight = float(input("Weight (kg): "))
+        height = float(input("Height (cm): "))
+        
+        # Validate activity factor
+        while True:
+            activity = float(input("Activity factor (1.4-2.2, default 1.55): ") or "1.55")
+            if 1.4 <= activity <= 2.2:
+                break
+            print("  ❌ Invalid! Must be 1.4-2.2")
+        
+        disease = input("Health condition (dm2/hypertension/normal, default 'normal'): ").strip().lower()
+        if disease not in ['dm2', 'hypertension', 'normal']:
+            disease = 'normal'
+        
+        return {
+            'gender': gender,
+            'age': age,
+            'weight': weight,
+            'height': height,
+            'activity_factor': activity,
+            'disease': disease,
+            'food_preferences': ['Indonesian', 'Asian']
+        }
+    except ValueError as e:
+        print(f"\n❌ Error: {e}")
+        print("Using default profile...\n")
+        return {
+            'gender': 'M',
+            'age': 30,
+            'weight': 70.0,
+            'height': 175.0,
+            'activity_factor': 1.55,
+            'disease': 'normal',
+            'food_preferences': ['Indonesian', 'Asian']
+        }
+
+
+def show_meal_plan(result: Dict[str, Any], food_df: pd.DataFrame):
+    """Display the generated meal plan"""
+    meal_plan = result.get('meal_plan', {})
+    
+    for time_period in ['breakfast', 'lunch', 'dinner', 'snack']:
+        meal = meal_plan.get(time_period, {})
+        budget = meal.get('budget_kcal', 0)
+        selected = meal.get('selected', {})
+        
+        print(f"\n🍽️ {time_period.upper():<12} (Budget: {budget:.0f} kcal)")
+        
+        if isinstance(selected, dict):
+            for role, fdc_id in selected.items():
+                if fdc_id is not None:
+                    try:
+                        match = food_df[food_df['fdc_id'] == int(fdc_id)]
+                        if not match.empty:
+                            name = match.iloc[0].get('food_name', f'Item {fdc_id}')
+                            kcal = match.iloc[0].get('energy_kcal', 0)
+                            print(f"   • {name[:50]:<50} ({kcal:>6.0f} kcal) [{role}]")
+                    except:
+                        pass
+        elif isinstance(selected, int):
+            try:
+                match = food_df[food_df['fdc_id'] == selected]
+                if not match.empty:
+                    name = match.iloc[0].get('food_name', f'Item {selected}')
+                    kcal = match.iloc[0].get('energy_kcal', 0)
+                    print(f"   • {name[:50]:<50} ({kcal:>6.0f} kcal)")
+            except:
+                pass
+
+
+def main():
+    print("\n" + "#"*70)
+    print("# HYBRID GA+LS MEAL PLANNING SYSTEM")
+    print("#"*70)
+    
+    # 1. Get user input
+    user_input = get_user_input()
+    
+    print("\n✓ Profile Received:")
+    print(f"  • Gender: {user_input['gender']}")
+    print(f"  • Age: {user_input['age']}")
+    print(f"  • Weight: {user_input['weight']} kg")
+    print(f"  • Height: {user_input['height']} cm")
+    print(f"  • Activity: {user_input['activity_factor']}")
+    print(f"  • Condition: {user_input['disease']}")
+    
+    # 2. Calculate nutrition needs
+    print("\n▶ Loading nutrition data...")
+    service = NutritionService()
+    result = service.calculate_nutrition_needs(user_input)
+    
+    if not result['success']:
+        print(f"❌ Error: {result.get('error', 'Unknown')}")
+        return
+    
+    food_df = result.get('food_data', {}).get('dataframe')
+    tdee = result.get('energy', {}).get('tdee', 2000)
+    
+    meal_budgets = {
+        'breakfast': round(tdee * 0.2375, 2),
+        'lunch': round(tdee * 0.3375, 2),
+        'dinner': round(tdee * 0.2875, 2),
+        'snack': round(tdee * 0.1375, 2)
+    }
+    
+    user_constraints = {
+        'age': user_input['age'],
+        'gender': user_input['gender'],
+        'disease': user_input['disease'],
+        'tdee': tdee
+    }
+    
+    print(f"\n✓ Nutrition Calculated:")
+    print(f"  • TDEE: {tdee:.0f} kcal/day")
+    print(f"  • Breakfast: {meal_budgets['breakfast']:.0f} kcal")
+    print(f"  • Lunch: {meal_budgets['lunch']:.0f} kcal")
+    print(f"  • Dinner: {meal_budgets['dinner']:.0f} kcal")
+    print(f"  • Snack: {meal_budgets['snack']:.0f} kcal")
+    print(f"  • Food items: {len(food_df)}")
+    
+    # 3. Run algorithms
+    print("\n" + "="*70)
+    print("RUNNING ALGORITHMS")
+    print("="*70)
+    
+    results = {}
+    
+    # GA
+    print("\n▶ Genetic Algorithm...")
+    try:
+        start = time.time()
+        ga_result = run_genetic_algorithm(
+            food_df=food_df,
+            user_constraints=user_constraints,
+            meal_budgets=meal_budgets,
+            tdee=tdee,
+            pop_size=20,
+            generations=10,
+            crossover_rate=0.8,
+            mutation_rate=0.2,
+            verbose=False
+        )
+        ga_result['summary']['execution_time'] = time.time() - start
+        results['GA'] = ga_result
+        print(f"  ✓ Done (Fitness: {ga_result['summary']['fitness_score']:.1f})")
+    except Exception as e:
+        print(f"  ✗ Error: {e}")
+    
+    # LS
+    print("\n▶ Local Search (Hill Climbing)...")
+    try:
+        start = time.time()
+        ls_result = run_local_search(
+            food_df=food_df,
+            user_constraints=user_constraints,
+            meal_budgets=meal_budgets,
+            tdee=tdee,
+            strategy='hill_climbing',
+            max_iterations=20
+        )
+        ls_result['summary']['execution_time'] = time.time() - start
+        results['LS'] = ls_result
+        print(f"  ✓ Done (Fitness: {ls_result['summary']['fitness_score']:.1f})")
+    except Exception as e:
+        print(f"  ✗ Error: {e}")
+    
+    # 4. Display results
+    if results:
+        print("\n" + "="*70)
+        print("COMPARISON")
+        print("="*70)
+        print(f"{'Algorithm':<15} {'Fitness':<15} {'Time (s)':<12} {'Feasible':<10}")
+        print("-"*70)
+        
+        best_algo = None
+        best_fitness = float('-inf')
+        
+        for name, res in results.items():
+            summary = res.get('summary', {})
+            fitness = summary.get('fitness_score', 0)
+            exec_time = summary.get('execution_time', 0)
+            feasible = "✓" if summary.get('feasible', False) else "✗"
+            
+            print(f"{name:<15} {fitness:>14.1f} {exec_time:>11.2f} {feasible:>9}")
+            
+            if fitness > best_fitness:
+                best_fitness = fitness
+                best_algo = name
+        
+        print("-"*70)
+        if best_algo:
+            print(f"\n🏆 BEST: {best_algo} (Fitness: {best_fitness:.1f})")
+            print("\n📋 RECOMMENDED MEAL PLAN:")
+            print("="*70)
+            show_meal_plan(results[best_algo], food_df)
+            print("\n" + "="*70)
+    
+    print("\n" + "#"*70)
+    print("# DONE")
+    print("#"*70 + "\n")
+
+
+if __name__ == '__main__':
+    main()
+"""
+INTERACTIVE DEMO - Hybrid GA+LS Meal Planning System
+
 Cara pakai:
 1. Run: python demo.py
 2. Input user profile (age, weight, height, etc)
@@ -101,24 +337,24 @@ def display_meal_plan(result: Dict[str, Any], food_df: pd.DataFrame, meal_name: 
                     try:
                         match = food_df[food_df['fdc_id'] == int(fdc_id)]
                         if not match.empty:
-                            name = match.iloc[0].get('description', f'Item {fdc_id}')
+                            name = match.iloc[0].get('food_name', f'Item {fdc_id}')
                             kcal = match.iloc[0].get('energy_kcal', 0)
                             print(f"   • {format_meal_name(name):<45} ({kcal:>6.0f} kcal) [{role}]")
                         else:
                             print(f"   • Item {fdc_id:<41} [{role}]")
-                    except:
+                    except Exception as e:
                         print(f"   • Item {fdc_id:<41} [{role}]")
         elif isinstance(selected, int):
             # Snack format
             try:
                 match = food_df[food_df['fdc_id'] == selected]
                 if not match.empty:
-                    name = match.iloc[0].get('description', f'Item {selected}')
+                    name = match.iloc[0].get('food_name', f'Item {selected}')
                     kcal = match.iloc[0].get('energy_kcal', 0)
                     print(f"   • {format_meal_name(name):<45} ({kcal:>6.0f} kcal)")
                 else:
                     print(f"   • Item {selected}")
-            except:
+            except Exception as e:
                 print(f"   • Item {selected}")
     
     print("\n" + "="*70)
