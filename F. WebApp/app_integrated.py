@@ -5,10 +5,11 @@ Sistem Rekomendasi Nutrisi berbasis Algoritma Genetika dan Greedy
 Integration dengan:
 - C. System Flow (NutritionService for calculations)
 - D. Model (Greedy Algorithm for menu generation)
-- Frontend (Alpine.js state management)
+- Frontend (React with Vite)
 """
 
 from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask_cors import CORS
 import sys
 import os
 import json
@@ -46,6 +47,15 @@ except Exception as e:
 # Initialize Flask app
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config['JSON_SORT_KEYS'] = False
+
+# Enable CORS for React frontend (Vercel deployment)
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 # Global service instances (initialize on first request)
 nutrition_service = None

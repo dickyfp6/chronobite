@@ -52,237 +52,227 @@
             <!-- Content Area -->
             <div class="p-6 md:p-8">
                 
-                <!-- Form Input Section (Step 1-5) -->
-                <div x-show="currentStep <= 5" class="slide-enter">
+                <!-- Form Input Section - Single Page -->
+                <div x-show="!analysisResult" class="slide-enter">
                     
-                    <!-- Progress Bar -->
-                    <div class="mb-8">
-                        <div class="flex justify-between mb-2">
-                            <span class="text-sm font-semibold text-gray-700">Step <span x-text="currentStep"></span> dari 5</span>
-                            <span class="text-sm text-gray-500"><span x-text="Math.round((currentStep/5)*100)"></span>%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" 
-                                 :style="`width: ${(currentStep/5)*100}%`"></div>
-                        </div>
-                    </div>
+                    <!-- Header -->
+                    <h2 class="text-3xl font-bold text-gray-800 mb-8 flex items-center">
+                        <i class="fas fa-user-circle text-blue-500 mr-3 text-4xl"></i>Profil Pengguna
+                    </h2>
 
-                    <!-- Step 1: Profile -->
-                    <div x-show="currentStep === 1" class="slide-enter">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                            <i class="fas fa-user text-blue-500 mr-3"></i>Profil Anda
-                        </h2>
+                    <!-- Single Page Form -->
+                    <div class="space-y-6">
                         
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <!-- Gender -->
+                        <!-- Row 1: Gender & Age -->
+                        <div class="grid md:grid-cols-3 gap-6">
+                            
+                            <!-- Gender Selection -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
-                                <div class="flex gap-4">
-                                    <label class="flex items-center cursor-pointer">
-                                        <input type="radio" x-model="formData.gender" value="M" class="w-4 h-4">
-                                        <span class="ml-2">Laki-laki</span>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-venus-mars text-pink-500 mr-2"></i>Jenis Kelamin
+                                </label>
+                                <div class="flex gap-3">
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" x-model="formData.gender" value="M" class="sr-only peer">
+                                        <div class="p-4 border-2 rounded-xl text-center font-semibold transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-300 hover:border-gray-400">
+                                            <i class="fas fa-mars text-2xl text-blue-600 mb-2 block"></i>
+                                            <span class="text-sm text-gray-700">Pria</span>
+                                        </div>
                                     </label>
-                                    <label class="flex items-center cursor-pointer">
-                                        <input type="radio" x-model="formData.gender" value="F" class="w-4 h-4">
-                                        <span class="ml-2">Perempuan</span>
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" x-model="formData.gender" value="F" class="sr-only peer">
+                                        <div class="p-4 border-2 rounded-xl text-center font-semibold transition-all peer-checked:border-pink-500 peer-checked:bg-pink-50 border-gray-300 hover:border-gray-400">
+                                            <i class="fas fa-venus text-2xl text-pink-600 mb-2 block"></i>
+                                            <span class="text-sm text-gray-700">Wanita</span>
+                                        </div>
                                     </label>
                                 </div>
                             </div>
 
                             <!-- Age -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Usia (tahun)</label>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-calendar-alt text-green-500 mr-2"></i>Usia (tahun)
+                                </label>
                                 <input type="number" x-model.number="formData.age" min="18" max="100"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold"
                                        placeholder="30">
-                                <p class="text-xs text-gray-500 mt-1">18-100 tahun</p>
+                                <p class="text-xs text-gray-500 mt-2">
+                                    <i class="fas fa-info-circle mr-1"></i>18-100 tahun
+                                </p>
                             </div>
 
+                            <!-- BMI Display -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-chart-bar text-purple-500 mr-2"></i>BMI Anda
+                                </label>
+                                <div class="p-4 rounded-xl bg-purple-50 border-2 border-purple-200 h-full flex flex-col justify-center items-center">
+                                    <p class="text-3xl font-bold text-purple-600" x-text="calculateBMI().toFixed(1)"></p>
+                                    <p class="text-xs text-purple-600 mt-1">kg/m²</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Weight, Height, & TDEE -->
+                        <div class="grid md:grid-cols-3 gap-6">
+                            
                             <!-- Weight -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Berat Badan (kg)</label>
-                                <input type="number" x-model.number="formData.weight" min="1" step="0.1"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                       placeholder="70">
-                                <p class="text-xs text-gray-500 mt-1">BMI: <span x-text="calculateBMI().toFixed(1)"></span> kg/m²</p>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-weight text-orange-500 mr-2"></i>Berat Badan
+                                </label>
+                                <div class="flex">
+                                    <input type="number" x-model.number="formData.weight" min="1" step="0.1"
+                                           class="flex-1 px-4 py-3 border-2 border-gray-300 border-r-0 rounded-l-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold"
+                                           placeholder="70">
+                                    <span class="px-4 py-3 bg-gray-100 border-2 border-gray-300 border-l-0 rounded-r-xl font-semibold text-gray-600">kg</span>
+                                </div>
                             </div>
 
                             <!-- Height -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tinggi Badan (cm)</label>
-                                <input type="number" x-model.number="formData.height" min="100" max="300" step="0.1"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                       placeholder="170">
-                                <p class="text-xs text-gray-500 mt-1">100-300 cm</p>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-arrows-alt-v text-cyan-500 mr-2"></i>Tinggi Badan
+                                </label>
+                                <div class="flex">
+                                    <input type="number" x-model.number="formData.height" min="100" max="300" step="0.1"
+                                           class="flex-1 px-4 py-3 border-2 border-gray-300 border-r-0 rounded-l-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold"
+                                           placeholder="170">
+                                    <span class="px-4 py-3 bg-gray-100 border-2 border-gray-300 border-l-0 rounded-r-xl font-semibold text-gray-600">cm</span>
+                                </div>
+                            </div>
+
+                            <!-- TDEE -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-fire text-red-500 mr-2"></i>TDEE Harian
+                                </label>
+                                <div class="p-4 rounded-xl bg-red-50 border-2 border-red-200 h-full flex flex-col justify-center items-center">
+                                    <p class="text-3xl font-bold text-red-600" x-text="calculateTDEE()"></p>
+                                    <p class="text-xs text-red-600 mt-1">kkal/hari</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Step 2: Activity Level -->
-                    <div x-show="currentStep === 2" class="slide-enter">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                            <i class="fas fa-heartbeat text-red-500 mr-3"></i>Tingkat Aktivitas
-                        </h2>
-                        
-                        <div class="space-y-4">
-                            <template x-for="(label, factor) in activities" :key="factor">
-                                <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all"
-                                       :class="formData.activity === factor ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'">
-                                    <input type="radio" x-model="formData.activity" :value="factor" class="w-4 h-4">
-                                    <div class="ml-4">
-                                        <p class="font-medium text-gray-800" x-text="label"></p>
-                                    </div>
+                        <!-- Row 3: Activity Level & Diseases -->
+                        <div class="grid md:grid-cols-2 gap-6">
+                            
+                            <!-- Activity Factor Dropdown -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-dumbbell text-orange-500 mr-2"></i>Faktor Aktivitas
                                 </label>
-                            </template>
-                        </div>
-                        
-                        <div class="mt-6 p-4 bg-blue-100 border border-blue-300 rounded-lg">
-                            <p class="text-sm text-blue-800">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                TDEE Anda diperkirakan: <span class="font-bold" x-text="calculateTDEE()"></span> kkal/hari
-                            </p>
-                        </div>
-                    </div>
+                                <select x-model="formData.activity" 
+                                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold bg-white cursor-pointer">
+                                    <option value="1.545">
+                                        <i class="fas fa-couch"></i> Sedentary (Jarang Aktivitas)
+                                    </option>
+                                    <option value="1.845">
+                                        <i class="fas fa-walking"></i> Active (Aktivitas Normal)
+                                    </option>
+                                    <option value="2.2">
+                                        <i class="fas fa-running"></i> Vigorous (Aktivitas Intens)
+                                    </option>
+                                </select>
+                                <p class="text-xs text-gray-500 mt-2">
+                                    <i class="fas fa-lightbulb mr-1"></i>Pilih sesuai rutinitas harian
+                                </p>
+                            </div>
 
-                    <!-- Step 3: Diseases -->
-                    <div x-show="currentStep === 3" class="slide-enter">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                            <i class="fas fa-hospital-user text-purple-500 mr-3"></i>Kondisi Kesehatan
-                        </h2>
-                        
-                        <p class="text-gray-600 mb-4">Pilih hingga 3 kondisi (atau biarkan kosong jika normal)</p>
-                        
-                        <div class="space-y-3">
-                            <template x-for="(label, key) in diseases" :key="key">
-                                <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
-                                       :class="key === 'normal' && formData.diseases.includes(key) ? 'opacity-50 pointer-events-none' : ''">
-                                    <input type="checkbox" @change="toggleDisease(key)" 
-                                           :checked="formData.diseases.includes(key)"
-                                           class="w-4 h-4">
-                                    <span class="ml-3 font-medium text-gray-800" x-text="label"></span>
-                                    <span x-show="formData.diseases.includes(key)" class="ml-auto text-green-500">
-                                        <i class="fas fa-check"></i>
-                                    </span>
+                            <!-- Health Conditions -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-heart-pulse text-red-500 mr-2"></i>Kondisi Kesehatan
                                 </label>
-                            </template>
-                        </div>
-                        
-                        <p class="text-xs text-gray-500 mt-4">
-                            Dipilih: <span x-text="formData.diseases.length"></span>/3 kondisi
-                        </p>
-                    </div>
-
-                    <!-- Step 4: Food Preferences -->
-                    <div x-show="currentStep === 4" class="slide-enter">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                            <i class="fas fa-utensils text-orange-500 mr-3"></i>Preferensi Makanan
-                        </h2>
-                        
-                        <p class="text-gray-600 mb-4">Pilih preferensi kuliner Anda (atau biarkan kosong untuk semua)</p>
-                        
-                        <div class="grid md:grid-cols-3 gap-4">
-                            <template x-for="(label, key) in foodPreferences" :key="key">
-                                <label class="relative">
-                                    <input type="checkbox" @change="toggleFoodPreference(key)"
-                                           :checked="formData.food_preferences.includes(key)"
-                                           class="sr-only peer">
-                                    <div class="p-4 border-2 rounded-lg cursor-pointer transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-300 hover:border-gray-400">
-                                        <p class="font-medium text-gray-800 text-center" x-text="label"></p>
-                                        <p x-show="formData.food_preferences.includes(key)" 
-                                           class="text-xs text-center text-green-600 mt-2">
-                                            <i class="fas fa-check"></i> Dipilih
-                                        </p>
-                                    </div>
-                                </label>
-                            </template>
-                        </div>
-                        
-                        <p class="text-sm text-gray-600 mt-4">
-                            <span x-show="formData.food_preferences.length === 0">Semua preferensi akan ditampilkan</span>
-                            <span x-show="formData.food_preferences.length > 0">
-                                Preferensi terpilih: <span x-text="formData.food_preferences.join(', ')"></span>
-                            </span>
-                        </p>
-                    </div>
-
-                    <!-- Step 5: Algorithm Selection -->
-                    <div x-show="currentStep === 5" class="slide-enter">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                            <i class="fas fa-cog text-teal-500 mr-3"></i>Pilih Algoritma
-                        </h2>
-                        
-                        <div class="space-y-4">
-                            <label class="relative">
-                                <input type="radio" x-model="formData.algorithm" value="greedy" class="sr-only peer">
-                                <div class="p-6 border-2 rounded-lg cursor-pointer transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-300 hover:border-gray-400">
-                                    <div class="flex items-start">
-                                        <div class="flex-1">
-                                            <h3 class="font-bold text-lg text-gray-800 mb-2">⚡ Greedy Algorithm</h3>
-                                            <p class="text-gray-600 text-sm mb-3">Cepat dan efisien untuk hasil yang baik</p>
-                                            <ul class="text-sm text-gray-700 space-y-1">
-                                                <li>✓ Waktu proses: <span class="font-semibold">&lt;500ms</span></li>
-                                                <li>✓ Scoring: Kalori (60%) + Nutrisi (30%) + Keragaman (10%)</li>
-                                                <li>✓ Multi-disease support dengan constraint merging</li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <template x-for="(label, key) in diseases" :key="key">
+                                        <label class="cursor-pointer">
+                                            <input type="checkbox" @change="toggleDisease(key)" 
+                                                   :checked="formData.diseases.includes(key)"
+                                                   class="sr-only peer">
+                                            <div class="p-3 border-2 rounded-lg text-center text-xs font-semibold transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-300 hover:border-gray-400">
+                                                <div x-show="key === 'normal'" class="text-lg mb-1"><i class="fas fa-smile-wink"></i></div>
+                                                <div x-show="key === 'dm2'" class="text-lg mb-1"><i class="fas fa-droplet"></i></div>
+                                                <div x-show="key === 'hypertension'" class="text-lg mb-1"><i class="fas fa-gauge"></i></div>
+                                                <div x-show="key === 'cvd'" class="text-lg mb-1"><i class="fas fa-heart"></i></div>
+                                                <div x-show="key === 'cholesterol'" class="text-lg mb-1"><i class="fas fa-flask"></i></div>
+                                                <div x-show="key === 'ckd'" class="text-lg mb-1"><i class="fas fa-kidney"></i></div>
+                                                <span x-text="label" class="block leading-tight"></span>
+                                            </div>
+                                        </label>
+                                    </template>
                                 </div>
-                            </label>
-
-                            <label class="relative opacity-50 pointer-events-none">
-                                <input type="radio" value="genetic" class="sr-only peer" disabled>
-                                <div class="p-6 border-2 rounded-lg border-gray-300 bg-gray-50">
-                                    <div class="flex items-start">
-                                        <div class="flex-1">
-                                            <h3 class="font-bold text-lg text-gray-500 mb-2">🧬 Genetic Algorithm</h3>
-                                            <p class="text-gray-500 text-sm mb-3">Coming Soon - Hasil optimal dengan waktu lebih lama</p>
-                                            <ul class="text-sm text-gray-600 space-y-1">
-                                                <li>⏳ Waktu proses: ~5-10 detik</li>
-                                                <li>⏳ Evolutionary optimization</li>
-                                                <li>⏳ Global optimum search</li>
-                                            </ul>
-                                        </div>
-                                        <span class="ml-4 px-3 py-1 bg-yellow-200 text-yellow-800 text-xs rounded-full font-semibold">
-                                            Soon
-                                        </span>
-                                    </div>
-                                </div>
-                            </label>
+                                <p class="text-xs text-gray-500 mt-2">
+                                    <i class="fas fa-info-circle mr-1"></i><span x-text="formData.diseases.length"></span>/3 dipilih
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Navigation Buttons -->
-                    <div class="flex justify-between mt-8">
-                        <button @click="previousStep()" x-show="currentStep > 1"
-                                class="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 font-medium transition">
-                            <i class="fas fa-chevron-left mr-2"></i>Kembali
-                        </button>
-                        
-                        <button @click="nextStep()"
-                                :disabled="!isStepValid()"
-                                class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                x-show="currentStep < 5">
-                            <span x-text="currentStep === 4 ? 'Lanjut ke Konfirmasi' : 'Lanjut'"></span>
-                            <i class="fas fa-chevron-right ml-2"></i>
-                        </button>
-                        
-                        <button @click="submitForm()"
-                                :disabled="isLoading"
-                                class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                x-show="currentStep === 5">
-                            <span x-show="!isLoading">
-                                <i class="fas fa-check mr-2"></i>Analisis Profile
-                            </span>
-                            <span x-show="isLoading" class="flex items-center">
-                                <i class="fas fa-spinner animate-spin mr-2"></i>Menganalisis...
-                            </span>
-                        </button>
+                        <!-- Row 4: Algorithm Selection -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-cog text-teal-500 mr-2"></i>Algoritma Optimasi
+                            </label>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <label class="cursor-pointer">
+                                    <input type="radio" x-model="formData.algorithm" value="greedy" class="sr-only peer">
+                                    <div class="p-4 border-2 rounded-lg transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-300 hover:border-gray-400">
+                                        <div class="flex items-center mb-2">
+                                            <i class="fas fa-bolt text-yellow-500 text-lg mr-2"></i>
+                                            <h4 class="font-bold text-gray-800">Greedy</h4>
+                                        </div>
+                                        <p class="text-xs text-gray-600">Cepat & akurat, &lt;500ms</p>
+                                    </div>
+                                </label>
+
+                                <label class="cursor-pointer opacity-50 pointer-events-none">
+                                    <input type="radio" value="genetic" class="sr-only peer" disabled>
+                                    <div class="p-4 border-2 rounded-lg border-gray-300 bg-gray-50">
+                                        <div class="flex items-center mb-2">
+                                            <i class="fas fa-dna text-purple-400 text-lg mr-2"></i>
+                                            <h4 class="font-bold text-gray-500">Genetic (Soon)</h4>
+                                        </div>
+                                        <p class="text-xs text-gray-500">Optimal tapi lambat</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex gap-4 pt-6 border-t-2 border-gray-200">
+                            <button @click="resetForm()"
+                                    class="flex-1 px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 font-bold transition flex items-center justify-center gap-2">
+                                <i class="fas fa-rotate-left"></i>Reset
+                            </button>
+                            <button @click="submitForm()"
+                                    :disabled="!isFormValid() || isLoading"
+                                    class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 font-bold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                <span x-show="!isLoading">
+                                    <i class="fas fa-play mr-2"></i>Analisis Profil
+                                </span>
+                                <span x-show="isLoading" class="flex items-center gap-2">
+                                    <i class="fas fa-spinner animate-spin"></i>Memproses...
+                                </span>
+                            </button>
+                        </div>
                     </div>
 
                 </div>
 
                 <!-- Results Section (After Analysis) -->
-                <div x-show="analysisResult && currentStep > 5" class="slide-enter">
+                <div x-show="analysisResult" class="slide-enter">
+                    
+                    <!-- Back to Form Button -->
+                    <div class="mb-6 flex items-center gap-4">
+                        <button @click="resetForm()"
+                                class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i>Kembali ke Form
+                        </button>
+                        <p class="text-sm text-gray-600">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>Analysis berhasil diproses
+                        </p>
+                    </div>
                     
                     <!-- Tabs untuk hasil -->
                     <div class="flex flex-wrap border-b border-gray-200 mb-6">
@@ -738,7 +728,6 @@ function nutritionApp() {
         // ═══════════════════════════════════════════════════════════════════════════
         // STATE VARIABLES
         // ═══════════════════════════════════════════════════════════════════════════
-        currentStep: 1,
         activeTab: 'profile',
         isLoading: false,
         showItemDetailsModal: false,
@@ -781,9 +770,9 @@ function nutritionApp() {
         },
 
         activities: {
-            '1.545': 'Sedentary or Light Activity',
-            '1.845': 'Active or Moderately Active',
-            '2.2': 'Vigorous or Vigorously Active'
+            '1.545': 'Sedentary (Jarang Aktivitas)',
+            '1.845': 'Active (Aktivitas Normal)',
+            '2.2': 'Vigorous (Aktivitas Intens)'
         },
 
         // ═══════════════════════════════════════════════════════════════════════════
@@ -791,39 +780,38 @@ function nutritionApp() {
         // ═══════════════════════════════════════════════════════════════════════════
         init() {
             console.log('Nutrition DSS App Initialized');
-            this.loadSavedMenu();
+            // Auto-load cache disabled - always show form on fresh load
+            // Uncomment below to restore previous menu if needed
+            // this.loadSavedMenu();
         },
 
         // ═══════════════════════════════════════════════════════════════════════════
-        // FORM NAVIGATION
+        // FORM VALIDATION & RESET
         // ═══════════════════════════════════════════════════════════════════════════
-        nextStep() {
-            if (this.isStepValid()) {
-                this.currentStep++;
-            }
+        isFormValid() {
+            return this.formData.age > 0 && 
+                   this.formData.weight > 0 && 
+                   this.formData.height > 0 && 
+                   this.formData.activity !== '' && 
+                   this.formData.diseases.length > 0 && 
+                   this.formData.algorithm !== '';
         },
 
-        previousStep() {
-            if (this.currentStep > 1) {
-                this.currentStep--;
-            }
-        },
-
-        isStepValid() {
-            switch (this.currentStep) {
-                case 1:
-                    return this.formData.age > 0 && this.formData.weight > 0 && this.formData.height > 0;
-                case 2:
-                    return this.formData.activity !== '';
-                case 3:
-                    return this.formData.diseases.length > 0;
-                case 4:
-                    return true;
-                case 5:
-                    return this.formData.algorithm !== '';
-                default:
-                    return true;
-            }
+        resetForm() {
+            this.formData = {
+                gender: 'M',
+                age: 30,
+                weight: 70,
+                height: 170,
+                activity: '1.845',
+                diseases: ['normal'],
+                food_preferences: [],
+                algorithm: 'greedy'
+            };
+            this.analysisResult = null;
+            this.menuResult = null;
+            this.activeTab = 'profile';
+            this.showNotification('Form direset', 'info');
         },
 
         // ═══════════════════════════════════════════════════════════════════════════
@@ -948,7 +936,7 @@ function nutritionApp() {
                 const data = await response.json();
                 if (data.success) {
                     this.analysisResult = data;
-                    this.currentStep = 6;
+                    this.activeTab = 'profile';
                     this.showNotification('Profile analysis complete!', 'success');
                 } else {
                     this.showNotification(data.error || 'Analysis failed', 'error');
