@@ -4,7 +4,8 @@ import { I18nProvider } from './contexts/I18nContext';
 import { Navbar } from './components/figma/Navbar';
 import { Landing } from './pages/Landing';
 import { AlgorithmSelect } from './pages/AlgorithmSelect';
-import { InputWizard, UserInputData } from './pages/InputWizard';
+import { InputWizard } from './pages/InputWizard';
+import type { UserInputData } from './pages/InputWizard';
 import { Results } from './pages/Results';
 import { Report } from './pages/Report';
 

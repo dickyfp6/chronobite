@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Heart, Activity, Droplet, TrendingDown, Shield, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, Activity, Droplet, TrendingDown, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '../contexts/I18nContext';
 

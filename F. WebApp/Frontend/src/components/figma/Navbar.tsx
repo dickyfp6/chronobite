@@ -1,6 +1,6 @@
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useI18n } from '../contexts/I18nContext';
+import { useI18n } from '../../contexts/I18nContext';
 
 interface NavbarProps {
   onHomeClick: () => void;
@@ -8,7 +8,7 @@ interface NavbarProps {
 
 export function Navbar({ onHomeClick }: NavbarProps) {
   const { theme, setTheme } = useTheme();
-  const { language, setLanguage, t } = useI18n();
+  const { language, setLanguage } = useI18n();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b-2 border-emerald-200 dark:border-emerald-700 shadow-sm">

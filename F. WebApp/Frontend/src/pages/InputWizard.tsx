@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { User, Ruler, Activity, Heart, UtensilsCrossed, ChevronRight, ChevronLeft } from 'lucide-react';
+import { User, Activity, Heart, UtensilsCrossed, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
-import { ProgressIndicator } from '../components/ProgressIndicator';
-import { IconCard } from '../components/IconCard';
+import { ProgressIndicator } from '../components/figma/ProgressIndicator';
+import { IconCard } from '../components/figma/IconCard';
 
 export interface UserInputData {
   gender?: 'male' | 'female';
@@ -49,7 +49,6 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
 
   const toggleHealthCondition = (condition: string) => {
     const isNormal = condition === 'normal';
-    const hasNormal = data.healthConditions.includes('normal');
     const isSelected = data.healthConditions.includes(condition);
 
     if (isNormal) {

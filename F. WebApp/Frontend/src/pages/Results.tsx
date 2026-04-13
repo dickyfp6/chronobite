@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { ArrowRight, RefreshCw } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import { generateRandomMealOptions, calculateNutrition, calculateDailyNeeds } from '../utils/mockData';
-import { UserInputData } from './InputWizard';
+import type { UserInputData } from './InputWizard';
 
 interface ResultsProps {
   userData: UserInputData;

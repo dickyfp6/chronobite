@@ -1,8 +1,7 @@
-import { LucideIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface IconCardProps {
-  icon: LucideIcon;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description?: string;
   selected?: boolean;

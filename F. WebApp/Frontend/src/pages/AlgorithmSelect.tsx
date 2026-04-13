@@ -1,7 +1,7 @@
 import { Zap, Network } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useI18n } from '../contexts/I18nContext';
-import { IconCard } from '../components/IconCard';
+import { IconCard } from '../components/figma/IconCard';
 
 interface AlgorithmSelectProps {
   selected?: 'greedy' | 'genetic';
