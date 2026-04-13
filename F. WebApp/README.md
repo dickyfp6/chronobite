@@ -1,248 +1,237 @@
-# 🌿 NutriPlan DSS - Web Application
+# Nutrition DSS - WebApp
 
-Sistem Rekomendasi Nutrisi & Diet Berbasis Keputusan dengan Interface Responsif dan PWA-Ready.
+Clean full-stack architecture with Python backend (Flask API) and React frontend.
 
-## ✨ Fitur Utama
-
-### 1. **Slide-Flow Interface** (Multi-Step Stepper)
-- **5 Tahap Interaktif**:
-  - 🎯 **Slide 0: Hero** - Landing page dengan call-to-action
-  - 👤 **Slide 1: Profile** - Input data demografi & aktivitas
-  - 🏥 **Slide 2: Health Condition** - Seleksi kondisi kesehatan & preferensi makanan
-  - 📊 **Slide 3: Analysis** - Dashboard hasil analisis nutrisi dengan TDEE & target makro
-  - 🍽️ **Slide 4: Menu Recommendation** - Grid rekomendasi menu yang disesuaikan
-
-### 2. **Design System Premium**
-- **Glassmorphism Effect**: Transparent containers dengan blur effect
-- **Color Palette**: 
-  - Primary: Emerald-600 (#10b981)
-  - Background: Slate-50
-  - Accent: Mint Green
-- **Typography**: Inter (body) + Montserrat (headlines)
-- **Responsive Mobile-First**: Optimal di semua ukuran layar
-- **Smooth Animations**: Fade-in, slide-up transitions
-
-### 3. **Progressive Web App (PWA)**
-- ✅ Offline Support dengan Service Worker
-- ✅ Installable di Home Screen
-- ✅ App-like Experience
-- ✅ Background Sync capability
-- ✅ Web Manifest dengan Icons
-
-### 4. **Fitur Interaktif**
-- Real-time form validation
-- Gender, Age, Weight, Height, Activity Level selection
-- Multi-select health conditions
-- Food preference selection
-- Dynamic macro calculation
-- Results export (JSON download)
-
-## 🏗️ Struktur Project
+## 🏗️ Project Structure
 
 ```
 F. WebApp/
-├── app.py                    # Flask backend dengan API
-├── requirements.txt          # Python dependencies
-├── README.md                # Dokumentasi ini
-├── templates/
-│   └── index.html          # Main UI dengan Slide-Flow (HTML + Alpine.js)
-└── static/
-    ├── manifest.json       # PWA Manifest
-    └── js/
-        └── sw.js          # Service Worker
+├── Backend/
+│   ├── app.py                    # Flask app factory
+│   ├── run.py                    # Entry point (python run.py)
+│   ├── config.py                 # Configuration
+│   ├── requirements.txt           # Python dependencies
+│   ├── routes/
+│   │   ├── analyze.py            # POST /api/analyze
+│   │   └── menu.py               # POST /api/generate-menu
+│   └── services/
+│       └── system_bridge.py      # Adapter to C. System Flow & D. Model
+│
+├── Frontend/
+│   ├── src/
+│   │   ├── App.tsx
+│   │   ├── components/           # React components
+│   │   ├── services/api.ts       # Backend API calls
+│   │   ├── hooks/                # Custom React hooks
+│   │   └── ...
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── ...
+│
+└── README.md (this file)
 ```
 
-## 🚀 Setup & Installation
+## 🚀 Local Development
 
 ### Prerequisites
+
 - Python 3.8+
-- pip
+- Node.js 18+
+- npm or yarn
 
-### Install Dependencies
+### Start Backend
+
 ```bash
-cd "F. WebApp"
+cd Backend
 pip install -r requirements.txt
+python run.py
 ```
 
-### Run Application
+Backend runs on: **http://localhost:5000**
+
+Available endpoints:
+- `POST /api/analyze` - Profile analysis
+- `POST /api/generate-menu` - Menu generation
+- `GET /health` - Health check
+
+### Start Frontend (new terminal)
+
 ```bash
-python app.py
+cd Frontend
+npm install
+npm run dev
 ```
 
-Aplikasi akan berjalan di `http://localhost:5000`
+Frontend runs on: **http://localhost:5173**
 
-## 📱 Penggunaan
+### Testing the Integration
 
-1. **Akses dari Browser**: 
-   - Desktop: `http://localhost:5000`
-   - Mobile: Akses via IP lokal atau deploy
+```bash
+# Terminal 1
+cd Backend && python run.py
 
-2. **Flow Analisis**:
-   - Klik "Mulai Analisis Sekarang"
-   - Isi data profil (gender, usia, berat, tinggi, aktivitas)
-   - Pilih kondisi kesehatan & preferensi makanan
-   - Lihat hasil analisis (BMI, BMR, TDEE, target makro)
-   - Lihat rekomendasi menu
-   - Unduh hasil dalam format JSON
+# Terminal 2
+cd Frontend && npm run dev
 
-3. **Install sebagai PWA**:
-   - Di Mobile: Tap menu → "Add to Home Screen"
-   - Di Desktop (Chrome): Install icon di address bar
+# Browser
+open http://localhost:5173
+```
 
-## ⚙️ Backend API
+## 🔌 API Endpoints
 
-### POST `/api/analyze`
-**Input:**
+### POST /api/analyze
+
+**Request:**
 ```json
 {
-  "gender": "M|F",
-  "age": 25,
-  "weight": 70.5,
-  "height": 170.5,
-  "activity": "1.2|1.375|1.55|1.725|1.9",
-  "diseases": ["normal", "dm2", "hypertension", "cvd", "cholesterol", "ckd"],
-  "food_preferences": ["Western", "Asian", "Mediterranean", "Generic"]
+  "gender": "M",
+  "age": 30,
+  "weight": 70,
+  "height": 170,
+  "activity": "1.845",
+  "diseases": ["normal"],
+  "food_preferences": [],
+  "algorithm": "greedy"
 }
 ```
 
-**Output:**
+**Response:**
 ```json
 {
-  "bmi": 24.4,
-  "bmi_category": "Normal",
-  "bmi_color": "green",
-  "bbi": 63.0,
-  "bmr": 1650,
-  "tdee": 2268,
-  "activity_label": "Moderately Active",
-  "diseases": ["Normal"],
-  "macros": {
-    "carbs": {"pct": [45, 65], "gram": 290},
-    "protein": {"pct": [10, 35], "gram": 130},
-    "fat": {"pct": [20, 35], "gram": 85}
+  "success": true,
+  "anthropometrics": {
+    "bmi": 24.2,
+    "bbi": 63.0,
+    "age_group": "young_people"
   },
-  "menu": {
-    "breakfast": [...],
-    "lunch": [...],
-    "dinner": [...],
-    "snack": [...]
+  "energy": {
+    "bmr": 1700,
+    "tdee": 2100
+  },
+  "guidelines": { ... }
+}
+```
+
+### POST /api/generate-menu
+
+**Request:**
+```json
+{
+  "algorithm": "greedy",
+  "user_profile": { ... },
+  "analysis_data": { ... }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "menu_plan": {
+    "meals": { ... },
+    "total_calories": 2100,
+    "total_protein": 150,
+    "total_carbs": 250,
+    "total_fat": 70
   }
 }
 ```
 
-## 🎨 Customization
+## 🧩 Architecture
 
-### Mengubah Warna
-Edit di `index.html` > `<style>`:
-```css
-:root {
-    --primary: #10b981;      /* Emerald */
-    --secondary: #f0fdfa;    /* Very light cyan */
-    --accent: #d1fae5;       /* Light mint */
-    --dark: #1e293b;         /* Slate */
-}
+### Backend Design
+- **Thin routes** → call services → call system logic
+- **No HTML rendering** → API only
+- **system_bridge.py** wraps existing C. System Flow & D. Model logic
+
+### Frontend Design
+- **React + Vite + TypeScript**
+- **Pages**: Form input, Results display, Menu display
+- **Services**: API communication via fetch
+
+### Data Flow
+
+```
+React UI
+  ↓ (fetch POST /api/analyze)
+Backend Route
+  ↓ (calls)
+Backend Service (system_bridge)
+  ↓ (imports)
+C. System Flow (NutritionService) ← UNTOUCHED
+  ↓
+Response back to Frontend
+  ↓
+Display Results
 ```
 
-### Menambah/Edit Menu Items
-Edit di `app.py` > `SAMPLE_MENU`:
-```python
-SAMPLE_MENU = {
-    "breakfast": [
-        {"name": "Nasi Kuning", "calories": 350, "carbs": 50, "protein": 8, "fat": 12, "emoji": "🍚"},
-        ...
-    ],
-    ...
-}
+## 🔐 Safety Guarantees
+
+✅ **Core system logic UNTOUCHED**
+- `C. System Flow/` - Zero modifications
+- `D. Model/` - Zero modifications
+
+✅ **Web layer ISOLATED**
+- Backend only calls system via bridges
+- Frontend only communicates via REST API
+
+✅ **No rewriting**
+- Backend serves as thin adapter layer
+- All calculations from original files
+
+## 📦 Dependencies
+
+### Backend
+- Flask >= 2.3.0
+- Flask-CORS >= 4.0.0
+- pandas >= 1.5.0
+
+### Frontend
+- React 19.2.4
+- Vite 8.0.8
+- TypeScript 6.0.2
+- Tailwind CSS 4.2.2
+
+## 🔧 Build for Production
+
+### Backend
+```bash
+cd Backend
+# Ready for deployment to Render, Heroku, etc.
+# Just run: python run.py
 ```
 
-### Mengubah Penyakit & Target Makro
-Edit di `app.py` > `DISEASE_MACROS`:
-```python
-DISEASE_MACROS = {
-    "diabetes_custom": {
-        "carbs": (40, 50),
-        "protein": (20, 25),
-        "fat": (25, 30)
-    },
-    ...
-}
+### Frontend
+```bash
+cd Frontend
+npm run build
+# Creates dist/ folder ready for Vercel, Netlify, etc.
 ```
 
-## 🔒 Security Notes
+## 📝 Notes
 
-- Validasi input di frontend & backend
-- Hindari exposing sensitive data
-- Untuk production, gunakan environment variables
-- Enable HTTPS
-- Implementasi rate limiting di API
-
-## 📊 Browser Compatibility
-
-| Browser | Support |
-|---------|---------|
-| Chrome  | ✅ Full |
-| Firefox | ✅ Full |
-| Safari  | ✅ Full |
-| Edge    | ✅ Full |
-| IE 11   | ❌ Not supported |
-
-## 📦 PWA Features
-
-✅ **Offline**: Service Worker meng-cache aset
-✅ **Installable**: Manifest + icons
-✅ **App-like**: Fullscreen, status bar
-✅ **Responsive**: Mobile-first design
-✅ **Share Target**: Import/export results
-✅ **Shortcuts**: Quick actions dari home screen
+- Backend port: 5000 (configurable via PORT env var)
+- Frontend port: 5173 (default Vite port)
+- CORS allows localhost:5173 and localhost:3000
+- Both run independently - can be deployed separately
 
 ## 🐛 Troubleshooting
 
-### Service Worker tidak register
-```bash
-# Clear browser cache & uninstall app
-# Restart Flask server
-# Refresh halaman
-```
+**Backend won't start**
+- Ensure C. System Flow and D. Model are in correct paths
+- Check: `python -c "import sys; print(sys.path)"`
 
-### Styling tidak muncul
-- Pastikan Tailwind CDN accessible
-- Cek network tab di DevTools
+**Frontend API calls fail**
+- Ensure Backend is running on 5000
+- Check browser Dev Tools Network tab
+- Verify CORS headers
 
-### Form tidak responsive
-- Gunakan browser terbaru
-- Clear browser cache
-
-## 🔗 Integrasi Backend
-
-Untuk mengintegrasikan dengan Algoritma Genetika/Greedy:
-
-1. **Update `/api/analyze` endpoint** untuk memanggil algoritma
-2. **Replace `SAMPLE_MENU`** dengan output dari algoritma
-3. **Validasi constraint** kesehatan di backend
-
-```python
-# Contoh
-from your_algorithm import generate_menu
-
-@app.route("/api/analyze", methods=["POST"])
-def analyze():
-    # ... existing code ...
-    
-    # Call your algorithm
-    menu = generate_menu(tdee, macros, diseases, preferences)
-    
-    return jsonify({ menu: menu, ... })
-```
-
-## 📝 License
-
-Bagian dari Tugas Akhir DSS Nutrisi
-
-## 👨‍💼 Support
-
-Untuk pertanyaan atau isu, hubungi tim development.
+**Module not found errors**
+- Backend: `pip install -r requirements.txt`
+- Frontend: `npm install`
 
 ---
 
-**Last Updated**: April 2025
-**Version**: 1.0.0 (Beta)
+**Created:** April 13, 2026  
+**Architecture:** Clean Full-Stack (Python API + React Frontend)  
+**Status:** Ready for Local Development
