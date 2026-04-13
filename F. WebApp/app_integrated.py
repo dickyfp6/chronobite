@@ -14,6 +14,7 @@ import os
 import json
 import pandas as pd
 from datetime import datetime
+import importlib.util
 
 # Add parent directories untuk imports (F. WebApp is one level deep, so one .. to get to root)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'C. System Flow'))
@@ -27,12 +28,20 @@ except ImportError as e:
     print(f"❌ Failed to import NutritionService: {e}")
     NutritionService = None
 
+# Special handling for Greedy Algorithm (folder has space in name)
+GreedyAlgorithmInterface = None
 try:
-    from Greedy_Algorithm.greedy_interface import GreedyAlgorithmInterface  # pyright: ignore
-    print("✓ GreedyAlgorithmInterface imported successfully")
-except ImportError as e:
+    greedy_path = os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Greedy Algorithm', 'greedy_interface.py')
+    spec = importlib.util.spec_from_file_location("greedy_interface", greedy_path)
+    if spec is not None and spec.loader is not None:
+        greedy_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(greedy_module)
+        GreedyAlgorithmInterface = greedy_module.GreedyAlgorithmInterface
+        print("✓ GreedyAlgorithmInterface imported successfully")
+    else:
+        print("❌ Failed to create spec for GreedyAlgorithmInterface")
+except Exception as e:
     print(f"❌ Failed to import GreedyAlgorithmInterface: {e}")
-    GreedyAlgorithmInterface = None
 
 # Initialize Flask app
 app = Flask(__name__, static_folder='static', static_url_path='/static')
@@ -97,6 +106,71 @@ def calculate_bmr(weight, height, age, gender):
 
 def calculate_tdee(bmr, activity):
     return round(bmr * float(activity), 0)
+
+
+def _course_to_item(course):
+    candidate = course.candidates[0] if getattr(course, 'candidates', None) else None
+    if candidate is None:
+        return {
+            'name': course.course_type,
+            'serving_size': 100,
+            'calories': 0,
+            'score': 0,
+            'main_ingredients': [],
+            'macros': {'carbs': 0, 'protein': 0, 'fat': 0},
+        }
+
+    return {
+        'name': candidate.food_name,
+        'serving_size': getattr(candidate, 'portion_gram', 100),
+        'calories': getattr(candidate, 'energy_kcal', 0),
+        'score': 100,
+        'food_category': getattr(candidate, 'consumption_label', course.course_type),
+        'main_ingredients': [candidate.food_name],
+        'macros': {
+            'carbs': getattr(candidate, 'carbohydrate_g', 0),
+            'protein': getattr(candidate, 'protein_g', 0),
+            'fat': getattr(candidate, 'fat_g', 0),
+        },
+        'micronutrients': [],
+        'halal_status': 'unknown',
+    }
+
+
+def _meal_to_frontend(meal):
+    items = []
+    if getattr(meal, 'courses', None):
+        for course in meal.courses.values():
+            items.append(_course_to_item(course))
+
+    total_calories = sum(item['calories'] for item in items)
+    total_carbs = sum(item['macros']['carbs'] for item in items)
+    total_protein = sum(item['macros']['protein'] for item in items)
+    total_fat = sum(item['macros']['fat'] for item in items)
+
+    return {
+        'total_calories': total_calories,
+        'items': items,
+        'macros': {
+            'carbs': total_carbs,
+            'protein': total_protein,
+            'fat': total_fat,
+        }
+    }
+
+
+def _menu_plan_to_frontend(menu_plan):
+    return {
+        'algorithm_used': getattr(menu_plan, 'algorithm_used', 'Greedy'),
+        'user_profile': getattr(menu_plan, 'user_profile', {}),
+        'breakfast': _meal_to_frontend(getattr(menu_plan, 'breakfast', None)),
+        'lunch': _meal_to_frontend(getattr(menu_plan, 'lunch', None)),
+        'dinner': _meal_to_frontend(getattr(menu_plan, 'dinner', None)),
+        'snack': _meal_to_frontend(getattr(menu_plan, 'snack', None)),
+        'total_calories': getattr(menu_plan, 'total_calories', getattr(menu_plan, 'total_daily_calories', 0)),
+        'feasible': getattr(menu_plan, 'feasible', True),
+        'violations': getattr(menu_plan, 'violations', []),
+    }
 
 
 def classify_age_group(age):
@@ -166,7 +240,7 @@ def landing():
 @app.route("/app")
 def index():
     """Main application"""
-    return render_template("index.html")
+    return render_template("index_comprehensive.html")
 
 
 @app.route("/manifest.json")
@@ -280,6 +354,10 @@ def analyze():
             'snack': 0.1375,      # 13.75%
             'dinner': 0.2875      # 28.75%
         }
+
+        # Remove non-JSON-serializable objects before response
+        if isinstance(result.get('food_data'), dict):
+            result['food_data'].pop('dataframe', None)
         
         return jsonify(result), 200
     
@@ -340,11 +418,26 @@ def generate_menu():
         
         # Extract required data
         analysis_data = data.get('analysis_data', {})
-        user_input = data.get('user_input', {})
+        user_input = data.get('user_input') or data.get('user_profile') or {}
+        if isinstance(user_input, dict) and 'user_input' in user_input:
+            user_input = user_input.get('user_input', {})
         tdee = analysis_data.get('energy', {}).get('tdee', 2100)
-        
-        # Initialize Greedy Algorithm dengan food database
-        food_database = analysis_data.get('food_data', {}).get('dataframe')
+
+        # Initialize Greedy Algorithm using server-side food database
+        food_database = None
+        if nutrition_service is not None and nutrition_service.guideline_loader is not None:
+            base_df = nutrition_service.guideline_loader.food_df
+            if base_df is not None:
+                food_database = base_df.copy()
+
+        # Optional cuisine filtering from user preferences
+        food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
+        if food_database is not None and food_preferences:
+            if 'cuisine' in food_database.columns:
+                food_database = food_database[food_database['cuisine'].isin(food_preferences)].copy()
+            elif 'cuisine_label' in food_database.columns:
+                food_database = food_database[food_database['cuisine_label'].isin(food_preferences)].copy()
+
         nutrition_guidelines = analysis_data.get('guidelines', {})
         
         if food_database is None or nutrition_guidelines is None:
@@ -378,8 +471,8 @@ def generate_menu():
                 "error": "Failed to generate menu (insufficient candidates)"
             }), 500
         
-        # Convert to dict for JSON response
-        menu_dict = menu_plan.to_dict()
+        # Convert to frontend-friendly dict for JSON response
+        menu_dict = _menu_plan_to_frontend(menu_plan)
         
         return jsonify({
             "success": True,

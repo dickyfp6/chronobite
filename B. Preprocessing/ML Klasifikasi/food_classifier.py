@@ -245,9 +245,10 @@ class FoodClassifier:
         if 'food_name' in df.columns:
             if fit:
                 self.tfidf = TfidfVectorizer(max_features=30, stop_words='english')
-                text_X = self.tfidf.fit_transform(df['food_name'].astype(str)).toarray()
+                text_X = self.tfidf.fit_transform(df['food_name'].astype(str)).toarray()  # type: ignore[attr-defined]
             else:
-                text_X = self.tfidf.transform(df['food_name'].astype(str)).toarray()
+                if self.tfidf is not None:
+                    text_X = self.tfidf.transform(df['food_name'].astype(str)).toarray()  # type: ignore[attr-defined]
         
         # Combine
         return np.hstack([numeric_X, cat_X, text_X])
@@ -264,12 +265,16 @@ class FoodClassifier:
         
         # Predict consumption
         if self.consumption_model is not None:
+            assert self.consumption_scaler is not None, "Scaler should not be None if model is trained"
+            assert self.consumption_label_encoder is not None, "Encoder should not be None if model is trained"
             X_consumption_scaled = self.consumption_scaler.transform(X_features)
             y_consumption_pred = self.consumption_model.predict(X_consumption_scaled)
             results['consumption_label'] = self.consumption_label_encoder.inverse_transform(y_consumption_pred)
         
         # Predict cuisine
         if self.cuisine_model is not None:
+            assert self.cuisine_scaler is not None, "Scaler should not be None if model is trained"
+            assert self.cuisine_label_encoder is not None, "Encoder should not be None if model is trained"
             X_cuisine_scaled = self.cuisine_scaler.transform(X_features)
             y_cuisine_pred = self.cuisine_model.predict(X_cuisine_scaled)
             results['cuisine_label'] = self.cuisine_label_encoder.inverse_transform(y_cuisine_pred)
@@ -292,6 +297,7 @@ class FoodClassifier:
         print("="*70)
         
         if y_test_consumption is not None and self.consumption_model is not None:
+            assert self.consumption_scaler is not None, "Scaler should not be None if model is trained"
             X_consumption_scaled = self.consumption_scaler.transform(X_features)
             y_pred = self.consumption_model.predict(X_consumption_scaled)
             accuracy = accuracy_score(y_test_consumption, y_pred)
@@ -300,6 +306,7 @@ class FoodClassifier:
             print(classification_report(y_test_consumption, y_pred))
         
         if y_test_cuisine is not None and self.cuisine_model is not None:
+            assert self.cuisine_scaler is not None, "Scaler should not be None if model is trained"
             X_cuisine_scaled = self.cuisine_scaler.transform(X_features)
             y_pred = self.cuisine_model.predict(X_cuisine_scaled)
             accuracy = accuracy_score(y_test_cuisine, y_pred)

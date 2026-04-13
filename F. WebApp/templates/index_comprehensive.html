@@ -35,7 +35,7 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen" x-cloak>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
 
 <div x-data="nutritionApp()" class="min-h-screen p-4 md:p-8">
     <!-- Header -->
@@ -309,7 +309,7 @@
                     </div>
 
                     <!-- TAB 1: Profile & Anthropometrics -->
-                    <div x-show="activeTab === 'profile'" class="slide-enter">
+                    <div x-show="activeTab === 'profile' && analysisResult" class="slide-enter">
                         <div class="grid md:grid-cols-2 gap-6 mb-8">
                             <!-- Anthropometrics Card -->
                             <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
@@ -319,24 +319,24 @@
                                 <div class="space-y-3">
                                     <div class="flex justify-between">
                                         <span class="text-gray-700">BMI:</span>
-                                        <span class="font-bold" x-text="analysisResult.anthropometrics.bmi + ' kg/m²'"></span>
+                                        <span class="font-bold" x-text="(analysisResult?.anthropometrics?.bmi || 0) + ' kg/m²'"></span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-700">Kategori BMI:</span>
                                         <span class="font-bold px-3 py-1 rounded-full text-sm"
-                                              :class="analysisResult.anthropometrics.bmi_category === 'Normal' ? 'bg-green-200 text-green-800' : 
-                                                       analysisResult.anthropometrics.bmi_category === 'Overweight' ? 'bg-yellow-200 text-yellow-800' :
+                                              :class="(analysisResult?.anthropometrics?.bmi_category || 'Normal') === 'Normal' ? 'bg-green-200 text-green-800' : 
+                                                       (analysisResult?.anthropometrics?.bmi_category || 'Normal') === 'Overweight' ? 'bg-yellow-200 text-yellow-800' :
                                                        'bg-red-200 text-red-800'"
-                                              x-text="analysisResult.anthropometrics.bmi_category">
+                                              x-text="analysisResult?.anthropometrics?.bmi_category || 'Normal'">
                                         </span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-700">BBI (Berat Ideal):</span>
-                                        <span class="font-bold" x-text="analysisResult.anthropometrics.bbi + ' kg'"></span>
+                                        <span class="font-bold" x-text="(analysisResult?.anthropometrics?.bbi || 0) + ' kg'"></span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-700">Grup Usia:</span>
-                                        <span class="font-bold" x-text="analysisResult.anthropometrics.age_group.label"></span>
+                                        <span class="font-bold" x-text="analysisResult?.anthropometrics?.age_group?.label || 'N/A'"></span>
                                     </div>
                                 </div>
                             </div>
@@ -349,12 +349,12 @@
                                 <div class="space-y-3">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Basal Metabolic Rate (BMR)</p>
-                                        <p class="text-3xl font-bold text-red-700" x-text="analysisResult.energy.bmr + ' kkal'"></p>
+                                        <p class="text-3xl font-bold text-red-700" x-text="(analysisResult?.energy?.bmr || 0) + ' kkal'"></p>
                                         <p class="text-xs text-gray-500">Kalori istirahat tanpa aktivitas</p>
                                     </div>
                                     <div class="pt-3 border-t border-red-300">
                                         <p class="text-sm text-gray-600 mb-1">Total Daily Energy Expenditure (TDEE)</p>
-                                        <p class="text-3xl font-bold text-red-700" x-text="analysisResult.energy.tdee + ' kkal'"></p>
+                                        <p class="text-3xl font-bold text-red-700" x-text="(analysisResult?.energy?.tdee || 0) + ' kkal'"></p>
                                         <p class="text-xs text-gray-500">Kalori total dengan aktivitas</p>
                                     </div>
                                 </div>
@@ -416,7 +416,7 @@
                     </div>
 
                     <!-- TAB 2: Nutrition Guidelines -->
-                    <div x-show="activeTab === 'nutrition'" class="slide-enter">
+                    <div x-show="activeTab === 'nutrition' && analysisResult" class="slide-enter">
                         <div class="mb-6 flex flex-wrap gap-2">
                             <button @click="nutrientFilter = 'all'"
                                     :class="nutrientFilter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'"
@@ -451,7 +451,7 @@
                     </div>
 
                     <!-- TAB 3: Menu Harian -->
-                    <div x-show="activeTab === 'menu'" class="slide-enter">
+                    <div x-show="activeTab === 'menu' && analysisResult" class="slide-enter">
                         
                         <!-- Generate Menu Section -->
                         <div class="mb-8 p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg text-white">
@@ -478,17 +478,17 @@
                         </div>
 
                         <!-- Menu Display -->
-                        <div x-show="menuResult" class="slide-enter">
+                        <div x-show="menuResult && analysisResult" class="slide-enter">
                             
                             <!-- Menu Info Header -->
                             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <p class="text-sm text-gray-600">Algoritma:
-                                            <span class="font-bold text-blue-600" x-text="menuResult.algorithm_used || 'Greedy'"></span>
+                                            <span class="font-bold text-blue-600" x-text="menuResult?.algorithm_used || 'Greedy'"></span>
                                         </p>
                                         <p class="text-sm text-gray-600 mt-1">Total Kalori:
-                                            <span class="font-bold text-red-600" x-text="(menuResult.total_calories || 0).toFixed(0) + ' kkal'"></span>
+                                            <span class="font-bold text-red-600" x-text="(menuResult?.total_calories || 0).toFixed(0) + ' kkal'"></span>
                                         </p>
                                     </div>
                                     <div class="space-y-2">
@@ -506,23 +506,23 @@
 
                             <!-- Meals -->
                             <div class="space-y-6">
-                                <template x-for="(meal, mealName) in ['breakfast', 'lunch', 'dinner', 'snack']" :key="mealName">
-                                    <div x-show="menuResult[mealName]" class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition">
+                                <template x-for="mealName in ['breakfast', 'lunch', 'dinner', 'snack']" :key="mealName">
+                                    <div x-show="hasMeal(mealName)" class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition">
                                         
                                         <!-- Meal Header -->
                                         <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
                                             <div class="flex justify-between items-center">
                                                 <h3 class="text-lg font-bold capitalize" x-text="mealName"></h3>
                                                 <div class="text-right">
-                                                    <p class="text-sm opacity-90" x-text="(menuResult[mealName].total_calories || 0).toFixed(0) + ' kkal'"></p>
-                                                    <p class="text-xs opacity-75" x-text="((menuResult[mealName].total_calories || 0) / (menuResult.total_calories || 1) * 100).toFixed(0) + '%'"></p>
+                                                    <p class="text-sm opacity-90" x-text="(getMeal(mealName).total_calories || 0).toFixed(0) + ' kkal'"></p>
+                                                    <p class="text-xs opacity-75" x-text="((getMeal(mealName).total_calories || 0) / (menuResult?.total_calories || 1) * 100).toFixed(0) + '%'"></p>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- Meal Items -->
                                         <div class="p-4 space-y-3">
-                                            <template x-for="(item, idx) in (menuResult[mealName].items || [])" :key="idx">
+                                            <template x-for="(item, idx) in getMeal(mealName).items" :key="idx">
                                                 <div class="flex justify-between items-start p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition cursor-pointer"
                                                      @click="showItemDetails(item)">
                                                     <div class="flex-1">
@@ -546,15 +546,15 @@
                                         <!-- Meal Macros -->
                                         <div class="px-4 pb-4 grid grid-cols-3 gap-3 text-center">
                                             <div>
-                                                <p class="text-2xl font-bold text-amber-600" x-text="((menuResult[mealName].macros?.carbs || 0) * 4).toFixed(0) + 'g'"></p>
+                                                <p class="text-2xl font-bold text-amber-600" x-text="((getMeal(mealName).macros?.carbs || 0) * 4).toFixed(0) + 'g'"></p>
                                                 <p class="text-xs text-gray-600">Carbs</p>
                                             </div>
                                             <div>
-                                                <p class="text-2xl font-bold text-red-600" x-text="(menuResult[mealName].macros?.protein || 0).toFixed(0) + 'g'"></p>
+                                                <p class="text-2xl font-bold text-red-600" x-text="(getMeal(mealName).macros?.protein || 0).toFixed(0) + 'g'"></p>
                                                 <p class="text-xs text-gray-600">Protein</p>
                                             </div>
                                             <div>
-                                                <p class="text-2xl font-bold text-yellow-600" x-text="(menuResult[mealName].macros?.fat || 0).toFixed(0) + 'g'"></p>
+                                                <p class="text-2xl font-bold text-yellow-600" x-text="(getMeal(mealName).macros?.fat || 0).toFixed(0) + 'g'"></p>
                                                 <p class="text-xs text-gray-600">Fat</p>
                                             </div>
                                         </div>
@@ -587,7 +587,7 @@
                     </div>
 
                     <!-- TAB 4: Constraint Compliance -->
-                    <div x-show="activeTab === 'constraints'" class="slide-enter">
+                    <div x-show="activeTab === 'constraints' && menuResult && analysisResult" class="slide-enter">
                         <div class="space-y-4">
                             <template x-for="(status, constraint) in getConstraintStatus()" :key="constraint">
                                 <div class="border rounded-lg p-4"
@@ -1110,6 +1110,21 @@ function nutritionApp() {
                     percentage: Math.min(100, ((this.menuResult.total_calories || 0) / (this.analysisResult?.energy?.tdee || 1) * 100))
                 }
             };
+        },
+
+        hasMeal(mealName) {
+            return Boolean(this.menuResult && this.menuResult[mealName]);
+        },
+
+        getMeal(mealName) {
+            if (!this.menuResult || !this.menuResult[mealName]) {
+                return {
+                    total_calories: 0,
+                    items: [],
+                    macros: { carbs: 0, protein: 0, fat: 0 }
+                };
+            }
+            return this.menuResult[mealName];
         },
 
         // ═══════════════════════════════════════════════════════════════════════════

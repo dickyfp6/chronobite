@@ -6,7 +6,7 @@ Output final akan selalu mengikuti kontrak ini, terlepas dari algoritma Greedy a
 """
 
 from typing import List, Dict, Optional
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 
 
 @dataclass
@@ -75,13 +75,9 @@ class Meal:
 class SnackMeal:
     """Representasi snack (tidak ada sub-course, cukup 3 kandidat)"""
     meal_type: str = 'Snack'
-    candidates: List[FoodItem] = None  # Max 3 candidates
+    candidates: List[FoodItem] = field(default_factory=list)  # Max 3 candidates
     target_calories: float = 0
     actual_calories: float = 0
-    
-    def __post_init__(self):
-        if self.candidates is None:
-            self.candidates = []
     
     def to_dict(self):
         return {
@@ -92,7 +88,7 @@ class SnackMeal:
         }
 
 
-@dataclass
+@dataclass(init=False)
 class MenuPlan:
     """Kontrak output final - struktur 9 slots + 1 snack"""
     algorithm_used: str  # 'Greedy' atau 'Genetic'
@@ -107,6 +103,40 @@ class MenuPlan:
     total_daily_fat_g: float
     feasible: bool  # Semua constraints terpenuhi
     violations: List[str]  # List constraint violations
+
+    def __init__(
+        self,
+        algorithm_used: str,
+        user_profile: Dict,
+        breakfast: Meal,
+        lunch: Meal,
+        dinner: Meal,
+        snack: SnackMeal,
+        total_daily_calories: float = 0,
+        total_daily_protein_g: float = 0,
+        total_daily_carb_g: float = 0,
+        total_daily_fat_g: float = 0,
+        feasible: bool = True,
+        violations: Optional[List[str]] = None,
+        total_calories: Optional[float] = None,
+        **_kwargs,
+    ):
+        self.algorithm_used = algorithm_used
+        self.user_profile = user_profile
+        self.breakfast = breakfast
+        self.lunch = lunch
+        self.dinner = dinner
+        self.snack = snack
+        self.total_daily_calories = total_daily_calories or (total_calories or 0)
+        self.total_daily_protein_g = total_daily_protein_g
+        self.total_daily_carb_g = total_daily_carb_g
+        self.total_daily_fat_g = total_daily_fat_g
+        self.feasible = feasible
+        self.violations = violations or []
+
+    @property
+    def total_calories(self):
+        return self.total_daily_calories
     
     def to_dict(self):
         """Convert ke dictionary untuk JSON response"""

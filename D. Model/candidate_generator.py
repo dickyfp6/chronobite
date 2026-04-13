@@ -5,7 +5,7 @@ Menggunakan regex-based similarity dari food_name untuk menghindari duplikasi je
 
 import pandas as pd
 import re
-from typing import List, Dict, Set, Optional
+from typing import List, Dict, Set, Optional, cast
 from meal_schema import FoodItem
 
 
@@ -101,17 +101,18 @@ class CandidateGenerator:
         min_cal = target_calories * (1 - tolerance)
         max_cal = target_calories * (1 + tolerance)
         
-        return candidates_df[
+        filtered = candidates_df[
             (candidates_df['energy_kcal'] >= min_cal) &
             (candidates_df['energy_kcal'] <= max_cal)
         ].copy()
+        return cast(pd.DataFrame, filtered)
     
     @staticmethod
     def generate_candidates(
         candidates_df: pd.DataFrame,
         target_calories: float,
         num_candidates: int = 3,
-        exclusion_list: List[str] = None,
+        exclusion_list: Optional[List[str]] = None,
         ingredient_diversity: bool = True
     ) -> List[Dict]:
         """
@@ -194,7 +195,7 @@ class CandidateGenerator:
         slot_category: str,  # 'Main', 'Side', 'Drink'
         target_calories: float,
         num_candidates: int = 3,
-        exclusion_names: List[str] = None
+        exclusion_names: Optional[List[str]] = None
     ) -> List[Dict]:
         """
         Convenience method: Generate candidates untuk 1 slot (sudah filter kategori)

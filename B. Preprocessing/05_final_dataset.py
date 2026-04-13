@@ -89,12 +89,12 @@ print("Jumlah dataset setelah filter:", len(filtered))
 # CEK DUPLIKASI
 # ======================
 print("Duplikasi fdc_id:",
-      filtered.duplicated(subset=["fdc_id"]).sum())
+      filtered.duplicated(subset=["fdc_id"]).sum())  # type: ignore[call-arg]
 
 print("Duplikasi food_name:",
-      filtered.duplicated(subset=["food_name"]).sum())
+      filtered.duplicated(subset=["food_name"]).sum())  # type: ignore[call-arg]
 
-filtered = filtered.drop_duplicates(subset=["fdc_id"])
+filtered = filtered.drop_duplicates(subset=["fdc_id"])  # type: ignore[call-arg]
 
 
 # ======================

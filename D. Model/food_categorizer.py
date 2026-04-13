@@ -4,7 +4,7 @@ Mengubah food items dari dataset ke kategori yang bisa digunakan untuk slot menu
 """
 
 import pandas as pd
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, cast
 
 
 class FoodCategorizer:
@@ -134,7 +134,7 @@ class FoodCategorizer:
         if 'menu_category' not in df.columns:
             df = FoodCategorizer.categorize_dataframe(df)
         
-        return df[df['menu_category'] == category].copy()
+        return cast(pd.DataFrame, df[df['menu_category'] == category].reset_index(drop=True))
     
     @staticmethod
     def get_category_stats(df: pd.DataFrame) -> Dict[str, int]:
@@ -150,7 +150,7 @@ class FoodCategorizer:
         if 'menu_category' not in df.columns:
             df = FoodCategorizer.categorize_dataframe(df)
         
-        return df['menu_category'].value_counts().to_dict()
+        return cast(Dict[str, int], df['menu_category'].value_counts().to_dict())
 
 
 # Test
