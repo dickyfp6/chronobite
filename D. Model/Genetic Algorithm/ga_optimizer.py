@@ -9,8 +9,7 @@ import pandas as pd
 
 from ga_chromosome import ChromosomeOperations
 from ga_operators import GeneticOperators
-from ga_fitness import FitnessCalculator
-from ga_local_search import LocalSearchOptimizer
+from ga_fitness_improved import ImprovedFitnessCalculator
 
 
 class GeneticAlgorithmOptimizer:
@@ -113,35 +112,6 @@ class GeneticAlgorithmOptimizer:
                       f"Avg: {avg_fit:6.2f} | Global Best: {self.best_fitness:6.2f}")
             
             # Step 3: Local Search on elite
-            if self.elite_fraction > 0:
-                elite_size = max(1, int(self.population_size * self.elite_fraction))
-                elite_indices = sorted(
-                    range(len(population)),
-                    key=lambda i: fitness_scores[i],
-                    reverse=True
-                )[:elite_size]
-                
-                for elite_idx in elite_indices:
-                    fitness_args = {
-                        'food_database': self.food_database,
-                        'guidelines': self.guidelines,
-                        'user_tdee': self.user_tdee
-                    }
-                    
-                    improved = LocalSearchOptimizer.optimize(
-                        population[elite_idx],
-                        self.food_database,
-                        FitnessCalculator.calculate_fitness,
-                        fitness_args,
-                        max_iterations=self.ls_max_iterations
-                    )
-                    
-                    # Update if better
-                    improved_fit = self._evaluate_fitness(improved)
-                    if improved_fit > fitness_scores[elite_idx]:
-                        population[elite_idx] = improved
-                        fitness_scores[elite_idx] = improved_fit
-            
             # Step 4: Elitism - preserve best
             elite_size = max(1, int(self.population_size * 0.1))
             sorted_indices = sorted(
@@ -238,7 +208,7 @@ class GeneticAlgorithmOptimizer:
     
     def _evaluate_fitness(self, chromosome: Dict) -> float:
         """Evaluate fitness"""
-        return FitnessCalculator.calculate_fitness(
+        return ImprovedFitnessCalculator.calculate_fitness(
             chromosome,
             self.food_database,
             self.guidelines,
