@@ -1,4 +1,4 @@
-"""
+﻿"""
 Module untuk menangani input dari user
 """
 
@@ -113,13 +113,13 @@ def get_user_input():
         # 5. SATPAM: Cek kontradiksi 'Normal' vs Penyakit
         if 'normal' in selected_labels:
             if len(selected_labels) > 1:
-                print("⚠ Pilihan 'Normal' tidak bisa digabung dengan penyakit lain!")
+                print("[WARN] Pilihan 'Normal' tidak bisa digabung dengan penyakit lain!")
                 continue
             disease = 'normal' # Output string tunggal jika normal
         
         # 6. SATPAM: Cek jumlah maksimal
         elif len(selected_labels) > 3:
-            print("⚠ Maksimal pilih 3 kombinasi penyakit.")
+            print("[WARN] Maksimal pilih 3 kombinasi penyakit.")
             continue
             
         else:
@@ -158,7 +158,7 @@ def get_user_input():
             food_preferences = [cuisine_mapping[c] for c in choice_list]
             break
         else:
-            print("⚠ Input tidak valid. Masukkan angka 1-3 saja.")
+            print("[WARN] Input tidak valid. Masukkan angka 1-3 saja.")
     
     user_data = {
         'gender': gender,

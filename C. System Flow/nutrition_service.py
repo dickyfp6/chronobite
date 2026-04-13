@@ -1,4 +1,4 @@
-"""
+﻿"""
 Nutrition Calculation Service
 Consolidated file untuk orchestrate semua input, calculations, dan output
 Designed untuk easy integration dengan Genetic Algorithm dan Greedy Algorithm
@@ -385,7 +385,7 @@ class NutritionService:
     def print_summary(self, result):
         """Print user-friendly summary"""
         if not result['success']:
-            print(f"❌ Error: {result['error']}")
+            print(f"[ERROR] Error: {result['error']}")
             return
         
         print("\n" + "="*70)
@@ -480,7 +480,7 @@ def example_usage():
         guidelines = result['guidelines']['nutrients']
         food_data = result['food_data']['dataframe']
         
-        print("\n✓ Ready for Genetic Algorithm / Greedy Algorithm!")
+        print("\n[OK] Ready for Genetic Algorithm / Greedy Algorithm!")
         print(f"  - Guidelines available: {len(guidelines)} constraints")
         print(f"  - Food items available: {len(food_data)} items")
 

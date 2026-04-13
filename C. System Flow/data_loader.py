@@ -51,7 +51,7 @@ class GuidelineLoader:
         """Load guideline CSV"""
         try:
             self.guideline_df = pd.read_csv(self.guideline_path)
-            print(f"✓ Guideline loaded: {self.guideline_path}")
+            print(f"[OK] Guideline loaded: {self.guideline_path}")
         except FileNotFoundError:
             raise FileNotFoundError(f"Guideline file not found: {self.guideline_path}")
         except Exception as e:
@@ -61,12 +61,12 @@ class GuidelineLoader:
         """Load DRI micronutrient CSV untuk fallback"""
         try:
             self.dri_df = pd.read_csv(self.dri_path)
-            print(f"✓ DRI Micronutrient loaded: {self.dri_path}")
+            print(f"[OK] DRI Micronutrient loaded: {self.dri_path}")
         except FileNotFoundError:
-            print(f"⚠ DRI file not found: {self.dri_path}")
+            print(f"[WARN] DRI file not found: {self.dri_path}")
             self.dri_df = None
         except Exception as e:
-            print(f"⚠ Error loading DRI: {e}")
+            print(f"[WARN] Error loading DRI: {e}")
             self.dri_df = None
     
     def get_dri_by_age_gender(self, age, gender):
@@ -231,11 +231,11 @@ class GuidelineLoader:
             if 'cuisine' not in self.food_df.columns and 'cuisine_label' in self.food_df.columns:
                 self.food_df['cuisine'] = self.food_df['cuisine_label']
 
-            print(f"✓ Food data loaded: {food_path}")
+            print(f"[OK] Food data loaded: {food_path}")
         except FileNotFoundError:
-            print(f"⚠ Food data not found: {food_path}")
+            print(f"[WARN] Food data not found: {food_path}")
         except Exception as e:
-            print(f"⚠ Error loading food data: {e}")
+            print(f"[WARN] Error loading food data: {e}")
     
     def get_food_by_cuisine(self, cuisine):
         """
