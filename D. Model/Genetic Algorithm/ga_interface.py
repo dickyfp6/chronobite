@@ -148,6 +148,22 @@ class GeneticAlgorithmInterface:
                 user_tdee=user_tdee
             )
             
+            # Step 3: Populate evaluation metrics into MenuPlan
+            if menu_plan:
+                # Assign GA fitness score (0-100 scale)
+                menu_plan.ga_fitness_score = best_fitness
+                
+                # Assign total energy computed from food items
+                menu_plan.total_energy_kcal = menu_plan.total_energy
+                
+                # Assign individual meal references for display compatibility
+                if 'breakfast' in menu_plan.meals:
+                    menu_plan.breakfast = menu_plan.meals['breakfast']
+                if 'lunch' in menu_plan.meals:
+                    menu_plan.lunch = menu_plan.meals['lunch']
+                if 'dinner' in menu_plan.meals:
+                    menu_plan.dinner = menu_plan.meals['dinner']
+            
             # Store results
             self.last_result = menu_plan
             self.convergence_stats = optimizer.get_statistics()
