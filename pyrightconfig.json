@@ -1,0 +1,15 @@
+{
+  "pythonVersion": "3.9",
+  "typeCheckingMode": "basic",
+  "include": [
+    "."
+  ],
+  "pythonPath": ".",
+  "extraPaths": [
+    "C. System Flow",
+    "D. Model",
+    "F. WebApp"
+  ],
+  "reportMissingImports": true,
+  "reportMissingModuleSource": false
+}
