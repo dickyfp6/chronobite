@@ -1,4 +1,4 @@
-"""
+﻿"""
 Module untuk format dan display output hasil perhitungan
 """
 
@@ -109,12 +109,12 @@ class OutputFormatter:
     @staticmethod
     def display_error(message):
         """Display error message"""
-        print(f"\n❌ ERROR: {message}\n")
+        print(f"\n[ERROR] ERROR: {message}\n")
     
     @staticmethod
     def display_success(message):
         """Display success message"""
-        print(f"\n✓ {message}\n")
+        print(f"\n[OK] {message}\n")
     
     @staticmethod
     def display_info(message):

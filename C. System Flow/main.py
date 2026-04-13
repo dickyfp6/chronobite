@@ -1,4 +1,4 @@
-"""
+﻿"""
 Main application untuk System Flow perhitungan nutrisi
 Menggunakan consolidated NutritionService dengan DRI fallback integration
 """
@@ -52,8 +52,8 @@ def main():
         # 4. Display detailed guidelines + summary with age classification
         service.print_summary(result)
         
-        print("\n✓ Process completed successfully!")
-        print("\n✓ Ready for Genetic Algorithm / Greedy Algorithm!")
+        print("\n[OK] Process completed successfully!")
+        print("\n[OK] Ready for Genetic Algorithm / Greedy Algorithm!")
         print(f"  - Total nutrients: {result['guidelines']['total_nutrients']}")
         print(f"  - Food items available: {result['food_data']['total_items'] if result['food_data'] else 'N/A'}")
         

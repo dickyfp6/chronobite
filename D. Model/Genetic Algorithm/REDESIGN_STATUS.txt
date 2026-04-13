@@ -1,0 +1,24 @@
+"""
+IMMEDIATE NEXT STEPS - CHROMOSOME REDESIGN
+
+Files that MUST be updated/created for new chromosome format:
+
+1. ✅ ga_chromosome.py - DONE (chromosome dict operations)
+2. ✅ ga_operators.py - DONE (mutation/crossover/selection)
+3. ⏳ ga_fitness.py - CRITICAL: Redesign untuk aggregate nutrients
+4. ⏳ ga_local_search.py - CRITICAL: Food swap & portion adjust
+5. ⏳ ga_output_formatter.py - CRITICAL: Chromosome to UI conversion
+6. ⏳ ga_optimizer.py - UPDATE untuk use new chromosome
+7. ⏳ ga_interface.py - UPDATE untuk integrate new components
+
+Quick Implementation Strategy:
+- Fitness: Calculate total nutrients dari ALL foods, compare vs constraints
+- Local Search: Swap foods & adjust portions (per-food operations)
+- Output Formatter: Most important! Convert best solution to UI format
+  * Identify main/side/drink per meal from chromosome
+  * Find alternative foods (similar kcal/nutrients)
+  * Return 3 candidates per slot
+
+Current Status: ~40% redesign complete
+Ready to implement remaining files
+"""

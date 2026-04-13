@@ -1,4 +1,4 @@
-"""
+﻿"""
 Module untuk process dan convert guideline
 """
 
@@ -49,7 +49,7 @@ class GuidelineProcessor:
             guideline_df = self.loader.get_guideline_by_disease(disease_item, age, gender)
             
             if guideline_df.empty:
-                print(f"⚠ No guideline found for disease={disease_item}, age={age}, gender={gender}")
+                print(f"[WARN] No guideline found for disease={disease_item}, age={age}, gender={gender}")
                 continue
             
             disease_names.append(disease_item)
@@ -88,7 +88,7 @@ class GuidelineProcessor:
                     )
         
         if not guidelines_dict:
-            print(f"⚠ No guidelines found for any diseases")
+            print(f"[WARN] No guidelines found for any diseases")
             return None
         
         return {
