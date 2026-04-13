@@ -21,89 +21,69 @@ class CandidateGenerator:
     """
     
     @staticmethod
-    def extract_protein_source(food_name: str) -> Optional[str]:
+    def extract_main_ingredients(food_name: str) -> Optional[str]:
         """
-        Extract protein source dari food_name menggunakan regex
-        Contoh: "Chicken Breast" -> "chicken", "Salmon Fillet" -> "salmon"
+        Extract main ingredient term(s) dari food_name untuk ingredient diversity check.
+        Bukan hanya protein, tapi semua jenis ingredient: daging, sayur, karbo, dll.
+        
+        Contoh: 
+        - "Chicken Breast Grilled" -> "chicken"
+        - "Spinach Salad" -> "spinach"
+        - "Grilled Salmon" -> "salmon"
+        - "Nasi Kuning" -> "nasi"
         
         Args:
             food_name: Nama makanan dari dataset
         
         Returns:
-            Keyword protein source (lowercase), atau None
+            Main ingredient keyword (lowercase), atau None
         """
-        # Protein keywords untuk matching
-        protein_keywords = [
-            'chicken', 'beef', 'pork', 'lamb', 'turkey', 'duck',  # Daging
-            'salmon', 'tuna', 'cod', 'tilapia', 'mackerel', 'anchovy', 'shrimp', 'crab', 'fish',  # Ikan
-            'egg', 'tofu', 'tempeh', 'soya', 'soybean',  # Plant-based protein
-            'milk', 'cheese', 'yogurt', 'dairy',  # Dairy
-            'bean', 'lentil', 'legume',  # Legumes
-        ]
-        
-        food_name_lower = food_name.lower()
-        
-        for keyword in protein_keywords:
-            if re.search(r'\b' + keyword + r'\b', food_name_lower):
-                return keyword
-        
-        return None
-    
-    @staticmethod
-    def extract_main_ingredient(food_name: str) -> Optional[str]:
-        """
-        Extract main ingredient term (first few words, tidak termasuk adjektive)
-        
-        Args:
-            food_name: Nama makanan
-        
-        Returns:
-            Main ingredient keyword
-        """
-        # Tokenize
         words = food_name.lower().split()
         
-        # Skip common descriptors
-        skip_words = ['cooked', 'raw', 'fried', 'boiled', 'grilled', 'baked', 'steamed', 'fresh', 'frozen', 'ready-to-eat']
+        # Skip common cooking descriptors
+        skip_words = {
+            'cooked', 'raw', 'fried', 'boiled', 'grilled', 'baked', 'steamed',
+            'fresh', 'frozen', 'ready-to-eat', 'ready', 'toasted', 'microwaved',
+            'commercially', 'prepared', 'toasted', 'roasted', 'sauteed', 'sautéed',
+            'sliced', 'diced', 'chopped', 'made', 'with', 'and', 'or', 'the'
+        }
         
+        # Ambil word pertama yang meaningful (bukan descriptor)
         for word in words:
-            if word not in skip_words and len(word) > 2:
+            # Skip short words dan descriptor
+            if word not in skip_words and len(word) > 2 and not word.isdigit():
                 return word
         
-        return None if len(words) == 0 else words[0]
+        # Fallback: return first word if exists
+        return words[0] if words else None
+    
+
     
     @staticmethod
-    def is_similar(food_name1: str, food_name2: str, similarity_type: str = 'protein') -> bool:
+    def is_similar_ingredient(food_name1: str, food_name2: str) -> bool:
         """
-        Check apakah dua makanan similar berdasarkan similarity_type
+        Check apakah dua makanan memiliki main ingredient yang sama.
+        Digunakan untuk ingredient diversity check - hindari duplikasi ingredient di meal time berbeda.
+        
+        Contoh similar:
+        - "Chicken Breast" vs "Grilled Chicken" -> True (same ingredient: chicken)
+        - "Spinach Salad" vs "Cooked Spinach" -> True (same ingredient: spinach)
+        - "Salmon Fillet" vs "Grilled Chicken" -> False (different ingredient)
         
         Args:
             food_name1: Nama makanan pertama
             food_name2: Nama makanan kedua
-            similarity_type: 'protein' (default) atau 'ingredient'
         
         Returns:
-            True jika similar, False jika berbeda
+            True jika memiliki main ingredient yang sama, False jika berbeda
         """
-        if similarity_type == 'protein':
-            protein1 = CandidateGenerator.extract_protein_source(food_name1)
-            protein2 = CandidateGenerator.extract_protein_source(food_name2)
-            
-            if protein1 is None or protein2 is None:
-                return False
-            
-            return protein1 == protein2
+        ingredient1 = CandidateGenerator.extract_main_ingredients(food_name1)
+        ingredient2 = CandidateGenerator.extract_main_ingredients(food_name2)
         
-        elif similarity_type == 'ingredient':
-            ingredient1 = CandidateGenerator.extract_main_ingredient(food_name1)
-            ingredient2 = CandidateGenerator.extract_main_ingredient(food_name2)
-            
-            if ingredient1 is None or ingredient2 is None:
-                return False
-            
-            return ingredient1 == ingredient2
+        if ingredient1 is None or ingredient2 is None:
+            return False
         
-        return False
+        return ingredient1 == ingredient2
     
     @staticmethod
     def filter_by_calorie_range(candidates_df: pd.DataFrame, target_calories: float, tolerance: float = 0.2) -> pd.DataFrame:
@@ -132,19 +112,18 @@ class CandidateGenerator:
         target_calories: float,
         num_candidates: int = 3,
         exclusion_list: List[str] = None,
-        similarity_check: bool = True,
-        similarity_type: str = 'protein'
+        ingredient_diversity: bool = True
     ) -> List[Dict]:
         """
-        Generate N kandidat terbaik dari pool dengan similarity check
+        Generate N kandidat terbaik dari pool dengan ingredient diversity check.
+        Hindari suggestion makanan dengan main ingredient yang sama dengan exclusion_list.
         
         Args:
             candidates_df: DataFrame dengan food items (harus punya kategori, kalori, nama)
             target_calories: Target calorie untuk slot
             num_candidates: Jumlah kandidat yang diinginkan (default 3)
-            exclusion_list: List nama makanan yang sudah dipilih (untuk menghindari duplikat)
-            similarity_check: Apakah melakukan similarity check (default True)
-            similarity_type: Tipe similarity ('protein' atau 'ingredient')
+            exclusion_list: List nama makanan yang sudah dipilih (untuk menghindari duplikat ingredient)
+            ingredient_diversity: Apakah melakukan ingredient diversity check (default True)
         
         Returns:
             List of Dict candidates (max num_candidates)
@@ -164,17 +143,17 @@ class CandidateGenerator:
             filtered['calorie_distance'] = abs(filtered['energy_kcal'] - target_calories)
             filtered = filtered.nsmallest(num_candidates + len(exclusion_list), 'calorie_distance')
         
-        # Step 2: Remove exclusions (similarity check)
-        if similarity_check and len(exclusion_list) > 0:
+        # Step 2: Remove exclusions based on ingredient similarity
+        if ingredient_diversity and len(exclusion_list) > 0:
             result_candidates = []
             
             for idx, row in filtered.iterrows():
                 food_name = str(row['food_name'])
                 is_excluded = False
                 
-                # Check similarity dengan setiap item di exclusion list
+                # Check ingredient similarity dengan setiap item di exclusion list
                 for excluded_name in exclusion_list:
-                    if CandidateGenerator.is_similar(food_name, excluded_name, similarity_type):
+                    if CandidateGenerator.is_similar_ingredient(food_name, excluded_name):
                         is_excluded = True
                         break
                 
@@ -247,23 +226,22 @@ class CandidateGenerator:
             target_calories=target_calories,
             num_candidates=num_candidates,
             exclusion_list=exclusion_names,
-            similarity_check=True,
-            similarity_type='protein'
+            ingredient_diversity=True
         )
 
 
 # Test
 if __name__ == "__main__":
-    # Test similarity
-    names = [
-        "Chicken Breast",
-        "Grilled Chicken",
-        "Salmon Fillet",
-        "Baked Salmon",
-        "Tofu Scramble"
+    # Test ingredient similarity
+    test_cases = [
+        ("Chicken Breast", "Grilled Chicken"),  # Same ingredient
+        ("Spinach Salad", "Cooked Spinach"),    # Same ingredient
+        ("Salmon Fillet", "Baked Salmon"),      # Same ingredient
+        ("Salmon Fillet", "Grilled Chicken"),   # Different ingredient
+        ("Sawi Rebus", "Sawi Goreng"),          # Same ingredient
+        ("Nasi Kuning", "Nasi Goreng"),         # Same ingredient
     ]
     
-    for i in range(len(names)):
-        for j in range(i+1, len(names)):
-            similar = CandidateGenerator.is_similar(names[i], names[j], 'protein')
-            print(f"{names[i]} ~ {names[j]}: {similar}")
+    for name1, name2 in test_cases:
+        similar = CandidateGenerator.is_similar_ingredient(name1, name2)
+        print(f"{name1:30} ~ {name2:30} : {similar}")

@@ -89,11 +89,9 @@ FOOD_PREFERENCES_LABELS = {
 }
 
 ACTIVITY_LABELS = {
-    "1.2":   "Sedentary",
-    "1.375": "Lightly Active",
-    "1.55":  "Moderately Active",
-    "1.725": "Very Active",
-    "1.9":   "Extremely Active",
+    "1.545": "Sedentary or Light Activity",
+    "1.845": "Active or Moderately Active",
+    "2.2":   "Vigorous or Vigorously Active",
 }
 
 # ─── Sample Menu Data (placeholder until algorithm integrated) ────────────────
@@ -153,10 +151,10 @@ def analyze():
     data = request.get_json()
 
     gender = data.get("gender", "M")
-    age = int(data.get("age", 25))
+    age = int(data.get("age", 30))
     weight = float(data.get("weight", 70))
     height = float(data.get("height", 170))
-    activity = data.get("activity", "1.375")
+    activity = data.get("activity", "1.845")
     diseases = data.get("diseases", ["normal"])
     food_prefs = data.get("food_preferences", ["Generic"])
 
