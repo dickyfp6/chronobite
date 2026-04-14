@@ -4,7 +4,15 @@
   "include": [
     "."
   ],
+  "exclude": [
+    ".venv",
+    "**/__pycache__"
+  ],
+  "ignore": [
+    ".venv/**"
+  ],
   "pythonPath": ".",
+  "useLibraryCodeForTypes": false,
   "extraPaths": [
     "C. System Flow",
     "D. Model",
