@@ -1,6 +1,8 @@
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useI18n } from '../../contexts/I18nContext';
+import lightLogo from '../../assets/light-horizontal.png';
+import darkLogo from '../../assets/dark-horizontal.png';
 
 interface NavbarProps {
   onHomeClick: () => void;
@@ -15,9 +17,13 @@ export function Navbar({ onHomeClick }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <button
           onClick={onHomeClick}
-          className="text-lg font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all"
+          className="cursor-pointer transition-all duration-300 hover:drop-shadow-[0_0_12px_rgba(16,185,129,0.6)]"
         >
-          NutriPlan
+          <img
+            src={theme === 'light' ? lightLogo : darkLogo}
+            alt="NutriPlan"
+            className="h-12"
+          />
         </button>
 
         <div className="flex items-center gap-3">

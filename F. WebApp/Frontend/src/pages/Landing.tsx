@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Heart, Activity, Droplet, TrendingDown, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '../contexts/I18nContext';
+import { useTheme } from 'next-themes';
+import lightLogo from '../assets/light.png';
+import darkLogo from '../assets/dark.png';
 
 const slides = [
   { id: 'intro', icon: Heart },
@@ -15,23 +18,25 @@ const slides = [
 export function Landing({ onStart }: { onStart: () => void }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { t } = useI18n();
+  const { theme } = useTheme();
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
   const slideContent = t.landing.slides[slides[currentSlide].id as keyof typeof t.landing.slides];
   const Icon = slides[currentSlide].icon;
+  const isIntroSlide = slides[currentSlide].id === 'intro';
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex flex-col">
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-5xl">
+        <div className="w-full max-w-6xl lg:max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8 sm:mb-12"
+            className="text-center mb-8 sm:mb-12 md:mt-6 lg:mt-10"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 px-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 px-4 lg:px-0">
               {t.landing.title}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
@@ -49,8 +54,16 @@ export function Landing({ onStart }: { onStart: () => void }) {
                 transition={{ duration: 0.3 }}
                 className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 md:p-12 border-2 border-emerald-200 dark:border-emerald-600 shadow-xl min-h-[280px] sm:min-h-[320px] flex flex-col items-center justify-center"
               >
-                <div className="mb-4 sm:mb-6 p-4 sm:p-6 bg-gradient-to-br from-emerald-400 to-teal-500 dark:from-emerald-500 dark:to-teal-600 rounded-full shadow-lg">
-                  <Icon className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
+                <div className="mb-4 sm:mb-6">
+                  {isIntroSlide ? (
+                    <img
+                      src={theme === 'light' ? lightLogo : darkLogo}
+                      alt="NutriPlan"
+                      className="w-20 h-20 sm:w-24 sm:h-24"
+                    />
+                  ) : (
+                    <Icon className="w-16 h-16 sm:w-20 sm:h-20 text-emerald-500" />
+                  )}
                 </div>
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 text-center text-gray-900 dark:text-white px-4">
                   {slideContent.title}
