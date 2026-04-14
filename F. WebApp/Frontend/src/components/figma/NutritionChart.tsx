@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTheme } from 'next-themes';
 import { ComposedChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { TooltipProps } from 'recharts';
 
@@ -99,6 +100,9 @@ export function NutritionChart({ data }: NutritionChartProps) {
     });
   }, [data]);
 
+  const { theme } = useTheme();
+  const minAreaFill = theme === 'dark' ? '#1e293b' : '#f0fdf4';
+
   return (
     <div className="w-full h-[350px] sm:h-[400px] md:h-[450px] mb-8">
       <ResponsiveContainer width="100%" height="100%">
@@ -152,17 +156,16 @@ export function NutritionChart({ data }: NutritionChartProps) {
             isAnimationActive={false}
           />
 
-          {/* Area 2: Dari 0 sampai min (background sesuai theme untuk "cut out") */}
+          {/* Area 2: Dari 0 sampai min (untuk "potong" bagian bawah, jadi hanya area antara min-max yang terlihat) */}
           <Area
             type="monotone"
             dataKey="minRange"
             stroke="#10b981"
             strokeWidth={2}
             strokeDasharray="5 5"
-            fill="#f0fdf4"
+            fill={minAreaFill}
             fillOpacity={1}
             isAnimationActive={false}
-            className="dark:fill-slate-900"
           />
 
           {/* Garis actual value (solid, tebal) - SELALU DI ATAS */}
