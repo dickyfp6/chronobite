@@ -127,9 +127,9 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int) -> pd.DataFrame:
     # Filter items yang memiliki salah satu expected group (case-insensitive)
     filtered = cast(pd.DataFrame, food_df[food_df['food_group'].str.lower().isin(expected_groups)])
     
-    # Jika tidak ada match, return original (fallback)
+    # Jika tidak ada match, sample dari original (fallback dengan randomness)
     if len(filtered) == 0:
-        return food_df
+        return food_df.sample(n=min(20, len(food_df)))
     
     return filtered
 
@@ -170,6 +170,7 @@ def random_solution(food_df: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(f"Food database harus memiliki minimal 1 item, got {len(food_df)}")
     
     solution_items = []
+    used_foods = set()  # Track used food_name untuk menghindari duplikasi jika mungkin
     
     # Generate 1 item per slot dengan food group filter jika tersedia
     for slot_idx in range(CHROMOSOME_SIZE):
@@ -178,8 +179,22 @@ def random_solution(food_df: pd.DataFrame) -> pd.DataFrame:
         # Sample 1 item untuk slot ini
         # Karena n=1, parameter replace tidak relevan
         if len(filtered_df) > 0:
-            item = filtered_df.sample(n=1)
+            # Coba hindari duplikasi jika ada pilihan lain
+            available_df = filtered_df
+            if 'food_name' in filtered_df.columns and len(used_foods) > 0:
+                # Filter out foods yang sudah digunakan jika masih ada pilihan
+                not_used = filtered_df[~filtered_df['food_name'].isin(used_foods)]
+                if len(not_used) > 0:
+                    available_df = not_used
+            
+            item = available_df.sample(n=1)
             solution_items.append(item)
+            
+            # Track food yang digunakan
+            if 'food_name' in item.columns:
+                food_name = item.iloc[0].get('food_name', '')
+                if food_name:
+                    used_foods.add(food_name)
     
     # Concat semua items dan reset index
     if solution_items:
@@ -789,7 +804,8 @@ def display_meal_options(slot_options: Dict[str, List[pd.Series]]):
 
 def display_fitness_details(solution: pd.DataFrame, guidelines: Dict):
     """
-    Display fitness score breakdown (penalty per nutrient)
+    Display fitness score breakdown (penalty per nutrient dengan weights)
+    Gunakan weighted calculation sama seperti di fitness() function
     
     Args:
         solution: DataFrame meal plan
@@ -813,14 +829,19 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict):
         max_val = constraint.get('max', float('inf'))
         value = total_nutrition[nutrient_name]
         
+        # Get nutrient weight (sama seperti di fitness())
+        weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
+        
         penalty = 0
         status = "✓ OK"
         
         if value < min_val:
-            penalty = min_val - value
+            # Kurang dari minimum dengan weight
+            penalty = (min_val - value) * weight
             status = f"✗ LOW (need {min_val - value:.1f} more)"
         elif value > max_val:
-            penalty = value - max_val
+            # Lebih dari maximum dengan weight
+            penalty = (value - max_val) * weight
             status = f"✗ HIGH (excess {value - max_val:.1f})"
         
         nutrient_penalties[nutrient_name] = penalty
@@ -830,9 +851,10 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict):
     violations.sort(key=lambda x: x[1], reverse=True)
     
     if violations:
-        print(f"Top violations:\n")
+        print(f"Top violations (with weights):\n")
         for nutrient, penalty in violations[:5]:
-            print(f"   {nutrient}: penalty = {penalty:.2f}")
+            weight = NUTRIENT_WEIGHTS.get(nutrient, 1.0)
+            print(f"   {nutrient} (weight={weight}): penalty = {penalty:.2f}")
     else:
         print(f"   No violations! All constraints satisfied ✓")
     
