@@ -21,7 +21,7 @@ sys.path.insert(0, system_flow_path)
 sys.path.insert(0, ga_rebuild_path)
 
 # Import GA engine
-from ga_v1 import run_ga, display_solution, display_fitness_details
+from ga_v1 import run_ga, display_solution, generate_meal_options, display_meal_options, display_fitness_details
 
 # Import NutritionService
 try:
@@ -163,7 +163,7 @@ def test_ga_with_nutrition_service():
         print("STEP 4: Run Genetic Algorithm...")
         print("="*70)
         
-        best_solution, best_fitness = run_ga(
+        best_solution, top_solutions = run_ga(
             food_df=food_df,
             guidelines=guidelines,
             generations=50,
@@ -181,30 +181,50 @@ def test_ga_with_nutrition_service():
         display_solution(best_solution, guidelines)
         display_fitness_details(best_solution, guidelines)
         
-        # STEP 6: Display food details
+        # STEP 6: Generate meal options dari top solutions
         print("\n" + "="*70)
-        print("DETAILED FOOD INFORMATION:")
+        print("STEP 6: Generate 3 pilihan menu per slot...")
         print("="*70)
         
-        meals = ['Breakfast', 'Lunch', 'Dinner', 'Snack']
-        for i, meal_name in enumerate(meals):
-            food_row = best_solution.iloc[i]
-            print(f"\n{i+1}. {meal_name}:")
+        slot_options = generate_meal_options(top_solutions, max_options_per_slot=3)
+        display_meal_options(slot_options)
+        
+        # STEP 7: Display detailed food information
+        print("\n" + "="*70)
+        print("STEP 7: DETAILED FOOD INFORMATION (Best Solution - 10 Items)")
+        print("="*70)
+        
+        meals = ['breakfast', 'lunch', 'dinner', 'snack']
+        slot_types = {'breakfast': ['main', 'side', 'drink'], 
+                      'lunch': ['main', 'side', 'drink'],
+                      'dinner': ['main', 'side', 'drink'],
+                      'snack': ['item']}
+        
+        for meal in meals:
+            indices = [0,1,2] if meal == 'breakfast' else [3,4,5] if meal == 'lunch' else [6,7,8] if meal == 'dinner' else [9]
             
-            # Display available columns
-            important_cols = ['food_name', 'energy_kcal', 'protein_g', 'carbohydrate_g', 
-                            'fat_g', 'fiber_g', 'cuisine']
-            
-            for col in important_cols:
-                if col in food_row.index:
-                    value = food_row[col]
-                    if isinstance(value, (int, float)):
-                        print(f"   {col}: {value:.1f}")
-                    else:
-                        print(f"   {col}: {value}")
+            print(f"\n{meal.upper()}:")
+            for i, idx in enumerate(indices):
+                if idx < len(best_solution):
+                    food_row = best_solution.iloc[idx]
+                    slot_type = slot_types[meal][i] if i < len(slot_types[meal]) else 'item'
+                    
+                    print(f"\n  {slot_type.upper()}:")
+                    
+                    # Display available columns
+                    important_cols = ['food_name', 'energy_kcal', 'protein_g', 'carbohydrate_g', 
+                                    'fat_g', 'fiber_g', 'cuisine']
+                    
+                    for col in important_cols:
+                        if col in food_row.index:
+                            value = food_row[col]
+                            if isinstance(value, (int, float)):
+                                print(f"    {col}: {value:.1f}")
+                            else:
+                                print(f"    {col}: {value}")
         
         print("\n" + "="*70)
-        print("✓ GA RUN COMPLETE")
+        print("✓ GA COMPLETE - ALL STEPS FINISHED")
         print("="*70 + "\n")
     
     except Exception as e:
