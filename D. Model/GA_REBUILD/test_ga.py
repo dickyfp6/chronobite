@@ -26,6 +26,12 @@ ga_rebuild_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, system_flow_path)
 sys.path.insert(0, ga_rebuild_path)
 
+# ============ MODE SWITCH ============
+# Set to True to use interactive input via CLI
+# Set to False to use hardcoded default values
+USE_INTERACTIVE_INPUT = True
+# ====================================
+
 # Import GA engine
 from ga_v1 import run_ga, display_solution, generate_meal_options, display_meal_options, display_fitness_details, MEAL_INDICES
 
@@ -35,6 +41,14 @@ try:
     print("✓ NutritionService imported successfully")
 except ImportError as e:
     print(f"✗ Cannot import NutritionService: {e}")
+    sys.exit(1)
+
+# Import input handler
+try:
+    from modules.input_handler import get_user_input
+    print("✓ Input handler imported successfully")
+except ImportError as e:
+    print(f"✗ Cannot import input handler: {e}")
     sys.exit(1)
 
 
@@ -73,7 +87,7 @@ def get_simple_user_input(interactive=False):
         food_preferences = [p.strip() for p in preferences_input.split(",")]
     else:
         # Use defaults (non-interactive)
-        print("\n(Using default values)")
+        # print("\n(Using default values)")  # Commented out - using real input
         gender = "M"
         age = 25
         weight = 70.0
@@ -110,7 +124,13 @@ def test_ga_with_nutrition_service():
     try:
         # STEP 1: Get user input
         print("\nSTEP 1: Get user input...")
-        user_input = get_simple_user_input(interactive=False)  # Non-interactive (use defaults)
+        
+        if USE_INTERACTIVE_INPUT:
+            # Use interactive input handler from modules
+            user_input = get_user_input()
+        else:
+            # Use default values (fallback)
+            user_input = get_simple_user_input(interactive=False)
         
         print("\n✓ User input received")
         print(f"  Gender: {user_input['gender']}")

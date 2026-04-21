@@ -219,12 +219,20 @@ class NutritionCalculator:
         
         # Basis: TDEE (multiply by TDEE)
         elif basis == 'TDEE':
-            tdee = user_params.get('tdee', 2000)
-            return {
-                'min_converted': round(min_float * tdee, 2),
-                'max_converted': round(max_float * tdee, 2),
-                'constraint_type': 'tdee_based'
-            }
+                tdee = user_params.get('tdee', 2000)
+
+                # asumsi default: protein & karbo
+                min_kcal = min_float * tdee
+                max_kcal = max_float * tdee
+
+                min_gram = min_kcal / 4
+                max_gram = max_kcal / 4
+
+                return {
+                    'min_converted': round(min_gram, 2),
+                    'max_converted': round(max_gram, 2),
+                    'constraint_type': 'tdee_based'
+                }
         
         # Basis: BB (Berat Badan - multiply by weight)
         elif basis == 'BB':
