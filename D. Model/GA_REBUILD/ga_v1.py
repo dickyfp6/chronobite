@@ -54,8 +54,22 @@ MEAL_INDICES = {
     'snack': [9]             # just 1 item
 }
 
-# Mapping slot index ke expected food group
-# Digunakan untuk filter agar breakfast_drink tidak jadi main course, dll
+# Mapping slot ke expected consumption_label
+# Digunakan untuk filter makanan sesuai kategori konsumsi yang realistis
+SLOT_LABEL_MAP = {
+    0: 'main',      # breakfast_main
+    1: 'side',      # breakfast_side
+    2: 'drink',     # breakfast_drink
+    3: 'main',      # lunch_main
+    4: 'side',      # lunch_side
+    5: 'drink',     # lunch_drink
+    6: 'main',      # dinner_main
+    7: 'side',      # dinner_side
+    8: 'drink',     # dinner_drink
+    9: 'snack'      # snack
+}
+
+# Legacy: kept for reference (tidak digunakan lagi, gunakan consumption_label)
 SLOT_FOOD_GROUP_MAPPING = {
     0: ['main_course', 'staple', 'rice', 'bread'],           # breakfast_main
     1: ['side_dish', 'vegetable', 'protein', 'legume'],      # breakfast_side
@@ -99,36 +113,48 @@ DUPLICATE_PENALTY_WEIGHT = 50.0  # Penalty for each duplicate food item
 # 1. RANDOM SOLUTION - Generate meal plan random
 # ═════════════════════════════════════════════════════════════════════════════
 
-def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int) -> pd.DataFrame:
+def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = False) -> pd.DataFrame:
     """
-    Filter food items sesuai dengan expected food group untuk slot tertentu
+    Filter food items sesuai dengan expected consumption_label untuk slot tertentu
     Menggunakan case-insensitive comparison untuk robustness
     
     Args:
-        food_df: DataFrame berisi semua food items dengan kolom 'food_group' (optional)
+        food_df: DataFrame berisi semua food items dengan kolom 'consumption_label'
         slot_idx: Index slot (0-9)
+        debug: Jika True, print info tentang filtering
     
     Returns:
-        Filtered DataFrame atau original jika tidak ada food_group column atau tidak ada match
+        Filtered DataFrame atau fallback jika tidak ada match
         
-    Note:
-        - Comparison adalah case-insensitive (BEVERAGE = beverage)
-        - Jika filtered result kosong, return original food_df sebagai fallback
+    Logic:
+        - Cek apakah ada kolom 'consumption_label' di dalam food_df
+        - Ambil expected_label dari SLOT_LABEL_MAP[slot_idx]
+        - Filter dengan case-insensitive comparison
+        - Fallback: return sample max 20 items jika tidak ada match
     """
-    # Jika tidak ada food_group column, return semua items
-    if 'food_group' not in food_df.columns:
+    # Jika tidak ada consumption_label column, return semua items
+    if 'consumption_label' not in food_df.columns:
+        if debug:
+            print(f"DEBUG: Slot {slot_idx} - No consumption_label column")
         return food_df
     
-    # Ambil expected groups untuk slot ini
-    expected_groups = SLOT_FOOD_GROUP_MAPPING.get(slot_idx, [])
-    if not expected_groups:
+    # Ambil expected label untuk slot ini
+    expected_label = SLOT_LABEL_MAP.get(slot_idx, None)
+    if not expected_label:
+        if debug:
+            print(f"DEBUG: Slot {slot_idx} - No label mapping")
         return food_df
     
-    # Filter items yang memiliki salah satu expected group (case-insensitive)
-    filtered = cast(pd.DataFrame, food_df[food_df['food_group'].str.lower().isin(expected_groups)])
+    # Filter items yang match expected label (case-insensitive)
+    filtered = cast(pd.DataFrame, food_df[food_df['consumption_label'].str.lower() == expected_label.lower()])
     
-    # Jika tidak ada match, sample dari original (fallback dengan randomness)
+    if debug:
+        print(f"DEBUG: Slot {slot_idx} ({SLOT_NAMES[slot_idx]}) -> label='{expected_label}' -> {len(filtered)} items")
+    
+    # Jika tidak ada match, sample dari original sebagai fallback
     if len(filtered) == 0:
+        if debug:
+            print(f"DEBUG: Slot {slot_idx} - No items found, using fallback (sampling max 20)")
         return food_df.sample(n=min(20, len(food_df)))
     
     return filtered
@@ -151,7 +177,7 @@ def random_solution(food_df: pd.DataFrame) -> pd.DataFrame:
         DataFrame dengan 10 baris (1 item per slot)
     
     Logic:
-        - Untuk setiap slot (0-9), filter foods by expected group
+        - Untuk setiap slot (0-9), filter foods by consumption_label
         - Jika food_df >= 10 items → sample tanpa replacement (unique)
         - Jika food_df < 10 items → sample dengan replacement (boleh duplikat)
     
