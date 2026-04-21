@@ -102,13 +102,18 @@ DUPLICATE_PENALTY_WEIGHT = 50.0  # Penalty for each duplicate food item
 def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int) -> pd.DataFrame:
     """
     Filter food items sesuai dengan expected food group untuk slot tertentu
+    Menggunakan case-insensitive comparison untuk robustness
     
     Args:
-        food_df: DataFrame berisi semua food items
+        food_df: DataFrame berisi semua food items dengan kolom 'food_group' (optional)
         slot_idx: Index slot (0-9)
     
     Returns:
-        Filtered DataFrame atau original jika tidak ada food_group column
+        Filtered DataFrame atau original jika tidak ada food_group column atau tidak ada match
+        
+    Note:
+        - Comparison adalah case-insensitive (BEVERAGE = beverage)
+        - Jika filtered result kosong, return original food_df sebagai fallback
     """
     # Jika tidak ada food_group column, return semua items
     if 'food_group' not in food_df.columns:
@@ -119,8 +124,8 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int) -> pd.DataFrame:
     if not expected_groups:
         return food_df
     
-    # Filter items yang memiliki salah satu expected group
-    filtered = cast(pd.DataFrame, food_df[food_df['food_group'].isin(expected_groups)])
+    # Filter items yang memiliki salah satu expected group (case-insensitive)
+    filtered = cast(pd.DataFrame, food_df[food_df['food_group'].str.lower().isin(expected_groups)])
     
     # Jika tidak ada match, return original (fallback)
     if len(filtered) == 0:
@@ -170,12 +175,10 @@ def random_solution(food_df: pd.DataFrame) -> pd.DataFrame:
     for slot_idx in range(CHROMOSOME_SIZE):
         filtered_df = _filter_food_by_slot(food_df, slot_idx)
         
-        # Smart replacement: jika ada cukup items, ambil unik; jika tidak, boleh duplikat
-        replace_flag = len(filtered_df) < 1  # Only replace if 0 items left
-        
         # Sample 1 item untuk slot ini
+        # Karena n=1, parameter replace tidak relevan
         if len(filtered_df) > 0:
-            item = filtered_df.sample(n=1, replace=replace_flag)
+            item = filtered_df.sample(n=1)
             solution_items.append(item)
     
     # Concat semua items dan reset index
@@ -183,14 +186,15 @@ def random_solution(food_df: pd.DataFrame) -> pd.DataFrame:
         solution = pd.concat(solution_items, ignore_index=True)
     else:
         # Fallback: jika semua filter gagal, random sample saja
-        replace_flag = len(food_df) < CHROMOSOME_SIZE
-        solution = food_df.sample(n=CHROMOSOME_SIZE, replace=replace_flag).reset_index(drop=True)
+        # Jika food_df < 10 items, allow replacement untuk mencapai 10 items
+        allow_replacement = len(food_df) < CHROMOSOME_SIZE
+        solution = food_df.sample(n=CHROMOSOME_SIZE, replace=allow_replacement).reset_index(drop=True)
     
     return solution
 
 
 # ═════════════════════════════════════════════════════════════════════════════
-# 2. CALCULATE TOTAL NUTRITION - Sum nutrisi dari 4 makanan
+# 2. CALCULATE TOTAL NUTRITION - Sum nutrisi dari 10 item (chromosome)
 # ═════════════════════════════════════════════════════════════════════════════
 
 def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
