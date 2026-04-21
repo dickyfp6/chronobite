@@ -11,6 +11,12 @@ Test file untuk GA dengan NutritionService
 
 import sys
 import os
+import random
+import numpy as np
+
+# Set random seeds untuk reproducibility
+random.seed(42)
+np.random.seed(42)
 
 # Add paths untuk import
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -21,7 +27,7 @@ sys.path.insert(0, system_flow_path)
 sys.path.insert(0, ga_rebuild_path)
 
 # Import GA engine
-from ga_v1 import run_ga, display_solution, generate_meal_options, display_meal_options, display_fitness_details
+from ga_v1 import run_ga, display_solution, generate_meal_options, display_meal_options, display_fitness_details, MEAL_INDICES
 
 # Import NutritionService
 try:
@@ -113,7 +119,7 @@ def test_ga_with_nutrition_service():
         print(f"  Diseases: {user_input['disease']}")
         print(f"  Food Preferences: {user_input['food_preferences']}")
         
-        # STEP 2: Calculate nutrition require ments using NutritionService
+        # STEP 2: Calculate nutrition requirements using NutritionService
         print("\n" + "="*70)
         print("STEP 2: Calculate nutrition requirements...")
         print("="*70)
@@ -201,7 +207,8 @@ def test_ga_with_nutrition_service():
                       'snack': ['item']}
         
         for meal in meals:
-            indices = [0,1,2] if meal == 'breakfast' else [3,4,5] if meal == 'lunch' else [6,7,8] if meal == 'dinner' else [9]
+            # Use MEAL_INDICES from ga_v1 untuk consistency
+            indices = MEAL_INDICES[meal]
             
             print(f"\n{meal.upper()}:")
             for i, idx in enumerate(indices):
@@ -227,8 +234,16 @@ def test_ga_with_nutrition_service():
         print("✓ GA COMPLETE - ALL STEPS FINISHED")
         print("="*70 + "\n")
     
+    except ValueError as e:
+        print(f"\n✗ VALUE ERROR: {e}")
+        import traceback
+        traceback.print_exc()
+    except KeyError as e:
+        print(f"\n✗ KEY ERROR: {e}")
+        import traceback
+        traceback.print_exc()
     except Exception as e:
-        print(f"\n✗ ERROR: {e}")
+        print(f"\n✗ UNEXPECTED ERROR: {e}")
         import traceback
         traceback.print_exc()
 
