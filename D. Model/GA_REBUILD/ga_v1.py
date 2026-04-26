@@ -270,11 +270,28 @@ def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
 def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
     """
     Hitung fitness score (penalty total) untuk 1 solusi (10-item chromosome)
-    Dengan weighted nutrients, duplicate penalty, dan normalization
+    Dengan HARD dan SOFT constraints, weighted nutrients, duplicate penalty, dan normalization
+    
+    ⚠️  HARD vs SOFT:
+        HARD (disease-based constraints):
+            - Violation penalty: 10x untuk under / 15x untuk over
+            - Contoh: Sodium (hipertensi), Cholesterol (CVD), Potassium (CKD)
+            - Jika ada HARD violation ekstrem: +10000 hard stop penalty
+        
+        SOFT (DRI-based constraints):
+            - Violation penalty: 1x normal weight
+            - Contoh: Protein, Energy, Fiber dari DRI umum
+            - Lebih fleksibel, tidak kritis
     
     Args:
         solution: DataFrame dengan 10 items (chromosome)
-        guidelines: Dict dari NutritionService
+        guidelines: Dict struktur BARU:
+                   {
+                       'hard': {nutrient: {'min': float, 'max': float, ...}, ...},
+                       'soft': {nutrient: {'min': float, 'max': float, ...}, ...}
+                   }
+                   
+                   ATAU struktur LAMA (backward compatible):
                    {nutrient: {'min': float, 'max': float, ...}, ...}
     
     Returns:
@@ -282,31 +299,14 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
                0 = perfectly match guidelines
     
     Logic:
-        1. Hitung total nutrisi dari 10 items
-        2. Untuk setiap nutrient dalam guidelines:
-           - Jika value < min → penalty += (min - value) * weight
-           - Jika value > max → penalty += (value - max) * weight
-           - Jika min ≤ value ≤ max → no penalty
-        3. Add duplicate penalty jika ada duplikat food_name
-        4. Normalize total penalty dengan jumlah constraints
-        5. Return total penalty
-    
-    Example:
-        guidelines = {
-            'energy_kcal': {'min': 1800, 'max': 2200, ...},
-            'protein_g': {'min': 60, 'max': 100, ...}
-        }
-        
-        solution_nutrition = {'energy_kcal': 1900, 'protein_g': 50, ...}
-        solution = [food1, food1, food3, ...]  # food1 appears twice = duplicate
-        
-        Penalties:
-        - energy_kcal: 1800 ≤ 1900 ≤ 2200 → 0
-        - protein_g: 50 < 60 → penalty = (60-50) * weight(1.5) = 15
-        - duplicate: 1 duplicate * 50 = 50
-        - normalized: (15 + 50) / 2 constraints = 32.5
-        
-        Total penalty = 32.5
+        1. Check structure (HARD/SOFT atau LAMA)
+        2. Hitung total nutrisi dari 10 items
+        3. HARD constraints: penalty besar (10x/15x)
+        4. SOFT constraints: penalty normal (1x)
+        5. Add duplicate penalty
+        6. Add hard stop jika ada violation ekstrem
+        7. Normalize
+        8. Return total penalty
     """
     # Hitung total nutrisi dari solution
     total_nutrition = calculate_total_nutrition(solution)
@@ -314,13 +314,29 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
     total_penalty = 0.0
     constraint_count = 0
     
-    # Iterate setiap nutrient constraint
-    for nutrient_name, constraint in guidelines.items():
-        # Skip jika constraint type unlimited
+    # ════════════════════════════════════════════════════════════════════════
+    # DETECT GUIDELINE STRUCTURE (HARD/SOFT atau LAMA)
+    # ════════════════════════════════════════════════════════════════════════
+    has_hard_soft = isinstance(guidelines.get(list(guidelines.keys())[0] if guidelines else None, None), dict) \
+                    and 'hard' in guidelines and 'soft' in guidelines
+    
+    if has_hard_soft:
+        hard_constraints = guidelines['hard']
+        soft_constraints = guidelines['soft']
+    else:
+        # Backward compatibility: semua jadi SOFT
+        hard_constraints = {}
+        soft_constraints = guidelines
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 1: HARD CONSTRAINTS - PRIORITAS UTAMA (10x/15x penalty)
+    # ════════════════════════════════════════════════════════════════════════
+    for nutrient_name, constraint in hard_constraints.items():
+        # Skip unlimited
         if constraint.get('constraint_type') == 'unlimited':
             continue
         
-        # Skip jika nutrient tidak ada di food database
+        # Skip jika nutrient tidak ada
         if nutrient_name not in total_nutrition:
             continue
         
@@ -331,32 +347,71 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
         max_val = constraint.get('max', float('inf'))
         value = total_nutrition[nutrient_name]
         
-        # Get nutrient weight (default 1.0 jika tidak ada)
+        # Get nutrient weight (default 1.0)
         weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
         
-        # Hitung penalty dengan weight
+        # HARD constraint penalty: lebih besar (10x untuk under, 15x untuk over)
         if value < min_val:
-            # Kurang dari minimum
+            penalty = (min_val - value) * weight * 10  # 10x multiplier untuk HARD under
+            total_penalty += penalty
+        elif value > max_val:
+            penalty = (value - max_val) * weight * 15  # 15x multiplier untuk HARD over
+            total_penalty += penalty
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 2: SOFT CONSTRAINTS - FLEXIBLE (1x normal penalty)
+    # ════════════════════════════════════════════════════════════════════════
+    for nutrient_name, constraint in soft_constraints.items():
+        # Skip unlimited
+        if constraint.get('constraint_type') == 'unlimited':
+            continue
+        
+        # Skip jika nutrient tidak ada
+        if nutrient_name not in total_nutrition:
+            continue
+        
+        constraint_count += 1
+        
+        # Ambil nilai min dan max
+        min_val = constraint.get('min', 0)
+        max_val = constraint.get('max', float('inf'))
+        value = total_nutrition[nutrient_name]
+        
+        # Get nutrient weight (default 1.0)
+        weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
+        
+        # SOFT constraint penalty: normal weight (tidak di-multiply)
+        if value < min_val:
             penalty = (min_val - value) * weight
             total_penalty += penalty
         elif value > max_val:
-            # Lebih dari maximum
             penalty = (value - max_val) * weight
             total_penalty += penalty
-        # else: dalam range, no penalty
     
-    # ════════════════════════════════════════════════════════════════
-    # PERBAIKAN 2: ADD DUPLICATE PENALTY
-    # ════════════════════════════════════════════════════════════════
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 3: HARD STOP - Jika ada violation ekstrem di HARD constraint
+    # ════════════════════════════════════════════════════════════════════════
+    # Misal: Sodium jauh melebihi limit (2x lipat atau lebih)
+    for nutrient_name, constraint in hard_constraints.items():
+        max_val = constraint.get('max', float('inf'))
+        value = total_nutrition.get(nutrient_name, 0)
+        
+        # Jika violation sangat ekstrem (>= 2x limit), add HARD STOP penalty
+        if max_val != float('inf') and value > max_val * 2:
+            total_penalty += 10000  # HARD STOP - ini buruk!
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 4: DUPLICATE PENALTY
+    # ════════════════════════════════════════════════════════════════════════
     if 'food_name' in solution.columns:
         unique_foods = solution['food_name'].nunique()
         duplicate_count = len(solution) - unique_foods
         duplicate_penalty = duplicate_count * DUPLICATE_PENALTY_WEIGHT
         total_penalty += duplicate_penalty
     
-    # ════════════════════════════════════════════════════════════════
-    # PERBAIKAN 4: NORMALIZE PENALTY
-    # ════════════════════════════════════════════════════════════════
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 5: NORMALIZE PENALTY
+    # ════════════════════════════════════════════════════════════════════════
     if constraint_count > 0:
         total_penalty = total_penalty / constraint_count
     
@@ -1027,65 +1082,87 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict):
 
 def calculate_portion_sizes_dynamic(
     selected_df: pd.DataFrame,
-    TDEE: float
+    TDEE: float,
+    guidelines: Optional[Dict] = None
 ) -> pd.DataFrame:
     """
-    Calculate portion sizes (grams) FULL DYNAMIC - semua makanan bekerja bersama.
+    Calculate portion sizes (grams) dengan MEAL-BASED DISTRIBUTION & DEFICIT-AWARE WEIGHTING.
     
-    Algoritma:
-        1. Hitung total energy (asumsi 100g per item)
-        2. Hitung proporsi kontribusi setiap item
-        3. Bagi target energy (TDEE) berdasarkan proporsi
-        4. Hitung gram untuk setiap item
-        5. Apply realistic constraints per kategori
-        6. Calculate final nutrition berdasarkan gram actual
+    Algoritma v3 - SOPHISTICATED:
+        1. Meal distribution: Breakfast 25%, Lunch 35%, Dinner 30%, Snack 10%
+        2. Calculate totals @ 100g
+        3. Calculate deficit (kekurangan vs target minimum)
+        4. Deficit-aware weight: prioritize nutrients yang kurang
+        5. Label adjustment: Snack 0.3x, Drink 0.5x, Side 0.8x, Main 1.0x
+        6. Normalize weights per meal
+        7. Distribute energy per meal
+        8. Calculate gram
+        9. Clamp realistic
+        10. Renormalize setelah clamp untuk match target
     
-    Rumus:
-        # Step 1: Total energy (100g assumption)
-        total_energy_100g = sum(item['energy_kcal'] for all items)
-        
-        # Step 2: Proportion weight
-        weight_i = item['energy_kcal'] / total_energy_100g
-        
-        # Step 3: Distribute target energy
-        target_energy_i = weight_i * TDEE
-        
-        # Step 4: Calculate gram
-        gram_i = (target_energy_i / item['energy_kcal']) * 100
-        
-        # Step 5: Apply constraints
-        gram_i = clamp(gram_i, min_g, max_g)
+    Tujuan:
+        - Snack tidak dominan
+        - Protein tidak over
+        - Carb tidak drop
+        - Distribusi meal realistis
+        - Compliance meningkat
     
     Args:
         selected_df: DataFrame 10 selected meal items (index 0-9)
         TDEE: Total daily energy expenditure (kcal)
+        guidelines: Optional dict dari NutritionService (untuk target nutrient)
     
     Returns:
-        DataFrame dengan kolom tambahan:
-        - gram: portion size (g)
-        - final_energy_kcal, final_protein_g, final_carbohydrate_g, dll
-    
-    Notes:
-        - Dataset values adalah per 100g
-        - Final nutrition = (dataset_value / 100) * actual_gram
-        - Semua items bekerja bersama memenuhi target (not individually)
+        DataFrame dengan kolom: gram, final_energy_kcal, final_protein_g, dll
     """
     
-    # Realistic gram constraints per food category (min, max)
-    gram_constraints = {
-        'Main Course': (100, 400),
-        'Side Dish': (50, 200),
-        'Drink': (150, 400),
-        'Snack': (30, 150)
+    # Meal distribution ratios
+    meal_ratio = {
+        'breakfast': 0.25,
+        'lunch': 0.35,
+        'dinner': 0.30,
+        'snack': 0.10
     }
     
-    # Copy dataframe untuk modifikasi
-    result_df = selected_df.copy()
+    # Mapping slot index ke meal type
+    slot_to_meal = {
+        0: 'breakfast', 1: 'breakfast', 2: 'breakfast',
+        3: 'lunch', 4: 'lunch', 5: 'lunch',
+        6: 'dinner', 7: 'dinner', 8: 'dinner',
+        9: 'snack'
+    }
     
-    # Initialize gram column
+    # Gram constraints realistic
+    gram_constraints = {
+        'Main Course': (100, 300),
+        'Side Dish': (50, 150),
+        'Drink': (150, 300),
+        'Snack': (30, 100)
+    }
+    
+    # Label adjustment factors
+    label_adjustments = {
+        'Main Course': 1.0,
+        'Side Dish': 0.8,
+        'Drink': 0.5,
+        'Snack': 0.3
+    }
+    
+    # Extract guideline targets if provided
+    if guidelines:
+        target_protein_min = guidelines.get('protein_g', {}).get('min', 60)
+        target_fat_min = guidelines.get('fat_g', {}).get('min', 50)
+        target_carb_min = guidelines.get('carbohydrate_g', {}).get('min', 250)
+    else:
+        target_protein_min = 60
+        target_fat_min = 50
+        target_carb_min = 250
+    
+    # Copy dataframe
+    result_df = selected_df.copy()
     result_df['gram'] = 0.0
     
-    # List of nutrients to scale (all numeric columns related to nutrition)
+    # Nutrients to scale
     nutrients_to_scale = [
         'energy_kcal', 'protein_g', 'carbohydrate_g', 'fat_g', 'fiber_g',
         'sodium_mg', 'calcium_mg', 'iron_mg', 'phosphorus_mg', 'zinc_mg',
@@ -1093,74 +1170,205 @@ def calculate_portion_sizes_dynamic(
         'vitamin_b1_mg', 'vitamin_b2_mg', 'vitamin_b3_mg', 'cholesterol_mg'
     ]
     
-    # Add final_nutrient columns
     for nutrient in nutrients_to_scale:
         result_df[f'final_{nutrient}'] = 0.0
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 1: Hitung total energy (asumsi 100g per item)
+    # STEP 1-2: Calculate totals @ 100g
     # ════════════════════════════════════════════════════════════════════════
-    total_energy_100g = 0.0
+    total_energy = 0.0
+    total_protein = 0.0
+    total_fat = 0.0
+    total_carb = 0.0
+    
     for idx in range(len(result_df)):
-        energy = result_df.iloc[idx].get('energy_kcal', 0) or 0
-        total_energy_100g += energy
+        item = result_df.iloc[idx]
+        total_energy += item.get('energy_kcal', 0) or 0
+        total_protein += item.get('protein_g', 0) or 0
+        total_fat += item.get('fat_g', 0) or 0
+        total_carb += item.get('carbohydrate_g', 0) or 0
     
-    if total_energy_100g <= 0:
-        total_energy_100g = 1  # Prevent division by zero
+    if total_energy <= 0: total_energy = 1
+    if total_protein <= 0: total_protein = 1
+    if total_fat <= 0: total_fat = 1
+    if total_carb <= 0: total_carb = 1
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 2-6: Calculate gram dan final nutrients untuk setiap item
+    # STEP 3: Calculate deficit (kekurangan vs target)
     # ════════════════════════════════════════════════════════════════════════
+    protein_need = max(0, target_protein_min - total_protein)
+    fat_need = max(0, target_fat_min - total_fat)
+    carb_need = max(0, target_carb_min - total_carb)
+    
+    # Boost factors untuk nutrients yang kurang
+    protein_boost = 1.0 if protein_need > 0 else 0.3
+    fat_boost = 1.0 if fat_need > 0 else 0.3
+    carb_boost = 1.0 if carb_need > 0 else 1.2
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 4-6: Calculate weights (deficit-aware) + label adjustment + normalize per meal
+    # ════════════════════════════════════════════════════════════════════════
+    
+    weights_per_meal = {meal: [] for meal in meal_ratio.keys()}
     
     for idx in range(len(result_df)):
         item = result_df.iloc[idx]
         
-        # Get energy per 100g
-        energy_per_100g = item.get('energy_kcal', 0) or 0
+        energy = item.get('energy_kcal', 0) or 0
+        protein = item.get('protein_g', 0) or 0
+        fat = item.get('fat_g', 0) or 0
+        carb = item.get('carbohydrate_g', 0) or 0
         
-        if energy_per_100g <= 0:
-            energy_per_100g = 1
+        # STEP 4: Deficit-aware weight
+        weight_raw = (
+            0.4 * (energy / total_energy) +
+            0.3 * (protein / total_protein) * protein_boost +
+            0.2 * (fat / total_fat) * fat_boost +
+            0.1 * (carb / total_carb) * carb_boost
+        )
         
-        # STEP 2: Hitung proporsi kontribusi item ini
-        weight = energy_per_100g / total_energy_100g
-        
-        # STEP 3: Bagi target energy (TDEE) berdasarkan proporsi
-        target_energy = weight * TDEE
-        
-        # STEP 4: Hitung gram
-        gram = (target_energy / energy_per_100g) * 100
-        
-        # STEP 5: Apply realistic gram constraints
+        # STEP 5: Label adjustment
         label = item.get('consumption_label', 'Main Course')
         if isinstance(label, str):
             label = label.strip()
         
-        min_g, max_g = gram_constraints.get(label, (50, 200))
-        gram = np.clip(gram, min_g, max_g)
+        adjustment = label_adjustments.get(label, 1.0)
+        weight_adjusted = weight_raw * adjustment
         
-        # Store gram (rounded to 1 decimal)
-        result_df.at[idx, 'gram'] = round(gram, 1)
+        # STEP 6: Store untuk normalisasi per meal
+        meal_type = slot_to_meal.get(idx, 'snack')
+        weights_per_meal[meal_type].append((idx, weight_adjusted, label, energy))
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 7-10: Normalize per meal, distribute energy, calc gram, clamp, renormalize
+    # ════════════════════════════════════════════════════════════════════════
+    
+    for meal_type, ratio in meal_ratio.items():
+        # Target energy untuk meal ini
+        target_meal_energy = TDEE * ratio
         
-        # STEP 6: Calculate final nutrients berdasarkan gram actual
-        for nutrient in nutrients_to_scale:
-            if nutrient in item.index:
-                value_per_100g = item.get(nutrient, 0) or 0
-                final_value = value_per_100g * gram / 100
-                result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+        # Get items untuk meal ini
+        meal_items = weights_per_meal[meal_type]
+        if not meal_items:
+            continue
+        
+        # Normalize weights per meal
+        total_weight_meal = sum(w for _, w, _, _ in meal_items)
+        if total_weight_meal <= 0:
+            total_weight_meal = 1
+        
+        normalized_weights = [(w / total_weight_meal) for _, w, _, _ in meal_items]
+        
+        # First pass: calculate grams
+        grams_first_pass = []
+        meal_energy_first = 0
+        
+        for (idx, weight_adj, label, energy), norm_weight in zip(meal_items, normalized_weights):
+            # STEP 7: Distribute energy per meal
+            target_energy_item = norm_weight * target_meal_energy
+            
+            # STEP 8: Calculate gram
+            energy_per_100g = energy or 1
+            gram = (target_energy_item / energy_per_100g) * 100
+            
+            # STEP 9: Clamp realistic
+            min_g, max_g = gram_constraints.get(label, (50, 150))
+            gram_clamped = np.clip(gram, min_g, max_g)
+            
+            grams_first_pass.append((idx, gram_clamped, energy_per_100g))
+            meal_energy_first += energy_per_100g * gram_clamped / 100
+        
+        # STEP 10: Renormalize setelah clamp untuk match target meal energy
+        if meal_energy_first > 0:
+            scale = target_meal_energy / meal_energy_first
+        else:
+            scale = 1.0
+        
+        for idx, gram_clamped, energy_per_100g in grams_first_pass:
+            gram_final = gram_clamped * scale
+            result_df.at[idx, 'gram'] = round(gram_final, 1)
+            
+            # Calculate final nutrients
+            item = result_df.iloc[idx]
+            for nutrient in nutrients_to_scale:
+                if nutrient in item.index:
+                    value_per_100g = item.get(nutrient, 0) or 0
+                    final_value = value_per_100g * gram_final / 100
+                    result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # NEW: HARD STOP CONTROL - SODIUM & CHOLESTEROL
+    # ════════════════════════════════════════════════════════════════════════
+    # Jika ada HARD constraint violation, scale down semua portions
+    
+    # Check HARD constraints from guidelines
+    if guidelines and isinstance(guidelines, dict) and 'hard' in guidelines:
+        hard_constraints = guidelines['hard']
+        
+        # ────────────────────────────────────────────────────────────────────
+        # SODIUM CONTROL
+        # ────────────────────────────────────────────────────────────────────
+        if 'sodium_mg' in hard_constraints:
+            sodium_limit = hard_constraints['sodium_mg'].get('max', float('inf'))
+            total_sodium = result_df['final_sodium_mg'].sum()
+            
+            if total_sodium > sodium_limit and sodium_limit != float('inf'):
+                # Scale down grams untuk match sodium limit
+                scale_sodium = sodium_limit / total_sodium
+                result_df['gram'] *= scale_sodium
+                
+                # Recalculate final nutrients dengan scaled gram
+                for idx in range(len(result_df)):
+                    item = result_df.iloc[idx]
+                    gram = result_df.at[idx, 'gram']
+                    
+                    for nutrient in nutrients_to_scale:
+                        if nutrient in item.index:
+                            value_per_100g = item.get(nutrient, 0) or 0
+                            final_value = value_per_100g * gram / 100
+                            result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+        
+        # ────────────────────────────────────────────────────────────────────
+        # CHOLESTEROL CONTROL
+        # ────────────────────────────────────────────────────────────────────
+        if 'cholesterol_mg' in hard_constraints:
+            chol_limit = hard_constraints['cholesterol_mg'].get('max', float('inf'))
+            total_chol = result_df['final_cholesterol_mg'].sum()
+            
+            if total_chol > chol_limit and chol_limit != float('inf'):
+                # Scale down grams untuk match cholesterol limit
+                scale_chol = chol_limit / total_chol
+                result_df['gram'] *= scale_chol
+                
+                # Recalculate final nutrients dengan scaled gram
+                for idx in range(len(result_df)):
+                    item = result_df.iloc[idx]
+                    gram = result_df.at[idx, 'gram']
+                    
+                    for nutrient in nutrients_to_scale:
+                        if nutrient in item.index:
+                            value_per_100g = item.get(nutrient, 0) or 0
+                            final_value = value_per_100g * gram / 100
+                            result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
     return result_df
 
 
 def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, TDEE: float):
     """
-    Display portion sizing hasil dengan detail per meal (FULL DYNAMIC version)
+    Display portion sizing hasil dengan detail per meal (v3 - SOPHISTICATED)
     
     Algorithm yang ditampilkan:
-    1. Total energy (100g assumption)
-    2. Proportion weight untuk setiap item
-    3. Target energy distribution
-    4. Gram calculation dengan constraints
-    5. Final nutrition summary
+    1. Meal distribution: Breakfast 25%, Lunch 35%, Dinner 30%, Snack 10%
+    2. Calculate totals @ 100g
+    3. Calculate deficit (kekurangan vs target)
+    4. Deficit-aware weight: boost nutrients yang kurang
+    5. Label adjustment: Snack 0.3x, Drink 0.5x, Side 0.8x, Main 1.0x
+    6. Normalize per meal
+    7. Distribute energy per meal
+    8. Clamp realistic
+    9. Renormalize setelah clamp untuk match target
+    10. Final nutrition summary
     
     Args:
         portion_df: DataFrame hasil calculate_portion_sizes_dynamic()
@@ -1168,15 +1376,19 @@ def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, 
         TDEE: Total daily energy expenditure (untuk reference)
     """
     print("\n" + "="*70)
-    print("STEP 9: PORTION SIZING - FULL DYNAMIC DISTRIBUTION")
+    print("STEP 9: PORTION SIZING - MEAL-BASED + DEFICIT-AWARE (v3)")
     print("="*70)
     
-    print(f"\n📐 ALGORITHM:")
-    print(f"  1. Calculate total energy (100g × 10 items): {portion_df['energy_kcal'].sum():.0f} kcal")
-    print(f"  2. Calculate weight proportion for each item")
-    print(f"  3. Distribute target energy ({TDEE:.0f} kcal) by proportion")
-    print(f"  4. Calculate gram: (target_energy / energy_per_100g) × 100")
-    print(f"  5. Apply realistic limits (Main: 100-400g, Side: 50-200g, Drink: 150-400g, Snack: 30-150g)")
+    print(f"\n📐 SOPHISTICATED ALGORITHM:")
+    print(f"  1. Meal distribution: Breakfast 25% | Lunch 35% | Dinner 30% | Snack 10% of TDEE")
+    print(f"  2. Totals @ 100g: Energy {portion_df['energy_kcal'].sum():.0f}kcal | Protein {portion_df['protein_g'].sum():.1f}g | Fat {portion_df['fat_g'].sum():.1f}g | Carb {portion_df['carbohydrate_g'].sum():.1f}g")
+    print(f"  3. Calculate deficit vs targets (Protein>{guidelines.get('protein_g', {}).get('min', 60)}, Fat>{guidelines.get('fat_g', {}).get('min', 50)}, Carb>{guidelines.get('carbohydrate_g', {}).get('min', 250)})")
+    print(f"  4. Weight = 40% energy + 30% protein(×boost) + 20% fat(×boost) + 10% carb(×boost)")
+    print(f"  5. Label adjustment: Main 1.0x | Side 0.8x | Drink 0.5x | Snack 0.3x")
+    print(f"  6. Normalize weights per meal")
+    print(f"  7. Distribute energy: Target_meal = TDEE × meal_ratio")
+    print(f"  8. Clamp: Main 100-300g | Side 50-150g | Drink 150-300g | Snack 30-100g")
+    print(f"  9. Renormalize setelah clamp untuk match target_meal_energy")
     
     print(f"\n📊 YOUR PERSONALIZED MEAL PORTIONS:")
     print(f"─" * 70)

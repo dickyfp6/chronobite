@@ -163,12 +163,47 @@ def test_ga_with_nutrition_service():
         print("\nSTEP 3: Extract data from NutritionService...")
         
         food_df = nutrition_result['food_data']['dataframe']
-        guidelines = nutrition_result['guidelines']['nutrients']
+        guidelines_all = nutrition_result['guidelines']['nutrients']
         tdee = nutrition_result['energy']['tdee']
+        
+        # ════════════════════════════════════════════════════════════════════════
+        # NEW: SPLIT GUIDELINES MENJADI HARD DAN SOFT CONSTRAINTS
+        # ════════════════════════════════════════════════════════════════════════
+        # HARD constraint: Berasal dari penyakit user → PRIORITAS UTAMA (high penalty)
+        # SOFT constraint: Berasal dari DRI → FLEXIBLE (normal penalty)
+        
+        # Define HARD_KEYS berdasarkan disease
+        HARD_KEYS = []
+        user_diseases = user_input['disease']
+        
+        # Selalu include sodium untuk semua user
+        HARD_KEYS.append('sodium_mg')
+        
+        # Add disease-specific HARD constraints
+        if any(d in ['dm2', 'cvd', 'cholesterol'] for d in user_diseases):
+            HARD_KEYS.append('cholesterol_mg')
+        
+        if any(d in ['hypertension', 'cvd'] for d in user_diseases):
+            HARD_KEYS.extend(['sodium_mg', 'potassium_mg'])  # sodium sudah ada
+            HARD_KEYS = list(set(HARD_KEYS))  # Remove duplicates
+        
+        if any(d in ['ckd'] for d in user_diseases):
+            HARD_KEYS.extend(['sodium_mg', 'potassium_mg', 'phosphorus_mg', 'protein_g'])
+            HARD_KEYS = list(set(HARD_KEYS))  # Remove duplicates
+        
+        # Remove duplicates
+        HARD_KEYS = list(set(HARD_KEYS))
+        
+        # Split guidelines
+        guidelines = {
+            'hard': {k: guidelines_all[k] for k in HARD_KEYS if k in guidelines_all},
+            'soft': {k: v for k, v in guidelines_all.items() if k not in HARD_KEYS}
+        }
         
         print(f"✓ Data extracted:")
         print(f"  - Food items available: {len(food_df)}")
-        print(f"  - Nutrition constraints: {len(guidelines)}")
+        print(f"  - HARD constraints: {len(guidelines['hard'])} nutrients")
+        print(f"  - SOFT constraints: {len(guidelines['soft'])} nutrients")
         print(f"  - User TDEE: {tdee:.0f} kcal/day")
         
         # Display some info dari NutritionService
@@ -180,13 +215,20 @@ def test_ga_with_nutrition_service():
         print(f"  - BMR: {energy['bmr']:.0f} kcal/day")
         print(f"  - TDEE: {energy['tdee']:.0f} kcal/day")
         
-        # Display nutrition constraints (only key ones)
-        print(f"\n🎯 Nutrition Guidelines (Key constraints):")
-        key_nutrients = ['energy_kcal', 'protein_g', 'carbohydrate_g', 'fat_g', 
-                        'sodium_mg', 'cholesterol_mg', 'fiber_g']
-        for nutrient in key_nutrients:
-            if nutrient in guidelines:
-                constraint = guidelines[nutrient]
+        # Display HARD vs SOFT constraints
+        print(f"\n🎯 HARD Constraints (Disease-based - HIGH PRIORITY):")
+        for nutrient in sorted(guidelines['hard'].keys()):
+            constraint = guidelines['hard'][nutrient]
+            min_val = constraint.get('min', 0)
+            max_val = constraint.get('max', float('inf'))
+            unit = constraint.get('unit', 'unit')
+            print(f"  - {nutrient:20s}: {min_val:8.1f} - {max_val:8.1f} {unit}")
+        
+        print(f"\n🎯 SOFT Constraints (DRI-based - FLEXIBLE):")
+        key_soft_nutrients = ['energy_kcal', 'protein_g', 'carbohydrate_g', 'fat_g', 'fiber_g']
+        for nutrient in key_soft_nutrients:
+            if nutrient in guidelines['soft']:
+                constraint = guidelines['soft'][nutrient]
                 min_val = constraint.get('min', 0)
                 max_val = constraint.get('max', float('inf'))
                 unit = constraint.get('unit', 'unit')
@@ -366,9 +408,9 @@ def test_ga_with_nutrition_service():
             print("="*70)
             
             # ════════════════════════════════════════════════════════════════════════
-            # STEP 9: PORTION SIZING - Calculate portion sizes dynamically (FULL DYNAMIC)
+            # STEP 9: PORTION SIZING - Calculate portion sizes dynamically (MEAL-BASED + DEFICIT-AWARE)
             # ════════════════════════════════════════════════════════════════════════
-            portion_result_df = calculate_portion_sizes_dynamic(selected_df, tdee)
+            portion_result_df = calculate_portion_sizes_dynamic(selected_df, tdee, guidelines)
             display_portion_summary_dynamic(portion_result_df, guidelines, tdee)
             
             print("\n✓ MEAL PLANNING SYSTEM - COMPLETE")
