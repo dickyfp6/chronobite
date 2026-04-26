@@ -37,7 +37,7 @@ USE_INTERACTIVE_INPUT = True
 from ga_v1 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
-    SLOT_NAMES, CHROMOSOME_SIZE
+    SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic
 )
 
 # Import NutritionService
@@ -180,16 +180,19 @@ def test_ga_with_nutrition_service():
         print(f"  - BMR: {energy['bmr']:.0f} kcal/day")
         print(f"  - TDEE: {energy['tdee']:.0f} kcal/day")
         
-        # Display nutrition constraints
-        print(f"\n🎯 Nutrition Guidelines (Top 10 constraints):")
-        constraint_items = list(guidelines.items())[:10]
-        for nutrient, constraint in constraint_items:
-            min_val = constraint.get('min', 0)
-            max_val = constraint.get('max', float('inf'))
-            unit = constraint.get('unit', 'unit')
-            print(f"  - {nutrient}: {min_val:.1f} - {max_val:.1f} {unit}")
+        # Display nutrition constraints (only key ones)
+        print(f"\n🎯 Nutrition Guidelines (Key constraints):")
+        key_nutrients = ['energy_kcal', 'protein_g', 'carbohydrate_g', 'fat_g', 
+                        'sodium_mg', 'cholesterol_mg', 'fiber_g']
+        for nutrient in key_nutrients:
+            if nutrient in guidelines:
+                constraint = guidelines[nutrient]
+                min_val = constraint.get('min', 0)
+                max_val = constraint.get('max', float('inf'))
+                unit = constraint.get('unit', 'unit')
+                print(f"  - {nutrient:20s}: {min_val:8.1f} - {max_val:8.1f} {unit}")
         
-        # STEP 4: Run GA
+        # STEP 4: Run GA (silently - less verbose)
         print("\n" + "="*70)
         print("STEP 4: Run Genetic Algorithm...")
         print("="*70)
@@ -201,8 +204,9 @@ def test_ga_with_nutrition_service():
             pop_size=20,
             elite_ratio=0.25,
             mutation_rate=0.3,
-            verbose=True
+            verbose=False  # Changed to False for cleaner output
         )
+        print("✓ GA optimization complete")
         
         # STEP 5: Display hasil
         print("\n" + "="*70)
@@ -212,12 +216,17 @@ def test_ga_with_nutrition_service():
         display_solution(best_solution, guidelines)
         display_fitness_details(best_solution, guidelines)
         
-        # STEP 6: Generate meal options dari top solutions
+        # STEP 6: Generate meal options dari top_solutions (berbagai kombinasi)
         print("\n" + "="*70)
-        print("STEP 6: Generate 3 pilihan menu per slot...")
+        print("STEP 6: Generate 2-3 varied menu options per slot...")
         print("="*70)
         
-        slot_options = generate_meal_options(top_solutions, max_options_per_slot=3)
+        slot_options = generate_meal_options(
+            food_df,
+            top_solutions,
+            max_options_per_slot=3,
+            food_preferences=user_input['food_preferences']
+        )
         display_meal_options(slot_options)
         
         # ============================================================================
@@ -297,35 +306,39 @@ def test_ga_with_nutrition_service():
             # Calculate total nutrition dari selected meals
             selected_nutrition = calculate_total_nutrition(selected_df)
             
-            # STEP 8: Display final nutrition comparison
+            # STEP 8: Display final nutrition comparison (simplified)
             print("\n" + "="*70)
-            print("STEP 8: FINAL NUTRITION ANALYSIS - Selected Menu Plan")
+            print("STEP 8: NUTRITION ANALYSIS - Your Selected Menu")
             print("="*70)
             
-            print("\n📊 SELECTED MEAL COMPOSITION:")
+            print("\n📋 YOUR SELECTED MENU (10 Items):")
             print("─" * 70)
             
-            # Display all selected meals
-            for idx, meal in enumerate(selected_df.itertuples()):
-                print(f"[{idx:2d}] {meal.food_name:30} | {meal.energy_kcal:6.1f} kcal")
+            # Display meals by meal type
+            for meal in ['breakfast', 'lunch', 'dinner', 'snack']:
+                indices = MEAL_INDICES[meal]
+                meal_items = [selected_df.iloc[i].get('food_name', f'Item {i}') 
+                             for i in indices if i < len(selected_df)]
+                print(f"\n{meal.upper():12}: {' | '.join(meal_items)}")
+            
+            # Calculate total nutrition dari selected meals
+            selected_nutrition = calculate_total_nutrition(selected_df)
             
             print("\n" + "─" * 70)
-            print("📈 TOTAL NUTRITION - SELECTED MENU:")
+            print("📊 NUTRITION SUMMARY:")
             print("─" * 70)
             
-            # Key nutrients for display
+            # Key nutrients for comparison
             key_nutrients = [
                 ('energy_kcal', 'kcal', 'Energy'),
                 ('protein_g', 'g', 'Protein'),
-                ('carbohydrate_g', 'g', 'Carbohydrates'),
                 ('fat_g', 'g', 'Fat'),
-                ('fiber_g', 'g', 'Fiber'),
                 ('sodium_mg', 'mg', 'Sodium'),
-                ('calcium_mg', 'mg', 'Calcium'),
-                ('iron_mg', 'mg', 'Iron')
+                ('cholesterol_mg', 'mg', 'Cholesterol')
             ]
             
-            nutrition_status = []
+            compliant = 0
+            total_checks = 0
             
             for nutrient_col, unit, label in key_nutrients:
                 if nutrient_col in selected_nutrition:
@@ -334,77 +347,36 @@ def test_ga_with_nutrition_service():
                     min_val = constraint.get('min', 0)
                     max_val = constraint.get('max', float('inf'))
                     
-                    # Determine status
-                    if value < min_val:
-                        status = "🔴 LOW"
-                        nutrition_status.append('❌')
-                    elif value > max_val:
-                        status = "🟡 HIGH"
-                        nutrition_status.append('⚠️')
+                    total_checks += 1
+                    if min_val <= value <= max_val:
+                        status = "✅"
+                        compliant += 1
+                    elif value < min_val:
+                        status = "🔴 (LOW)"
                     else:
-                        status = "🟢 OK"
-                        nutrition_status.append('✅')
+                        status = "🟡 (HIGH)"
                     
-                    print(f"\n{label:20} : {value:8.1f} {unit:5} {status}")
-                    print(f"  Target           : {min_val:8.1f} - {max_val:8.1f} {unit}")
+                    print(f"  {label:15}: {value:8.1f} {unit:5} [{min_val:8.1f}-{max_val:8.1f}] {status}")
             
-            # Summary status
+            # Summary compliance
             print("\n" + "="*70)
-            compliance_rate = (nutrition_status.count('✅') / len(nutrition_status)) * 100
-            print(f"📋 GUIDELINE COMPLIANCE: {compliance_rate:.0f}% ({nutrition_status.count('✅')}/{len(nutrition_status)} nutrients OK)")
-            
-            if compliance_rate == 100:
-                print("✅ ALL nutrients within guidelines!")
-            elif compliance_rate >= 75:
-                print("⚠️  Most nutrients are within guidelines")
-            else:
-                print("❌ Several nutrients outside guidelines - consider adjusting selection")
-            
+            if total_checks > 0:
+                compliance_rate = (compliant / total_checks) * 100
+                print(f"✅ COMPLIANCE: {compliance_rate:.0f}% ({compliant}/{total_checks} nutrients OK)")
             print("="*70)
+            
+            # ════════════════════════════════════════════════════════════════════════
+            # STEP 9: PORTION SIZING - Calculate portion sizes dynamically (FULL DYNAMIC)
+            # ════════════════════════════════════════════════════════════════════════
+            portion_result_df = calculate_portion_sizes_dynamic(selected_df, tdee)
+            display_portion_summary_dynamic(portion_result_df, guidelines, tdee)
+            
+            print("\n✓ MEAL PLANNING SYSTEM - COMPLETE")
+            print("="*70 + "\n")
         else:
             print(f"✗ Error: Hanya {len(selected_meal)} dari {CHROMOSOME_SIZE} items yang dipilih")
-        
-        # STEP 9: Display detailed food information
-        print("\n" + "="*70)
-        print("STEP 9: DETAILED FOOD INFORMATION (Selected Menu - 10 Items)")
-        print("="*70)
-        
-        meals = ['breakfast', 'lunch', 'dinner', 'snack']
-        slot_types = {'breakfast': ['main', 'side', 'drink'], 
-                      'lunch': ['main', 'side', 'drink'],
-                      'dinner': ['main', 'side', 'drink'],
-                      'snack': ['item']}
-        
-        # Use selected_df jika tersedia, otherwise use best_solution
-        display_df = selected_df if len(selected_meal) == CHROMOSOME_SIZE else best_solution
-        
-        for meal in meals:
-            # Use MEAL_INDICES from ga_v1 untuk consistency
-            indices = MEAL_INDICES[meal]
-            
-            print(f"\n{meal.upper()}:")
-            for i, idx in enumerate(indices):
-                if idx < len(display_df):
-                    food_row = display_df.iloc[idx]
-                    slot_type = slot_types[meal][i] if i < len(slot_types[meal]) else 'item'
-                    
-                    print(f"\n  {slot_type.upper()}:")
-                    
-                    # Display available columns
-                    important_cols = ['food_name', 'energy_kcal', 'protein_g', 'carbohydrate_g', 
-                                    'fat_g', 'fiber_g', 'cuisine']
-                    
-                    for col in important_cols:
-                        if col in food_row.index:
-                            value = food_row[col]
-                            if isinstance(value, (int, float)):
-                                print(f"    {col}: {value:.1f}")
-                            else:
-                                print(f"    {col}: {value}")
-        
-        print("\n" + "="*70)
-        print("✓ GA COMPLETE - ALL STEPS FINISHED")
-        print("="*70 + "\n")
+            print("\n✓ MEAL PLANNING SYSTEM - COMPLETE")
+            print("="*70 + "\n")
     
     except ValueError as e:
         print(f"\n✗ VALUE ERROR: {e}")

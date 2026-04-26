@@ -56,17 +56,18 @@ MEAL_INDICES = {
 
 # Mapping slot ke expected consumption_label
 # Digunakan untuk filter makanan sesuai kategori konsumsi yang realistis
+# HARUS MATCH dengan actual dataset labels: "Main Course", "Side Dish", "Drink", "Snack"
 SLOT_LABEL_MAP = {
-    0: 'main',      # breakfast_main
-    1: 'side',      # breakfast_side
-    2: 'drink',     # breakfast_drink
-    3: 'main',      # lunch_main
-    4: 'side',      # lunch_side
-    5: 'drink',     # lunch_drink
-    6: 'main',      # dinner_main
-    7: 'side',      # dinner_side
-    8: 'drink',     # dinner_drink
-    9: 'snack'      # snack
+    0: 'Main Course',    # breakfast_main
+    1: 'Side Dish',      # breakfast_side
+    2: 'Drink',          # breakfast_drink
+    3: 'Main Course',    # lunch_main
+    4: 'Side Dish',      # lunch_side
+    5: 'Drink',          # lunch_drink
+    6: 'Main Course',    # dinner_main
+    7: 'Side Dish',      # dinner_side
+    8: 'Drink',          # dinner_drink
+    9: 'Snack'           # snack
 }
 
 # Legacy: kept for reference (tidak digunakan lagi, gunakan consumption_label)
@@ -129,7 +130,7 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
     Logic:
         - Cek apakah ada kolom 'consumption_label' di dalam food_df
         - Ambil expected_label dari SLOT_LABEL_MAP[slot_idx]
-        - Filter dengan case-insensitive comparison
+        - Filter dengan case-insensitive comparison + strip
         - Fallback: return sample max 20 items jika tidak ada match
     """
     # Jika tidak ada consumption_label column, return semua items
@@ -145,11 +146,15 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
             print(f"DEBUG: Slot {slot_idx} - No label mapping")
         return food_df
     
-    # Filter items yang match expected label (case-insensitive)
-    filtered = cast(pd.DataFrame, food_df[food_df['consumption_label'].str.lower() == expected_label.lower()])
+    # Filter items yang match expected label (case-insensitive with strip)
+    filtered = cast(pd.DataFrame, food_df[
+        food_df['consumption_label'].str.strip().str.lower() == expected_label.lower()
+    ])
     
     if debug:
         print(f"DEBUG: Slot {slot_idx} ({SLOT_NAMES[slot_idx]}) -> label='{expected_label}' -> {len(filtered)} items")
+        if len(filtered) == 0:
+            print(f"       Available labels: {food_df['consumption_label'].unique().tolist()}")
     
     # Jika tidak ada match, sample dari original sebagai fallback
     if len(filtered) == 0:
@@ -649,80 +654,209 @@ def display_solution(solution: pd.DataFrame, guidelines: Optional[Dict] = None):
             print(f"   {nutrient.replace('_', ' ').title()}: {value:.1f} {unit}")
 
 
-def generate_meal_options(top_solutions: List[pd.DataFrame], max_options_per_slot: int = 3) -> Dict[str, List[pd.Series]]:
+def _calculate_nutrition_score(food_item: pd.Series) -> float:
     """
-    Generate 3 pilihan makanan untuk SETIAP SLOT (breakfast_main, breakfast_side, dst)
-    dari top solutions
+    Hitung nutrition score untuk food item
     
-    Output structure (10 slots):
-    {
-        'breakfast_main': [item1, item2, item3],
-        'breakfast_side': [item1, item2, item3],
-        'breakfast_drink': [item1, item2, item3],
-        'lunch_main': [...],
-        'lunch_side': [...],
-        'lunch_drink': [...],
-        'dinner_main': [...],
-        'dinner_side': [...],
-        'dinner_drink': [...],
-        'snack': [item1, item2, item3]
-    }
+    Score = (0.6 * protein) + (0.3 * energy/100) - (0.1 * fat)
+    
+    Tujuan: Prioritas protein, energy, minimal fat
     
     Args:
-        top_solutions: List of top DataFrame solutions dari GA (10 items each)
-        max_options_per_slot: Jumlah pilihan per slot (default 3)
+        food_item: pd.Series dengan kolom energy_kcal, protein_g, fat_g
     
     Returns:
-        Dict dengan 10 keys (per slot), masing-masing berisi list items
+        float: Score (higher is better)
+    """
+    protein = food_item.get('protein_g', 0) or 0
+    energy = food_item.get('energy_kcal', 0) or 0
+    fat = food_item.get('fat_g', 0) or 0
     
-    Logic:
-        1. Loop setiap slot index (0-9)
-        2. Untuk setiap slot, loop setiap solution
-        3. Ambil item dari solution.iloc[slot_idx]
-        4. Deduplicate by food_name
-        5. Simpan max 3 unik items per slot
+    # Score: prioritas protein > energy > minimize fat
+    score = (0.6 * protein) + (0.3 * energy / 100) - (0.1 * fat)
+    
+    return float(score)
+
+
+def _apply_quality_filter(filtered: pd.DataFrame, expected_label: str) -> pd.DataFrame:
+    """
+    Apply quality filter untuk setiap food category
+    
+    Main Course: strict (energy >= 150, protein >= 5)
+    Side Dish: moderate
+    Drink: lenient
+    Snack: lenient
+    
+    Args:
+        filtered: DataFrame yang sudah filter by label
+        expected_label: Label untuk slot (e.g., 'Main Course')
+    
+    Returns:
+        Filtered DataFrame dengan quality constraints
+    """
+    if len(filtered) == 0:
+        return filtered
+    
+    expected_lower = expected_label.strip().lower()
+    
+    # MAIN COURSE: STRICT quality filter untuk realistic main dishes
+    if expected_lower == 'main course':
+        # Main harus energy >= 200 kcal (sufficient) dan protein >= 8g (adequate protein)
+        # Ini menghilangkan snack-like items seperti chestnut, pretzel
+        filtered = cast(pd.DataFrame, filtered[
+            (filtered['energy_kcal'] >= 200) &
+            (filtered['protein_g'] >= 8)
+        ])
+    
+    # SIDE DISH: Moderate filter (minimum nutrisi)
+    elif expected_lower == 'side dish':
+        # Side minimal protein >= 2g (biar ada nutrisi)
+        filtered = cast(pd.DataFrame, filtered[filtered['protein_g'] >= 2])
+    
+    # DRINK & SNACK: Lenient, terima saja
+    
+    return filtered
+
+
+def generate_meal_options(
+    food_df: pd.DataFrame,
+    top_solutions: List[pd.DataFrame],
+    max_options_per_slot: int = 3,
+    food_preferences: Optional[List[str]] = None
+) -> Dict[str, List[pd.Series]]:
+    """
+    Generate 2-3 opsi menu per slot yang beragam dan tidak duplikat.
+    
+    Strategy SEDERHANA:
+    1. Kumpulkan items dari top_solutions untuk setiap slot → basis utama
+    2. Tambah variasi dari dataset dengan filtering konsumsi label
+    3. Hilangkan duplikat per slot (by food_name)
+    4. Hindari duplikasi global (across slots) dengan tracking used_foods
+    5. Shuffle ringan untuk variasi
+    6. Ambil 3 opsi pertama
+    
+    Args:
+        food_df: DataFrame semua food items
+        top_solutions: List of top 10 meal plans dari GA
+        max_options_per_slot: Jumlah pilihan per slot (default 3)
+        food_preferences: List of preferred cuisines (e.g., ['Asian', 'Western'])
+    
+    Returns:
+        Dict[slot_name: [option1, option2, option3], ...]
     
     Example:
-        top_solutions = [sol1, sol2, ..., sol10]  # each with 10 items
-        options = generate_meal_options(top_solutions)
-        
-        options['breakfast_main'] = [
-            pd.Series{food_name: 'Nasi Putih', energy_kcal: 180, ...},
-            pd.Series{food_name: 'Roti Tawar', energy_kcal: 250, ...},
-            pd.Series{food_name: 'Bubur Ayam', energy_kcal: 200, ...}
-        ]
-        
-        options['breakfast_side'] = [
-            pd.Series{food_name: 'Tempe Goreng', energy_kcal: 95, ...},
-            ...
-        ]
+        best_sol, top_sols = run_ga(food_df, guidelines)
+        options = generate_meal_options(food_df, top_sols, max_options_per_slot=3)
     """
-    # Initialize dictionary untuk semua 10 slots
-    slot_options = {slot: [] for slot in SLOT_NAMES}
-    tracked_foods = {slot: set() for slot in SLOT_NAMES}  # Track food_name untuk dedup
     
-    # Loop setiap slot index (0-9)
+    slot_options = {slot: [] for slot in SLOT_NAMES}
+    used_foods = set()  # Track makanan yang sudah dipakai (hindari duplikasi global)
+    
+    # Prepare cuisine preferences
+    if food_preferences and len(food_preferences) > 0:
+        allowed_cuisine = food_preferences + ['Generic']
+        allowed_cuisine = list(set(allowed_cuisine))
+    else:
+        allowed_cuisine = None
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # LOOP SETIAP SLOT
+    # ════════════════════════════════════════════════════════════════════════
     for slot_idx in range(CHROMOSOME_SIZE):
         slot_name = SLOT_NAMES[slot_idx]
+        expected_label = SLOT_LABEL_MAP[slot_idx]
         
-        # Loop setiap solution
+        # ────────────────────────────────────────────────────────────────────
+        # STEP 1: Kumpulkan items dari top_solutions
+        # ────────────────────────────────────────────────────────────────────
+        candidates = []
+        
         for solution in top_solutions:
-            # Skip jika sudah punya max options untuk slot ini
-            if len(slot_options[slot_name]) >= max_options_per_slot:
-                break
-            
-            # Check index valid
             if slot_idx < len(solution):
-                food_item = solution.iloc[slot_idx]
-                food_name = food_item.get('food_name', 'Unknown')
-                
-                # Deduplicate: skip jika sudah ada
-                if food_name in tracked_foods[slot_name]:
-                    continue
-                
-                # Add to options
-                slot_options[slot_name].append(food_item)
-                tracked_foods[slot_name].add(food_name)
+                item = solution.iloc[slot_idx]
+                candidates.append(item)
+        
+        # ────────────────────────────────────────────────────────────────────
+        # STEP 2: Tambah variasi dari dataset
+        # ────────────────────────────────────────────────────────────────────
+        dataset_items = food_df[
+            food_df['consumption_label'].str.strip().str.lower() == expected_label.lower()
+        ]
+        
+        # Filter by cuisine jika ada preference
+        if allowed_cuisine and 'cuisine' in dataset_items.columns:
+            dataset_items = dataset_items[dataset_items['cuisine'].isin(allowed_cuisine)]
+        
+        # Sample max 20 items dari dataset untuk variasi
+        if len(dataset_items) > 20:
+            dataset_items = dataset_items.sample(n=20, random_state=None)
+        
+        # Gabungkan candidates + dataset items (convert to Series list)
+        for idx, row in dataset_items.iterrows():
+            candidates.append(row)  # row is already a pd.Series
+        
+        # ────────────────────────────────────────────────────────────────────
+        # STEP 3: Hilangkan duplikat per slot (by food_name)
+        # ────────────────────────────────────────────────────────────────────
+        unique_dict = {}
+        for item in candidates:
+            # Safe extraction dari Series
+            item_name = item.get('food_name', '') if isinstance(item, pd.Series) else getattr(item, 'food_name', '')
+            if item_name and item_name not in unique_dict:
+                unique_dict[item_name] = item
+        
+        candidates = list(unique_dict.values())
+        
+        # ────────────────────────────────────────────────────────────────────
+        # STEP 4: Hindari duplikasi global (dengan exception untuk Drinks)
+        # ────────────────────────────────────────────────────────────────────
+        # LOGIC: Strict untuk Main Course/Side Dish, tapi RELAX untuk Drink/Snack
+        # Alasan: Realistis bahwa user bisa minum hal yang sama di berbagai waktu,
+        #         tapi unlikely makan exact same main course di multiple slots
+        # ────────────────────────────────────────────────────────────────────
+        filtered_candidates = []
+        is_drink_or_snack = expected_label.lower() in ['drink', 'snack']
+        
+        for item in candidates:
+            # Safe extraction dari Series
+            item_name = item.get('food_name', '') if isinstance(item, pd.Series) else getattr(item, 'food_name', '')
+            
+            # Untuk Drink/Snack: RELAX global dedup (allow reuse)
+            # Untuk Main Course/Side Dish: STRICT global dedup (no reuse)
+            if item_name:
+                if is_drink_or_snack or item_name not in used_foods:
+                    filtered_candidates.append(item)
+        
+        candidates = filtered_candidates
+        
+        # ────────────────────────────────────────────────────────────────────
+        # STEP 5: Shuffle ringan untuk variasi
+        # ────────────────────────────────────────────────────────────────────
+        random.shuffle(candidates)
+        
+        # ────────────────────────────────────────────────────────────────────
+        # STEP 6: Ambil 3 opsi pertama
+        # ────────────────────────────────────────────────────────────────────
+        final_options = candidates[:max_options_per_slot]
+        
+        # Ensure semua adalah pd.Series untuk konsistensi
+        final_options_series = []
+        for opt in final_options:
+            if isinstance(opt, pd.Series):
+                opt_series = opt
+            else:
+                opt_series = pd.Series(opt)
+            
+            final_options_series.append(opt_series)
+            
+            # Track makanan yang dipakai HANYA untuk Main Course/Side Dish
+            # Drink/Snack: DON'T track (allow reuse untuk realism)
+            if not is_drink_or_snack:
+                item_name = opt_series.get('food_name', '')
+                if item_name:
+                    used_foods.add(item_name)
+        
+        slot_options[slot_name] = final_options_series
     
     return slot_options
 
@@ -885,3 +1019,280 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict):
         print(f"   No violations! All constraints satisfied ✓")
     
     print(f"\n   Total Penalty Score: {total_penalty:.2f}")
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# 7. CALCULATE PORTION SIZES - Hitung gram dinamis berdasarkan target energi
+# ═════════════════════════════════════════════════════════════════════════════
+
+def calculate_portion_sizes_dynamic(
+    selected_df: pd.DataFrame,
+    TDEE: float
+) -> pd.DataFrame:
+    """
+    Calculate portion sizes (grams) FULL DYNAMIC - semua makanan bekerja bersama.
+    
+    Algoritma:
+        1. Hitung total energy (asumsi 100g per item)
+        2. Hitung proporsi kontribusi setiap item
+        3. Bagi target energy (TDEE) berdasarkan proporsi
+        4. Hitung gram untuk setiap item
+        5. Apply realistic constraints per kategori
+        6. Calculate final nutrition berdasarkan gram actual
+    
+    Rumus:
+        # Step 1: Total energy (100g assumption)
+        total_energy_100g = sum(item['energy_kcal'] for all items)
+        
+        # Step 2: Proportion weight
+        weight_i = item['energy_kcal'] / total_energy_100g
+        
+        # Step 3: Distribute target energy
+        target_energy_i = weight_i * TDEE
+        
+        # Step 4: Calculate gram
+        gram_i = (target_energy_i / item['energy_kcal']) * 100
+        
+        # Step 5: Apply constraints
+        gram_i = clamp(gram_i, min_g, max_g)
+    
+    Args:
+        selected_df: DataFrame 10 selected meal items (index 0-9)
+        TDEE: Total daily energy expenditure (kcal)
+    
+    Returns:
+        DataFrame dengan kolom tambahan:
+        - gram: portion size (g)
+        - final_energy_kcal, final_protein_g, final_carbohydrate_g, dll
+    
+    Notes:
+        - Dataset values adalah per 100g
+        - Final nutrition = (dataset_value / 100) * actual_gram
+        - Semua items bekerja bersama memenuhi target (not individually)
+    """
+    
+    # Realistic gram constraints per food category (min, max)
+    gram_constraints = {
+        'Main Course': (100, 400),
+        'Side Dish': (50, 200),
+        'Drink': (150, 400),
+        'Snack': (30, 150)
+    }
+    
+    # Copy dataframe untuk modifikasi
+    result_df = selected_df.copy()
+    
+    # Initialize gram column
+    result_df['gram'] = 0.0
+    
+    # List of nutrients to scale (all numeric columns related to nutrition)
+    nutrients_to_scale = [
+        'energy_kcal', 'protein_g', 'carbohydrate_g', 'fat_g', 'fiber_g',
+        'sodium_mg', 'calcium_mg', 'iron_mg', 'phosphorus_mg', 'zinc_mg',
+        'potassium_mg', 'magnesium_mg', 'vitamin_a_iu', 'vitamin_c_mg',
+        'vitamin_b1_mg', 'vitamin_b2_mg', 'vitamin_b3_mg', 'cholesterol_mg'
+    ]
+    
+    # Add final_nutrient columns
+    for nutrient in nutrients_to_scale:
+        result_df[f'final_{nutrient}'] = 0.0
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 1: Hitung total energy (asumsi 100g per item)
+    # ════════════════════════════════════════════════════════════════════════
+    total_energy_100g = 0.0
+    for idx in range(len(result_df)):
+        energy = result_df.iloc[idx].get('energy_kcal', 0) or 0
+        total_energy_100g += energy
+    
+    if total_energy_100g <= 0:
+        total_energy_100g = 1  # Prevent division by zero
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 2-6: Calculate gram dan final nutrients untuk setiap item
+    # ════════════════════════════════════════════════════════════════════════
+    
+    for idx in range(len(result_df)):
+        item = result_df.iloc[idx]
+        
+        # Get energy per 100g
+        energy_per_100g = item.get('energy_kcal', 0) or 0
+        
+        if energy_per_100g <= 0:
+            energy_per_100g = 1
+        
+        # STEP 2: Hitung proporsi kontribusi item ini
+        weight = energy_per_100g / total_energy_100g
+        
+        # STEP 3: Bagi target energy (TDEE) berdasarkan proporsi
+        target_energy = weight * TDEE
+        
+        # STEP 4: Hitung gram
+        gram = (target_energy / energy_per_100g) * 100
+        
+        # STEP 5: Apply realistic gram constraints
+        label = item.get('consumption_label', 'Main Course')
+        if isinstance(label, str):
+            label = label.strip()
+        
+        min_g, max_g = gram_constraints.get(label, (50, 200))
+        gram = np.clip(gram, min_g, max_g)
+        
+        # Store gram (rounded to 1 decimal)
+        result_df.at[idx, 'gram'] = round(gram, 1)
+        
+        # STEP 6: Calculate final nutrients berdasarkan gram actual
+        for nutrient in nutrients_to_scale:
+            if nutrient in item.index:
+                value_per_100g = item.get(nutrient, 0) or 0
+                final_value = value_per_100g * gram / 100
+                result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+    
+    return result_df
+
+
+def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, TDEE: float):
+    """
+    Display portion sizing hasil dengan detail per meal (FULL DYNAMIC version)
+    
+    Algorithm yang ditampilkan:
+    1. Total energy (100g assumption)
+    2. Proportion weight untuk setiap item
+    3. Target energy distribution
+    4. Gram calculation dengan constraints
+    5. Final nutrition summary
+    
+    Args:
+        portion_df: DataFrame hasil calculate_portion_sizes_dynamic()
+        guidelines: Dict dengan constraint min/max per nutrient
+        TDEE: Total daily energy expenditure (untuk reference)
+    """
+    print("\n" + "="*70)
+    print("STEP 9: PORTION SIZING - FULL DYNAMIC DISTRIBUTION")
+    print("="*70)
+    
+    print(f"\n📐 ALGORITHM:")
+    print(f"  1. Calculate total energy (100g × 10 items): {portion_df['energy_kcal'].sum():.0f} kcal")
+    print(f"  2. Calculate weight proportion for each item")
+    print(f"  3. Distribute target energy ({TDEE:.0f} kcal) by proportion")
+    print(f"  4. Calculate gram: (target_energy / energy_per_100g) × 100")
+    print(f"  5. Apply realistic limits (Main: 100-400g, Side: 50-200g, Drink: 150-400g, Snack: 30-150g)")
+    
+    print(f"\n📊 YOUR PERSONALIZED MEAL PORTIONS:")
+    print(f"─" * 70)
+    
+    # Display by meal type
+    meal_display_order = [
+        ('breakfast', '🌅 BREAKFAST', [0, 1, 2]),
+        ('lunch', '☀️ LUNCH', [3, 4, 5]),
+        ('dinner', '🌙 DINNER', [6, 7, 8]),
+        ('snack', '🍪 SNACK', [9])
+    ]
+    
+    meal_totals = {}
+    
+    for meal_name, meal_emoji, indices in meal_display_order:
+        print(f"\n{meal_emoji}")
+        print(f"─" * 70)
+        
+        meal_energy = 0
+        meal_protein = 0
+        meal_items = []
+        
+        for idx in indices:
+            if idx >= len(portion_df):
+                continue
+            
+            item = portion_df.iloc[idx]
+            
+            food_name = item.get('food_name', f'Item {idx}')
+            gram = item.get('gram', 0)
+            final_energy = item.get('final_energy_kcal', 0)
+            final_protein = item.get('final_protein_g', 0)
+            final_carbs = item.get('final_carbohydrate_g', 0)
+            final_fat = item.get('final_fat_g', 0)
+            label = item.get('consumption_label', 'Unknown')
+            
+            meal_items.append({
+                'name': food_name,
+                'gram': gram,
+                'label': label,
+                'energy': final_energy,
+                'protein': final_protein,
+                'carbs': final_carbs,
+                'fat': final_fat
+            })
+            
+            meal_energy += final_energy
+            meal_protein += final_protein
+            
+            # Display item
+            print(f"  • {food_name[:40]}")
+            print(f"    Label: {label} | Portion: {gram:.0f}g")
+            print(f"    Energy: {final_energy:.0f} kcal | Protein: {final_protein:.1f}g | Carbs: {final_carbs:.1f}g | Fat: {final_fat:.1f}g")
+        
+        meal_totals[meal_name] = {
+            'energy': meal_energy,
+            'protein': meal_protein,
+            'items': meal_items
+        }
+    
+    # Display daily totals
+    print(f"\n" + "="*70)
+    print(f"📈 DAILY NUTRITION SUMMARY:")
+    print(f"─" * 70)
+    
+    total_energy = portion_df['final_energy_kcal'].sum()
+    total_protein = portion_df['final_protein_g'].sum()
+    total_carbs = portion_df['final_carbohydrate_g'].sum()
+    total_fat = portion_df['final_fat_g'].sum()
+    total_fiber = portion_df['final_fiber_g'].sum()
+    total_sodium = portion_df['final_sodium_mg'].sum()
+    
+    for meal_name, meal_emoji, _ in meal_display_order:
+        if meal_name in meal_totals:
+            energy = meal_totals[meal_name]['energy']
+            protein = meal_totals[meal_name]['protein']
+            print(f"  {meal_emoji} {meal_name.upper():10}: {energy:6.0f} kcal | {protein:5.1f}g protein")
+    
+    print(f"\n  {'─'*66}")
+    print(f"  {'TOTAL':10}: {total_energy:6.0f} kcal | {total_protein:5.1f}g protein")
+    print(f"              {total_carbs:6.1f}g carbs | {total_fat:6.1f}g fat | {total_sodium:6.0f}mg sodium")
+    
+    # Show compliance vs target
+    print(f"\n📋 COMPLIANCE vs GUIDELINES:")
+    print(f"─" * 70)
+    
+    # Key nutrients for compliance check
+    key_checks = [
+        ('energy_kcal', total_energy, 'kcal'),
+        ('protein_g', total_protein, 'g'),
+        ('carbohydrate_g', total_carbs, 'g'),
+        ('fat_g', total_fat, 'g'),
+        ('sodium_mg', total_sodium, 'mg'),
+    ]
+    
+    compliant_count = 0
+    total_checks = 0
+    
+    for nutrient, actual_val, unit in key_checks:
+        constraint = guidelines.get(nutrient, {})
+        min_val = constraint.get('min', 0)
+        max_val = constraint.get('max', float('inf'))
+        
+        total_checks += 1
+        is_compliant = min_val <= actual_val <= max_val
+        
+        if is_compliant:
+            compliant_count += 1
+            status = "✓"
+        else:
+            status = "✗"
+        
+        print(f"  {status} {nutrient:20}: {actual_val:8.1f} {unit:3} (Target: {min_val:7.0f} - {max_val:7.0f} {unit})")
+    
+    compliance_pct = (compliant_count / total_checks * 100) if total_checks > 0 else 0
+    print(f"\n  💯 Compliance Rate: {compliance_pct:.0f}% ({compliant_count}/{total_checks})")
+    print(f"  🎯 Target TDEE: {TDEE:.0f} kcal | Actual: {total_energy:.0f} kcal | Δ: {abs(total_energy - TDEE):.0f} kcal")
+    
+    print(f"\n" + "="*70 + "\n")
