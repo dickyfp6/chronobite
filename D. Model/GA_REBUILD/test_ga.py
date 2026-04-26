@@ -13,6 +13,7 @@ import sys
 import os
 import random
 import numpy as np
+import pandas as pd
 
 # Set random seeds untuk reproducibility
 random.seed(42)
@@ -33,7 +34,11 @@ USE_INTERACTIVE_INPUT = True
 # ====================================
 
 # Import GA engine
-from ga_v1 import run_ga, display_solution, generate_meal_options, display_meal_options, display_fitness_details, MEAL_INDICES
+from ga_v1 import (
+    run_ga, display_solution, generate_meal_options, display_meal_options, 
+    display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
+    SLOT_NAMES, CHROMOSOME_SIZE
+)
 
 # Import NutritionService
 try:
@@ -215,9 +220,153 @@ def test_ga_with_nutrition_service():
         slot_options = generate_meal_options(top_solutions, max_options_per_slot=3)
         display_meal_options(slot_options)
         
-        # STEP 7: Display detailed food information
+        # ============================================================================
+        # STEP 7: USER SELECTION - Interactive menu selection
+        # ============================================================================
         print("\n" + "="*70)
-        print("STEP 7: DETAILED FOOD INFORMATION (Best Solution - 10 Items)")
+        print("STEP 7: USER SELECTION - Choose your menu")
+        print("="*70)
+        
+        selected_meal = []
+        
+        # Mapping slot name ke meal type untuk better display
+        meal_display_map = {
+            'breakfast_main': ('BREAKFAST', 'MAIN'),
+            'breakfast_side': ('BREAKFAST', 'SIDE'),
+            'breakfast_drink': ('BREAKFAST', 'DRINK'),
+            'lunch_main': ('LUNCH', 'MAIN'),
+            'lunch_side': ('LUNCH', 'SIDE'),
+            'lunch_drink': ('LUNCH', 'DRINK'),
+            'dinner_main': ('DINNER', 'MAIN'),
+            'dinner_side': ('DINNER', 'SIDE'),
+            'dinner_drink': ('DINNER', 'DRINK'),
+            'snack': ('SNACK', 'ITEM')
+        }
+        
+        # Loop setiap slot dan minta user untuk memilih
+        for slot_idx, slot_name in enumerate(SLOT_NAMES):
+            options = slot_options.get(slot_name, [])
+            
+            if not options:
+                print(f"\n⚠️  {slot_name}: Tidak ada opsi tersedia")
+                continue
+            
+            meal_type, item_type = meal_display_map.get(slot_name, (slot_name, 'Item'))
+            
+            print(f"\n{'─' * 70}")
+            print(f"{meal_type} - {item_type} (Slot {slot_idx})")
+            print(f"{'─' * 70}")
+            
+            # Display 3 options
+            for i, option in enumerate(options, 1):
+                food_name = option.get('food_name', 'Unknown')
+                energy = option.get('energy_kcal', 0)
+                protein = option.get('protein_g', 0)
+                print(f"{i}. {food_name:30} | Energy: {energy:6.1f} kcal | Protein: {protein:5.1f}g")
+            
+            # Get user choice
+            while True:
+                try:
+                    choice_str = input(f"\nPilih opsi (1-{len(options)}) [default=1]: ").strip()
+                    
+                    # Default to 1 jika user tekan Enter
+                    if choice_str == "":
+                        choice = 0
+                    else:
+                        choice = int(choice_str) - 1
+                    
+                    if 0 <= choice < len(options):
+                        selected_item = options[choice].copy()
+                        selected_meal.append(selected_item)
+                        print(f"✓ {options[choice].get('food_name', 'Unknown')} dipilih")
+                        break
+                    else:
+                        print(f"✗ Pilih antara 1-{len(options)}")
+                except ValueError:
+                    print("✗ Input harus berupa angka")
+        
+        # Convert selected meals ke DataFrame
+        print("\n" + "="*70)
+        print("Memproses pilihan user...")
+        print("="*70)
+        
+        if len(selected_meal) == CHROMOSOME_SIZE:
+            selected_df = pd.DataFrame(selected_meal).reset_index(drop=True)
+            print(f"✓ {len(selected_df)} items dipilih dari {CHROMOSOME_SIZE} slots")
+            
+            # Calculate total nutrition dari selected meals
+            selected_nutrition = calculate_total_nutrition(selected_df)
+            
+            # STEP 8: Display final nutrition comparison
+            print("\n" + "="*70)
+            print("STEP 8: FINAL NUTRITION ANALYSIS - Selected Menu Plan")
+            print("="*70)
+            
+            print("\n📊 SELECTED MEAL COMPOSITION:")
+            print("─" * 70)
+            
+            # Display all selected meals
+            for idx, meal in enumerate(selected_df.itertuples()):
+                print(f"[{idx:2d}] {meal.food_name:30} | {meal.energy_kcal:6.1f} kcal")
+            
+            print("\n" + "─" * 70)
+            print("📈 TOTAL NUTRITION - SELECTED MENU:")
+            print("─" * 70)
+            
+            # Key nutrients for display
+            key_nutrients = [
+                ('energy_kcal', 'kcal', 'Energy'),
+                ('protein_g', 'g', 'Protein'),
+                ('carbohydrate_g', 'g', 'Carbohydrates'),
+                ('fat_g', 'g', 'Fat'),
+                ('fiber_g', 'g', 'Fiber'),
+                ('sodium_mg', 'mg', 'Sodium'),
+                ('calcium_mg', 'mg', 'Calcium'),
+                ('iron_mg', 'mg', 'Iron')
+            ]
+            
+            nutrition_status = []
+            
+            for nutrient_col, unit, label in key_nutrients:
+                if nutrient_col in selected_nutrition:
+                    value = selected_nutrition[nutrient_col]
+                    constraint = guidelines.get(nutrient_col, {})
+                    min_val = constraint.get('min', 0)
+                    max_val = constraint.get('max', float('inf'))
+                    
+                    # Determine status
+                    if value < min_val:
+                        status = "🔴 LOW"
+                        nutrition_status.append('❌')
+                    elif value > max_val:
+                        status = "🟡 HIGH"
+                        nutrition_status.append('⚠️')
+                    else:
+                        status = "🟢 OK"
+                        nutrition_status.append('✅')
+                    
+                    print(f"\n{label:20} : {value:8.1f} {unit:5} {status}")
+                    print(f"  Target           : {min_val:8.1f} - {max_val:8.1f} {unit}")
+            
+            # Summary status
+            print("\n" + "="*70)
+            compliance_rate = (nutrition_status.count('✅') / len(nutrition_status)) * 100
+            print(f"📋 GUIDELINE COMPLIANCE: {compliance_rate:.0f}% ({nutrition_status.count('✅')}/{len(nutrition_status)} nutrients OK)")
+            
+            if compliance_rate == 100:
+                print("✅ ALL nutrients within guidelines!")
+            elif compliance_rate >= 75:
+                print("⚠️  Most nutrients are within guidelines")
+            else:
+                print("❌ Several nutrients outside guidelines - consider adjusting selection")
+            
+            print("="*70)
+        else:
+            print(f"✗ Error: Hanya {len(selected_meal)} dari {CHROMOSOME_SIZE} items yang dipilih")
+        
+        # STEP 9: Display detailed food information
+        print("\n" + "="*70)
+        print("STEP 9: DETAILED FOOD INFORMATION (Selected Menu - 10 Items)")
         print("="*70)
         
         meals = ['breakfast', 'lunch', 'dinner', 'snack']
@@ -226,14 +375,17 @@ def test_ga_with_nutrition_service():
                       'dinner': ['main', 'side', 'drink'],
                       'snack': ['item']}
         
+        # Use selected_df jika tersedia, otherwise use best_solution
+        display_df = selected_df if len(selected_meal) == CHROMOSOME_SIZE else best_solution
+        
         for meal in meals:
             # Use MEAL_INDICES from ga_v1 untuk consistency
             indices = MEAL_INDICES[meal]
             
             print(f"\n{meal.upper()}:")
             for i, idx in enumerate(indices):
-                if idx < len(best_solution):
-                    food_row = best_solution.iloc[idx]
+                if idx < len(display_df):
+                    food_row = display_df.iloc[idx]
                     slot_type = slot_types[meal][i] if i < len(slot_types[meal]) else 'item'
                     
                     print(f"\n  {slot_type.upper()}:")
