@@ -267,46 +267,33 @@ def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
 # 3. FITNESS - Hitung penalty score dari nutrient violations
 # ═════════════════════════════════════════════════════════════════════════════
 
-def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
+def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = None) -> float:
     """
     Hitung fitness score (penalty total) untuk 1 solusi (10-item chromosome)
     Dengan HARD dan SOFT constraints, weighted nutrients, duplicate penalty, dan normalization
     
     ⚠️  HARD vs SOFT:
-        HARD (disease-based constraints):
-            - Violation penalty: 10x untuk under / 15x untuk over
-            - Contoh: Sodium (hipertensi), Cholesterol (CVD), Potassium (CKD)
+        HARD (PRIMARY - disease-based + energy):
+            - ENERGY: ±20% tolerance (0.8-1.2 × TDEE)
+            - SODIUM, CHOLESTEROL, dll: 10x untuk under / 15x untuk over
             - Jika ada HARD violation ekstrem: +10000 hard stop penalty
         
-        SOFT (DRI-based constraints):
+        SOFT (SECONDARY - DRI-based):
             - Violation penalty: 1x normal weight
-            - Contoh: Protein, Energy, Fiber dari DRI umum
+            - Contoh: Protein, Fiber dari DRI umum
             - Lebih fleksibel, tidak kritis
     
     Args:
         solution: DataFrame dengan 10 items (chromosome)
-        guidelines: Dict struktur BARU:
+        guidelines: Dict struktur:
                    {
                        'hard': {nutrient: {'min': float, 'max': float, ...}, ...},
                        'soft': {nutrient: {'min': float, 'max': float, ...}, ...}
                    }
-                   
-                   ATAU struktur LAMA (backward compatible):
-                   {nutrient: {'min': float, 'max': float, ...}, ...}
+        tdee: Target daily energy expenditure (kcal) - untuk energy constraint
     
     Returns:
         float: Total penalty (semakin kecil = semakin baik)
-               0 = perfectly match guidelines
-    
-    Logic:
-        1. Check structure (HARD/SOFT atau LAMA)
-        2. Hitung total nutrisi dari 10 items
-        3. HARD constraints: penalty besar (10x/15x)
-        4. SOFT constraints: penalty normal (1x)
-        5. Add duplicate penalty
-        6. Add hard stop jika ada violation ekstrem
-        7. Normalize
-        8. Return total penalty
     """
     # Hitung total nutrisi dari solution
     total_nutrition = calculate_total_nutrition(solution)
@@ -329,7 +316,28 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
         soft_constraints = guidelines
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 1: HARD CONSTRAINTS - PRIORITAS UTAMA (10x/15x penalty)
+    # STEP 1: ENERGY CONSTRAINT - UTAMA SEKALI (HARD)
+    # ════════════════════════════════════════════════════════════════════════
+    if tdee and tdee > 0:
+        current_energy = total_nutrition.get('energy_kcal', 0)
+        
+        # Tolerance: 80% - 120% dari TDEE
+        min_energy = 0.8 * tdee
+        max_energy = 1.2 * tdee
+        
+        if current_energy < min_energy:
+            # Energi terlalu rendah - BESAR penalty (20x multiplier)
+            energy_penalty = (min_energy - current_energy) * 20
+            total_penalty += energy_penalty
+        elif current_energy > max_energy:
+            # Energi terlalu tinggi - penalty besar (15x multiplier)
+            energy_penalty = (current_energy - max_energy) * 15
+            total_penalty += energy_penalty
+        
+        constraint_count += 1
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 2: HARD CONSTRAINTS - PRIORITAS UTAMA (10x/15x penalty)
     # ════════════════════════════════════════════════════════════════════════
     for nutrient_name, constraint in hard_constraints.items():
         # Skip unlimited
@@ -338,6 +346,10 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
         
         # Skip jika nutrient tidak ada
         if nutrient_name not in total_nutrition:
+            continue
+        
+        # Skip energy (sudah di-handle di STEP 1)
+        if nutrient_name == 'energy_kcal':
             continue
         
         constraint_count += 1
@@ -352,14 +364,14 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
         
         # HARD constraint penalty: lebih besar (10x untuk under, 15x untuk over)
         if value < min_val:
-            penalty = (min_val - value) * weight * 10  # 10x multiplier untuk HARD under
+            penalty = (min_val - value) * weight * 10
             total_penalty += penalty
         elif value > max_val:
-            penalty = (value - max_val) * weight * 15  # 15x multiplier untuk HARD over
+            penalty = (value - max_val) * weight * 15
             total_penalty += penalty
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 2: SOFT CONSTRAINTS - FLEXIBLE (1x normal penalty)
+    # STEP 3: SOFT CONSTRAINTS - FLEXIBLE (1x normal penalty)
     # ════════════════════════════════════════════════════════════════════════
     for nutrient_name, constraint in soft_constraints.items():
         # Skip unlimited
@@ -368,6 +380,10 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
         
         # Skip jika nutrient tidak ada
         if nutrient_name not in total_nutrition:
+            continue
+        
+        # Skip energy (sudah di-handle di STEP 1)
+        if nutrient_name == 'energy_kcal':
             continue
         
         constraint_count += 1
@@ -389,9 +405,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
             total_penalty += penalty
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 3: HARD STOP - Jika ada violation ekstrem di HARD constraint
+    # STEP 4: HARD STOP - Jika ada violation ekstrem di HARD constraint
     # ════════════════════════════════════════════════════════════════════════
-    # Misal: Sodium jauh melebihi limit (2x lipat atau lebih)
     for nutrient_name, constraint in hard_constraints.items():
         max_val = constraint.get('max', float('inf'))
         value = total_nutrition.get(nutrient_name, 0)
@@ -401,7 +416,7 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
             total_penalty += 10000  # HARD STOP - ini buruk!
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 4: DUPLICATE PENALTY
+    # STEP 5: DUPLICATE PENALTY
     # ════════════════════════════════════════════════════════════════════════
     if 'food_name' in solution.columns:
         unique_foods = solution['food_name'].nunique()
@@ -410,7 +425,7 @@ def fitness(solution: pd.DataFrame, guidelines: Dict) -> float:
         total_penalty += duplicate_penalty
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 5: NORMALIZE PENALTY
+    # STEP 6: NORMALIZE PENALTY
     # ════════════════════════════════════════════════════════════════════════
     if constraint_count > 0:
         total_penalty = total_penalty / constraint_count
@@ -524,6 +539,7 @@ def mutation(solution: pd.DataFrame, food_df: pd.DataFrame,
 def run_ga(
     food_df: pd.DataFrame,
     guidelines: Dict,
+    tdee: Optional[float] = None,
     generations: int = 50,
     pop_size: int = 20,
     elite_ratio: float = 0.25,
@@ -536,6 +552,7 @@ def run_ga(
     Args:
         food_df: DataFrame semua food items
         guidelines: Dict constraints dari NutritionService
+        tdee: Target daily energy expenditure (kcal) - CRITICAL HARD constraint
         generations: Jumlah generasi (default 50)
         pop_size: Ukuran populasi (default 20)
         elite_ratio: Fraksi elite untuk breeding (default 0.25 = top 25%)
@@ -568,6 +585,8 @@ def run_ga(
         print(f"Pop Size: {pop_size} | Generations: {generations}")
         print(f"Elite Ratio: {elite_ratio} | Mutation Rate: {mutation_rate}")
         print(f"Food Items: {len(food_df)} | Constraints: {len(guidelines)}")
+        if tdee:
+            print(f"Target TDEE: {tdee:.0f} kcal/day (HARD constraint)")
         print(f"{'='*70}\n")
     
     # STEP 1: Initialize populasi random
@@ -581,7 +600,7 @@ def run_ga(
     
     # Track best solution ever found
     best_solution = population[0].copy()
-    best_fitness = fitness(best_solution, guidelines)
+    best_fitness = fitness(best_solution, guidelines, tdee=tdee)
     
     # STEP 2: Main GA loop
     if verbose:
@@ -593,7 +612,7 @@ def run_ga(
         # 2a. Evaluate fitness semua population
         fitness_scores = []
         for solution in population:
-            score = fitness(solution, guidelines)
+            score = fitness(solution, guidelines, tdee=tdee)
             fitness_scores.append(score)
         
         # 2b. Sort population by fitness (ascending = semakin kecil semakin baik)
