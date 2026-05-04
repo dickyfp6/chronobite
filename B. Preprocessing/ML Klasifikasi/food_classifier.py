@@ -14,7 +14,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, f1_score, classification_report
 from sklearn.ensemble import RandomForestClassifier
 try:
-    from xgboost import XGBClassifier
+    from xgboost import XGBClassifier  # noqa: F401 #type: ignore[import]
     USE_XGBOOST = True
     print("[INFO] XGBoost available, will use XGBClassifier")
 except ImportError:
@@ -49,7 +49,7 @@ class FoodClassifier:
             print("\n" + "="*70)
             print("TRAINING FOOD CLASSIFIER (XGBoost + Stratified Split)")
             print("="*70)
-        
+                
         X = df.copy()
         
         # ===== TRAIN CONSUMPTION MODEL =====

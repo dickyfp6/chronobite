@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { User, Activity, Heart, UtensilsCrossed, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
@@ -22,8 +22,19 @@ interface InputWizardProps {
 }
 
 export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(() => {
+    const saved = localStorage.getItem('dss_wizard_step');
+    return saved ? parseInt(saved, 10) : 0;
+  });
+
+  const [editing, setEditing] = useState<null | 'age' | 'weight' | 'height'>(null);
+  const [tempValue, setTempValue] = useState<string>('');
   const { t } = useI18n();
+
+  // Persist step to localStorage
+  useEffect(() => {
+    localStorage.setItem('dss_wizard_step', step.toString());
+  }, [step]);
 
   const steps = t.input.steps;
 
@@ -130,7 +141,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                       </div>
                       {t.input.metrics.age}
                     </label>
-                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3">
                       <button
                         onClick={() => onUpdate({ age: Math.max(18, data.age - 1) })}
                         className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center font-bold shadow-md hover:shadow-lg"
@@ -138,7 +149,39 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                         -
                       </button>
                       <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 min-w-[80px] text-center">
-                        {data.age}
+                        {editing === 'age' ? (
+                          <input
+                            autoFocus
+                            className="w-[80px] text-center bg-transparent outline-none"
+                            type="number"
+                            min={18}
+                            max={100}
+                            value={tempValue}
+                            onChange={(e) => setTempValue(e.target.value)}
+                            onBlur={() => {
+                              const v = Math.max(18, Math.min(100, parseInt(tempValue || '18')));
+                              onUpdate({ age: Number.isFinite(v) ? v : 18 });
+                              setEditing(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                (e.target as HTMLInputElement).blur();
+                              } else if (e.key === 'Escape') {
+                                setEditing(null);
+                              }
+                            }}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setEditing('age');
+                              setTempValue(String(data.age));
+                            }}
+                            className="w-full"
+                          >
+                            {data.age}
+                          </button>
+                        )}
                       </span>
                       <button
                         onClick={() => onUpdate({ age: Math.min(100, data.age + 1) })}
@@ -171,7 +214,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                       </div>
                       {t.input.metrics.weight}
                     </label>
-                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3">
                       <button
                         onClick={() => onUpdate({ weight: Math.max(30, data.weight - 1) })}
                         className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center font-bold shadow-md hover:shadow-lg"
@@ -179,7 +222,36 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                         -
                       </button>
                       <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 min-w-[80px] text-center">
-                        {data.weight}
+                        {editing === 'weight' ? (
+                          <input
+                            autoFocus
+                            className="w-[80px] text-center bg-transparent outline-none"
+                            type="number"
+                            min={30}
+                            max={200}
+                            value={tempValue}
+                            onChange={(e) => setTempValue(e.target.value)}
+                            onBlur={() => {
+                              const v = Math.max(30, Math.min(200, parseFloat(tempValue || '30')));
+                              onUpdate({ weight: Number.isFinite(v) ? v : 30 });
+                              setEditing(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                              if (e.key === 'Escape') setEditing(null);
+                            }}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setEditing('weight');
+                              setTempValue(String(data.weight));
+                            }}
+                            className="w-full"
+                          >
+                            {data.weight}
+                          </button>
+                        )}
                       </span>
                       <button
                         onClick={() => onUpdate({ weight: Math.min(200, data.weight + 1) })}
@@ -212,7 +284,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                       </div>
                       {t.input.metrics.height}
                     </label>
-                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3">
                       <button
                         onClick={() => onUpdate({ height: Math.max(100, data.height - 1) })}
                         className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center font-bold shadow-md hover:shadow-lg"
@@ -220,7 +292,36 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                         -
                       </button>
                       <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 min-w-[80px] text-center">
-                        {data.height}
+                        {editing === 'height' ? (
+                          <input
+                            autoFocus
+                            className="w-[80px] text-center bg-transparent outline-none"
+                            type="number"
+                            min={100}
+                            max={300}
+                            value={tempValue}
+                            onChange={(e) => setTempValue(e.target.value)}
+                            onBlur={() => {
+                              const v = Math.max(100, Math.min(300, parseFloat(tempValue || '100')));
+                              onUpdate({ height: Number.isFinite(v) ? v : 100 });
+                              setEditing(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                              if (e.key === 'Escape') setEditing(null);
+                            }}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setEditing('height');
+                              setTempValue(String(data.height));
+                            }}
+                            className="w-full"
+                          >
+                            {data.height}
+                          </button>
+                        )}
                       </span>
                       <button
                         onClick={() => onUpdate({ height: Math.min(300, data.height + 1) })}
@@ -249,11 +350,54 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-6 p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-xl text-center border-2 border-emerald-200 dark:border-emerald-400"
+                    className="mt-6 p-6 rounded-xl text-center border-2"
+                    style={{
+                      borderColor: (() => {
+                        const bmi = data.weight / ((data.height / 100) ** 2);
+                        if (bmi >= 30) return '#ef4444'; // red
+                        if (bmi >= 25) return '#f59e0b'; // yellow
+                        if (bmi >= 18.5) return '#10b981'; // green
+                        return '#f59e0b'; // yellow for underweight
+                      })(),
+                      background: 'linear-gradient(to right, rgba(16,185,129,0.05), rgba(16,185,129,0.02))'
+                    }}
                   >
-                    <p className="text-sm text-emerald-700 dark:text-emerald-300 mb-2 font-medium">Body Mass Index</p>
-                    <p className="text-4xl font-bold text-emerald-600 dark:text-emerald-400">
+                    <p className="text-sm mb-2 font-medium" style={{ color: (() => {
+                      const bmi = data.weight / ((data.height / 100) ** 2);
+                      if (bmi >= 30) return '#b91c1c';
+                      if (bmi >= 25) return '#92400e';
+                      if (bmi >= 18.5) return '#047857';
+                      return '#92400e';
+                    })() }}>
+                      Body Mass Index
+                    </p>
+                    <p className="text-4xl font-bold" style={{ color: (() => {
+                      const bmi = data.weight / ((data.height / 100) ** 2);
+                      if (bmi >= 30) return '#b91c1c';
+                      if (bmi >= 25) return '#92400e';
+                      if (bmi >= 18.5) return '#047857';
+                      return '#92400e';
+                    })() }}>
                       {(data.weight / ((data.height / 100) ** 2)).toFixed(1)}
+                    </p>
+                    <p className="mt-2 text-sm font-semibold" style={{ color: (() => {
+                      const bmi = data.weight / ((data.height / 100) ** 2);
+                      if (bmi >= 40) return '#b91c1c';
+                      if (bmi >= 35) return '#b91c1c';
+                      if (bmi >= 30) return '#b91c1c';
+                      if (bmi >= 25) return '#92400e';
+                      if (bmi >= 18.5) return '#047857';
+                      return '#92400e';
+                    })() }}>
+                      {(() => {
+                        const bmi = data.weight / ((data.height / 100) ** 2);
+                        if (bmi < 18.5) return 'Underweight (<18.5)';
+                        if (bmi < 25) return 'Normal weight (18.5–24.9)';
+                        if (bmi < 30) return 'Overweight (25–29.9)';
+                        if (bmi < 35) return 'Obesity Class I (30–34.9)';
+                        if (bmi < 40) return 'Obesity Class II (35–39.9)';
+                        return 'Obesity Class III (≥40)';
+                      })()}
                     </p>
                   </motion.div>
                 )}

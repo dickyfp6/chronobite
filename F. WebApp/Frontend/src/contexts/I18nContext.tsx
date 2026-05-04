@@ -2,21 +2,21 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import { translations } from '../utils/translations';
 
-type Language = 'en' | 'id';
+type Language = 'en';
 
 interface I18nContextType {
   language: Language;
-  setLanguage: (lang: Language) => void;
+  setLanguage: () => void;
   t: typeof translations.en;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language] = useState<Language>('en');
 
   return (
-    <I18nContext.Provider value={{ language, setLanguage, t: translations[language] }}>
+    <I18nContext.Provider value={{ language, setLanguage: () => {}, t: translations.en }}>
       {children}
     </I18nContext.Provider>
   );

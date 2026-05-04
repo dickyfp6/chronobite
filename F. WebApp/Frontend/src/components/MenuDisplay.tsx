@@ -45,10 +45,10 @@ export const MenuDisplay: React.FC<MenuDisplayProps> = ({
 
   const mealOrder = ['breakfast', 'lunch', 'dinner', 'snack'];
   const mealLabels: { [key: string]: string } = {
-    breakfast: 'Sarapan',
-    lunch: 'Makan Siang',
-    dinner: 'Makan Malam',
-    snack: 'Selingan',
+    breakfast: 'Breakfast',
+    lunch: 'Lunch',
+    dinner: 'Dinner',
+    snack: 'Snack',
   };
 
   const getMealIcon = (mealName: string) => {
@@ -67,7 +67,7 @@ export const MenuDisplay: React.FC<MenuDisplayProps> = ({
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-bold text-gray-800 flex items-center">
           <i className="fas fa-book-open text-green-500 mr-3"></i>
-          Menu Harian
+          Daily Menu
         </h3>
         <div className="flex gap-2">
           {onRegenerate && (
@@ -77,7 +77,7 @@ export const MenuDisplay: React.FC<MenuDisplayProps> = ({
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg transition-colors"
             >
               <i className="fas fa-refresh mr-2"></i>
-              Regenerasi
+              Regenerate
             </button>
           )}
           {onDownload && (
@@ -95,24 +95,24 @@ export const MenuDisplay: React.FC<MenuDisplayProps> = ({
       {/* Total Macros Summary */}
       <div className="grid md:grid-cols-4 gap-4">
         <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4 border-l-4 border-red-500">
-          <p className="text-xs text-gray-600 font-semibold mb-1">Kalori Total</p>
+          <p className="text-xs text-gray-600 font-semibold mb-1">Total Calories</p>
           <p className="text-2xl font-bold text-red-600">{menu.total_calories.toFixed(0)}</p>
-          <p className="text-xs text-gray-600 mt-1">kkal/hari</p>
+          <p className="text-xs text-gray-600 mt-1">kcal/day</p>
         </div>
         <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border-l-4 border-yellow-500">
           <p className="text-xs text-gray-600 font-semibold mb-1">Protein</p>
           <p className="text-2xl font-bold text-yellow-600">{menu.total_protein.toFixed(1)}</p>
-          <p className="text-xs text-gray-600 mt-1">gram</p>
+          <p className="text-xs text-gray-600 mt-1">grams</p>
         </div>
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border-l-4 border-blue-500">
-          <p className="text-xs text-gray-600 font-semibold mb-1">Karbo</p>
+          <p className="text-xs text-gray-600 font-semibold mb-1">Carbs</p>
           <p className="text-2xl font-bold text-blue-600">{menu.total_carbs.toFixed(1)}</p>
-          <p className="text-xs text-gray-600 mt-1">gram</p>
+          <p className="text-xs text-gray-600 mt-1">grams</p>
         </div>
         <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg p-4 border-l-4 border-pink-500">
-          <p className="text-xs text-gray-600 font-semibold mb-1">Lemak</p>
+          <p className="text-xs text-gray-600 font-semibold mb-1">Fat</p>
           <p className="text-2xl font-bold text-pink-600">{menu.total_fat.toFixed(1)}</p>
-          <p className="text-xs text-gray-600 mt-1">gram</p>
+          <p className="text-xs text-gray-600 mt-1">grams</p>
         </div>
       </div>
 
@@ -131,7 +131,7 @@ export const MenuDisplay: React.FC<MenuDisplayProps> = ({
                   <div>
                     <h4 className="font-bold text-lg capitalize">{mealLabels[mealName]}</h4>
                     <p className="text-xs opacity-90">
-                      {meal.calories.toFixed(0)} kkal ({meal.recommended_calories.toFixed(0)} rekomendasi)
+                      {meal.calories.toFixed(0)} kcal ({meal.recommended_calories.toFixed(0)} recommended)
                     </p>
                   </div>
                 </div>
@@ -158,7 +158,7 @@ export const MenuDisplay: React.FC<MenuDisplayProps> = ({
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-red-600">{item.calories.toFixed(0)} kkal</p>
+                          <p className="font-bold text-red-600">{item.calories.toFixed(0)} kcal</p>
                           <p className="text-xs text-gray-600">
                             P:{item.protein.toFixed(1)}g | C:{item.carbs.toFixed(1)}g
                           </p>
@@ -183,23 +183,23 @@ export const MenuDisplay: React.FC<MenuDisplayProps> = ({
 
             <div className="space-y-2 text-sm">
               <div className="flex justify-between border-b pb-2">
-                <span className="text-gray-600">Berat:</span>
+                <span className="text-gray-600">Weight:</span>
                 <span className="font-semibold">{selectedItem.weight?.toFixed(0) || 'N/A'} g</span>
               </div>
               <div className="flex justify-between border-b pb-2">
-                <span className="text-gray-600">Kalori:</span>
-                <span className="font-semibold">{selectedItem.calories.toFixed(0)} kkal</span>
+                <span className="text-gray-600">Calories:</span>
+                <span className="font-semibold">{selectedItem.calories.toFixed(0)} kcal</span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-gray-600">Protein:</span>
                 <span className="font-semibold">{selectedItem.protein?.toFixed(1) || '0'} g</span>
               </div>
               <div className="flex justify-between border-b pb-2">
-                <span className="text-gray-600">Karbo:</span>
+                <span className="text-gray-600">Carbs:</span>
                 <span className="font-semibold">{selectedItem.carbs?.toFixed(1) || '0'} g</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Lemak:</span>
+                <span className="text-gray-600">Fat:</span>
                 <span className="font-semibold">{selectedItem.fat?.toFixed(1) || '0'} g</span>
               </div>
             </div>
@@ -208,7 +208,7 @@ export const MenuDisplay: React.FC<MenuDisplayProps> = ({
               onClick={() => setSelectedItem(null)}
               className="w-full px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 font-medium transition"
             >
-              Tutup
+              Close
             </button>
           </div>
         </div>
