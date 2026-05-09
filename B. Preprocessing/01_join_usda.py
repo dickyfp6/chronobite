@@ -15,7 +15,6 @@ print("Nutrient:", nutrient.shape)
 print("Food Nutrient:", food_nutrient.shape)
 print("Food Category:", food_category.shape)
 
-
 # ======================
 # JOIN TABLE
 # ======================
