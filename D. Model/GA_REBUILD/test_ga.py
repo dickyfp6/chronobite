@@ -242,6 +242,7 @@ def test_ga_with_nutrition_service():
         best_solution, top_solutions = run_ga(
             food_df=food_df,
             guidelines=guidelines,
+            tdee=tdee,
             generations=50,
             pop_size=20,
             elite_ratio=0.25,

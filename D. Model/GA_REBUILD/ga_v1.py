@@ -663,7 +663,7 @@ def run_ga(
     # Evaluate final population
     final_fitness_scores = []
     for solution in population:
-        score = fitness(solution, guidelines)
+        score = fitness(solution, guidelines, tdee=tdee)
         final_fitness_scores.append(score)
     
     # Sort population by fitness
@@ -1369,6 +1369,54 @@ def calculate_portion_sizes_dynamic(
                             value_per_100g = item.get(nutrient, 0) or 0
                             final_value = value_per_100g * gram / 100
                             result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # GLOBAL RESCALE - Ensure total energy matches TDEE target
+    # ════════════════════════════════════════════════════════════════════════
+    # After all the per-meal calculations and hard stop controls,
+    # perform one final global rescale to ensure total energy is close to TDEE
+    
+    total_energy_after_controls = result_df['final_energy_kcal'].sum()
+    
+    if total_energy_after_controls > 0 and TDEE > 0:
+        # Calculate scaling factor
+        global_scale = TDEE / total_energy_after_controls
+        
+        # Allow scale up to 2.0x to ensure TDEE is met
+        # This is more important than portion size exactness
+        if 0.6 <= global_scale <= 2.0:
+            result_df['gram'] *= global_scale
+            
+            # Recalculate all final nutrients with globally scaled grams
+            for idx in range(len(result_df)):
+                item = result_df.iloc[idx]
+                gram = result_df.at[idx, 'gram']
+                
+                for nutrient in nutrients_to_scale:
+                    if nutrient in item.index:
+                        value_per_100g = item.get(nutrient, 0) or 0
+                        final_value = value_per_100g * gram / 100
+                        result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # SAFETY CHECK - Cap oversized portions (>500g)
+    # ════════════════════════════════════════════════════════════════════════
+    oversized_items = result_df[result_df['gram'] > 500]
+    
+    if len(oversized_items) > 0:
+        # Cap each oversized item at 500g max
+        result_df.loc[result_df['gram'] > 500, 'gram'] = 500
+        
+        # Recalculate nutrients for capped items
+        for idx in result_df[result_df['gram'] > 500].index:
+            item = result_df.iloc[idx]
+            gram = result_df.at[idx, 'gram']
+            
+            for nutrient in nutrients_to_scale:
+                if nutrient in item.index:
+                    value_per_100g = item.get(nutrient, 0) or 0
+                    final_value = value_per_100g * gram / 100
+                    result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
     return result_df
 
