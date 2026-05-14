@@ -206,7 +206,7 @@ DISEASE_MACROS = {
     "dm2":          {"carbs": (45, 55), "protein": (15, 20), "fat": (25, 35)},
     "hypertension": {"carbs": (50, 60), "protein": (15, 20), "fat": (25, 30)},
     "cvd":          {"carbs": (45, 55), "protein": (15, 25), "fat": (20, 30)},
-    "cholesterol":  {"carbs": (45, 55), "protein": (15,), "fat": (20, 30)},
+    "cholesterol":  {"carbs": (45, 55), "protein": (15, 20), "fat": (20, 30)},
     "ckd":          {"carbs": (50, 60), "protein": (5,  10), "fat": (25, 35)},
 }
 

@@ -20,17 +20,17 @@ interface UserFormProps {
 
 const DISEASES = {
   normal: 'Normal',
-  dm2: 'Diabetes Tipe 2',
-  hypertension: 'Hipertensi',
-  cvd: 'Penyakit Kardiovaskular',
-  cholesterol: 'Kolesterol Tinggi',
-  ckd: 'Penyakit Ginjal Kronis',
+  dm2: 'Type 2 Diabetes',
+  hypertension: 'Hypertension',
+  cvd: 'Cardiovascular Disease',
+  cholesterol: 'High Cholesterol',
+  ckd: 'Chronic Kidney Disease',
 };
 
 const ACTIVITIES = {
-  '1.545': 'Sedentary (Jarang Aktivitas)',
-  '1.845': 'Active (Aktivitas Normal)',
-  '2.2': 'Vigorous (Aktivitas Intens)',
+  '1.545': 'Sedentary (Low Activity)',
+  '1.845': 'Active (Moderate Activity)',
+  '2.2': 'Vigorous (High Activity)',
 };
 
 export const UserForm: React.FC<UserFormProps> = ({
@@ -89,7 +89,7 @@ export const UserForm: React.FC<UserFormProps> = ({
       {/* Header */}
       <h2 className="text-3xl font-bold text-gray-800 flex items-center">
         <i className="fas fa-user-circle text-blue-500 mr-3 text-4xl"></i>
-        Profil Pengguna
+        User Profile
       </h2>
 
       {/* Form Grid */}
@@ -100,7 +100,7 @@ export const UserForm: React.FC<UserFormProps> = ({
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-3">
               <i className="fas fa-venus-mars text-pink-500 mr-2"></i>
-              Jenis Kelamin
+              Gender
             </label>
             <div className="flex gap-3">
               <label className="flex-1 cursor-pointer">
@@ -114,7 +114,7 @@ export const UserForm: React.FC<UserFormProps> = ({
                 />
                 <div className="p-4 border-2 rounded-xl text-center font-semibold transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-300 hover:border-gray-400">
                   <i className="fas fa-mars text-2xl text-blue-600 mb-2 block"></i>
-                  <span className="text-sm text-gray-700">Pria</span>
+                  <span className="text-sm text-gray-700">Male</span>
                 </div>
               </label>
               <label className="flex-1 cursor-pointer">
@@ -128,7 +128,7 @@ export const UserForm: React.FC<UserFormProps> = ({
                 />
                 <div className="p-4 border-2 rounded-xl text-center font-semibold transition-all peer-checked:border-pink-500 peer-checked:bg-pink-50 border-gray-300 hover:border-gray-400">
                   <i className="fas fa-venus text-2xl text-pink-600 mb-2 block"></i>
-                  <span className="text-sm text-gray-700">Wanita</span>
+                  <span className="text-sm text-gray-700">Female</span>
                 </div>
               </label>
             </div>
@@ -138,7 +138,7 @@ export const UserForm: React.FC<UserFormProps> = ({
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-3">
               <i className="fas fa-calendar-alt text-green-500 mr-2"></i>
-              Usia (tahun)
+              Age (years)
             </label>
             <input
               type="number"
@@ -155,7 +155,7 @@ export const UserForm: React.FC<UserFormProps> = ({
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-3">
               <i className="fas fa-weight text-orange-500 mr-2"></i>
-              Berat Badan (kg)
+              Weight (kg)
             </label>
             <input
               type="number"
@@ -175,7 +175,7 @@ export const UserForm: React.FC<UserFormProps> = ({
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-3">
               <i className="fas fa-ruler-vertical text-purple-500 mr-2"></i>
-              Tinggi Badan (cm)
+              Height (cm)
             </label>
             <input
               type="number"
@@ -192,7 +192,7 @@ export const UserForm: React.FC<UserFormProps> = ({
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-3">
               <i className="fas fa-dumbbell text-red-500 mr-2"></i>
-              Tingkat Aktivitas
+              Activity Level
             </label>
             <select
               value={formData.activity}
@@ -212,7 +212,7 @@ export const UserForm: React.FC<UserFormProps> = ({
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-4">
             <i className="fas fa-heart text-red-500 mr-2"></i>
-            Kondisi Kesehatan
+            Health Conditions
           </label>
           <div className="grid md:grid-cols-3 gap-3">
             {Object.entries(DISEASES).map(([key, label]) => (
@@ -233,7 +233,7 @@ export const UserForm: React.FC<UserFormProps> = ({
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-4">
             <i className="fas fa-cogs text-gray-500 mr-2"></i>
-            Algoritma Optimasi
+            Optimization Algorithm
           </label>
           <div className="grid md:grid-cols-2 gap-4">
             <label className="cursor-pointer">
@@ -247,7 +247,7 @@ export const UserForm: React.FC<UserFormProps> = ({
               />
               <div className="p-4 border-2 rounded-lg transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-300 hover:border-gray-400">
                 <p className="font-semibold text-gray-700">Greedy Algorithm</p>
-                <p className="text-xs text-gray-500">Cepat dan efisien</p>
+                <p className="text-xs text-gray-500">Fast and efficient</p>
               </div>
             </label>
             <label className="cursor-pointer">
@@ -261,7 +261,7 @@ export const UserForm: React.FC<UserFormProps> = ({
               />
               <div className="p-4 border-2 rounded-lg transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-300 hover:border-gray-400">
                 <p className="font-semibold text-gray-700">Genetic Algorithm</p>
-                <p className="text-xs text-gray-500">Optimal tapi lambat</p>
+                <p className="text-xs text-gray-500">Optimal but slower</p>
               </div>
             </label>
           </div>
@@ -276,12 +276,12 @@ export const UserForm: React.FC<UserFormProps> = ({
           {isLoading ? (
             <>
               <i className="fas fa-spinner fa-spin"></i>
-              Menganalisis...
+              Analyzing...
             </>
           ) : (
             <>
               <i className="fas fa-check"></i>
-              Analisis Profil
+              Analyze Profile
             </>
           )}
         </button>

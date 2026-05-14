@@ -1,6 +1,5 @@
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useI18n } from '../../contexts/I18nContext';
 import lightLogo from '../../assets/light-horizontal.png';
 import darkLogo from '../../assets/dark-horizontal.png';
 
@@ -10,7 +9,6 @@ interface NavbarProps {
 
 export function Navbar({ onHomeClick }: NavbarProps) {
   const { theme, setTheme } = useTheme();
-  const { language, setLanguage } = useI18n();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
@@ -50,28 +48,6 @@ export function Navbar({ onHomeClick }: NavbarProps) {
             </button>
           </div>
 
-          <div className="flex items-center gap-1 bg-emerald-100 dark:bg-slate-700 rounded-full p-1 shadow-sm">
-            <button
-              onClick={() => setLanguage('en')}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                language === 'en'
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md'
-                  : 'text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300'
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage('id')}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                language === 'id'
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md'
-                  : 'text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300'
-              }`}
-            >
-              ID
-            </button>
-          </div>
         </div>
       </div>
     </nav>

@@ -3,6 +3,7 @@ Module untuk perhitungan BMI, BBI, TDEE, dan konversi guideline
 """
 
 import math
+import pandas as pd
 
 
 class NutritionCalculator:
@@ -191,30 +192,37 @@ class NutritionCalculator:
             dict dengan keys: min_converted, max_converted, constraint_type
         """
         
-        # Handle empty/missing values (unlimited)
-        if not str(min_val) or not str(max_val) or str(min_val).strip() == '' or str(max_val).strip() == '':
-            return {
-                'min_converted': 0,
-                'max_converted': float('inf'),
-                'constraint_type': 'unlimited'
-            }
-        
+        def _to_float_or_none(value):
+            if value is None or pd.isna(value):
+                return None
+            if isinstance(value, str) and value.strip() == '':
+                return None
+            return float(value)
+
         try:
-            min_float = float(min_val)
-            max_float = float(max_val)
+            min_float = _to_float_or_none(min_val)
+            max_float = _to_float_or_none(max_val)
         except (ValueError, TypeError):
             return {
                 'min_converted': 0,
                 'max_converted': float('inf'),
                 'constraint_type': 'invalid'
             }
-        
+
+        # If both bounds are empty, treat it as fully unlimited.
+        if min_float is None and max_float is None:
+            return {
+                'min_converted': 0,
+                'max_converted': float('inf'),
+                'constraint_type': 'unlimited'
+            }
+
         # Basis: Absolute value (tidak dikonversi)
         if basis == '1' or basis == 1:
             return {
-                'min_converted': min_float,
-                'max_converted': max_float,
-                'constraint_type': 'absolute'
+                'min_converted': min_float if min_float is not None else 0,
+                'max_converted': max_float if max_float is not None else float('inf'),
+                'constraint_type': 'absolute' if min_float is not None and max_float is not None else 'partial_absolute'
             }
         
         # Basis: TDEE (multiply by TDEE)
@@ -222,34 +230,31 @@ class NutritionCalculator:
                 tdee = user_params.get('tdee', 2000)
 
                 # asumsi default: protein & karbo
-                min_kcal = min_float * tdee
-                max_kcal = max_float * tdee
-
-                min_gram = min_kcal / 4
-                max_gram = max_kcal / 4
+                min_gram = (min_float * tdee / 4) if min_float is not None else 0
+                max_gram = (max_float * tdee / 4) if max_float is not None else float('inf')
 
                 return {
-                    'min_converted': round(min_gram, 2),
-                    'max_converted': round(max_gram, 2),
-                    'constraint_type': 'tdee_based'
+                    'min_converted': round(min_gram, 2) if min_float is not None else 0,
+                    'max_converted': round(max_gram, 2) if max_float is not None else float('inf'),
+                    'constraint_type': 'tdee_based' if min_float is not None and max_float is not None else 'partial_tdee_based'
                 }
         
         # Basis: BB (Berat Badan - multiply by weight)
         elif basis == 'BB':
             weight = user_params.get('weight', 70)
             return {
-                'min_converted': round(min_float * weight, 2),
-                'max_converted': round(max_float * weight, 2),
-                'constraint_type': 'weight_based'
+                'min_converted': round(min_float * weight, 2) if min_float is not None else 0,
+                'max_converted': round(max_float * weight, 2) if max_float is not None else float('inf'),
+                'constraint_type': 'weight_based' if min_float is not None and max_float is not None else 'partial_weight_based'
             }
         
         # Basis: BBI (Berat Badan Ideal - multiply by BBI)
         elif basis == 'BBI':
             bbi = user_params.get('bbi', 70)
             return {
-                'min_converted': round(min_float * bbi, 2),
-                'max_converted': round(max_float * bbi, 2),
-                'constraint_type': 'bbi_based'
+                'min_converted': round(min_float * bbi, 2) if min_float is not None else 0,
+                'max_converted': round(max_float * bbi, 2) if max_float is not None else float('inf'),
+                'constraint_type': 'bbi_based' if min_float is not None and max_float is not None else 'partial_bbi_based'
             }
         
         else:
