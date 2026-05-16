@@ -30,6 +30,224 @@ import random
 from typing import List, Dict, Tuple, Optional, cast
 
 # ═════════════════════════════════════════════════════════════════════════════
+# GUIDELINE UTILITIES - Consistency helpers
+# ═════════════════════════════════════════════════════════════════════════════
+
+def merge_hard_soft_guidelines(guidelines: Dict) -> Dict:
+    """
+    Merge HARD + SOFT guidelines menjadi flat dictionary untuk compatibility.
+    
+    Purpose: Memastikan constraint consistency antara GA dan final evaluation.
+    Bug Fix: Mencegah guidelines berubah menjadi 0-inf di tahap akhir.
+    
+    Args:
+        guidelines: Dict dengan struktur {'hard': {...}, 'soft': {...}} 
+                   atau flat dict {nutrient: {...}}
+    
+    Returns:
+        Dict flat: {nutrient: {min, max, ...}, ...}
+    
+    Example:
+        SEBELUM (GA): {'hard': {'sodium_mg': {'min': 1500, 'max': 1500}},
+                       'soft': {'protein_g': {'min': 60, 'max': 120}}}
+        
+        SESUDAH (Final): {'sodium_mg': {'min': 1500, 'max': 1500},
+                          'protein_g': {'min': 60, 'max': 120}}
+    """
+    if not guidelines:
+        return {}
+    
+    # Detect if already flat
+    if isinstance(guidelines, dict):
+        first_key = next(iter(guidelines.keys())) if guidelines else None
+        if first_key:
+            first_val = guidelines[first_key]
+            # Check if value is dict with 'min/max' (flat structure) or nested 'hard/soft'
+            if isinstance(first_val, dict) and ('min' in first_val or 'max' in first_val or 'constraint_type' in first_val):
+                # Already flat
+                return guidelines
+    
+    # Merge HARD + SOFT if nested
+    guidelines_flat = {}
+    
+    if 'hard' in guidelines and isinstance(guidelines['hard'], dict):
+        guidelines_flat.update(guidelines['hard'])
+    
+    if 'soft' in guidelines and isinstance(guidelines['soft'], dict):
+        guidelines_flat.update(guidelines['soft'])
+    
+    return guidelines_flat if guidelines_flat else guidelines
+
+
+def validate_final_solution(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = None) -> Dict:
+    """
+    Validate solusi final terhadap constraints yang SAMA dengan GA fitness function.
+    
+    Purpose: Ensure consistency antara GA evaluation dan final output validation.
+    
+    Args:
+        solution: DataFrame selected meal plan (10 items)
+        guidelines: Dict constraints (sama struktur dengan GA)
+        tdee: Target daily energy expenditure (kcal)
+    
+    Returns:
+        Dict validation result:
+        {
+            'is_valid': bool,
+            'compliance_rate': float (0-100),
+            'violations': [(nutrient, value, min, max, severity), ...],
+            'summary': str
+        }
+    
+    Example:
+        result = validate_final_solution(selected_meal, guidelines, tdee=2206)
+        if not result['is_valid']:
+            print(f"Failed: {result['summary']}")
+            for nutrient, val, min_val, max_val, sev in result['violations']:
+                print(f"  {nutrient}: {val} (range {min_val}-{max_val}) - {sev}")
+    """
+    # Import disini untuk avoid circular dependency
+    from ga_v1 import calculate_total_nutrition
+    
+    # Flatten guidelines
+    guidelines_flat = merge_hard_soft_guidelines(guidelines)
+    
+    # Calculate total nutrition
+    total_nutrition = calculate_total_nutrition(solution)
+    
+    violations = []
+    compliant_count = 0
+    total_checks = 0
+    
+    # Check setiap nutrient
+    for nutrient, constraint in guidelines_flat.items():
+        if constraint.get('constraint_type') == 'unlimited':
+            continue
+        
+        if nutrient not in total_nutrition:
+            continue
+        
+        value = total_nutrition[nutrient]
+        min_val = constraint.get('min', 0)
+        max_val = constraint.get('max', float('inf'))
+        
+        total_checks += 1
+        
+        if min_val <= value <= max_val:
+            compliant_count += 1
+        else:
+            if value < min_val:
+                severity = f"LOW (need {min_val - value:.1f} more)"
+            else:
+                severity = f"HIGH (excess {value - max_val:.1f})"
+            
+            violations.append((nutrient, value, min_val, max_val, severity))
+    
+    # Energy check jika ada TDEE
+    if tdee and tdee > 0:
+        current_energy = total_nutrition.get('energy_kcal', 0)
+        min_energy = 0.75 * tdee
+        max_energy = 1.25 * tdee
+        
+        total_checks += 1
+        if min_energy <= current_energy <= max_energy:
+            compliant_count += 1
+        else:
+            severity = f"{'LOW' if current_energy < min_energy else 'HIGH'} (need {abs(min_energy - current_energy) if current_energy < min_energy else abs(current_energy - max_energy):.0f} kcal)"
+            violations.append(('energy_kcal', current_energy, min_energy, max_energy, severity))
+    
+    # Summary
+    compliance_rate = (compliant_count / total_checks * 100) if total_checks > 0 else 0
+    is_valid = len(violations) == 0
+    
+    summary = f"Compliance: {compliance_rate:.0f}% ({compliant_count}/{total_checks})"
+    if not is_valid:
+        summary += f" - {len(violations)} violations found"
+    
+    return {
+        'is_valid': is_valid,
+        'compliance_rate': compliance_rate,
+        'violations': violations,
+        'summary': summary
+    }
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# DATA FILTERING - Remove junk food sebelum GA
+# ═════════════════════════════════════════════════════════════════════════════
+
+def filter_food_dataset(food_df: pd.DataFrame, verbose: bool = True) -> pd.DataFrame:
+    """
+    Filter food dataset untuk remove:
+    1. Junk food (candy, chocolate, dessert, dll)
+    2. Unrealistic items (energy < 50 kcal, energy > 500 kcal @ 100g)
+    3. Pure fat/oil items
+    
+    Purpose: GA bekerja dengan makanan realistis, bukan junk food
+    
+    Args:
+        food_df: Full dataset
+        verbose: Print filtering stats
+    
+    Returns:
+        Filtered DataFrame dengan hanya makanan berkualitas
+    
+    Filtering logic:
+    1. Hapus junk food keywords
+    2. Hapus energy ekstrim (< 50 atau > 500 kcal @ 100g)
+    3. Hapus pure oil/fat items (fat > 90% of energy)
+    """
+    
+    initial_count = len(food_df)
+    
+    # STEP 1: Remove junk food keywords
+    junk_keywords = [
+        'candy', 'chocolate', 'dessert', 'cake', 'cookie', 'syrup', 'donut',
+        'candy bar', 'confection', 'sweet candy', 'caramel', 'fudge',
+        'pie', 'ice cream', 'pudding', 'mousse', 'brownie', 'wafer',
+        'candied', 'frosting', 'icing', 'glaze', 'cream cheese'
+    ]
+    junk_pattern = '|'.join(junk_keywords)
+    
+    filtered = food_df.copy()
+    if 'food_name' in filtered.columns:
+        filtered = cast(pd.DataFrame, filtered[
+            ~filtered['food_name'].str.lower().str.contains(junk_pattern, na=False)
+        ])
+    
+    junk_removed = initial_count - len(filtered)
+    
+    # STEP 2: Remove unrealistic energy values (per 100g)
+    # Normal food @ 100g: 50-500 kcal (water-based to oil-based)
+    filtered = cast(pd.DataFrame, filtered[
+        (filtered['energy_kcal'] >= 50) &
+        (filtered['energy_kcal'] <= 500)
+    ])
+    energy_removed = initial_count - junk_removed - len(filtered)
+    
+    # STEP 3: Remove pure oil/fat items
+    # Fat provides 9 kcal/g, so if fat > energy/9 * 0.85 = mostly fat → exclude
+    if 'fat_g' in filtered.columns and 'energy_kcal' in filtered.columns:
+        filtered = cast(pd.DataFrame, filtered[
+            filtered['fat_g'] <= (filtered['energy_kcal'] / 9 * 0.85)
+        ])
+    
+    oil_removed = initial_count - junk_removed - energy_removed - len(filtered)
+    
+    if verbose:
+        print(f"\n🧹 DATASET FILTERING:")
+        print(f"   Initial items: {initial_count}")
+        print(f"   - Junk food removed: {junk_removed}")
+        print(f"   - Extreme energy removed: {energy_removed}")
+        print(f"   - Pure fat/oil removed: {oil_removed}")
+        print(f"   ────────────────────")
+        print(f"   Final items: {len(filtered)} ({len(filtered)/initial_count*100:.1f}%)")
+        print(f"   ✓ Dataset cleaned, ready for GA\n")
+    
+    return filtered
+
+
+# ═════════════════════════════════════════════════════════════════════════════
 # CHROMOSOME STRUCTURE
 # ═════════════════════════════════════════════════════════════════════════════
 
@@ -85,25 +303,27 @@ SLOT_FOOD_GROUP_MAPPING = {
 }
 
 # Nutrient weights - semakin tinggi weight semakin strict constraint-nya
+# SOFT CONSTRAINTS: Macronutrients (protein, carbs, fat) sangat penting - weight 2-3x
+# HARD CONSTRAINTS: Disease-related (sodium, cholesterol) - akan di-multiply 10-15x lagi di fitness
 NUTRIENT_WEIGHTS = {
-    'energy_kcal': 2.0,      # Energy is critical
-    'protein_g': 1.5,        # Protein important
-    'fat_g': 1.2,            # Fat moderation
-    'carbohydrate_g': 1.2,   # Carbs moderation
-    'fiber_g': 1.0,          # Standard weight
-    'sodium_mg': 1.3,        # Important for health
-    'calcium_mg': 1.0,       # Standard
-    'iron_mg': 1.0,          # Standard
-    'phosphorus_mg': 1.0,    # Standard
-    'zinc_mg': 1.0,          # Standard
-    'potassium_mg': 1.2,     # Important for hypertension
-    'magnesium_mg': 1.0,     # Standard
-    'vitamin_a_iu': 0.8,     # Lower weight (optional)
-    'vitamin_c_mg': 0.8,     # Lower weight
-    'vitamin_b1_mg': 0.8,    # Lower weight
-    'vitamin_b2_mg': 0.8,    # Lower weight
-    'vitamin_b3_mg': 0.8,    # Lower weight
-    'cholesterol_mg': 1.2    # Important for CVD
+    'energy_kcal': 2.0,           # Energy is critical (akan 50-30x di energy step)
+    'protein_g': 2.5,             # SOFT: Protein sangat penting (3x karena fundamental)
+    'carbohydrate_g': 2.0,        # SOFT: Carbs penting untuk energy (2x)
+    'fat_g': 2.0,                 # SOFT: Fat penting untuk hormone & absorption (2x)
+    'fiber_g': 1.5,               # SOFT: Fiber penting untuk digestive health
+    'sodium_mg': 1.5,             # HARD: Akan di-multiply 10-15x lagi
+    'calcium_mg': 1.2,            # SOFT/HARD: Bone health
+    'iron_mg': 1.3,               # SOFT/HARD: Oxygen transport
+    'phosphorus_mg': 1.0,         # HARD: Bone health (CKD)
+    'zinc_mg': 1.0,               # SOFT: Immune function
+    'potassium_mg': 1.5,          # HARD: Electrolyte balance (hypertension)
+    'magnesium_mg': 1.0,          # SOFT: Muscle function
+    'vitamin_a_iu': 0.8,          # SOFT: Vision (lower weight - optional)
+    'vitamin_c_mg': 0.8,          # SOFT: Immune (lower weight)
+    'vitamin_b1_mg': 0.8,         # SOFT: Energy metabolism (lower weight)
+    'vitamin_b2_mg': 0.8,         # SOFT: Energy metabolism (lower weight)
+    'vitamin_b3_mg': 0.8,         # SOFT: Energy metabolism (lower weight)
+    'cholesterol_mg': 1.5         # HARD: Cardiovascular health - akan di-multiply 10-15x lagi
 }
 
 # Duplicate penalty weight
@@ -151,8 +371,14 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
         food_df['consumption_label'].str.strip().str.lower() == expected_label.lower()
     ])
     
+    # ════════════════════════════════════════════════════════════════════════
+    # QUALITY FILTER - Ensure only quality foods are selected
+    # ════════════════════════════════════════════════════════════════════════
+    # Apply quality checks (nutrient minimums, energy ranges, etc)
+    filtered = _apply_quality_filter(filtered, expected_label)
+    
     if debug:
-        print(f"DEBUG: Slot {slot_idx} ({SLOT_NAMES[slot_idx]}) -> label='{expected_label}' -> {len(filtered)} items")
+        print(f"DEBUG: Slot {slot_idx} ({SLOT_NAMES[slot_idx]}) -> label='{expected_label}' -> {len(filtered)} items (after quality filter)")
         if len(filtered) == 0:
             print(f"       Available labels: {food_df['consumption_label'].unique().tolist()}")
     
@@ -272,16 +498,20 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
     Hitung fitness score (penalty total) untuk 1 solusi (10-item chromosome)
     Dengan HARD dan SOFT constraints, weighted nutrients, duplicate penalty, dan normalization
     
-    ⚠️  HARD vs SOFT:
-        HARD (PRIMARY - disease-based + energy):
-            - ENERGY: ±20% tolerance (0.8-1.2 × TDEE)
-            - SODIUM, CHOLESTEROL, dll: 10x untuk under / 15x untuk over
-            - Jika ada HARD violation ekstrem: +10000 hard stop penalty
+    ⚠️  HARD vs SOFT (PERUBAHAN PHASE 4 - STRICT ENFORCEMENT):
+        HARD (PRIMARY - disease-based + energy) - STRICT ENFORCEMENT:
+            - Jika melanggar → REJECT LANGSUNG (return 1e9)
+            - Toleransi: 5% (agar GA tidak stuck dengan dataset terbatas)
+            - Contoh sodium: min=1500 → lower_bound=1425, upper_bound=1575
+            - Jika value < 1425 atau value > 1575 → reject (return 1e9)
+            - ENERGY: ±25% tolerance (0.75-1.25 × TDEE) - juga strict!
+            - Sodium, Cholesterol, dll: HARUS dipenuhi (constraint medis!)
         
-        SOFT (SECONDARY - DRI-based):
-            - Violation penalty: 1x normal weight
-            - Contoh: Protein, Fiber dari DRI umum
+        SOFT (SECONDARY - DRI-based) - PENALTY-BASED:
+            - Violation masih dihitung penalty seperti sebelumnya
             - Lebih fleksibel, tidak kritis
+            - Protein, Carbs, Fat, Fiber: 10x multiplier (fundamental)
+            - Micronutrients: 2x multiplier (flexible)
     
     Args:
         solution: DataFrame dengan 10 items (chromosome)
@@ -294,9 +524,34 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
     
     Returns:
         float: Total penalty (semakin kecil = semakin baik)
+                OR 1e9 jika ada HARD constraint violation (reject)
     """
     # Hitung total nutrisi dari solution
     total_nutrition = calculate_total_nutrition(solution)
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # SCALE NUTRITION TO TDEE (Konsistensi dengan tahap akhir portion sizing)
+    # ════════════════════════════════════════════════════════════════════════
+    # GA harus mengevaluasi seolah-olah sudah di-scale ke TDEE
+    # Ini memastikan hasil GA konsisten dengan output akhir setelah portion scaling
+    # 
+    # Logic:
+    #   - Ambil total energy dari solution (per 100g setiap item)
+    #   - Hitung scale_factor = tdee / total_energy
+    #   - Kalikan semua nutrient dengan scale_factor
+    # 
+    # Hasil:
+    #   - GA menilai solusi dengan nilai yang sudah di-scale
+    #   - Energy akan mendekati TDEE
+    #   - Constraint akan lebih konsisten dengan output akhir
+    if tdee and tdee > 0:
+        total_energy = total_nutrition.get('energy_kcal', 0)
+        if total_energy > 0:
+            scale_factor = tdee / total_energy
+            # Kalikan semua nutrient dengan scale factor
+            # ⚠️  PENTING: Scaling berlaku ke SEMUA nutrient, bukan hanya energy!
+            for nutrient_name in total_nutrition:
+                total_nutrition[nutrient_name] = total_nutrition[nutrient_name] * scale_factor
     
     total_penalty = 0.0
     constraint_count = 0
@@ -316,28 +571,30 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         soft_constraints = guidelines
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 1: ENERGY CONSTRAINT - UTAMA SEKALI (HARD)
+    # STEP 1: ENERGY CONSTRAINT - STRICT ENFORCEMENT (HARD)
     # ════════════════════════════════════════════════════════════════════════
+    # Energy adalah CRITICAL - tanpa energy yang cukup, semua nutrient jadi irrelevant
+    # Jika melanggar → REJECT LANGSUNG (return 1e9)
+    # Tolerance ketat: 75% - 125% dari TDEE (±25%)
     if tdee and tdee > 0:
         current_energy = total_nutrition.get('energy_kcal', 0)
         
-        # Tolerance: 80% - 120% dari TDEE
-        min_energy = 0.8 * tdee
-        max_energy = 1.2 * tdee
+        # Ketat: 75% - 125% dari TDEE
+        min_energy = 0.75 * tdee
+        max_energy = 1.25 * tdee
         
-        if current_energy < min_energy:
-            # Energi terlalu rendah - BESAR penalty (20x multiplier)
-            energy_penalty = (min_energy - current_energy) * 20
-            total_penalty += energy_penalty
-        elif current_energy > max_energy:
-            # Energi terlalu tinggi - penalty besar (15x multiplier)
-            energy_penalty = (current_energy - max_energy) * 15
-            total_penalty += energy_penalty
+        # ⚠️  STRICT ENFORCEMENT: Jika melanggar energy range → REJECT
+        if current_energy < min_energy or current_energy > max_energy:
+            return 1e9  # HARD violation - energy CRITICAL!
         
         constraint_count += 1
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 2: HARD CONSTRAINTS - PRIORITAS UTAMA (10x/15x penalty)
+    # STEP 2: HARD CONSTRAINTS - STRICT ENFORCEMENT (REJECT LANGSUNG)
+    # ════════════════════════════════════════════════════════════════════════
+    # HARD constraint adalah constraint MEDIS - TIDAK BOLEH dilanggar!
+    # Jika melanggar → reject solusi LANGSUNG (return 1e9)
+    # Toleransi kecil (5%) ditambahkan agar GA tidak stuck (dataset terbatas)
     # ════════════════════════════════════════════════════════════════════════
     for nutrient_name, constraint in hard_constraints.items():
         # Skip unlimited
@@ -359,19 +616,21 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         max_val = constraint.get('max', float('inf'))
         value = total_nutrition[nutrient_name]
         
-        # Get nutrient weight (default 1.0)
-        weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
+        # ⚠️  TOLERANSI KECIL: 5% (agar GA tidak stuck dengan dataset terbatas)
+        # Contoh sodium: min=1500, tolerance 5% → lower_bound = 1425
+        tolerance = 0.05
+        lower_bound = min_val * (1 - tolerance)
+        upper_bound = max_val * (1 + tolerance)
         
-        # HARD constraint penalty: lebih besar (10x untuk under, 15x untuk over)
-        if value < min_val:
-            penalty = (min_val - value) * weight * 10
-            total_penalty += penalty
-        elif value > max_val:
-            penalty = (value - max_val) * weight * 15
-            total_penalty += penalty
+        # ⚠️  STRICT ENFORCEMENT: Jika melanggar → REJECT LANGSUNG
+        # Ini adalah HARD constraint (medis) → tidak boleh diabaikan!
+        if value < lower_bound or value > upper_bound:
+            # HARD violation → solusi TIDAK LAYAK (return 1e9)
+            return 1e9
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 3: SOFT CONSTRAINTS - FLEXIBLE (1x normal penalty)
+    # STEP 3: SOFT CONSTRAINTS - FLEXIBLE tapi TIDAK IGNORABLE
+    # Macronutrients (protein, carbs, fat) adalah FUNDAMENTAL, bukan optional!
     # ════════════════════════════════════════════════════════════════════════
     for nutrient_name, constraint in soft_constraints.items():
         # Skip unlimited
@@ -396,27 +655,19 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         # Get nutrient weight (default 1.0)
         weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
         
-        # SOFT constraint penalty: normal weight (tidak di-multiply)
+        # SOFT constraint penalty: 
+        # - Macronutrients (protein, carbs, fat): 10x multiplier (VERY IMPORTANT!)
+        # - Fiber & micronutrients: 2x multiplier (flexible)
+        soft_multiplier = 10.0 if nutrient_name in ['protein_g', 'carbohydrate_g', 'fat_g'] else 2.0
+        
         if value < min_val:
-            penalty = (min_val - value) * weight
+            penalty = (min_val - value) * weight * soft_multiplier
             total_penalty += penalty
         elif value > max_val:
-            penalty = (value - max_val) * weight
+            penalty = (value - max_val) * weight * soft_multiplier
             total_penalty += penalty
-    
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 4: HARD STOP - Jika ada violation ekstrem di HARD constraint
-    # ════════════════════════════════════════════════════════════════════════
-    for nutrient_name, constraint in hard_constraints.items():
-        max_val = constraint.get('max', float('inf'))
-        value = total_nutrition.get(nutrient_name, 0)
-        
-        # Jika violation sangat ekstrem (>= 2x limit), add HARD STOP penalty
-        if max_val != float('inf') and value > max_val * 2:
-            total_penalty += 10000  # HARD STOP - ini buruk!
-    
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 5: DUPLICATE PENALTY
+    # STEP 4: DUPLICATE PENALTY
     # ════════════════════════════════════════════════════════════════════════
     if 'food_name' in solution.columns:
         unique_foods = solution['food_name'].nunique()
@@ -425,10 +676,12 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         total_penalty += duplicate_penalty
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 6: NORMALIZE PENALTY
+    # STEP 5: RETURN PENALTY (NO NORMALIZATION!)
     # ════════════════════════════════════════════════════════════════════════
-    if constraint_count > 0:
-        total_penalty = total_penalty / constraint_count
+    # ⚠️  REMOVED normalisasi penalty (total_penalty / constraint_count)
+    # Alasan: Normalisasi membuat penalty sangat kecil, GA abaikan constraint
+    # Contoh: 1000 penalty ÷ 30 constraints = 33.33 (tidak signifikan!)
+    # Solusi: Keep absolute penalty agar GA hindari violation
     
     return total_penalty
 
@@ -754,12 +1007,13 @@ def _calculate_nutrition_score(food_item: pd.Series) -> float:
 
 def _apply_quality_filter(filtered: pd.DataFrame, expected_label: str) -> pd.DataFrame:
     """
-    Apply quality filter untuk setiap food category
+    Apply STRICT quality filter untuk setiap food category
+    Tujuan: Hindari junk food, makanan tidak realistis, dan items dengan nutrisi buruk
     
-    Main Course: strict (energy >= 150, protein >= 5)
-    Side Dish: moderate
-    Drink: lenient
-    Snack: lenient
+    Main Course: VERY STRICT (nutrisi balanced)
+    Side Dish: STRICT (ada nutrisi, bukan lemak murni)
+    Drink: MODERATE (not too calorie-dense)
+    Snack: MODERATE (reasonable portions)
     
     Args:
         filtered: DataFrame yang sudah filter by label
@@ -767,27 +1021,93 @@ def _apply_quality_filter(filtered: pd.DataFrame, expected_label: str) -> pd.Dat
     
     Returns:
         Filtered DataFrame dengan quality constraints
+    
+    JUNK FOOD KEYWORDS yang di-exclude:
+    ['candy', 'chocolate', 'dessert', 'cake', 'cookie', 'syrup', 'donut',
+     'candy bar', 'confection', 'sweet', 'sauce-fat', 'oil-pure']
     """
     if len(filtered) == 0:
         return filtered
     
     expected_lower = expected_label.strip().lower()
     
-    # MAIN COURSE: STRICT quality filter untuk realistic main dishes
-    if expected_lower == 'main course':
-        # Main harus energy >= 200 kcal (sufficient) dan protein >= 8g (adequate protein)
-        # Ini menghilangkan snack-like items seperti chestnut, pretzel
+    # JUNK FOOD BLACKLIST - exclude dari semua kategori
+    junk_keywords = ['candy', 'chocolate', 'dessert', 'cake', 'cookie', 'syrup', 
+                     'donut', 'confection', 'sweet candy', 'caramel', 'fudge',
+                     'pie', 'ice cream', 'pudding', 'mousse', 'brownie']
+    junk_pattern = '|'.join(junk_keywords)
+    
+    # Remove junk food
+    if 'food_name' in filtered.columns:
         filtered = cast(pd.DataFrame, filtered[
-            (filtered['energy_kcal'] >= 200) &
-            (filtered['protein_g'] >= 8)
+            ~filtered['food_name'].str.lower().str.contains(junk_pattern, na=False)
         ])
     
-    # SIDE DISH: Moderate filter (minimum nutrisi)
-    elif expected_lower == 'side dish':
-        # Side minimal protein >= 2g (biar ada nutrisi)
-        filtered = cast(pd.DataFrame, filtered[filtered['protein_g'] >= 2])
+    # ────────────────────────────────────────────────────────────────────
+    # MAIN COURSE: VERY STRICT - harus ada balanced nutrients
+    # ────────────────────────────────────────────────────────────────────
+    if expected_lower == 'main course':
+        # Main Course HARUS:
+        # - Energy 200-400 kcal (realistic portion @ 100g)
+        # - Protein >= 12g (adequate protein content)
+        # - Fat > 2g AND Fat < 40g (not fat-only, not too fatty)
+        # - NOT pure oil/fat items
+        filtered = cast(pd.DataFrame, filtered[
+            (filtered['energy_kcal'] >= 200) &
+            (filtered['energy_kcal'] <= 400) &
+            (filtered['protein_g'] >= 12) &
+            (filtered['fat_g'] >= 2) &
+            (filtered['fat_g'] <= 40)
+        ])
     
-    # DRINK & SNACK: Lenient, terima saja
+    # ────────────────────────────────────────────────────────────────────
+    # SIDE DISH: STRICT - harus ada nutrisi, bukan hanya lemak/gula
+    # ────────────────────────────────────────────────────────────────────
+    elif expected_lower == 'side dish':
+        # Side HARUS:
+        # - Protein >= 3g (ada nutrisi, bukan empty calorie)
+        # - NOT pure fat/oil (fat <= 50% of energy)
+        # - NOT pure sugar
+        filtered = cast(pd.DataFrame, filtered[
+            (filtered['protein_g'] >= 3)
+        ])
+        
+        # Exclude pure fat items (fat memberikan 9 kcal/g)
+        # Jika fat > energy/9 * 0.7 = mostly fat → exclude
+        if 'fat_g' in filtered.columns and 'energy_kcal' in filtered.columns:
+            filtered = cast(pd.DataFrame, filtered[
+                filtered['fat_g'] <= (filtered['energy_kcal'] / 9 * 0.7)
+            ])
+    
+    # ────────────────────────────────────────────────────────────────────
+    # DRINK: MODERATE - hindari meal replacement yang terlalu calorie-dense
+    # ────────────────────────────────────────────────────────────────────
+    elif expected_lower == 'drink':
+        # Drink:
+        # - Energy 0-200 kcal @ 100g (beverage realistic range)
+        # - Exclude "meal replacement" yang sudah terlalu nutrient-dense
+        if 'food_name' in filtered.columns:
+            filtered = cast(pd.DataFrame, filtered[
+                ~filtered['food_name'].str.lower().str.contains('meal replacement|nutritional shake', na=False)
+            ])
+        
+        # Energy limit untuk drink
+        filtered = cast(pd.DataFrame, filtered[
+            filtered['energy_kcal'] <= 200
+        ])
+    
+    # ────────────────────────────────────────────────────────────────────
+    # SNACK: MODERATE - reasonable size, tidak murni junk
+    # ────────────────────────────────────────────────────────────────────
+    elif expected_lower == 'snack':
+        # Snack:
+        # - Energy 50-250 kcal (reasonable snack size)
+        # - Protein >= 1g (biar ada minimal nutrisi)
+        filtered = cast(pd.DataFrame, filtered[
+            (filtered['energy_kcal'] >= 50) &
+            (filtered['energy_kcal'] <= 250) &
+            (filtered['protein_g'] >= 1)
+        ])
     
     return filtered
 
@@ -853,9 +1173,14 @@ def generate_meal_options(
         # ────────────────────────────────────────────────────────────────────
         # STEP 2: Tambah variasi dari dataset
         # ────────────────────────────────────────────────────────────────────
-        dataset_items = food_df[
+        dataset_items = cast(pd.DataFrame, food_df[
             food_df['consumption_label'].str.strip().str.lower() == expected_label.lower()
-        ]
+        ])
+        
+        # ════════════════════════════════════════════════════════════════════
+        # QUALITY FILTER - Ensure dataset items meet quality standards
+        # ════════════════════════════════════════════════════════════════════
+        dataset_items = cast(pd.DataFrame, _apply_quality_filter(dataset_items, expected_label))
         
         # Filter by cuisine jika ada preference
         if allowed_cuisine and 'cuisine' in dataset_items.columns:
@@ -1036,32 +1361,55 @@ def display_meal_options(slot_options: Dict[str, List[pd.Series]]):
 
 
 
-def display_fitness_details(solution: pd.DataFrame, guidelines: Dict):
+def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = None):
     """
     Display fitness score breakdown (penalty per nutrient dengan weights)
     Gunakan weighted calculation sama seperti di fitness() function
+    Handle HARD vs SOFT constraints properly
     
     Args:
         solution: DataFrame meal plan
-        guidelines: Dict constraints
+        guidelines: Dict constraints (dengan 'hard' dan 'soft' keys jika tersedia)
+        tdee: Target daily energy expenditure (opsional)
     """
     total_nutrition = calculate_total_nutrition(solution)
-    total_penalty = fitness(solution, guidelines)
+    total_penalty = fitness(solution, guidelines, tdee=tdee)
     
     print("\n⚖️  FITNESS BREAKDOWN:")
     print("─" * 70)
     
-    nutrient_penalties = {}
+    # ════════════════════════════════════════════════════════════════════════
+    # DETECT GUIDELINE STRUCTURE (HARD/SOFT atau LAMA)
+    # ════════════════════════════════════════════════════════════════════════
+    has_hard_soft = 'hard' in guidelines and 'soft' in guidelines
     
-    for nutrient_name, constraint in guidelines.items():
+    if has_hard_soft:
+        hard_constraints = guidelines['hard']
+        soft_constraints = guidelines['soft']
+    else:
+        # Backward compatibility
+        hard_constraints = {}
+        soft_constraints = guidelines
+    
+    nutrient_penalties = {}
+    violation_severity = {}  # Track HARD vs SOFT
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # HARD CONSTRAINTS CHECK (dengan multiplier 10-15x)
+    # ════════════════════════════════════════════════════════════════════════
+    for nutrient_name, constraint in hard_constraints.items():
         if constraint.get('constraint_type') == 'unlimited':
             continue
-        if nutrient_name not in total_nutrition:
+        if nutrient_name not in total_nutrition and nutrient_name != 'energy_kcal':
+            continue
+        
+        # Skip energy (di-handle terpisah)
+        if nutrient_name == 'energy_kcal':
             continue
         
         min_val = constraint.get('min', 0)
         max_val = constraint.get('max', float('inf'))
-        value = total_nutrition[nutrient_name]
+        value = total_nutrition.get(nutrient_name, 0)
         
         # Get nutrient weight (sama seperti di fitness())
         weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
@@ -1070,27 +1418,91 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict):
         status = "✓ OK"
         
         if value < min_val:
-            # Kurang dari minimum dengan weight
-            penalty = (min_val - value) * weight
-            status = f"✗ LOW (need {min_val - value:.1f} more)"
+            # HARD: Kurang dari minimum dengan weight * 10
+            penalty = (min_val - value) * weight * 10
+            status = f"🔴 LOW (need {min_val - value:.1f} more) [HARD]"
+            violation_severity[nutrient_name] = 'HARD-UNDER'
         elif value > max_val:
-            # Lebih dari maximum dengan weight
-            penalty = (value - max_val) * weight
-            status = f"✗ HIGH (excess {value - max_val:.1f})"
+            # HARD: Lebih dari maximum dengan weight * 15
+            penalty = (value - max_val) * weight * 15
+            status = f"🔴 HIGH (excess {value - max_val:.1f}) [HARD]"
+            violation_severity[nutrient_name] = 'HARD-OVER'
         
         nutrient_penalties[nutrient_name] = penalty
     
-    # Show top violations
+    # ════════════════════════════════════════════════════════════════════════
+    # SOFT CONSTRAINTS CHECK (dengan multiplier 1x)
+    # ════════════════════════════════════════════════════════════════════════
+    for nutrient_name, constraint in soft_constraints.items():
+        if constraint.get('constraint_type') == 'unlimited':
+            continue
+        if nutrient_name not in total_nutrition and nutrient_name != 'energy_kcal':
+            continue
+        
+        # Skip energy (di-handle terpisah)
+        if nutrient_name == 'energy_kcal':
+            continue
+        
+        min_val = constraint.get('min', 0)
+        max_val = constraint.get('max', float('inf'))
+        value = total_nutrition.get(nutrient_name, 0)
+        
+        # Get nutrient weight (sama seperti di fitness())
+        weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
+        
+        penalty = 0
+        status = "✓ OK"
+        
+        if value < min_val:
+            # SOFT: Kurang dari minimum dengan weight * 1
+            penalty = (min_val - value) * weight
+            status = f"🟡 LOW (need {min_val - value:.1f} more) [SOFT]"
+            violation_severity[nutrient_name] = 'SOFT-UNDER'
+        elif value > max_val:
+            # SOFT: Lebih dari maximum dengan weight * 1
+            penalty = (value - max_val) * weight
+            status = f"🟡 HIGH (excess {value - max_val:.1f}) [SOFT]"
+            violation_severity[nutrient_name] = 'SOFT-OVER'
+        
+        nutrient_penalties[nutrient_name] = penalty
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # ENERGY CONSTRAINT CHECK (HARD - CRITICAL)
+    # ════════════════════════════════════════════════════════════════════════
+    if tdee and tdee > 0:
+        current_energy = total_nutrition.get('energy_kcal', 0)
+        min_energy = 0.8 * tdee
+        max_energy = 1.2 * tdee
+        
+        energy_penalty = 0
+        energy_status = "✓ OK"
+        
+        if current_energy < min_energy:
+            energy_penalty = (min_energy - current_energy) * 20
+            energy_status = f"🔴 UNDER (need {min_energy - current_energy:.0f} more kcal) [HARD-ENERGY]"
+            violation_severity['energy_kcal'] = 'HARD-ENERGY-UNDER'
+        elif current_energy > max_energy:
+            energy_penalty = (current_energy - max_energy) * 15
+            energy_status = f"🔴 OVER (excess {current_energy - max_energy:.0f} kcal) [HARD-ENERGY]"
+            violation_severity['energy_kcal'] = 'HARD-ENERGY-OVER'
+        
+        nutrient_penalties['energy_kcal'] = energy_penalty
+    
+    # Show all violations sorted by severity (HARD first, then SOFT)
     violations = [(n, p) for n, p in nutrient_penalties.items() if p > 0]
-    violations.sort(key=lambda x: x[1], reverse=True)
+    violations.sort(key=lambda x: (-10000 if 'HARD' in violation_severity.get(x[0], '') else -1000, -x[1]))
     
     if violations:
-        print(f"Top violations (with weights):\n")
-        for nutrient, penalty in violations[:5]:
-            weight = NUTRIENT_WEIGHTS.get(nutrient, 1.0)
-            print(f"   {nutrient} (weight={weight}): penalty = {penalty:.2f}")
+        print(f"Violations found:\n")
+        for nutrient, penalty in violations:
+            severity = violation_severity.get(nutrient, 'UNKNOWN')
+            multiplier = 15 if 'OVER' in severity and 'HARD' in severity else \
+                        10 if 'UNDER' in severity and 'HARD' in severity else \
+                        20 if 'ENERGY-UNDER' in severity else \
+                        15 if 'ENERGY-OVER' in severity else 1
+            print(f"   {nutrient:20} ({severity:18}): penalty = {penalty:8.2f}")
     else:
-        print(f"   No violations! All constraints satisfied ✓")
+        print(f"   ✅ No violations! All constraints satisfied")
     
     print(f"\n   Total Penalty Score: {total_penalty:.2f}")
 
@@ -1168,10 +1580,17 @@ def calculate_portion_sizes_dynamic(
     }
     
     # Extract guideline targets if provided
+    # FIX: Flatten guidelines if it has {'hard': {...}, 'soft': {...}} structure
     if guidelines:
-        target_protein_min = guidelines.get('protein_g', {}).get('min', 60)
-        target_fat_min = guidelines.get('fat_g', {}).get('min', 50)
-        target_carb_min = guidelines.get('carbohydrate_g', {}).get('min', 250)
+        guidelines_flat = {}
+        if isinstance(guidelines, dict) and 'hard' in guidelines and 'soft' in guidelines:
+            guidelines_flat = {**guidelines['hard'], **guidelines['soft']}
+        else:
+            guidelines_flat = guidelines
+        
+        target_protein_min = guidelines_flat.get('protein_g', {}).get('min', 60)
+        target_fat_min = guidelines_flat.get('fat_g', {}).get('min', 50)
+        target_carb_min = guidelines_flat.get('carbohydrate_g', {}).get('min', 250)
     else:
         target_protein_min = 60
         target_fat_min = 50
@@ -1316,85 +1735,127 @@ def calculate_portion_sizes_dynamic(
                     result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
     # ════════════════════════════════════════════════════════════════════════
-    # NEW: HARD STOP CONTROL - SODIUM & CHOLESTEROL
+    # NEW: ENERGY-AWARE HARD CONSTRAINT HANDLING
     # ════════════════════════════════════════════════════════════════════════
-    # Jika ada HARD constraint violation, scale down semua portions
+    # IMPORTANT: Energy (TDEE) adalah PRIORITAS UTAMA
+    # Jangan scale down agresif karena HARD constraint lain (sodium, chol)
+    # Gunakan strategy: reduce violating items SELECTIVELY, not globally
+    
+    current_energy_baseline = result_df['final_energy_kcal'].sum()
+    current_sodium = result_df['final_sodium_mg'].sum() if 'final_sodium_mg' in result_df.columns else 0
     
     # Check HARD constraints from guidelines
     if guidelines and isinstance(guidelines, dict) and 'hard' in guidelines:
         hard_constraints = guidelines['hard']
         
         # ────────────────────────────────────────────────────────────────────
-        # SODIUM CONTROL
+        # SODIUM CONTROL (INTELLIGENT)
         # ────────────────────────────────────────────────────────────────────
         if 'sodium_mg' in hard_constraints:
             sodium_limit = hard_constraints['sodium_mg'].get('max', float('inf'))
-            total_sodium = result_df['final_sodium_mg'].sum()
             
-            if total_sodium > sodium_limit and sodium_limit != float('inf'):
-                # Scale down grams untuk match sodium limit
-                scale_sodium = sodium_limit / total_sodium
-                result_df['gram'] *= scale_sodium
+            if current_sodium > sodium_limit and sodium_limit != float('inf'):
+                sodium_excess = current_sodium - sodium_limit
                 
-                # Recalculate final nutrients dengan scaled gram
-                for idx in range(len(result_df)):
-                    item = result_df.iloc[idx]
-                    gram = result_df.at[idx, 'gram']
+                # Strategy: Reduce highest-sodium items SELECTIVELY
+                # Cari items dengan sodium tertinggi per 100g
+                if 'sodium_mg' in result_df.columns:
+                    result_df['sodium_per_100g'] = (result_df['sodium_mg'] / 
+                                                    (result_df['energy_kcal'] + 0.1)) * 100
                     
-                    for nutrient in nutrients_to_scale:
-                        if nutrient in item.index:
-                            value_per_100g = item.get(nutrient, 0) or 0
-                            final_value = value_per_100g * gram / 100
-                            result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+                    # Reduce portions untuk items dengan sodium tinggi (max 30% reduction to preserve energy)
+                    sorted_high_sodium = result_df.nlargest(3, 'sodium_per_100g')
+                    
+                    for idx in sorted_high_sodium.index:
+                        item_sodium = result_df.at[idx, 'final_sodium_mg']
+                        if item_sodium > 0 and sodium_excess > 0:
+                            # Reduce max 30% dari item ini untuk save energy
+                            reduction_factor = min(0.3, sodium_excess / item_sodium)
+                            reduction_factor = min(reduction_factor, 0.15)  # Conservative: max 15%
+                            
+                            gram_old = result_df.at[idx, 'gram']
+                            gram_new = gram_old * (1 - reduction_factor)
+                            result_df.at[idx, 'gram'] = gram_new
+                            
+                            # Recalculate nutrients
+                            actual_item = selected_df.iloc[idx]
+                            for nutrient in nutrients_to_scale:
+                                if nutrient in actual_item.index:
+                                    value_per_100g = actual_item.get(nutrient, 0) or 0
+                                    final_value = value_per_100g * gram_new / 100
+                                    result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+                            
+                            sodium_excess -= item_sodium * reduction_factor
+                    
+                    # If still over, apply global scale (but capped at 80% to protect energy)
+                    if sodium_excess > 0:
+                        total_sodium_after = result_df['final_sodium_mg'].sum()
+                        if total_sodium_after > sodium_limit:
+                            scale_factor = sodium_limit / total_sodium_after
+                            scale_factor = max(scale_factor, 0.8)  # Never scale below 80%
+                            
+                            result_df['gram'] *= scale_factor
+                            
+                            # Recalculate all nutrients
+                            for idx in range(len(result_df)):
+                                gram = result_df.at[idx, 'gram']
+                                actual_item = selected_df.iloc[idx]
+                                
+                                for nutrient in nutrients_to_scale:
+                                    if nutrient in actual_item.index:
+                                        value_per_100g = actual_item.get(nutrient, 0) or 0
+                                        final_value = value_per_100g * gram / 100
+                                        result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
         
         # ────────────────────────────────────────────────────────────────────
-        # CHOLESTEROL CONTROL
+        # CHOLESTEROL CONTROL (INTELLIGENT)
         # ────────────────────────────────────────────────────────────────────
         if 'cholesterol_mg' in hard_constraints:
             chol_limit = hard_constraints['cholesterol_mg'].get('max', float('inf'))
-            total_chol = result_df['final_cholesterol_mg'].sum()
+            total_chol = result_df['final_cholesterol_mg'].sum() if 'final_cholesterol_mg' in result_df.columns else 0
             
             if total_chol > chol_limit and chol_limit != float('inf'):
-                # Scale down grams untuk match cholesterol limit
-                scale_chol = chol_limit / total_chol
-                result_df['gram'] *= scale_chol
+                # Scale factor capped at 80% to protect energy (same strategy as sodium)
+                scale_factor = chol_limit / total_chol
+                scale_factor = max(scale_factor, 0.8)  # Never scale below 80%
                 
-                # Recalculate final nutrients dengan scaled gram
+                result_df['gram'] *= scale_factor
+                
+                # Recalculate final nutrients
                 for idx in range(len(result_df)):
-                    item = result_df.iloc[idx]
                     gram = result_df.at[idx, 'gram']
+                    actual_item = selected_df.iloc[idx]
                     
                     for nutrient in nutrients_to_scale:
-                        if nutrient in item.index:
-                            value_per_100g = item.get(nutrient, 0) or 0
+                        if nutrient in actual_item.index:
+                            value_per_100g = actual_item.get(nutrient, 0) or 0
                             final_value = value_per_100g * gram / 100
                             result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
     # ════════════════════════════════════════════════════════════════════════
-    # GLOBAL RESCALE - Ensure total energy matches TDEE target
+    # GLOBAL ENERGY RESCALE - Ensure total energy matches TDEE target
     # ════════════════════════════════════════════════════════════════════════
-    # After all the per-meal calculations and hard stop controls,
-    # perform one final global rescale to ensure total energy is close to TDEE
+    # CRITICAL: After all constraint handling, rescale portions to match TDEE
+    # Energy is MORE important than exact constraint satisfaction
     
-    total_energy_after_controls = result_df['final_energy_kcal'].sum()
+    total_energy_after_constraints = result_df['final_energy_kcal'].sum()
     
-    if total_energy_after_controls > 0 and TDEE > 0:
-        # Calculate scaling factor
-        global_scale = TDEE / total_energy_after_controls
+    if total_energy_after_constraints > 0 and TDEE > 0:
+        # Calculate scaling factor needed to reach TDEE
+        energy_scale = TDEE / total_energy_after_constraints
         
-        # Allow scale up to 2.0x to ensure TDEE is met
-        # This is more important than portion size exactness
-        if 0.6 <= global_scale <= 2.0:
-            result_df['gram'] *= global_scale
+        # Much broader range: 0.5x to 2.5x (to handle aggressive constraint scaling)
+        if 0.5 <= energy_scale <= 2.5:
+            result_df['gram'] *= energy_scale
             
-            # Recalculate all final nutrients with globally scaled grams
+            # Recalculate all final nutrients with energy-adjusted grams
             for idx in range(len(result_df)):
-                item = result_df.iloc[idx]
                 gram = result_df.at[idx, 'gram']
+                actual_item = selected_df.iloc[idx]
                 
                 for nutrient in nutrients_to_scale:
-                    if nutrient in item.index:
-                        value_per_100g = item.get(nutrient, 0) or 0
+                    if nutrient in actual_item.index:
+                        value_per_100g = actual_item.get(nutrient, 0) or 0
                         final_value = value_per_100g * gram / 100
                         result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
@@ -1446,10 +1907,17 @@ def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, 
     print("STEP 9: PORTION SIZING - MEAL-BASED + DEFICIT-AWARE (v3)")
     print("="*70)
     
+    # FIX: Flatten guidelines if it has {'hard': {...}, 'soft': {...}} structure (for display)
+    guidelines_flat_for_display = {}
+    if isinstance(guidelines, dict) and 'hard' in guidelines and 'soft' in guidelines:
+        guidelines_flat_for_display = {**guidelines['hard'], **guidelines['soft']}
+    else:
+        guidelines_flat_for_display = guidelines
+    
     print(f"\n📐 SOPHISTICATED ALGORITHM:")
     print(f"  1. Meal distribution: Breakfast 25% | Lunch 35% | Dinner 30% | Snack 10% of TDEE")
     print(f"  2. Totals @ 100g: Energy {portion_df['energy_kcal'].sum():.0f}kcal | Protein {portion_df['protein_g'].sum():.1f}g | Fat {portion_df['fat_g'].sum():.1f}g | Carb {portion_df['carbohydrate_g'].sum():.1f}g")
-    print(f"  3. Calculate deficit vs targets (Protein>{guidelines.get('protein_g', {}).get('min', 60)}, Fat>{guidelines.get('fat_g', {}).get('min', 50)}, Carb>{guidelines.get('carbohydrate_g', {}).get('min', 250)})")
+    print(f"  3. Calculate deficit vs targets (Protein>{guidelines_flat_for_display.get('protein_g', {}).get('min', 60)}, Fat>{guidelines_flat_for_display.get('fat_g', {}).get('min', 50)}, Carb>{guidelines_flat_for_display.get('carbohydrate_g', {}).get('min', 250)})")
     print(f"  4. Weight = 40% energy + 30% protein(×boost) + 20% fat(×boost) + 10% carb(×boost)")
     print(f"  5. Label adjustment: Main 1.0x | Side 0.8x | Drink 0.5x | Snack 0.3x")
     print(f"  6. Normalize weights per meal")
@@ -1542,6 +2010,13 @@ def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, 
     print(f"\n📋 COMPLIANCE vs GUIDELINES:")
     print(f"─" * 70)
     
+    # FIX: Flatten guidelines if it has {'hard': {...}, 'soft': {...}} structure
+    guidelines_flat = {}
+    if isinstance(guidelines, dict) and 'hard' in guidelines and 'soft' in guidelines:
+        guidelines_flat = {**guidelines['hard'], **guidelines['soft']}
+    else:
+        guidelines_flat = guidelines
+    
     # Key nutrients for compliance check
     key_checks = [
         ('energy_kcal', total_energy, 'kcal'),
@@ -1555,7 +2030,7 @@ def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, 
     total_checks = 0
     
     for nutrient, actual_val, unit in key_checks:
-        constraint = guidelines.get(nutrient, {})
+        constraint = guidelines_flat.get(nutrient, {})
         min_val = constraint.get('min', 0)
         max_val = constraint.get('max', float('inf'))
         

@@ -37,7 +37,8 @@ USE_INTERACTIVE_INPUT = True
 from ga_v1 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
-    SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic
+    SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
+    filter_food_dataset
 )
 
 # Import NutritionService
@@ -234,9 +235,16 @@ def test_ga_with_nutrition_service():
                 unit = constraint.get('unit', 'unit')
                 print(f"  - {nutrient:20s}: {min_val:8.1f} - {max_val:8.1f} {unit}")
         
-        # STEP 4: Run GA (silently - less verbose)
+        # STEP 4: Filter food dataset untuk remove junk food
         print("\n" + "="*70)
-        print("STEP 4: Run Genetic Algorithm...")
+        print("STEP 4: Filter Food Dataset - Remove Junk Food...")
+        print("="*70)
+        
+        food_df = filter_food_dataset(food_df, verbose=True)
+        
+        # STEP 5: Run GA
+        print("="*70)
+        print("STEP 5: Run Genetic Algorithm...")
         print("="*70)
         
         best_solution, top_solutions = run_ga(
@@ -251,17 +259,17 @@ def test_ga_with_nutrition_service():
         )
         print("✓ GA optimization complete")
         
-        # STEP 5: Display hasil
+        # STEP 6: Display hasil
         print("\n" + "="*70)
-        print("STEP 5: OPTIMAL MEAL PLAN - GA RESULT")
+        print("STEP 6: OPTIMAL MEAL PLAN - GA RESULT")
         print("="*70)
         
         display_solution(best_solution, guidelines)
         display_fitness_details(best_solution, guidelines)
         
-        # STEP 6: Generate meal options dari top_solutions (berbagai kombinasi)
+        # STEP 7: Generate meal options dari top_solutions (berbagai kombinasi)
         print("\n" + "="*70)
-        print("STEP 6: Generate 2-3 varied menu options per slot...")
+        print("STEP 7: Generate 2-3 varied menu options per slot...")
         print("="*70)
         
         slot_options = generate_meal_options(
@@ -273,10 +281,10 @@ def test_ga_with_nutrition_service():
         display_meal_options(slot_options)
         
         # ============================================================================
-        # STEP 7: USER SELECTION - Interactive menu selection
+        # STEP 8: USER SELECTION - Interactive menu selection
         # ============================================================================
         print("\n" + "="*70)
-        print("STEP 7: USER SELECTION - Choose your menu")
+        print("STEP 8: USER SELECTION - Choose your menu")
         print("="*70)
         
         selected_meal = []
@@ -349,9 +357,9 @@ def test_ga_with_nutrition_service():
             # Calculate total nutrition dari selected meals
             selected_nutrition = calculate_total_nutrition(selected_df)
             
-            # STEP 8: Display final nutrition comparison (simplified)
+            # STEP 9: Display final nutrition comparison (simplified)
             print("\n" + "="*70)
-            print("STEP 8: NUTRITION ANALYSIS - Your Selected Menu")
+            print("STEP 9: NUTRITION ANALYSIS - Your Selected Menu")
             print("="*70)
             
             print("\n📋 YOUR SELECTED MENU (10 Items):")
@@ -371,6 +379,17 @@ def test_ga_with_nutrition_service():
             print("📊 NUTRITION SUMMARY:")
             print("─" * 70)
             
+            # ════════════════════════════════════════════════════════════════════════
+            # FIX: Merge HARD+SOFT guidelines untuk STEP 8
+            # ════════════════════════════════════════════════════════════════════════
+            # Reconstruct flat guidelines dari HARD+SOFT structure
+            guidelines_flat = {}
+            if isinstance(guidelines, dict) and 'hard' in guidelines and 'soft' in guidelines:
+                guidelines_flat = {**guidelines['hard'], **guidelines['soft']}
+            else:
+                # Backward compatibility: jika sudah flat
+                guidelines_flat = guidelines
+            
             # Key nutrients for comparison
             key_nutrients = [
                 ('energy_kcal', 'kcal', 'Energy'),
@@ -386,7 +405,9 @@ def test_ga_with_nutrition_service():
             for nutrient_col, unit, label in key_nutrients:
                 if nutrient_col in selected_nutrition:
                     value = selected_nutrition[nutrient_col]
-                    constraint = guidelines.get(nutrient_col, {})
+                    
+                    # FIX: Use merged flat guidelines instead of raw guidelines
+                    constraint = guidelines_flat.get(nutrient_col, {})
                     min_val = constraint.get('min', 0)
                     max_val = constraint.get('max', float('inf'))
                     
@@ -409,7 +430,7 @@ def test_ga_with_nutrition_service():
             print("="*70)
             
             # ════════════════════════════════════════════════════════════════════════
-            # STEP 9: PORTION SIZING - Calculate portion sizes dynamically (MEAL-BASED + DEFICIT-AWARE)
+            # STEP 10: PORTION SIZING - Calculate portion sizes dynamically (MEAL-BASED + DEFICIT-AWARE)
             # ════════════════════════════════════════════════════════════════════════
             portion_result_df = calculate_portion_sizes_dynamic(selected_df, tdee, guidelines)
             display_portion_summary_dynamic(portion_result_df, guidelines, tdee)
