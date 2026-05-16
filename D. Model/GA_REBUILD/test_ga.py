@@ -58,6 +58,104 @@ except ImportError as e:
     sys.exit(1)
 
 
+# ════════════════════════════════════════════════════════════════════════
+# HELPER FUNCTIONS: Percentage Fulfillment & Status Categorization
+# ════════════════════════════════════════════════════════════════════════
+
+def calculate_fulfillment_percentage(value, min_val, max_val):
+    """
+    Calculate nutrient fulfillment percentage based on range.
+    
+    Logic:
+    - If value < min: percent = (value / min) * 100
+    - Elif value > max: percent = (max / value) * 100
+    - Else: percent = 100
+    
+    Args:
+        value: Actual nutrient value
+        min_val: Minimum target
+        max_val: Maximum target
+    
+    Returns:
+        float: Percentage (0-100+)
+    """
+    if min_val == 0 and max_val == float('inf'):
+        # No constraint
+        return 100.0
+    
+    if value < min_val:
+        # Below minimum - calculate deficit percentage
+        percent = (value / min_val * 100) if min_val > 0 else 0
+    elif value > max_val:
+        # Above maximum - calculate excess percentage
+        percent = (max_val / value * 100) if value > 0 else 0
+    else:
+        # Within range - 100%
+        percent = 100.0
+    
+    return percent
+
+
+def get_status_category(percent):
+    """
+    Categorize nutrient fulfillment status based on percentage.
+    
+    Categories:
+    - >= 95%: Excellent ✨
+    - >= 85%: Good 🟢
+    - >= 70%: Fair 🟡
+    - < 70%: Poor 🔴
+    
+    Args:
+        percent: Fulfillment percentage
+    
+    Returns:
+        tuple: (status_text, emoji, category_color)
+    """
+    if percent >= 95:
+        return ("Excellent", "✨", "green")
+    elif percent >= 85:
+        return ("Good", "🟢", "green")
+    elif percent >= 70:
+        return ("Fair", "🟡", "yellow")
+    else:
+        return ("Poor", "🔴", "red")
+
+
+def format_fulfillment_display(value, min_val, max_val, unit):
+    """
+    Format nutrient value display dengan percentage.
+    
+    Example: 197 g / 241 g → 81.7% (Fair)
+    
+    Args:
+        value: Actual value
+        min_val: Minimum target
+        max_val: Maximum target
+        unit: Unit string
+    
+    Returns:
+        tuple: (display_string, percentage, category)
+    """
+    percent = calculate_fulfillment_percentage(value, min_val, max_val)
+    status_text, emoji, category = get_status_category(percent)
+    
+    # Format based on constraint type
+    if min_val == 0 and max_val == float('inf'):
+        display_str = f"{value:.1f} {unit}"
+    elif min_val == max_val:
+        # Target value (exact)
+        display_str = f"{value:.1f} / {min_val:.1f} {unit}"
+    else:
+        # Range
+        if max_val == float('inf'):
+            display_str = f"{value:.1f} / min {min_val:.1f} {unit}"
+        else:
+            display_str = f"{value:.1f} ({min_val:.1f}-{max_val:.1f}) {unit}"
+    
+    return display_str, percent, status_text, emoji
+
+
 def get_simple_user_input(interactive=False):
     """
     Get user input either interactively or use defaults
@@ -380,7 +478,7 @@ def test_ga_with_nutrition_service():
             print("─" * 70)
             
             # ════════════════════════════════════════════════════════════════════════
-            # FIX: Merge HARD+SOFT guidelines untuk STEP 8
+            # FIX: Merge HARD+SOFT guidelines untuk STEP 9
             # ════════════════════════════════════════════════════════════════════════
             # Reconstruct flat guidelines dari HARD+SOFT structure
             guidelines_flat = {}
@@ -390,44 +488,115 @@ def test_ga_with_nutrition_service():
                 # Backward compatibility: jika sudah flat
                 guidelines_flat = guidelines
             
-            # Key nutrients for comparison
-            key_nutrients = [
-                ('energy_kcal', 'kcal', 'Energy'),
-                ('protein_g', 'g', 'Protein'),
-                ('fat_g', 'g', 'Fat'),
-                ('sodium_mg', 'mg', 'Sodium'),
-                ('cholesterol_mg', 'mg', 'Cholesterol')
-            ]
-            
+            # ════════════════════════════════════════════════════════════════════════
+            # DISPLAY ALL NUTRIENTS (MACRO + MICRO) - NOT JUST 5!
+            # ════════════════════════════════════════════════════════════════════════
             compliant = 0
             total_checks = 0
             
-            for nutrient_col, unit, label in key_nutrients:
-                if nutrient_col in selected_nutrition:
-                    value = selected_nutrition[nutrient_col]
-                    
-                    # FIX: Use merged flat guidelines instead of raw guidelines
-                    constraint = guidelines_flat.get(nutrient_col, {})
-                    min_val = constraint.get('min', 0)
-                    max_val = constraint.get('max', float('inf'))
-                    
-                    total_checks += 1
-                    if min_val <= value <= max_val:
-                        status = "✅"
-                        compliant += 1
-                    elif value < min_val:
-                        status = "🔴 (LOW)"
-                    else:
-                        status = "🟡 (HIGH)"
-                    
-                    print(f"  {label:15}: {value:8.1f} {unit:5} [{min_val:8.1f}-{max_val:8.1f}] {status}")
+            # Define unit mapping untuk common nutrients
+            unit_map = {
+                'energy_kcal': 'kcal',
+                'protein_g': 'g',
+                'carbohydrate_g': 'g',
+                'fat_g': 'g',
+                'fiber_g': 'g',
+                'sodium_mg': 'mg',
+                'potassium_mg': 'mg',
+                'cholesterol_mg': 'mg',
+                'calcium_mg': 'mg',
+                'iron_mg': 'mg',
+                'magnesium_mg': 'mg',
+                'phosphorus_mg': 'mg',
+                'zinc_mg': 'mg',
+                'vitamin_a_mcg': 'mcg',
+                'vitamin_b1_mg': 'mg',
+                'vitamin_b2_mg': 'mg',
+                'vitamin_b3_mg': 'mg',
+                'vitamin_b5_mg': 'mg',
+                'vitamin_b6_mg': 'mg',
+                'vitamin_b12_mcg': 'mcg',
+                'vitamin_c_mg': 'mg',
+                'vitamin_d_mcg': 'mcg',
+                'vitamin_e_mg': 'mg',
+                'vitamin_k_mcg': 'mcg',
+                'folate_mcg': 'mcg',
+            }
+            
+            # Format nutrient name untuk display
+            def format_nutrient_label(nutrient_col: str) -> str:
+                """Convert nutrient_col ke readable label"""
+                # Contoh: energy_kcal → Energy, protein_g → Protein
+                name = nutrient_col.replace('_', ' ').replace('kcal', '').replace('mg', '').replace('g', '').replace('mcg', '').strip()
+                # Capitalize each word
+                return ' '.join(word.capitalize() for word in name.split())
+            
+            print("\n📊 DETAILED NUTRIENT ANALYSIS (ALL MACRO + MICRO):")
+            print("─" * 130)
+            print(f"{'Nutrient':<30} {'Value / Target':<35} {'Fulfill %':>12} {'Status':>20} {'Category':>12}")
+            print("─" * 130)
+            
+            # Loop ALL nutrients dari guidelines (TIDAK HANYA 5!)
+            for nutrient_col, constraint in sorted(guidelines_flat.items()):
+                # Skip unlimited constraints
+                if constraint.get('constraint_type') == 'unlimited':
+                    continue
+                
+                # Skip jika nutrient tidak ada di data
+                if nutrient_col not in selected_nutrition:
+                    continue
+                
+                value = selected_nutrition[nutrient_col]
+                min_val = constraint.get('min', 0)
+                max_val = constraint.get('max', float('inf'))
+                
+                # Get unit dari mapping atau dari constraint
+                unit = unit_map.get(nutrient_col, constraint.get('unit', ''))
+                
+                # Format nutrient label
+                label = format_nutrient_label(nutrient_col)
+                
+                total_checks += 1
+                
+                # [NEW] Calculate fulfillment percentage dan status
+                display_str, percent, status_text, emoji = format_fulfillment_display(
+                    value, min_val, max_val, unit
+                )
+                
+                # Determine if compliant (>= 70% OR within range)
+                is_compliant = (min_val <= value <= max_val) or (percent >= 70)
+                if is_compliant:
+                    compliant += 1
+                
+                # Display row dengan percentage dan status
+                percent_str = f"{percent:.1f}%"
+                status_display = f"{emoji} {status_text}"
+                
+                print(f"{label:<30} {display_str:<35} {percent_str:>12} {status_display:>20} {'':<12}")
             
             # Summary compliance
-            print("\n" + "="*70)
+            print("─" * 130)
+            print(f"\n{'Total nutrients checked':<30} {total_checks:>10}")
+            print(f"{'Nutrients >= 70% fulfilled':<30} {compliant:>10}")
+            
             if total_checks > 0:
                 compliance_rate = (compliant / total_checks) * 100
-                print(f"✅ COMPLIANCE: {compliance_rate:.0f}% ({compliant}/{total_checks} nutrients OK)")
-            print("="*70)
+                compliance_bar = "█" * int(compliance_rate / 5) + "░" * (20 - int(compliance_rate / 5))
+                print(f"\n{'Fulfillment Rate':<30} {compliance_rate:>6.1f}% [{compliance_bar}]")
+                
+                # Overall assessment
+                if compliance_rate >= 90:
+                    overall_status = "🌟 EXCELLENT - Outstanding nutrition profile"
+                elif compliance_rate >= 80:
+                    overall_status = "🟢 GOOD - Strong nutrition balance"
+                elif compliance_rate >= 70:
+                    overall_status = "🟡 FAIR - Acceptable nutrition profile"
+                else:
+                    overall_status = "🔴 POOR - Needs improvement"
+                
+                print(f"{'Overall Assessment':<30} {overall_status}")
+            
+            print("\n" + "="*130)
             
             # ════════════════════════════════════════════════════════════════════════
             # STEP 10: PORTION SIZING - Calculate portion sizes dynamically (MEAL-BASED + DEFICIT-AWARE)
