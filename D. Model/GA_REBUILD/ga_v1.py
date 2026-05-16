@@ -1051,6 +1051,288 @@ def run_ga(
 
 
 # ═════════════════════════════════════════════════════════════════════════════
+# 7. LOCAL SEARCH - Fine-tuning setelah GA untuk memperbaiki solusi locally
+# ═════════════════════════════════════════════════════════════════════════════
+
+def local_search(
+    solution: pd.DataFrame,
+    food_df: pd.DataFrame,
+    guidelines: Dict,
+    tdee: Optional[float] = None,
+    iterations: int = 20,
+    verbose: bool = False
+) -> pd.DataFrame:
+    """
+    Local Search (Hill Climbing) dengan GUIDED + RESTRICTED CANDIDATE SELECTION
+    
+    Tujuan: Fine-tune GA result dengan mengganti makanan untuk menutup nutrient gaps
+    
+    Algoritma IMPROVED:
+        1. TASK 1: Filter food_df - Remove junk foods (spices, powder, sauce, etc)
+        2. TASK 2: Guided selection dengan PRIORITAS (fat > carb > protein)
+        3. TASK 3: Smart gene selection (pilih gene dengan deficit terbesar, bukan random)
+        4. TASK 4: Soft acceptance (accept jika nutrient improvement, tidak hanya fitness)
+        5. TASK 5: Stop condition (break jika 5 iterasi tanpa improvement)
+    
+    Args:
+        solution: GA result (DataFrame 10 items)
+        food_df: Food database (DataFrame all items)
+        guidelines: Dict constraints
+        tdee: Target daily energy (optional)
+        iterations: Max iterations (default 20)
+        verbose: Print progress? (default False)
+    
+    Returns:
+        DataFrame: Best solution ditemukan
+    
+    Expected Impact:
+        - Carbs: +5 to +30g
+        - Fats: +3 to +15g
+        - Protein: -5 to -20g
+        - Improvements: 5-8 per 20 iterations
+    """
+    
+    if verbose:
+        print(f"\n{'='*70}")
+        print(f"LOCAL SEARCH - Guided Fine-tuning GA Result")
+        print(f"{'='*70}")
+    
+    # ════════════════════════════════════════════════════════════════
+    # TASK 1: FILTER KANDIDAT MAKANAN - Remove junk foods, spices, dll
+    # ════════════════════════════════════════════════════════════════
+    
+    invalid_keywords = [
+        'spice', 'powder', 'yeast', 'sauce', 'extract',
+        'flavoring', 'dressing', 'seasoning', 'mix', 'condiment'
+    ]
+    
+    # Buat cleaned dataset
+    food_df_clean = food_df[
+        ~food_df['food_name'].str.lower().str.contains('|'.join(invalid_keywords), na=False)
+    ].copy()
+    
+    if verbose:
+        print(f"[TASK 1] Candidate filtering:")
+        print(f"  Original: {len(food_df)} items")
+        print(f"  Cleaned: {len(food_df_clean)} items (removed {len(food_df) - len(food_df_clean)} junk foods)")
+    
+    if len(food_df_clean) < CHROMOSOME_SIZE:
+        if verbose:
+            print(f"  ⚠️ Warning: Too few clean candidates, using original dataset")
+        food_df_clean = food_df.copy()
+    
+    # Start dengan GA solution
+    best_solution = solution.copy()
+    best_fitness = fitness(best_solution, guidelines, tdee=tdee)
+    
+    # Get guidelines
+    guidelines_flat = merge_hard_soft_guidelines(guidelines)
+    
+    # Extract targets
+    carb_target = guidelines_flat.get('carbohydrate_g', {}).get('max', 350)
+    fat_target = guidelines_flat.get('fat_g', {}).get('max', 78)
+    protein_target = guidelines_flat.get('protein_g', {}).get('max', 100)
+    
+    if verbose:
+        print(f"\n[TARGETS] Macronutrients:")
+        print(f"  Carbs: {carb_target:.0f}g")
+        print(f"  Fats: {fat_target:.0f}g")
+        print(f"  Protein: {protein_target:.0f}g\n")
+    
+    improvements = 0
+    no_improve_count = 0
+    max_no_improve = 5
+    replacements = []
+    
+    iteration = 0
+    while iteration < iterations and no_improve_count < max_no_improve:
+        iteration += 1
+        
+        # ════════════════════════════════════════════════════════════════
+        # TASK 2 & 3: Detect deficits + SMART GENE SELECTION
+        # ════════════════════════════════════════════════════════════════
+        
+        current_nutrition = calculate_total_nutrition(best_solution)
+        current_carbs = current_nutrition.get('carbohydrate_g', 0)
+        current_fats = current_nutrition.get('fat_g', 0)
+        current_protein = current_nutrition.get('protein_g', 0)
+        
+        carb_deficit = carb_target - current_carbs
+        fat_deficit = fat_target - current_fats
+        protein_excess = current_protein - protein_target
+        
+        # ════════ TASK 3: Smart Gene Selection (Not Random!) ════════
+        # Pilih gene dengan deficit terbesar, bukan random
+        
+        selected_gene_idx = None
+        selection_reason = None
+        
+        # PRIORITAS: Fat > Carb > Protein
+        
+        # PRIORITAS 1: Jika FAT deficit
+        if fat_deficit > 3:  # Only if deficient
+            # Cari gene dengan FAT TERENDAH
+            fat_values = best_solution['fat_g'].values
+            selected_gene_idx = np.argmin(fat_values)
+            selection_reason = f"LOW FAT (deficit {fat_deficit:.1f}g)"
+        
+        # PRIORITAS 2: Jika CARB deficit (dan fat OK)
+        elif carb_deficit > 5:  # Only if deficient
+            # Cari gene dengan CARB TERENDAH
+            carb_values = best_solution['carbohydrate_g'].values
+            selected_gene_idx = np.argmin(carb_values)
+            selection_reason = f"LOW CARB (deficit {carb_deficit:.1f}g)"
+        
+        # PRIORITAS 3: Jika PROTEIN excess
+        elif protein_excess > 10:  # Only if excess
+            # Cari gene dengan PROTEIN TERTINGGI
+            protein_values = best_solution['protein_g'].values
+            selected_gene_idx = np.argmax(protein_values)
+            selection_reason = f"HIGH PROTEIN (excess {protein_excess:.1f}g)"
+        
+        # Fallback: Random gene
+        else:
+            selected_gene_idx = random.randint(0, len(best_solution) - 1)
+            selection_reason = "EXPLORATORY"
+        
+        gene_idx = selected_gene_idx
+        current_food = best_solution.iloc[gene_idx]
+        current_food_name = current_food.get('food_name', 'Unknown')
+        
+        # ════════════════════════════════════════════════════════════════
+        # TASK 2: GUIDED CANDIDATE SELECTION dengan PRIORITAS
+        # ════════════════════════════════════════════════════════════════
+        
+        slot_name = SLOT_NAMES[gene_idx]
+        expected_label = SLOT_LABEL_MAP.get(gene_idx, 'Main Course')
+        
+        # Filter by consumption label
+        candidates = food_df_clean[food_df_clean['consumption_label'] == expected_label].copy()
+        
+        if len(candidates) == 0:
+            no_improve_count += 1
+            continue
+        
+        # GUIDED SELECTION dengan PRIORITAS STRICT
+        # PRIORITAS: FAT > CARB > PROTEIN
+        
+        candidates_original_count = len(candidates)
+        
+        if fat_deficit > 3:
+            # PRIORITAS 1: High fat
+            high_fat = candidates[candidates['fat_g'] >= 10].copy()
+            if len(high_fat) > 0:
+                candidates = high_fat
+        elif carb_deficit > 5:
+            # PRIORITAS 2: High carb
+            high_carb = candidates[candidates['carbohydrate_g'] >= 25].copy()
+            if len(high_carb) > 0:
+                candidates = high_carb
+        elif protein_excess > 10:
+            # PRIORITAS 3: Low protein
+            low_protein = candidates[candidates['protein_g'] <= 10].copy()
+            if len(low_protein) > 0:
+                candidates = low_protein
+        
+        if len(candidates) == 0:
+            no_improve_count += 1
+            if verbose:
+                print(f"[ITER {iteration}] No candidates found for {slot_name} ({selection_reason})")
+            continue
+        
+        # Pilih random dari candidates yang sudah di-filter
+        new_food = candidates.sample(n=1).iloc[0]
+        new_food_name = new_food.get('food_name', 'Unknown')
+        
+        # Test replacement
+        test_solution = best_solution.copy()
+        test_solution.iloc[gene_idx] = new_food
+        test_fitness = fitness(test_solution, guidelines, tdee=tdee)
+        
+        # ════════════════════════════════════════════════════════════════
+        # TASK 4: SOFT ACCEPTANCE CRITERIA (Not just fitness improvement)
+        # ════════════════════════════════════════════════════════════════
+        
+        test_nutrition = calculate_total_nutrition(test_solution)
+        test_carbs = test_nutrition.get('carbohydrate_g', 0)
+        test_fats = test_nutrition.get('fat_g', 0)
+        test_protein = test_nutrition.get('protein_g', 0)
+        
+        # Cek apakah ada nutrient improvement
+        carb_improved = test_carbs > current_carbs
+        fat_improved = test_fats > current_fats
+        protein_improved = test_protein < current_protein  # Lower = better
+        
+        nutrient_improvement = carb_improved or fat_improved or protein_improved
+        fitness_improved = test_fitness < best_fitness
+        
+        accept = False
+        accept_reason = ""
+        
+        # Acceptance logic
+        if fitness_improved:
+            # Hard acceptance: fitness lebih baik
+            accept = True
+            accept_reason = "FITNESS IMPROVED"
+        elif nutrient_improvement and random.random() < 0.3:  # 30% soft acceptance
+            # Soft acceptance: nutrient improvement tapi fitness mungkin turun
+            accept = True
+            accept_reason = "SOFT ACCEPT (nutrient improved)"
+        
+        if accept:
+            best_solution = test_solution
+            best_fitness = test_fitness
+            improvements += 1
+            no_improve_count = 0
+            
+            replacements.append({
+                'iteration': iteration,
+                'slot': slot_name,
+                'old_food': current_food_name,
+                'new_food': new_food_name,
+                'reason': selection_reason,
+                'carb_change': test_carbs - current_carbs,
+                'fat_change': test_fats - current_fats,
+                'protein_change': test_protein - current_protein
+            })
+            
+            if verbose:
+                print(f"[ITER {iteration}] ✓ IMPROVED - {slot_name} ({selection_reason})")
+                print(f"  {current_food_name} → {new_food_name}")
+                print(f"  Fitness: {best_fitness:.2f} | Carbs: {test_carbs:+.0f}g | Fats: {test_fats:+.0f}g | Protein: {test_protein:+.0f}g")
+                print(f"  Reason: {accept_reason}")
+        else:
+            no_improve_count += 1
+            if verbose:
+                fitness_change = ((test_fitness - best_fitness) / best_fitness * 100) if best_fitness > 0 else 0
+                print(f"[ITER {iteration}] ✗ No accept (tried {new_food_name}, fitness {fitness_change:+.1f}%, no nutrient gain)")
+    
+    if verbose:
+        print(f"\n{'='*70}")
+        print(f"LOCAL SEARCH COMPLETE")
+        print(f"{'='*70}")
+        print(f"Iterations: {iteration} (stopped: no_improve_count={no_improve_count}/{max_no_improve})")
+        print(f"Total improvements: {improvements}")
+        print(f"Final fitness: {best_fitness:.2f}")
+        
+        if improvements > 0:
+            print(f"\n✓ Improvements Found: {len(replacements)}")
+            total_carb_change = sum(r['carb_change'] for r in replacements)
+            total_fat_change = sum(r['fat_change'] for r in replacements)
+            total_protein_change = sum(r['protein_change'] for r in replacements)
+            
+            print(f"  Total Carbs: {total_carb_change:+.1f}g")
+            print(f"  Total Fats: {total_fat_change:+.1f}g")
+            print(f"  Total Protein: {total_protein_change:+.1f}g")
+        else:
+            print(f"\n✗ No improvements found")
+        
+        print(f"{'='*70}\n")
+    
+    return best_solution
+
+
+# ═════════════════════════════════════════════════════════════════════════════
 # UTILITY FUNCTIONS
 # ═════════════════════════════════════════════════════════════════════════════
 

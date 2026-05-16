@@ -38,7 +38,7 @@ from ga_v1 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
-    filter_food_dataset
+    filter_food_dataset, local_search
 )
 
 # Import NutritionService
@@ -356,6 +356,21 @@ def test_ga_with_nutrition_service():
             verbose=False  # Changed to False for cleaner output
         )
         print("✓ GA optimization complete")
+        
+        # STEP 5.5: LOCAL SEARCH - Fine-tuning untuk meningkatkan solusi
+        print("\n" + "="*70)
+        print("STEP 5.5: Local Search - Fine-tuning GA Result...")
+        print("="*70)
+        
+        best_solution = local_search(
+            solution=best_solution,
+            food_df=food_df,
+            guidelines=guidelines,
+            tdee=tdee,
+            iterations=15,
+            verbose=True  # Show improvements
+        )
+        print("✓ Local search optimization complete")
         
         # STEP 6: Display hasil
         print("\n" + "="*70)
