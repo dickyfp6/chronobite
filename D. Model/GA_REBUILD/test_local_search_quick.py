@@ -13,6 +13,7 @@ from ga_v1 import (
     run_ga, local_search, calculate_total_nutrition,
     filter_food_dataset
 )
+from food_filter_meal_ready import filter_meal_ready_foods
 from nutrition_service import NutritionService
 
 print("[OK] All imports successful\n")
@@ -67,11 +68,20 @@ print(f"[OK] Nutrition guidelines ready")
 # ════════════════════════════════════════════════════════════════
 
 print("\n" + "="*70)
-print("STEP 2: Filtering food candidates")
+print("STEP 2: Filtering food candidates - Remove non-meal foods")
 print("="*70)
 
-food_df_filtered = filter_food_dataset(food_df)
-print(f"[OK] Filtered to {len(food_df_filtered)} suitable foods")
+# Apply meal-ready filtering (removes dried, powder, spice, etc)
+food_df_filtered = filter_meal_ready_foods(
+    input_csv=food_df,
+    output_csv=None,
+    verbose=False
+)
+print(f"[OK] Meal-ready filter: {len(food_df)} -> {len(food_df_filtered)} items")
+
+# Also apply legacy filter for additional safety
+food_df_filtered = filter_food_dataset(food_df_filtered, verbose=False)
+print(f"[OK] Legacy filter: {len(food_df_filtered)} suitable foods")
 
 # ════════════════════════════════════════════════════════════════
 # STEP 3: Run GA

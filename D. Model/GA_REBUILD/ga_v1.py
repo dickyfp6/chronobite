@@ -682,11 +682,14 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         
         elif nutrient_name == 'protein_g':
             # PROTEIN - CONTROL EXCESS, MAINTAIN MINIMUM
+            # TASK 3: HARD PENALTY UNTUK PROTEIN (mencegah over-protein)
             if value < min_val:
-                penalty = (min_val - value) * 200
+                # Under minimum
+                penalty = (min_val - value) * 2000  # TASK 3: Hard penalty
                 total_penalty += penalty
             elif value > max_val:
-                penalty = (value - max_val) * 500  # Tinggi penalty untuk excess
+                # Over maximum (KRITIS - mencegah over-protein)
+                penalty = (value - max_val) * 5000  # TASK 3: Hard penalty (5x lebih besar)
                 total_penalty += penalty
         
         else:
@@ -701,13 +704,23 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
                 penalty = (value - max_val) * weight * soft_multiplier
                 total_penalty += penalty
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 4: DUPLICATE PENALTY
+    # STEP 4: DUPLICATE PENALTY + TASK 4: HIGH-PROTEIN FOOD COUNT LIMIT
     # ════════════════════════════════════════════════════════════════════════
     if 'food_name' in solution.columns:
         unique_foods = solution['food_name'].nunique()
         duplicate_count = len(solution) - unique_foods
         duplicate_penalty = duplicate_count * DUPLICATE_PENALTY_WEIGHT
         total_penalty += duplicate_penalty
+    
+    # TASK 4: Batasi high-protein food items (protein > 20g)
+    # Tujuan: Hindari meal plan yang dominan daging/cheese
+    high_protein_count = 0
+    if 'protein_g' in solution.columns:
+        high_protein_count = (solution['protein_g'] > 20).sum()
+        if high_protein_count > 2:
+            # Penalty untuk setiap item high-protein di atas limit 2
+            penalty = (high_protein_count - 2) * 3000
+            total_penalty += penalty
     
     # ════════════════════════════════════════════════════════════════════════
     # STEP 5: RETURN PENALTY (NO NORMALIZATION!)
@@ -1149,7 +1162,7 @@ def local_search(
         iteration += 1
         
         # ════════════════════════════════════════════════════════════════
-        # TASK 2 & 3: Detect deficits + SMART GENE SELECTION
+        # TASK 1: Detect conditions + TASK 2: SMART GENE SELECTION
         # ════════════════════════════════════════════════════════════════
         
         current_nutrition = calculate_total_nutrition(best_solution)
@@ -1161,78 +1174,98 @@ def local_search(
         fat_deficit = fat_target - current_fats
         protein_excess = current_protein - protein_target
         
-        # ════════ TASK 3: Smart Gene Selection (Not Random!) ════════
-        # Pilih gene dengan deficit terbesar, bukan random
+        # ════════ TASK 1: Hitung Kondisi ════════
+        need_carb = current_carbs < carb_target
+        need_fat = current_fats < fat_target
+        protein_over = current_protein > protein_target
+        
+        # ════════ TASK 2: SMART GENE SELECTION (Not Random!) ════════
+        # Pilih gene dengan masalah terbesar, bukan random
         
         selected_gene_idx = None
         selection_reason = None
         
-        # PRIORITAS: Fat > Carb > Protein
+        # PRIORITAS: PROTEIN_OVER > FAT > CARB
         
-        # PRIORITAS 1: Jika FAT deficit
-        if fat_deficit > 3:  # Only if deficient
-            # Cari gene dengan FAT TERENDAH
-            fat_values = best_solution['fat_g'].values
-            selected_gene_idx = np.argmin(fat_values)
-            selection_reason = f"LOW FAT (deficit {fat_deficit:.1f}g)"
-        
-        # PRIORITAS 2: Jika CARB deficit (dan fat OK)
-        elif carb_deficit > 5:  # Only if deficient
-            # Cari gene dengan CARB TERENDAH
-            carb_values = best_solution['carbohydrate_g'].values
-            selected_gene_idx = np.argmin(carb_values)
-            selection_reason = f"LOW CARB (deficit {carb_deficit:.1f}g)"
-        
-        # PRIORITAS 3: Jika PROTEIN excess
-        elif protein_excess > 10:  # Only if excess
-            # Cari gene dengan PROTEIN TERTINGGI
+        if protein_over:
+            # PRIORITAS 1: Jika PROTEIN OVER - cari gene dengan PROTEIN TERTINGGI
             protein_values = best_solution['protein_g'].values
             selected_gene_idx = np.argmax(protein_values)
             selection_reason = f"HIGH PROTEIN (excess {protein_excess:.1f}g)"
-        
-        # Fallback: Random gene
+        elif need_fat and fat_deficit > 3:
+            # PRIORITAS 2: Jika FAT deficit - cari gene dengan FAT TERENDAH
+            fat_values = best_solution['fat_g'].values
+            selected_gene_idx = np.argmin(fat_values)
+            selection_reason = f"LOW FAT (deficit {fat_deficit:.1f}g)"
+        elif need_carb and carb_deficit > 5:
+            # PRIORITAS 3: Jika CARB deficit - cari gene dengan CARB TERENDAH
+            carb_values = best_solution['carbohydrate_g'].values
+            selected_gene_idx = np.argmin(carb_values)
+            selection_reason = f"LOW CARB (deficit {carb_deficit:.1f}g)"
         else:
+            # Fallback: Random gene untuk exploration
             selected_gene_idx = random.randint(0, len(best_solution) - 1)
             selection_reason = "EXPLORATORY"
         
-        gene_idx = selected_gene_idx
+        gene_idx = int(selected_gene_idx)
         current_food = best_solution.iloc[gene_idx]
         current_food_name = current_food.get('food_name', 'Unknown')
         
         # ════════════════════════════════════════════════════════════════
-        # TASK 2: GUIDED CANDIDATE SELECTION dengan PRIORITAS
+        # TASK 1 & 2: GUIDED CANDIDATE SELECTION - Priority-based filtering
         # ════════════════════════════════════════════════════════════════
         
         slot_name = SLOT_NAMES[gene_idx]
         expected_label = SLOT_LABEL_MAP.get(gene_idx, 'Main Course')
         
-        # Filter by consumption label
+        # Filter by consumption label (mandatory - tetap filter berdasarkan slot)
         candidates = food_df_clean[food_df_clean['consumption_label'] == expected_label].copy()
         
         if len(candidates) == 0:
             no_improve_count += 1
             continue
         
-        # GUIDED SELECTION dengan PRIORITAS STRICT
-        # PRIORITAS: FAT > CARB > PROTEIN
+        # TASK 1: PRIORITY-BASED CANDIDATE SELECTION
+        # WAJIB: Tetap filter berdasarkan slot + nutrient-aware
         
-        candidates_original_count = len(candidates)
+        original_candidates_count = len(candidates)
         
-        if fat_deficit > 3:
-            # PRIORITAS 1: High fat
-            high_fat = candidates[candidates['fat_g'] >= 10].copy()
-            if len(high_fat) > 0:
-                candidates = high_fat
-        elif carb_deficit > 5:
-            # PRIORITAS 2: High carb
-            high_carb = candidates[candidates['carbohydrate_g'] >= 25].copy()
-            if len(high_carb) > 0:
-                candidates = high_carb
-        elif protein_excess > 10:
-            # PRIORITAS 3: Low protein
+        if protein_over:
+            # PRIORITY 1: PROTEIN OVER - cari LOW PROTEIN ONLY
             low_protein = candidates[candidates['protein_g'] <= 10].copy()
             if len(low_protein) > 0:
                 candidates = low_protein
+            # Jika kosong, fallback ke slot-based (tetap skip junk)
+        elif need_fat and fat_deficit > 3:
+            # PRIORITY 2: NEED FAT - cari HIGH FAT + MODERATE PROTEIN
+            high_fat_balanced = candidates[
+                (candidates['fat_g'] >= 10) &
+                (candidates['protein_g'] <= 12)  # Kontrol protein
+            ].copy()
+            if len(high_fat_balanced) > 0:
+                candidates = high_fat_balanced
+            else:
+                # Fallback ke high fat only
+                high_fat = candidates[candidates['fat_g'] >= 10].copy()
+                if len(high_fat) > 0:
+                    candidates = high_fat
+        elif need_carb and carb_deficit > 5:
+            # PRIORITY 3: NEED CARB - cari HIGH CARB + MODERATE PROTEIN
+            high_carb_balanced = candidates[
+                (candidates['carbohydrate_g'] >= 25) &
+                (candidates['protein_g'] <= 15)  # Kontrol protein
+            ].copy()
+            if len(high_carb_balanced) > 0:
+                candidates = high_carb_balanced
+            else:
+                # Fallback ke high carb only
+                high_carb = candidates[candidates['carbohydrate_g'] >= 25].copy()
+                if len(high_carb) > 0:
+                    candidates = high_carb
+        
+        # Fallback jika tidak ada candidates yang match (tetap gunakan slot-filtered)
+        if len(candidates) == 0:
+            candidates = food_df_clean[food_df_clean['consumption_label'] == expected_label].copy()
         
         if len(candidates) == 0:
             no_improve_count += 1
@@ -1250,7 +1283,7 @@ def local_search(
         test_fitness = fitness(test_solution, guidelines, tdee=tdee)
         
         # ════════════════════════════════════════════════════════════════
-        # TASK 4: SOFT ACCEPTANCE CRITERIA (Not just fitness improvement)
+        # TASK 5: PERBAIKI ACCEPTANCE CRITERIA
         # ════════════════════════════════════════════════════════════════
         
         test_nutrition = calculate_total_nutrition(test_solution)
@@ -1258,23 +1291,24 @@ def local_search(
         test_fats = test_nutrition.get('fat_g', 0)
         test_protein = test_nutrition.get('protein_g', 0)
         
-        # Cek apakah ada nutrient improvement
-        carb_improved = test_carbs > current_carbs
-        fat_improved = test_fats > current_fats
-        protein_improved = test_protein < current_protein  # Lower = better
+        # TASK 5: Smart acceptance logic
+        # Cek apakah ada SIGNIFIKAN improvement
+        carb_improved_sig = test_carbs > (current_carbs + 2)  # At least 2g improvement
+        fat_improved_sig = test_fats > (current_fats + 1)     # At least 1g improvement
+        protein_reduced_sig = test_protein < (current_protein - 2)  # At least 2g reduction
         
-        nutrient_improvement = carb_improved or fat_improved or protein_improved
+        nutrient_improvement = carb_improved_sig or fat_improved_sig or protein_reduced_sig
         fitness_improved = test_fitness < best_fitness
         
         accept = False
         accept_reason = ""
         
-        # Acceptance logic
+        # TASK 5: Acceptance logic dengan SOFT ACCEPTANCE 20% (bukan 30%)
         if fitness_improved:
             # Hard acceptance: fitness lebih baik
             accept = True
             accept_reason = "FITNESS IMPROVED"
-        elif nutrient_improvement and random.random() < 0.3:  # 30% soft acceptance
+        elif nutrient_improvement and random.random() < 0.2:  # TASK 5: 20% soft acceptance (stricter)
             # Soft acceptance: nutrient improvement tapi fitness mungkin turun
             accept = True
             accept_reason = "SOFT ACCEPT (nutrient improved)"

@@ -41,6 +41,9 @@ from ga_v1 import (
     filter_food_dataset, local_search
 )
 
+# Import Meal-Ready Food Filter
+from food_filter_meal_ready import filter_meal_ready_foods
+
 # Import NutritionService
 try:
     from nutrition_service import NutritionService
@@ -335,10 +338,15 @@ def test_ga_with_nutrition_service():
         
         # STEP 4: Filter food dataset untuk remove junk food
         print("\n" + "="*70)
-        print("STEP 4: Filter Food Dataset - Remove Junk Food...")
+        print("STEP 4: Filter Food Dataset - Remove Non-Meal Foods...")
         print("="*70)
         
-        food_df = filter_food_dataset(food_df, verbose=True)
+        # Apply meal-ready filtering directly to dataframe
+        food_df = filter_meal_ready_foods(
+            input_csv=food_df,
+            output_csv=None,
+            verbose=True
+        )
         
         # STEP 5: Run GA
         print("="*70)
