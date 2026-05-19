@@ -495,242 +495,293 @@ def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
 
 def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = None) -> float:
     """
-    Hitung fitness score (penalty total) untuk 1 solusi (10-item chromosome)
-    Dengan HARD dan SOFT constraints, weighted nutrients, duplicate penalty, dan normalization
+    TASK 3 - FITNESS FUNCTION (100g basis, no scaling, HARD/SOFT separated)
     
-    ⚠️  HARD vs SOFT (PERUBAHAN PHASE 4 - STRICT ENFORCEMENT):
-        HARD (PRIMARY - disease-based + energy) - STRICT ENFORCEMENT:
-            - Jika melanggar → REJECT LANGSUNG (return 1e9)
-            - Toleransi: 5% (agar GA tidak stuck dengan dataset terbatas)
-            - Contoh sodium: min=1500 → lower_bound=1425, upper_bound=1575
-            - Jika value < 1425 atau value > 1575 → reject (return 1e9)
-            - ENERGY: ±25% tolerance (0.75-1.25 × TDEE) - juga strict!
-            - Sodium, Cholesterol, dll: HARUS dipenuhi (constraint medis!)
-        
-        SOFT (SECONDARY - DRI-based) - PENALTY-BASED:
-            - Violation masih dihitung penalty seperti sebelumnya
-            - Lebih fleksibel, tidak kritis
-            - Protein, Carbs, Fat, Fiber: 10x multiplier (fundamental)
-            - Micronutrients: 2x multiplier (flexible)
+    Hitung penalty untuk 1 chromosome tanpa scaling (hasil evaluasi final = 100g basis).
+    
+    HARD constraint (guideline.csv): penalty 5000x
+    SOFT constraint (DRI_micro.csv): penalty 50x
     
     Args:
-        solution: DataFrame dengan 10 items (chromosome)
-        guidelines: Dict struktur:
-                   {
-                       'hard': {nutrient: {'min': float, 'max': float, ...}, ...},
-                       'soft': {nutrient: {'min': float, 'max': float, ...}, ...}
-                   }
-        tdee: Target daily energy expenditure (kcal) - untuk energy constraint
+        solution: DataFrame 10 items (100g basis, NO SCALING)
+        guidelines: {'hard': {...}, 'soft': {...}} structure
+        tdee: Unused (evaluasi pure 100g basis)
     
     Returns:
-        float: Total penalty (semakin kecil = semakin baik)
-                OR 1e9 jika ada HARD constraint violation (reject)
+        float: Total penalty (lower = better)
     """
-    # Hitung total nutrisi dari solution
+    # Hitung total nutrisi (100g basis) - NO SCALING
     total_nutrition = calculate_total_nutrition(solution)
     
-    # ════════════════════════════════════════════════════════════════════════
-    # SCALE NUTRITION TO TDEE (Konsistensi dengan tahap akhir portion sizing)
-    # ════════════════════════════════════════════════════════════════════════
-    # GA harus mengevaluasi seolah-olah sudah di-scale ke TDEE
-    # Ini memastikan hasil GA konsisten dengan output akhir setelah portion scaling
-    # 
-    # Logic:
-    #   - Ambil total energy dari solution (per 100g setiap item)
-    #   - Hitung scale_factor = tdee / total_energy
-    #   - Kalikan semua nutrient dengan scale_factor
-    # 
-    # Hasil:
-    #   - GA menilai solusi dengan nilai yang sudah di-scale
-    #   - Energy akan mendekati TDEE
-    #   - Constraint akan lebih konsisten dengan output akhir
-    if tdee and tdee > 0:
-        total_energy = total_nutrition.get('energy_kcal', 0)
-        if total_energy > 0:
-            scale_factor = tdee / total_energy
-            # Kalikan semua nutrient dengan scale factor
-            # ⚠️  PENTING: Scaling berlaku ke SEMUA nutrient, bukan hanya energy!
-            for nutrient_name in total_nutrition:
-                total_nutrition[nutrient_name] = total_nutrition[nutrient_name] * scale_factor
-    
     total_penalty = 0.0
-    constraint_count = 0
+    
+    # Separate HARD & SOFT
+    hard_constraints = guidelines.get('hard', {})
+    soft_constraints = guidelines.get('soft', {})
     
     # ════════════════════════════════════════════════════════════════════════
-    # DETECT GUIDELINE STRUCTURE (HARD/SOFT atau LAMA)
-    # ════════════════════════════════════════════════════════════════════════
-    has_hard_soft = isinstance(guidelines.get(list(guidelines.keys())[0] if guidelines else None, None), dict) \
-                    and 'hard' in guidelines and 'soft' in guidelines
-    
-    if has_hard_soft:
-        hard_constraints = guidelines['hard']
-        soft_constraints = guidelines['soft']
-    else:
-        # Backward compatibility: semua jadi SOFT
-        hard_constraints = {}
-        soft_constraints = guidelines
-    
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 1: ENERGY CONSTRAINT - STRICT ENFORCEMENT (HARD)
-    # ════════════════════════════════════════════════════════════════════════
-    # Energy adalah CRITICAL - tanpa energy yang cukup, semua nutrient jadi irrelevant
-    # Jika melanggar → REJECT LANGSUNG (return 1e9)
-    # Tolerance ketat: 75% - 125% dari TDEE (±25%)
-    if tdee and tdee > 0:
-        current_energy = total_nutrition.get('energy_kcal', 0)
-        
-        # Ketat: 75% - 125% dari TDEE
-        min_energy = 0.75 * tdee
-        max_energy = 1.25 * tdee
-        
-        # ⚠️  STRICT ENFORCEMENT: Jika melanggar energy range → REJECT
-        if current_energy < min_energy or current_energy > max_energy:
-            return 1e9  # HARD violation - energy CRITICAL!
-        
-        constraint_count += 1
-    
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 2: HARD CONSTRAINTS - SEMI-STRICT ENFORCEMENT (PENALTY SANGAT BESAR)
-    # ════════════════════════════════════════════════════════════════════════
-    # HARD constraint adalah constraint MEDIS - SANGAT DIPRIORITASKAN!
-    # Jika melanggar → penalty SANGAT BESAR (10000x) tapi GA tetap bisa jalan
-    # Multiplier 10000 >> SOFT multiplier (10-100) → HARD diprioritaskan
-    # Tapi tidak return 1e9 agar GA bisa membandingkan & improve solusi antar generasi
+    # HARD CONSTRAINTS: penalty 5000x
     # ════════════════════════════════════════════════════════════════════════
     for nutrient_name, constraint in hard_constraints.items():
-        # Skip unlimited
         if constraint.get('constraint_type') == 'unlimited':
             continue
         
-        # Skip jika nutrient tidak ada
         if nutrient_name not in total_nutrition:
             continue
         
-        # Skip energy (sudah di-handle di STEP 1)
-        if nutrient_name == 'energy_kcal':
-            continue
-        
-        constraint_count += 1
-        
-        # Ambil nilai min dan max
         min_val = constraint.get('min', 0)
         max_val = constraint.get('max', float('inf'))
         value = total_nutrition[nutrient_name]
         
-        # ⚠️  SEMI-STRICT: Penalty sangat besar (10000) tapi tidak reject
-        # Multiplier 10000 jauh lebih besar daripada SOFT (10-100)
-        # Hasil: HARD constraint prioritas tinggi tapi GA bisa jalan
-        hard_multiplier = 10000
-        
         if value < min_val:
-            # Under minimum: penalty = (deficit) * 10000
-            penalty = (min_val - value) * hard_multiplier
+            penalty = (min_val - value) * 5000
             total_penalty += penalty
         elif value > max_val:
-            # Over maximum: penalty = (excess) * 10000
-            penalty = (value - max_val) * hard_multiplier
+            penalty = (value - max_val) * 5000
             total_penalty += penalty
     
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 3: SOFT CONSTRAINTS - PRIORITIZE MACRONUTRIENTS
-    # Macronutrients (protein, carbs, fat) adalah TARGET UTAMA GA!
-    # Gunakan penalty multipliers berbeda untuk setiap macro
+    # SOFT CONSTRAINTS: penalty 50x
     # ════════════════════════════════════════════════════════════════════════
     for nutrient_name, constraint in soft_constraints.items():
-        # Skip unlimited
         if constraint.get('constraint_type') == 'unlimited':
             continue
         
-        # Skip jika nutrient tidak ada
         if nutrient_name not in total_nutrition:
             continue
         
-        # Skip energy (sudah di-handle di STEP 1)
-        if nutrient_name == 'energy_kcal':
-            continue
-        
-        constraint_count += 1
-        
-        # Ambil nilai min dan max
         min_val = constraint.get('min', 0)
         max_val = constraint.get('max', float('inf'))
         value = total_nutrition[nutrient_name]
         
-        # [NEW] MACRONUTRIENT-SPECIFIC PENALTIES
-        # Carbohydrate: paling prioritas (800 deficit, 400 excess)
-        # Fat: prioritas tinggi (600 deficit, 300 excess)
-        # Protein: kontrol excess (500 excess, 200 deficit)
-        # Lainnya: weight normal 2x
-        
-        if nutrient_name == 'carbohydrate_g':
-            # CARBS - HIGHEST PRIORITY
-            if value < min_val:
-                penalty = (min_val - value) * 800
-                total_penalty += penalty
-            elif value > max_val:
-                penalty = (value - max_val) * 400
-                total_penalty += penalty
-        
-        elif nutrient_name == 'fat_g':
-            # FAT - HIGH PRIORITY
-            if value < min_val:
-                penalty = (min_val - value) * 600
-                total_penalty += penalty
-            elif value > max_val:
-                penalty = (value - max_val) * 300
-                total_penalty += penalty
-        
-        elif nutrient_name == 'protein_g':
-            # PROTEIN - CONTROL EXCESS, MAINTAIN MINIMUM
-            # TASK 3: HARD PENALTY UNTUK PROTEIN (mencegah over-protein)
-            if value < min_val:
-                # Under minimum
-                penalty = (min_val - value) * 2000  # TASK 3: Hard penalty
-                total_penalty += penalty
-            elif value > max_val:
-                # Over maximum (KRITIS - mencegah over-protein)
-                penalty = (value - max_val) * 5000  # TASK 3: Hard penalty (5x lebih besar)
-                total_penalty += penalty
-        
-        else:
-            # FIBER & MICRONUTRIENTS - FLEXIBLE (2x multiplier)
-            weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
-            soft_multiplier = 2.0
-            
-            if value < min_val:
-                penalty = (min_val - value) * weight * soft_multiplier
-                total_penalty += penalty
-            elif value > max_val:
-                penalty = (value - max_val) * weight * soft_multiplier
-                total_penalty += penalty
+        if value < min_val:
+            penalty = (min_val - value) * 50
+            total_penalty += penalty
+        elif value > max_val:
+            penalty = (value - max_val) * 50
+            total_penalty += penalty
+    
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 4: DUPLICATE PENALTY + TASK 4: HIGH-PROTEIN FOOD COUNT LIMIT
+    # DUPLICATE PENALTY
     # ════════════════════════════════════════════════════════════════════════
     if 'food_name' in solution.columns:
         unique_foods = solution['food_name'].nunique()
         duplicate_count = len(solution) - unique_foods
-        duplicate_penalty = duplicate_count * DUPLICATE_PENALTY_WEIGHT
-        total_penalty += duplicate_penalty
-    
-    # TASK 4: Batasi high-protein food items (protein > 20g)
-    # Tujuan: Hindari meal plan yang dominan daging/cheese
-    high_protein_count = 0
-    if 'protein_g' in solution.columns:
-        high_protein_count = (solution['protein_g'] > 20).sum()
-        if high_protein_count > 2:
-            # Penalty untuk setiap item high-protein di atas limit 2
-            penalty = (high_protein_count - 2) * 3000
-            total_penalty += penalty
-    
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 5: RETURN PENALTY (NO NORMALIZATION!)
-    # ════════════════════════════════════════════════════════════════════════
-    # ⚠️  REMOVED normalisasi penalty (total_penalty / constraint_count)
-    # Alasan: Normalisasi membuat penalty sangat kecil, GA abaikan constraint
-    # Contoh: 1000 penalty ÷ 30 constraints = 33.33 (tidak signifikan!)
-    # Solusi: Keep absolute penalty agar GA hindari violation
+        total_penalty += duplicate_count * DUPLICATE_PENALTY_WEIGHT
     
     return total_penalty
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# 3.5 ANALYZE NUTRITION - Perhitungan detail (TASK 5-8)
+# ═════════════════════════════════════════════════════════════════════════════
+
+def calculate_fulfillment_percentage(actual: float, min_val: Optional[float], max_val: Optional[float]) -> float:
+    """
+    TASK 5 - Hitung fulfillment % (100g basis)
+    
+    Formula:
+    - Jika ada min & max: 100 jika dalam range, else calc deficit/excess
+    - Jika hanya min: (actual / min) * 100
+    - Jika hanya max: 100 jika <= max, else (max / actual) * 100
+    """
+    if min_val is None and max_val is None:
+        return 100.0
+    
+    if min_val is not None and max_val is not None:
+        # Ada range
+        if min_val <= actual <= max_val:
+            return 100.0
+        elif actual < min_val:
+            return (actual / min_val) * 100 if min_val > 0 else 0.0
+        else:  # actual > max_val
+            return (max_val / actual) * 100 if actual > 0 else 0.0
+    
+    elif min_val is not None:
+        # Hanya min
+        return (actual / min_val) * 100 if min_val > 0 else 100.0
+    
+    elif max_val is not None:
+        # Hanya max
+        if actual <= max_val:
+            return 100.0
+        else:
+            return (max_val / actual) * 100 if actual > 0 else 0.0
+    
+    else:
+        # Tidak ada constraint
+        return 100.0
+
+
+def get_nutrient_status(actual: float, min_val: Optional[float], max_val: Optional[float]) -> str:
+    """
+    TASK 6 - Status nutrient (LOW / HIGH / OK)
+    """
+    if min_val is not None and actual < min_val:
+        return "LOW"
+    elif max_val is not None and actual > max_val:
+        return "HIGH"
+    else:
+        return "OK"
+
+
+def get_nutrient_details(actual: float, min_val: Optional[float], max_val: Optional[float]) -> str:
+    """
+    TASK 7 - Deskripsi spesifik nutrient (100g basis)
+    
+    Format:
+    - LOW: "Kurang X dari minimum (Y%)"
+    - HIGH: "Lebih X dari maksimum (Y%)"
+    - OK: "Dalam rentang ideal"
+    """
+    if min_val is not None and actual < min_val:
+        deficit = min_val - actual
+        fulfill = (actual / min_val) * 100 if min_val > 0 else 0
+        return f"Kurang {deficit:.1f} dari minimum ({fulfill:.1f}%)"
+    
+    elif max_val is not None and actual > max_val:
+        excess = actual - max_val
+        percent = (actual / max_val - 1) * 100 if max_val > 0 else 0
+        return f"Lebih {excess:.1f} dari maksimum ({percent:.1f}%)"
+    
+    else:
+        return "Dalam rentang ideal"
+
+
+def analyze_nutrition_detailed(solution: pd.DataFrame, guidelines: Dict) -> pd.DataFrame:
+    """
+    TASK 5-8 - Buat tabel analisis nutrisi lengkap (100g basis)
+    
+    Output format:
+    | Nutrient | Actual | Min | Max | Fulfill % | Status | Details |
+    
+    - HARD constraints ditampilkan dulu, lalu SOFT
+    - Semua kolom diisi (gunakan "-" untuk yang kosong)
+    - Fulfill dalam persen (%)
+    - Angka dibulatkan 2 desimal
+    """
+    # Hitung total nutrition (100g basis)
+    total_nutrition = calculate_total_nutrition(solution)
+    
+    # Prepare analysis rows
+    analysis_rows = []
+    
+    # HARD constraints DULU
+    hard_constraints = guidelines.get('hard', {})
+    for nutrient_name, constraint in hard_constraints.items():
+        if constraint.get('constraint_type') == 'unlimited':
+            continue
+        
+        actual = total_nutrition.get(nutrient_name, 0)
+        min_val = constraint.get('min')
+        max_val = constraint.get('max')
+        
+        fulfill = calculate_fulfillment_percentage(actual, min_val, max_val)
+        status = get_nutrient_status(actual, min_val, max_val)
+        details = get_nutrient_details(actual, min_val, max_val)
+        
+        analysis_rows.append({
+            'Nutrient': nutrient_name,
+            'Actual': actual,
+            'Min': min_val if min_val is not None else '-',
+            'Max': max_val if max_val is not None else '-',
+            'Fulfill %': fulfill,
+            'Status': status,
+            'Details': details,
+            'Type': 'HARD'
+        })
+    
+    # Lalu SOFT constraints
+    soft_constraints = guidelines.get('soft', {})
+    for nutrient_name, constraint in soft_constraints.items():
+        if constraint.get('constraint_type') == 'unlimited':
+            continue
+        
+        actual = total_nutrition.get(nutrient_name, 0)
+        min_val = constraint.get('min')
+        max_val = constraint.get('max')
+        
+        fulfill = calculate_fulfillment_percentage(actual, min_val, max_val)
+        status = get_nutrient_status(actual, min_val, max_val)
+        details = get_nutrient_details(actual, min_val, max_val)
+        
+        analysis_rows.append({
+            'Nutrient': nutrient_name,
+            'Actual': actual,
+            'Min': min_val if min_val is not None else '-',
+            'Max': max_val if max_val is not None else '-',
+            'Fulfill %': fulfill,
+            'Status': status,
+            'Details': details,
+            'Type': 'SOFT'
+        })
+    
+    # Create DataFrame
+    df_analysis = pd.DataFrame(analysis_rows)
+    
+    return df_analysis
+
+
+def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
+    """
+    TASK 8 - Display tabel analisis nutrisi dengan format profesional
+    
+    Kolom: | Nutrient | Actual | Min | Max | Fulfill % | Status | Details |
+    """
+    df = analyze_nutrition_detailed(solution, guidelines)
+    
+    # Format output
+    print(f"\n{'='*120}")
+    print(f"NUTRITION ANALYSIS TABLE (100g basis)")
+    print(f"{'='*120}\n")
+    
+    if len(df) == 0:
+        print("No constraints found.")
+        return
+    
+    # Separate HARD and SOFT
+    df_hard = df[df['Type'] == 'HARD']
+    df_soft = df[df['Type'] == 'SOFT']
+    
+    # Display HARD
+    if len(df_hard) > 0:
+        print(f"{'HARD CONSTRAINTS (Disease-based)':^120}\n")
+        print(f"{'Nutrient':<30} {'Actual':>12} {'Min':>12} {'Max':>12} {'Fulfill %':>12} {'Status':>8} {'Details':<40}")
+        print(f"{'-'*120}")
+        
+        for _, row in df_hard.iterrows():
+            nutrient = str(row['Nutrient'])[:30]
+            actual = f"{row['Actual']:.2f}"
+            min_val = f"{row['Min']:.2f}" if row['Min'] != '-' else '-'
+            max_val = f"{row['Max']:.2f}" if row['Max'] != '-' else '-'
+            fulfill = f"{row['Fulfill %']:.2f}%"
+            status = row['Status']
+            details = str(row['Details'])[:40]
+            
+            print(f"{nutrient:<30} {actual:>12} {min_val:>12} {max_val:>12} {fulfill:>12} {status:>8} {details:<40}")
+        
+        print()
+    
+    # Display SOFT
+    if len(df_soft) > 0:
+        print(f"\n{'SOFT CONSTRAINTS (DRI-based)':^120}\n")
+        print(f"{'Nutrient':<30} {'Actual':>12} {'Min':>12} {'Max':>12} {'Fulfill %':>12} {'Status':>8} {'Details':<40}")
+        print(f"{'-'*120}")
+        
+        for _, row in df_soft.iterrows():
+            nutrient = str(row['Nutrient'])[:30]
+            actual = f"{row['Actual']:.2f}"
+            min_val = f"{row['Min']:.2f}" if row['Min'] != '-' else '-'
+            max_val = f"{row['Max']:.2f}" if row['Max'] != '-' else '-'
+            fulfill = f"{row['Fulfill %']:.2f}%"
+            status = row['Status']
+            details = str(row['Details'])[:40]
+            
+            print(f"{nutrient:<30} {actual:>12} {min_val:>12} {max_val:>12} {fulfill:>12} {status:>8} {details:<40}")
+        
+        print()
+    
+    print(f"{'='*120}\n")
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -1076,291 +1127,235 @@ def local_search(
     verbose: bool = False
 ) -> pd.DataFrame:
     """
-    Local Search (Hill Climbing) dengan GUIDED + RESTRICTED CANDIDATE SELECTION
+    TASK 4 - LOCAL SEARCH HARD-AWARE (100g basis, no scaling)
     
-    Tujuan: Fine-tune GA result dengan mengganti makanan untuk menutup nutrient gaps
+    Priority: HARD constraints dulu, baru SOFT
     
-    Algoritma IMPROVED:
-        1. TASK 1: Filter food_df - Remove junk foods (spices, powder, sauce, etc)
-        2. TASK 2: Guided selection dengan PRIORITAS (fat > carb > protein)
-        3. TASK 3: Smart gene selection (pilih gene dengan deficit terbesar, bukan random)
-        4. TASK 4: Soft acceptance (accept jika nutrient improvement, tidak hanya fitness)
-        5. TASK 5: Stop condition (break jika 5 iterasi tanpa improvement)
+    Algoritma:
+    1. Identify SEMUA HARD constraint yang belum terpenuhi
+    2. Urutkan berdasarkan terbesar deviasi dari range
+    3. Pilih kandidat yang fix HARD tanpa break HARD lain
+    4. Terakhir: perbaiki SOFT constraints
     
     Args:
-        solution: GA result (DataFrame 10 items)
-        food_df: Food database (DataFrame all items)
-        guidelines: Dict constraints
-        tdee: Target daily energy (optional)
-        iterations: Max iterations (default 20)
-        verbose: Print progress? (default False)
+        solution: GA result (10 items, 100g basis)
+        food_df: Food database
+        guidelines: {'hard': {...}, 'soft': {...}}
+        tdee: Unused (100g basis only)
+        iterations: Max iterations
+        verbose: Print progress
     
     Returns:
-        DataFrame: Best solution ditemukan
-    
-    Expected Impact:
-        - Carbs: +5 to +30g
-        - Fats: +3 to +15g
-        - Protein: -5 to -20g
-        - Improvements: 5-8 per 20 iterations
+        Best solution found
     """
     
     if verbose:
         print(f"\n{'='*70}")
-        print(f"LOCAL SEARCH - Guided Fine-tuning GA Result")
+        print(f"LOCAL SEARCH - HARD-AWARE (100g basis)")
         print(f"{'='*70}")
     
-    # ════════════════════════════════════════════════════════════════
-    # TASK 1: FILTER KANDIDAT MAKANAN - Remove junk foods, spices, dll
-    # ════════════════════════════════════════════════════════════════
-    
+    # Filter junk foods
     invalid_keywords = [
         'spice', 'powder', 'yeast', 'sauce', 'extract',
         'flavoring', 'dressing', 'seasoning', 'mix', 'condiment'
     ]
     
-    # Buat cleaned dataset
     food_df_clean = food_df[
         ~food_df['food_name'].str.lower().str.contains('|'.join(invalid_keywords), na=False)
     ].copy()
     
-    if verbose:
-        print(f"[TASK 1] Candidate filtering:")
-        print(f"  Original: {len(food_df)} items")
-        print(f"  Cleaned: {len(food_df_clean)} items (removed {len(food_df) - len(food_df_clean)} junk foods)")
-    
     if len(food_df_clean) < CHROMOSOME_SIZE:
-        if verbose:
-            print(f"  ⚠️ Warning: Too few clean candidates, using original dataset")
         food_df_clean = food_df.copy()
     
-    # Start dengan GA solution
-    best_solution = solution.copy()
-    best_fitness = fitness(best_solution, guidelines, tdee=tdee)
-    
-    # Get guidelines
-    guidelines_flat = merge_hard_soft_guidelines(guidelines)
-    
-    # Extract targets
-    carb_target = guidelines_flat.get('carbohydrate_g', {}).get('max', 350)
-    fat_target = guidelines_flat.get('fat_g', {}).get('max', 78)
-    protein_target = guidelines_flat.get('protein_g', {}).get('max', 100)
-    
     if verbose:
-        print(f"\n[TARGETS] Macronutrients:")
-        print(f"  Carbs: {carb_target:.0f}g")
-        print(f"  Fats: {fat_target:.0f}g")
-        print(f"  Protein: {protein_target:.0f}g\n")
+        print(f"[SETUP] Candidates: {len(food_df_clean)} items (clean)")
+    
+    best_solution = solution.copy()
+    best_fitness = fitness(best_solution, guidelines, tdee=None)  # 100g basis
+    
+    hard_constraints = guidelines.get('hard', {})
+    soft_constraints = guidelines.get('soft', {})
     
     improvements = 0
     no_improve_count = 0
-    max_no_improve = 5
-    replacements = []
-    
     iteration = 0
-    while iteration < iterations and no_improve_count < max_no_improve:
+    
+    while iteration < iterations and no_improve_count < 5:
         iteration += 1
         
         # ════════════════════════════════════════════════════════════════
-        # TASK 1: Detect conditions + TASK 2: SMART GENE SELECTION
+        # TASK 4: Identifikasi HARD violations (100g basis)
         # ════════════════════════════════════════════════════════════════
         
         current_nutrition = calculate_total_nutrition(best_solution)
-        current_carbs = current_nutrition.get('carbohydrate_g', 0)
-        current_fats = current_nutrition.get('fat_g', 0)
-        current_protein = current_nutrition.get('protein_g', 0)
+        hard_violations = []
         
-        carb_deficit = carb_target - current_carbs
-        fat_deficit = fat_target - current_fats
-        protein_excess = current_protein - protein_target
+        for nutrient, constraint in hard_constraints.items():
+            if constraint.get('constraint_type') == 'unlimited':
+                continue
+            
+            if nutrient not in current_nutrition:
+                continue
+            
+            actual = current_nutrition[nutrient]
+            min_val = constraint.get('min', 0)
+            max_val = constraint.get('max', float('inf'))
+            
+            if actual < min_val:
+                deviation = min_val - actual
+                hard_violations.append({
+                    'nutrient': nutrient,
+                    'type': 'LOW',
+                    'actual': actual,
+                    'target': min_val,
+                    'deviation': deviation
+                })
+            elif actual > max_val:
+                deviation = actual - max_val
+                hard_violations.append({
+                    'nutrient': nutrient,
+                    'type': 'HIGH',
+                    'actual': actual,
+                    'target': max_val,
+                    'deviation': deviation
+                })
         
-        # ════════ TASK 1: Hitung Kondisi ════════
-        need_carb = current_carbs < carb_target
-        need_fat = current_fats < fat_target
-        protein_over = current_protein > protein_target
+        # Sort by deviation (terbesar dulu)
+        hard_violations.sort(key=lambda x: x['deviation'], reverse=True)
         
-        # ════════ TASK 2: SMART GENE SELECTION (Not Random!) ════════
-        # Pilih gene dengan masalah terbesar, bukan random
-        
-        selected_gene_idx = None
-        selection_reason = None
-        
-        # PRIORITAS: PROTEIN_OVER > FAT > CARB
-        
-        if protein_over:
-            # PRIORITAS 1: Jika PROTEIN OVER - cari gene dengan PROTEIN TERTINGGI
-            protein_values = best_solution['protein_g'].values
-            selected_gene_idx = np.argmax(protein_values)
-            selection_reason = f"HIGH PROTEIN (excess {protein_excess:.1f}g)"
-        elif need_fat and fat_deficit > 3:
-            # PRIORITAS 2: Jika FAT deficit - cari gene dengan FAT TERENDAH
-            fat_values = best_solution['fat_g'].values
-            selected_gene_idx = np.argmin(fat_values)
-            selection_reason = f"LOW FAT (deficit {fat_deficit:.1f}g)"
-        elif need_carb and carb_deficit > 5:
-            # PRIORITAS 3: Jika CARB deficit - cari gene dengan CARB TERENDAH
-            carb_values = best_solution['carbohydrate_g'].values
-            selected_gene_idx = np.argmin(carb_values)
-            selection_reason = f"LOW CARB (deficit {carb_deficit:.1f}g)"
-        else:
-            # Fallback: Random gene untuk exploration
-            selected_gene_idx = random.randint(0, len(best_solution) - 1)
-            selection_reason = "EXPLORATORY"
-        
-        gene_idx = int(selected_gene_idx)
-        current_food = best_solution.iloc[gene_idx]
-        current_food_name = current_food.get('food_name', 'Unknown')
+        if verbose and iteration == 1:
+            print(f"\n[HARD VIOLATIONS (100g basis)]")
+            for v in hard_violations[:3]:  # Show top 3
+                print(f"  {v['nutrient']}: {v['type']} by {v['deviation']:.1f}g")
         
         # ════════════════════════════════════════════════════════════════
-        # TASK 1 & 2: GUIDED CANDIDATE SELECTION - Priority-based filtering
+        # Jika HARD OK, perbaiki SOFT (optional)
+        # ════════════════════════════════════════════════════════════════
+        
+        target_violation = None  # Initialize to None
+        
+        if len(hard_violations) == 0:
+            # HARD OK, cek SOFT
+            target_nutrient = None
+            for nutrient, constraint in soft_constraints.items():
+                if constraint.get('constraint_type') == 'unlimited':
+                    continue
+                
+                if nutrient not in current_nutrition:
+                    continue
+                
+                actual = current_nutrition[nutrient]
+                min_val = constraint.get('min', 0)
+                max_val = constraint.get('max', float('inf'))
+                
+                if actual < min_val or actual > max_val:
+                    target_nutrient = nutrient
+                    # Create a soft violation object for consistency
+                    if actual < min_val:
+                        target_violation = {
+                            'nutrient': nutrient,
+                            'type': 'LOW',
+                            'actual': actual,
+                            'target': min_val,
+                            'deviation': min_val - actual,
+                            'is_soft': True
+                        }
+                    else:
+                        target_violation = {
+                            'nutrient': nutrient,
+                            'type': 'HIGH',
+                            'actual': actual,
+                            'target': max_val,
+                            'deviation': actual - max_val,
+                            'is_soft': True
+                        }
+                    break
+            
+            if not target_violation:
+                if verbose:
+                    print(f"[ITER {iteration}] All constraints OK! Stopping.")
+                break
+        
+        else:
+            # Fix HARD dulu
+            target_violation = hard_violations[0]
+            target_violation['is_soft'] = False
+            target_nutrient = target_violation['nutrient']
+        
+        # ════════════════════════════════════════════════════════════════
+        # Select gene yang perlu di-replace
+        # ════════════════════════════════════════════════════════════════
+        
+        if target_violation['type'] == 'LOW':
+            # Cari gene dengan nutrient TERENDAH (highest deficit)
+            values = best_solution[target_nutrient].values if target_nutrient in best_solution.columns else None
+            if values is not None:
+                gene_idx = int(np.argmin(values))
+            else:
+                gene_idx = random.randint(0, len(best_solution) - 1)
+        else:  # HIGH
+            # Cari gene dengan nutrient TERTINGGI (highest excess)
+            values = best_solution[target_nutrient].values if target_nutrient in best_solution.columns else None
+            if values is not None:
+                gene_idx = int(np.argmax(values))
+            else:
+                gene_idx = random.randint(0, len(best_solution) - 1)
+        
+        # ════════════════════════════════════════════════════════════════
+        # Find candidates
         # ════════════════════════════════════════════════════════════════
         
         slot_name = SLOT_NAMES[gene_idx]
         expected_label = SLOT_LABEL_MAP.get(gene_idx, 'Main Course')
         
-        # Filter by consumption label (mandatory - tetap filter berdasarkan slot)
         candidates = food_df_clean[food_df_clean['consumption_label'] == expected_label].copy()
         
         if len(candidates) == 0:
             no_improve_count += 1
             continue
         
-        # TASK 1: PRIORITY-BASED CANDIDATE SELECTION
-        # WAJIB: Tetap filter berdasarkan slot + nutrient-aware
+        # Filter untuk fix problem
+        if target_violation['type'] == 'LOW':
+            # Cari HIGH nutrient untuk LOW case
+            min_threshold = target_violation['target'] / 2  # At least half of target
+            filtered = candidates[candidates[target_nutrient] >= min_threshold].copy()
+        else:  # HIGH
+            # Cari LOW nutrient untuk HIGH case
+            max_threshold = target_violation['target'] * 0.8  # At most 80% of limit
+            filtered = candidates[candidates[target_nutrient] <= max_threshold].copy()
         
-        original_candidates_count = len(candidates)
+        if len(filtered) == 0:
+            candidates_to_use = candidates
+        else:
+            candidates_to_use = filtered
         
-        if protein_over:
-            # PRIORITY 1: PROTEIN OVER - cari LOW PROTEIN ONLY
-            low_protein = candidates[candidates['protein_g'] <= 10].copy()
-            if len(low_protein) > 0:
-                candidates = low_protein
-            # Jika kosong, fallback ke slot-based (tetap skip junk)
-        elif need_fat and fat_deficit > 3:
-            # PRIORITY 2: NEED FAT - cari HIGH FAT + MODERATE PROTEIN
-            high_fat_balanced = candidates[
-                (candidates['fat_g'] >= 10) &
-                (candidates['protein_g'] <= 12)  # Kontrol protein
-            ].copy()
-            if len(high_fat_balanced) > 0:
-                candidates = high_fat_balanced
-            else:
-                # Fallback ke high fat only
-                high_fat = candidates[candidates['fat_g'] >= 10].copy()
-                if len(high_fat) > 0:
-                    candidates = high_fat
-        elif need_carb and carb_deficit > 5:
-            # PRIORITY 3: NEED CARB - cari HIGH CARB + MODERATE PROTEIN
-            high_carb_balanced = candidates[
-                (candidates['carbohydrate_g'] >= 25) &
-                (candidates['protein_g'] <= 15)  # Kontrol protein
-            ].copy()
-            if len(high_carb_balanced) > 0:
-                candidates = high_carb_balanced
-            else:
-                # Fallback ke high carb only
-                high_carb = candidates[candidates['carbohydrate_g'] >= 25].copy()
-                if len(high_carb) > 0:
-                    candidates = high_carb
-        
-        # Fallback jika tidak ada candidates yang match (tetap gunakan slot-filtered)
-        if len(candidates) == 0:
-            candidates = food_df_clean[food_df_clean['consumption_label'] == expected_label].copy()
-        
-        if len(candidates) == 0:
-            no_improve_count += 1
-            if verbose:
-                print(f"[ITER {iteration}] No candidates found for {slot_name} ({selection_reason})")
-            continue
-        
-        # Pilih random dari candidates yang sudah di-filter
-        new_food = candidates.sample(n=1).iloc[0]
-        new_food_name = new_food.get('food_name', 'Unknown')
-        
+        # ════════════════════════════════════════════════════════════════
         # Test replacement
+        # ════════════════════════════════════════════════════════════════
+        
+        current_food = best_solution.iloc[gene_idx]
+        new_food = candidates_to_use.sample(n=1).iloc[0]
+        
         test_solution = best_solution.copy()
         test_solution.iloc[gene_idx] = new_food
-        test_fitness = fitness(test_solution, guidelines, tdee=tdee)
+        test_fitness = fitness(test_solution, guidelines, tdee=None)  # 100g basis
         
-        # ════════════════════════════════════════════════════════════════
-        # TASK 5: PERBAIKI ACCEPTANCE CRITERIA
-        # ════════════════════════════════════════════════════════════════
-        
-        test_nutrition = calculate_total_nutrition(test_solution)
-        test_carbs = test_nutrition.get('carbohydrate_g', 0)
-        test_fats = test_nutrition.get('fat_g', 0)
-        test_protein = test_nutrition.get('protein_g', 0)
-        
-        # TASK 5: Smart acceptance logic
-        # Cek apakah ada SIGNIFIKAN improvement
-        carb_improved_sig = test_carbs > (current_carbs + 2)  # At least 2g improvement
-        fat_improved_sig = test_fats > (current_fats + 1)     # At least 1g improvement
-        protein_reduced_sig = test_protein < (current_protein - 2)  # At least 2g reduction
-        
-        nutrient_improvement = carb_improved_sig or fat_improved_sig or protein_reduced_sig
-        fitness_improved = test_fitness < best_fitness
-        
-        accept = False
-        accept_reason = ""
-        
-        # TASK 5: Acceptance logic dengan SOFT ACCEPTANCE 20% (bukan 30%)
-        if fitness_improved:
-            # Hard acceptance: fitness lebih baik
-            accept = True
-            accept_reason = "FITNESS IMPROVED"
-        elif nutrient_improvement and random.random() < 0.2:  # TASK 5: 20% soft acceptance (stricter)
-            # Soft acceptance: nutrient improvement tapi fitness mungkin turun
-            accept = True
-            accept_reason = "SOFT ACCEPT (nutrient improved)"
-        
-        if accept:
+        # Accept jika fitness improves
+        if test_fitness < best_fitness:
             best_solution = test_solution
             best_fitness = test_fitness
             improvements += 1
             no_improve_count = 0
             
-            replacements.append({
-                'iteration': iteration,
-                'slot': slot_name,
-                'old_food': current_food_name,
-                'new_food': new_food_name,
-                'reason': selection_reason,
-                'carb_change': test_carbs - current_carbs,
-                'fat_change': test_fats - current_fats,
-                'protein_change': test_protein - current_protein
-            })
-            
             if verbose:
-                print(f"[ITER {iteration}] ✓ IMPROVED - {slot_name} ({selection_reason})")
-                print(f"  {current_food_name} → {new_food_name}")
-                print(f"  Fitness: {best_fitness:.2f} | Carbs: {test_carbs:+.0f}g | Fats: {test_fats:+.0f}g | Protein: {test_protein:+.0f}g")
-                print(f"  Reason: {accept_reason}")
+                print(f"[ITER {iteration}] Improved: {current_food.get('food_name', '?')} → {new_food.get('food_name', '?')}")
+                print(f"  Fitness: {best_fitness:.2f}")
         else:
             no_improve_count += 1
-            if verbose:
-                fitness_change = ((test_fitness - best_fitness) / best_fitness * 100) if best_fitness > 0 else 0
-                print(f"[ITER {iteration}] ✗ No accept (tried {new_food_name}, fitness {fitness_change:+.1f}%, no nutrient gain)")
     
     if verbose:
         print(f"\n{'='*70}")
-        print(f"LOCAL SEARCH COMPLETE")
-        print(f"{'='*70}")
-        print(f"Iterations: {iteration} (stopped: no_improve_count={no_improve_count}/{max_no_improve})")
-        print(f"Total improvements: {improvements}")
-        print(f"Final fitness: {best_fitness:.2f}")
-        
-        if improvements > 0:
-            print(f"\n✓ Improvements Found: {len(replacements)}")
-            total_carb_change = sum(r['carb_change'] for r in replacements)
-            total_fat_change = sum(r['fat_change'] for r in replacements)
-            total_protein_change = sum(r['protein_change'] for r in replacements)
-            
-            print(f"  Total Carbs: {total_carb_change:+.1f}g")
-            print(f"  Total Fats: {total_fat_change:+.1f}g")
-            print(f"  Total Protein: {total_protein_change:+.1f}g")
-        else:
-            print(f"\n✗ No improvements found")
-        
+        print(f"Improvements: {improvements}, Iterations: {iteration}")
         print(f"{'='*70}\n")
     
     return best_solution

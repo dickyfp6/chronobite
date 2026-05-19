@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 from ga_v1 import (
     run_ga, local_search, calculate_total_nutrition,
-    filter_food_dataset
+    filter_food_dataset, display_nutrition_analysis_table
 )
 from food_filter_meal_ready import filter_meal_ready_foods
 from nutrition_service import NutritionService
@@ -159,5 +159,11 @@ if carb_change > 0 or fat_change > 0 or protein_change < 0:
     print(f"\n[OK] SUCCESS! Local Search produced improvements!")
 else:
     print(f"\n[FAIL] No improvements found")
+
+# Display detailed nutrition analysis table (TASK 8)
+print("\n" + "="*70)
+print("NUTRITION ANALYSIS TABLE (100g basis - HARD/SOFT separated)")
+print("="*70)
+display_nutrition_analysis_table(best_solution, guidelines)
 
 print(f"\n[OK] Test complete!")

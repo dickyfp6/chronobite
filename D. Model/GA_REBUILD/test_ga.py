@@ -38,7 +38,7 @@ from ga_v1 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
-    filter_food_dataset, local_search
+    filter_food_dataset, local_search, display_nutrition_analysis_table
 )
 
 # Import Meal-Ready Food Filter
@@ -387,6 +387,9 @@ def test_ga_with_nutrition_service():
         
         display_solution(best_solution, guidelines)
         display_fitness_details(best_solution, guidelines)
+        
+        # TASK 8: Display nutrition analysis table (100g basis, HARD/SOFT separated)
+        display_nutrition_analysis_table(best_solution, guidelines)
         
         # STEP 7: Generate meal options dari top_solutions (berbagai kombinasi)
         print("\n" + "="*70)
