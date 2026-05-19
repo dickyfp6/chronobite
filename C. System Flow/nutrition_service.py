@@ -191,6 +191,7 @@ class NutritionService:
                 min_val = guideline_data['min']
                 max_val = guideline_data['max']
                 basis = guideline_data['basis']
+                tipe = guideline_data.get('tipe', 'range')  # Get tipe from guideline
                 diseases_list = guideline_data['diseases']
                 
                 # Convert nilai
@@ -201,11 +202,16 @@ class NutritionService:
                 # Infer unit from nutrient name
                 unit = self._infer_unit(nutrient)
                 
+                # Determine constraint type based on tipe column
+                # tipe in ["range", "max"] → HARD constraint
+                constraint_type = 'HARD' if tipe in ['range', 'max'] else 'SOFT'
+                
                 nutrients_dict[nutrient] = {
                     'min': converted['min_converted'],
                     'max': converted['max_converted'],
                     'basis': basis,
-                    'constraint_type': converted['constraint_type'],
+                    'tipe': tipe,  # Store original tipe
+                    'constraint_type': constraint_type,  # HARD or SOFT
                     'unit': unit,
                     'source': 'guideline',
                     'diseases': diseases_list  # Track which diseases contributed

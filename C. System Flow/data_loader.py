@@ -167,6 +167,7 @@ class GuidelineLoader:
                 min_val = row['min']
                 max_val = row['max']
                 basis = row['basis']
+                tipe = row.get('tipe', 'range')  # Extract tipe column (range or max)
                 
                 try:
                     min_val = float(min_val) if pd.notna(min_val) else None
@@ -180,6 +181,7 @@ class GuidelineLoader:
                         'min': min_val,
                         'max': max_val,
                         'basis': basis,
+                        'tipe': tipe,  # Store tipe column
                         'diseases': [disease]
                     }
                 else:

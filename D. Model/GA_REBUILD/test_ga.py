@@ -271,35 +271,13 @@ def test_ga_with_nutrition_service():
         # ════════════════════════════════════════════════════════════════════════
         # NEW: SPLIT GUIDELINES MENJADI HARD DAN SOFT CONSTRAINTS
         # ════════════════════════════════════════════════════════════════════════
-        # HARD constraint: Berasal dari penyakit user → PRIORITAS UTAMA (high penalty)
-        # SOFT constraint: Berasal dari DRI → FLEXIBLE (normal penalty)
+        # HARD constraint: tipe="range" atau "max" dari guideline.csv (HIGH PRIORITY)
+        # SOFT constraint: DRI micronutrient (FLEXIBLE)
         
-        # Define HARD_KEYS berdasarkan disease
-        HARD_KEYS = []
-        user_diseases = user_input['disease']
-        
-        # Selalu include sodium untuk semua user
-        HARD_KEYS.append('sodium_mg')
-        
-        # Add disease-specific HARD constraints
-        if any(d in ['dm2', 'cvd', 'cholesterol'] for d in user_diseases):
-            HARD_KEYS.append('cholesterol_mg')
-        
-        if any(d in ['hypertension', 'cvd'] for d in user_diseases):
-            HARD_KEYS.extend(['sodium_mg', 'potassium_mg'])  # sodium sudah ada
-            HARD_KEYS = list(set(HARD_KEYS))  # Remove duplicates
-        
-        if any(d in ['ckd'] for d in user_diseases):
-            HARD_KEYS.extend(['sodium_mg', 'potassium_mg', 'phosphorus_mg', 'protein_g'])
-            HARD_KEYS = list(set(HARD_KEYS))  # Remove duplicates
-        
-        # Remove duplicates
-        HARD_KEYS = list(set(HARD_KEYS))
-        
-        # Split guidelines
+        # Split guidelines berdasarkan constraint_type
         guidelines = {
-            'hard': {k: guidelines_all[k] for k in HARD_KEYS if k in guidelines_all},
-            'soft': {k: v for k, v in guidelines_all.items() if k not in HARD_KEYS}
+            'hard': {k: v for k, v in guidelines_all.items() if v.get('constraint_type') == 'HARD'},
+            'soft': {k: v for k, v in guidelines_all.items() if v.get('constraint_type') != 'HARD'}
         }
         
         print(f"✓ Data extracted:")
@@ -387,9 +365,6 @@ def test_ga_with_nutrition_service():
         
         display_solution(best_solution, guidelines)
         display_fitness_details(best_solution, guidelines)
-        
-        # TASK 8: Display nutrition analysis table (100g basis, HARD/SOFT separated)
-        display_nutrition_analysis_table(best_solution, guidelines)
         
         # STEP 7: Generate meal options dari top_solutions (berbagai kombinasi)
         print("\n" + "="*70)
@@ -500,8 +475,11 @@ def test_ga_with_nutrition_service():
             selected_nutrition = calculate_total_nutrition(selected_df)
             
             print("\n" + "─" * 70)
-            print("📊 NUTRITION SUMMARY:")
+            print("📊 NUTRITION ANALYSIS:")
             print("─" * 70)
+            
+            # Display detailed nutrition analysis for selected menu
+            display_nutrition_analysis_table(selected_df, guidelines)
             
             # ════════════════════════════════════════════════════════════════════════
             # STEP 10: PORTION SIZING - Calculate portion sizes dynamically (MEAL-BASED + DEFICIT-AWARE)

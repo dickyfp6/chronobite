@@ -728,6 +728,12 @@ def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
     
     Format: | Nutrient (TYPE) | Actual | Min | Max | Fulfill % | Status | Details |
     Urutan: HARD dulu, lalu SOFT
+    
+    Tambahan: Calculate total fulfillment score
+    - HARD_avg = mean of HARD fulfill%
+    - SOFT_avg = mean of SOFT fulfill%
+    - TOTAL_SCORE = (HARD_avg * 0.7) + (SOFT_avg * 0.3)
+    - STATUS: EXCELLENT (>=90), GOOD (>=75), FAIR (>=60), POOR (<60)
     """
     df = analyze_nutrition_detailed(solution, guidelines)
     
@@ -747,6 +753,10 @@ def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
     print(f"{'Nutrient':<35} {'Actual':>12} {'Min':>12} {'Max':>12} {'Fulfill %':>12} {'Status':>8} {'Details':<50}")
     print(f"{'-'*140}")
     
+    # Collect fulfillment percentages for averaging
+    hard_fulfill_list = []
+    soft_fulfill_list = []
+    
     # Display HARD first
     for _, row in df_hard.iterrows():
         nutrient = f"{row['Nutrient']} (HARD)"[:35]
@@ -756,6 +766,8 @@ def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
         fulfill = f"{row['Fulfill %']:.2f}%"
         status = row['Status']
         details = str(row['Details'])[:50]
+        
+        hard_fulfill_list.append(row['Fulfill %'])
         
         print(f"{nutrient:<35} {actual:>12} {min_val:>12} {max_val:>12} {fulfill:>12} {status:>8} {details:<50}")
     
@@ -769,9 +781,38 @@ def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
         status = row['Status']
         details = str(row['Details'])[:50]
         
+        soft_fulfill_list.append(row['Fulfill %'])
+        
         print(f"{nutrient:<35} {actual:>12} {min_val:>12} {max_val:>12} {fulfill:>12} {status:>8} {details:<50}")
     
     print(f"{'='*140}\n")
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # TOTAL FULFILLMENT SCORE SUMMARY
+    # ════════════════════════════════════════════════════════════════════════
+    
+    hard_avg = np.mean(hard_fulfill_list) if hard_fulfill_list else 0
+    soft_avg = np.mean(soft_fulfill_list) if soft_fulfill_list else 0
+    total_score = (hard_avg * 0.7) + (soft_avg * 0.3)
+    
+    # Determine status based on total score
+    if total_score >= 90:
+        status_text = "EXCELLENT"
+    elif total_score >= 75:
+        status_text = "GOOD"
+    elif total_score >= 60:
+        status_text = "FAIR"
+    else:
+        status_text = "POOR"
+    
+    print(f"{'TOTAL FULFILLMENT SUMMARY':^140}")
+    print(f"{'-'*140}")
+    print(f"{'HARD Avg':30} {hard_avg:>10.2f}%")
+    print(f"{'SOFT Avg':30} {soft_avg:>10.2f}%")
+    print(f"{'TOTAL SCORE (70% HARD + 30% SOFT)':30} {total_score:>10.2f}%")
+    print(f"{'STATUS':30} {status_text:>10}")
+    print(f"{'='*140}\n")
+
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -2365,18 +2406,6 @@ def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, 
     print(f"\n  {'─'*66}")
     print(f"  {'TOTAL':10}: {total_energy:6.0f} kcal | {total_protein:5.1f}g protein")
     print(f"              {total_carbs:6.1f}g carbs | {total_fat:6.1f}g fat | {total_sodium:6.0f}mg sodium")
-    
-    # Summary compliance
-    compliance_pct = (compliant_count / total_checks * 100) if total_checks > 0 else 0
-    compliance_bar = "█" * int(compliance_pct / 5) + "░" * (20 - int(compliance_pct / 5))
-    
-    print(f"\n  {'Total nutrients checked':<30} {total_checks:>10}")
-    print(f"  {'Compliant nutrients':<30} {compliant_count:>10}")
-    print(f"  {'Compliance Rate':<30} {compliance_pct:>6.1f}% [{compliance_bar}]")
-    print(f"  {'Status':<30} {'✅ GOOD' if compliance_pct >= 80 else '⚠️  FAIR' if compliance_pct >= 50 else '❌ POOR'}")
-    print(f"  {'🎯 Target TDEE':<30} {TDEE:>10.0f} kcal")
-    print(f"  {'📊 Actual Energy':<30} {total_energy:>10.0f} kcal")
-    print(f"  {'📈 Difference':<30} {abs(total_energy - TDEE):>+10.0f} kcal")
     
     print(f"\n" + "="*70 + "\n")
     print(f"[NOTE] Detailed nutrition analysis akan ditampilkan di output akhir")
