@@ -724,64 +724,54 @@ def analyze_nutrition_detailed(solution: pd.DataFrame, guidelines: Dict) -> pd.D
 
 def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
     """
-    TASK 8 - Display tabel analisis nutrisi dengan format profesional
+    TASK 8 - TABEL UTAMA FINAL: Display nutrisi dengan format profesional
     
-    Kolom: | Nutrient | Actual | Min | Max | Fulfill % | Status | Details |
+    Format: | Nutrient (TYPE) | Actual | Min | Max | Fulfill % | Status | Details |
+    Urutan: HARD dulu, lalu SOFT
     """
     df = analyze_nutrition_detailed(solution, guidelines)
-    
-    # Format output
-    print(f"\n{'='*120}")
-    print(f"NUTRITION ANALYSIS TABLE (100g basis)")
-    print(f"{'='*120}\n")
     
     if len(df) == 0:
         print("No constraints found.")
         return
     
+    print(f"\n{'='*140}")
+    print(f"{'NUTRITION ANALYSIS - 100g BASIS':^140}")
+    print(f"{'='*140}\n")
+    
     # Separate HARD and SOFT
     df_hard = df[df['Type'] == 'HARD']
     df_soft = df[df['Type'] == 'SOFT']
     
-    # Display HARD
-    if len(df_hard) > 0:
-        print(f"{'HARD CONSTRAINTS (Disease-based)':^120}\n")
-        print(f"{'Nutrient':<30} {'Actual':>12} {'Min':>12} {'Max':>12} {'Fulfill %':>12} {'Status':>8} {'Details':<40}")
-        print(f"{'-'*120}")
-        
-        for _, row in df_hard.iterrows():
-            nutrient = str(row['Nutrient'])[:30]
-            actual = f"{row['Actual']:.2f}"
-            min_val = f"{row['Min']:.2f}" if row['Min'] != '-' else '-'
-            max_val = f"{row['Max']:.2f}" if row['Max'] != '-' else '-'
-            fulfill = f"{row['Fulfill %']:.2f}%"
-            status = row['Status']
-            details = str(row['Details'])[:40]
-            
-            print(f"{nutrient:<30} {actual:>12} {min_val:>12} {max_val:>12} {fulfill:>12} {status:>8} {details:<40}")
-        
-        print()
+    # Combined table dengan label (HARD)/(SOFT)
+    print(f"{'Nutrient':<35} {'Actual':>12} {'Min':>12} {'Max':>12} {'Fulfill %':>12} {'Status':>8} {'Details':<50}")
+    print(f"{'-'*140}")
     
-    # Display SOFT
-    if len(df_soft) > 0:
-        print(f"\n{'SOFT CONSTRAINTS (DRI-based)':^120}\n")
-        print(f"{'Nutrient':<30} {'Actual':>12} {'Min':>12} {'Max':>12} {'Fulfill %':>12} {'Status':>8} {'Details':<40}")
-        print(f"{'-'*120}")
+    # Display HARD first
+    for _, row in df_hard.iterrows():
+        nutrient = f"{row['Nutrient']} (HARD)"[:35]
+        actual = f"{row['Actual']:.2f}"
+        min_val = f"{row['Min']:.2f}" if row['Min'] != '-' else '-'
+        max_val = f"{row['Max']:.2f}" if row['Max'] != '-' else '-'
+        fulfill = f"{row['Fulfill %']:.2f}%"
+        status = row['Status']
+        details = str(row['Details'])[:50]
         
-        for _, row in df_soft.iterrows():
-            nutrient = str(row['Nutrient'])[:30]
-            actual = f"{row['Actual']:.2f}"
-            min_val = f"{row['Min']:.2f}" if row['Min'] != '-' else '-'
-            max_val = f"{row['Max']:.2f}" if row['Max'] != '-' else '-'
-            fulfill = f"{row['Fulfill %']:.2f}%"
-            status = row['Status']
-            details = str(row['Details'])[:40]
-            
-            print(f"{nutrient:<30} {actual:>12} {min_val:>12} {max_val:>12} {fulfill:>12} {status:>8} {details:<40}")
-        
-        print()
+        print(f"{nutrient:<35} {actual:>12} {min_val:>12} {max_val:>12} {fulfill:>12} {status:>8} {details:<50}")
     
-    print(f"{'='*120}\n")
+    # Display SOFT after
+    for _, row in df_soft.iterrows():
+        nutrient = f"{row['Nutrient']} (SOFT)"[:35]
+        actual = f"{row['Actual']:.2f}"
+        min_val = f"{row['Min']:.2f}" if row['Min'] != '-' else '-'
+        max_val = f"{row['Max']:.2f}" if row['Max'] != '-' else '-'
+        fulfill = f"{row['Fulfill %']:.2f}%"
+        status = row['Status']
+        details = str(row['Details'])[:50]
+        
+        print(f"{nutrient:<35} {actual:>12} {min_val:>12} {max_val:>12} {fulfill:>12} {status:>8} {details:<50}")
+    
+    print(f"{'='*140}\n")
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -2376,116 +2366,7 @@ def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, 
     print(f"  {'TOTAL':10}: {total_energy:6.0f} kcal | {total_protein:5.1f}g protein")
     print(f"              {total_carbs:6.1f}g carbs | {total_fat:6.1f}g fat | {total_sodium:6.0f}mg sodium")
     
-    # Show compliance vs target
-    print(f"\n📋 COMPLIANCE vs GUIDELINES (ALL NUTRIENTS):")
-    print(f"─" * 120)
-    
-    # FIX: Flatten guidelines if it has {'hard': {...}, 'soft': {...}} structure
-    guidelines_flat = {}
-    if isinstance(guidelines, dict) and 'hard' in guidelines and 'soft' in guidelines:
-        guidelines_flat = {**guidelines['hard'], **guidelines['soft']}
-    else:
-        guidelines_flat = guidelines
-    
-    # Define unit mapping untuk common nutrients
-    unit_map = {
-        'energy_kcal': 'kcal',
-        'protein_g': 'g',
-        'carbohydrate_g': 'g',
-        'fat_g': 'g',
-        'fiber_g': 'g',
-        'sodium_mg': 'mg',
-        'potassium_mg': 'mg',
-        'cholesterol_mg': 'mg',
-        'calcium_mg': 'mg',
-        'iron_mg': 'mg',
-        'magnesium_mg': 'mg',
-        'phosphorus_mg': 'mg',
-        'zinc_mg': 'mg',
-        'vitamin_a_mcg': 'mcg',
-        'vitamin_b1_mg': 'mg',
-        'vitamin_b2_mg': 'mg',
-        'vitamin_b3_mg': 'mg',
-        'vitamin_b5_mg': 'mg',
-        'vitamin_b6_mg': 'mg',
-        'vitamin_b12_mcg': 'mcg',
-        'vitamin_c_mg': 'mg',
-        'vitamin_d_mcg': 'mcg',
-        'vitamin_e_mg': 'mg',
-        'vitamin_k_mcg': 'mcg',
-        'folate_mcg': 'mcg',
-    }
-    
-    # Format nutrient name untuk display
-    def format_nutrient_label(nutrient_col: str) -> str:
-        """Convert nutrient_col ke readable label"""
-        # Contoh: energy_kcal → Energy, protein_g → Protein
-        name = nutrient_col.replace('_', ' ').replace('kcal', '').replace('mg', '').replace('g', '').replace('mcg', '').strip()
-        # Capitalize each word
-        return ' '.join(word.capitalize() for word in name.split())
-    
-    # Get actual values dari portion_df
-    final_nutrition = {}
-    for nutrient in guidelines_flat.keys():
-        # Try to get from portion_df columns like 'final_protein_g'
-        final_col = f'final_{nutrient}'
-        if final_col in portion_df.columns:
-            final_nutrition[nutrient] = portion_df[final_col].sum()
-        else:
-            # Fallback: calculate dari food data
-            final_nutrition[nutrient] = 0
-    
-    # Print table header
-    print(f"{'Nutrient':<30} {'Actual':>12} {'Min':>12} {'Max':>12} {'Status':>12} {'Details':>20}")
-    print(f"─" * 120)
-    
-    compliant_count = 0
-    total_checks = 0
-    
-    # Loop ALL nutrients dari guidelines (TIDAK HANYA 5!)
-    for nutrient_col, constraint in sorted(guidelines_flat.items()):
-        # Skip unlimited constraints
-        if constraint.get('constraint_type') == 'unlimited':
-            continue
-        
-        # Get actual value
-        actual_val = final_nutrition.get(nutrient_col, 0)
-        
-        # Skip jika tidak ada value
-        if actual_val == 0 and nutrient_col not in final_nutrition:
-            continue
-        
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
-        
-        # Get unit dari mapping atau dari constraint
-        unit = unit_map.get(nutrient_col, constraint.get('unit', ''))
-        
-        # Format nutrient label
-        label = format_nutrient_label(nutrient_col)
-        
-        total_checks += 1
-        
-        # Determine status dengan indikator yang jelas
-        if min_val <= actual_val <= max_val:
-            status = "✅ OK"
-            details = "Within range"
-            compliant_count += 1
-        elif actual_val < min_val:
-            deficit = min_val - actual_val
-            status = "🔴 LOW"
-            details = f"Need +{deficit:.1f} {unit}"
-        else:
-            excess = actual_val - max_val
-            status = "🟡 HIGH"
-            details = f"Excess {excess:.1f} {unit}"
-        
-        # Display row
-        print(f"{label:<30} {actual_val:>12.1f} {min_val:>12.1f} {max_val:>12.1f} {status:>12} {details:>20}")
-    
     # Summary compliance
-    print(f"─" * 120)
-    
     compliance_pct = (compliant_count / total_checks * 100) if total_checks > 0 else 0
     compliance_bar = "█" * int(compliance_pct / 5) + "░" * (20 - int(compliance_pct / 5))
     
@@ -2498,3 +2379,5 @@ def display_portion_summary_dynamic(portion_df: pd.DataFrame, guidelines: Dict, 
     print(f"  {'📈 Difference':<30} {abs(total_energy - TDEE):>+10.0f} kcal")
     
     print(f"\n" + "="*70 + "\n")
+    print(f"[NOTE] Detailed nutrition analysis akan ditampilkan di output akhir")
+    print(f"="*70 + "\n")
