@@ -274,10 +274,10 @@ def test_ga_with_nutrition_service():
         # HARD constraint: tipe="range" atau "max" dari guideline.csv (HIGH PRIORITY)
         # SOFT constraint: DRI micronutrient (FLEXIBLE)
         
-        # Split guidelines berdasarkan constraint_type
+        # Split guidelines berdasarkan hard_soft_type
         guidelines = {
-            'hard': {k: v for k, v in guidelines_all.items() if v.get('constraint_type') == 'HARD'},
-            'soft': {k: v for k, v in guidelines_all.items() if v.get('constraint_type') != 'HARD'}
+            'hard': {k: v for k, v in guidelines_all.items() if v.get('hard_soft_type') == 'HARD'},
+            'soft': {k: v for k, v in guidelines_all.items() if v.get('hard_soft_type') != 'HARD'}
         }
         
         print(f"✓ Data extracted:")

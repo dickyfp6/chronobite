@@ -202,16 +202,18 @@ class NutritionService:
                 # Infer unit from nutrient name
                 unit = self._infer_unit(nutrient)
                 
-                # Determine constraint type based on tipe column
-                # tipe in ["range", "max"] → HARD constraint
-                constraint_type = 'HARD' if tipe in ['range', 'max'] else 'SOFT'
+                # Determine HARD/SOFT based on tipe column
+                # tipe in ["range", "max"] → HARD constraint (disease guideline)
+                # otherwise → SOFT constraint (DRI micronutrient)
+                hard_soft_type = 'HARD' if tipe in ['range', 'max'] else 'SOFT'
                 
                 nutrients_dict[nutrient] = {
                     'min': converted['min_converted'],
                     'max': converted['max_converted'],
                     'basis': basis,
-                    'tipe': tipe,  # Store original tipe
-                    'constraint_type': constraint_type,  # HARD or SOFT
+                    'tipe': tipe,  # Store original tipe from CSV
+                    'constraint_type': converted['constraint_type'],  # From convert_guideline_value
+                    'hard_soft_type': hard_soft_type,  # HARD or SOFT for GA purposes
                     'unit': unit,
                     'source': 'guideline',
                     'diseases': diseases_list  # Track which diseases contributed
@@ -241,7 +243,9 @@ class NutritionService:
                                 'min': float(dri_value),
                                 'max': float(dri_value),
                                 'basis': 'DRI',
+                                'tipe': 'dri',
                                 'constraint_type': 'dri_micronutrient',
+                                'hard_soft_type': 'SOFT',  # DRI nutrients are always SOFT
                                 'unit': unit,
                                 'source': 'DRI fallback'
                             }

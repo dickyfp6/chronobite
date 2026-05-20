@@ -391,6 +391,180 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
     return filtered
 
 
+# ═════════════════════════════════════════════════════════════════════════════
+# TASK 4 - FILTER EXTREME FOODS (before GA)
+# ═════════════════════════════════════════════════════════════════════════════
+
+def filter_extreme_foods(food_df: pd.DataFrame, verbose: bool = True) -> pd.DataFrame:
+    """
+    TASK 4 - Remove extreme foods sebelum GA
+    
+    Criteria:
+    - fat > 50g per 100g (pure fat) → REMOVE
+    - sugar > 40g per 100g (liquid sugar) → REMOVE  
+    - energy > 600 kcal per 100g (extreme) → REMOVE
+    - protein > 80g per 100g (impossible) → REMOVE
+    
+    Args:
+        food_df: Full food database
+        verbose: Print statistics
+    
+    Returns:
+        Cleaned DataFrame
+    """
+    if verbose:
+        print(f"\n🔍 [TASK 4] FILTERING EXTREME FOODS")
+        print(f"   Initial: {len(food_df)} items")
+    
+    filtered = food_df.copy()
+    
+    # Remove if fat > 50g per 100g
+    if 'fat_g' in filtered.columns:
+        before = len(filtered)
+        filtered = filtered[filtered['fat_g'] <= 50]
+        if verbose:
+            print(f"   - Fat > 50g/100g: {before - len(filtered)} removed")
+    
+    # Remove if sugar > 40g per 100g
+    if 'sugar_g' in filtered.columns:
+        before = len(filtered)
+        filtered = filtered[filtered['sugar_g'] <= 40]
+        if verbose:
+            print(f"   - Sugar > 40g/100g: {before - len(filtered)} removed")
+    
+    # Remove if energy > 600 kcal per 100g
+    if 'energy_kcal' in filtered.columns:
+        before = len(filtered)
+        filtered = filtered[filtered['energy_kcal'] <= 600]
+        if verbose:
+            print(f"   - Energy > 600 kcal/100g: {before - len(filtered)} removed")
+    
+    # Remove if protein > 80g per 100g (impossible)
+    if 'protein_g' in filtered.columns:
+        before = len(filtered)
+        filtered = filtered[filtered['protein_g'] <= 80]
+        if verbose:
+            print(f"   - Protein > 80g/100g: {before - len(filtered)} removed")
+    
+    if verbose:
+        print(f"   Final: {len(filtered)} items ({len(filtered)/len(food_df)*100:.1f}%)")
+        print(f"   ✓ Extreme foods filtered\n")
+    
+    return filtered
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# TASK 1 - GUIDED INITIAL POPULATION
+# ═════════════════════════════════════════════════════════════════════════════
+
+def guided_solution(food_df: pd.DataFrame, guidelines: Dict) -> pd.DataFrame:
+    """
+    TASK 1 - Generate 1 meal plan guided toward HARD constraint targets
+    
+    Algorithm:
+    1. Extract macro targets: carb_min, protein_min, fat_min
+    2. For each slot (0-9):
+       - Calculate remaining need
+       - Rank candidates by contribution to deficient nutrient
+       - Select from top-20, not pure random
+    3. Slot-aware: prioritize nutrients for meal type
+    
+    Args:
+        food_df: Available foods (should be pre-filtered)
+        guidelines: {'hard': {...}, 'soft': {...}}
+    
+    Returns:
+        DataFrame 10 items (guided composition)
+    """
+    # Extract macro targets
+    hard_constraints = guidelines.get('hard', {})
+    
+    target_carb = hard_constraints.get('carbohydrate_g', {}).get('min', 150)
+    target_protein = hard_constraints.get('protein_g', {}).get('min', 50)
+    target_fat = hard_constraints.get('fat_g', {}).get('min', 30)
+    
+    remaining_carb = target_carb
+    remaining_protein = target_protein
+    remaining_fat = target_fat
+    
+    solution_items = []
+    
+    for slot_idx in range(CHROMOSOME_SIZE):
+        # Filter by consumption label
+        slot_candidates = _filter_food_by_slot(food_df, slot_idx)
+        
+        if len(slot_candidates) == 0:
+            slot_candidates = food_df.copy()
+        
+        # ════════════════════════════════════════════════════════════════
+        # TASK 3 - SLOT-AWARE PRIORITIZATION
+        # ════════════════════════════════════════════════════════════════
+        
+        slot_label = SLOT_LABEL_MAP.get(slot_idx, 'Main Course')
+        scored_candidates = slot_candidates.copy()
+        
+        # Compute contribution score based on slot type + remaining needs
+        if 'carbohydrate_g' in scored_candidates.columns and \
+           'protein_g' in scored_candidates.columns and \
+           'fat_g' in scored_candidates.columns:
+            
+            # Base score: contribution to deficient nutrients
+            carb_score = scored_candidates['carbohydrate_g'] / (remaining_carb + 1)
+            protein_score = scored_candidates['protein_g'] / (remaining_protein + 1)
+            fat_score = scored_candidates['fat_g'] / (remaining_fat + 1)
+            
+            # Slot-specific weighting (TASK 3)
+            if 'main' in slot_label.lower():
+                # Main course: prioritize protein + carb
+                total_score = (protein_score * 2) + (carb_score * 1.5) + (fat_score * 0.5)
+            elif 'side' in slot_label.lower():
+                # Side dish: prioritize carb + fiber (if available)
+                total_score = (carb_score * 2) + (protein_score * 0.5)
+            elif 'drink' in slot_label.lower():
+                # Drink: avoid sugar, prefer minimal nutrients (or specific like milk)
+                # Penalize high sugar
+                sugar_penalty = 0
+                if 'sugar_g' in scored_candidates.columns:
+                    sugar_penalty = scored_candidates['sugar_g'] * 10
+                total_score = (protein_score * 0.5) - sugar_penalty
+            elif 'snack' in slot_label.lower():
+                # Snack: balanced, small portions
+                total_score = (carb_score * 1) + (protein_score * 1) + (fat_score * 1)
+            else:
+                total_score = carb_score + protein_score + fat_score
+            
+            scored_candidates['_score'] = total_score
+        else:
+            # Fallback: random selection
+            scored_candidates['_score'] = np.random.random(len(scored_candidates))
+        
+        # Sort by score and take top-20 (or all if < 20)
+        top_candidates = scored_candidates.nlargest(min(20, len(scored_candidates)), '_score')
+        
+        # Random select from top-20
+        if len(top_candidates) > 0:
+            selected = top_candidates.sample(n=1)
+        else:
+            selected = slot_candidates.sample(n=1)
+        
+        # Remove _score column
+        if '_score' in selected.columns:
+            selected = selected.drop(columns=['_score'])
+        
+        solution_items.append(selected)
+        
+        # Update remaining nutrients
+        if len(selected) > 0:
+            item = selected.iloc[0]
+            remaining_carb = max(0, remaining_carb - item.get('carbohydrate_g', 0))
+            remaining_protein = max(0, remaining_protein - item.get('protein_g', 0))
+            remaining_fat = max(0, remaining_fat - item.get('fat_g', 0))
+    
+    # Concat and return
+    solution = pd.concat(solution_items, ignore_index=True)
+    return solution
+
+
 def random_solution(food_df: pd.DataFrame) -> pd.DataFrame:
     """
     Generate 1 solusi random = 10 makanan random dari food_df dengan food group filter
@@ -490,38 +664,148 @@ def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
 
 
 # ═════════════════════════════════════════════════════════════════════════════
+# 2.5 FEASIBILITY CHECK - Validate HARD constraints with tolerance
+# ═════════════════════════════════════════════════════════════════════════════
+
+def is_feasible(solution: pd.DataFrame, guidelines: Dict) -> Tuple[bool, List[Dict]]:
+    """
+    TASK 1 - Check if solution is FEASIBLE (all HARD constraints satisfied)
+    
+    Feasibility criteria for HARD constraints:
+    - actual >= 0.8 * min  (80% of minimum)
+    - actual <= 1.2 * max  (120% of maximum)
+    
+    If any HARD constraint violated → INVALID
+    
+    Args:
+        solution: DataFrame 10 items (100g basis)
+        guidelines: {'hard': {...}, 'soft': {...}} structure
+    
+    Returns:
+        Tuple[bool, List]: (is_feasible, list of violations)
+        
+    Example:
+        feasible, violations = is_feasible(solution, guidelines)
+        if not feasible:
+            for v in violations:
+                print(f"{v['nutrient']}: {v['actual']} (tolerance: {v['min_tol']}-{v['max_tol']})")
+    """
+    total_nutrition = calculate_total_nutrition(solution)
+    hard_constraints = guidelines.get('hard', {})
+    violations = []
+    
+    for nutrient, constraint in hard_constraints.items():
+        if constraint.get('constraint_type') == 'unlimited':
+            continue
+        
+        if nutrient not in total_nutrition:
+            continue
+        
+        actual = total_nutrition[nutrient]
+        min_val = constraint.get('min', 0)
+        max_val = constraint.get('max', float('inf'))
+        
+        # Feasibility tolerance: 80% - 120% of range
+        min_tolerance = 0.8 * min_val
+        max_tolerance = 1.2 * max_val
+        
+        if actual < min_tolerance or actual > max_tolerance:
+            violations.append({
+                'nutrient': nutrient,
+                'actual': actual,
+                'min': min_val,
+                'max': max_val,
+                'min_tol': min_tolerance,
+                'max_tol': max_tolerance,
+                'status': 'LOW' if actual < min_tolerance else 'HIGH'
+            })
+    
+    is_valid = len(violations) == 0
+    return is_valid, violations
+
+
+# ═════════════════════════════════════════════════════════════════════════════
 # 3. FITNESS - Hitung penalty score dari nutrient violations
 # ═════════════════════════════════════════════════════════════════════════════
 
 def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = None) -> float:
     """
-    TASK 3 - FITNESS FUNCTION (100g basis, no scaling, HARD/SOFT separated)
+    TASK 2 - MACRO-AWARE FITNESS FUNCTION (WAJIB)
     
-    Hitung penalty untuk 1 chromosome tanpa scaling (hasil evaluasi final = 100g basis).
+    NEW FITNESS FORMULA:
+    fitness = (macro_penalty * 5000) + (hard_penalty * 10000) + (soft_penalty * 100) + diversity_penalty
     
-    HARD constraint (guideline.csv): penalty 5000x
-    SOFT constraint (DRI_micro.csv): penalty 50x
+    Where:
+    - macro_penalty: Distance to target for carb/protein/fat
+      For each macro:
+        IF actual < min: deviation = (min - actual) / min
+        ELIF actual > max: deviation = (actual - max) / max
+        ELSE: deviation = 0
+      macro_penalty = sum(deviations)
+    
+    - hard_penalty: Violations of HARD constraints (macro + other)
+    - soft_penalty: Violations of SOFT constraints (micronutrients)
+    - diversity_penalty: Food repetition penalty (TASK 5)
+    
+    Key Principle:
+    ✓ Macro MUST dominate over soft constraints
+    ✓ Early population focused on reaching macro targets
+    ✓ Once feasible, refine with soft constraints
     
     Args:
-        solution: DataFrame 10 items (100g basis, NO SCALING)
+        solution: DataFrame 10 items (100g basis)
         guidelines: {'hard': {...}, 'soft': {...}} structure
-        tdee: Unused (evaluasi pure 100g basis)
+        tdee: Unused (100g basis only)
     
     Returns:
         float: Total penalty (lower = better)
     """
-    # Hitung total nutrisi (100g basis) - NO SCALING
     total_nutrition = calculate_total_nutrition(solution)
-    
-    total_penalty = 0.0
-    
-    # Separate HARD & SOFT
     hard_constraints = guidelines.get('hard', {})
     soft_constraints = guidelines.get('soft', {})
     
+    macro_nutrients = {'carbohydrate_g', 'protein_g', 'fat_g'}
+    
     # ════════════════════════════════════════════════════════════════════════
-    # HARD CONSTRAINTS: penalty 5000x
+    # TASK 2 - CALCULATE MACRO PENALTY (dominant)
     # ════════════════════════════════════════════════════════════════════════
+    
+    macro_penalty = 0.0
+    
+    for nutrient in macro_nutrients:
+        if nutrient not in hard_constraints:
+            continue
+        
+        constraint = hard_constraints[nutrient]
+        if constraint.get('constraint_type') == 'unlimited':
+            continue
+        
+        if nutrient not in total_nutrition:
+            continue
+        
+        actual = total_nutrition[nutrient]
+        min_val = constraint.get('min', 0)
+        max_val = constraint.get('max', float('inf'))
+        
+        # Calculate deviation
+        if actual < min_val:
+            # LOW: how far below target
+            deviation = (min_val - actual) / (min_val + 1)  # +1 to avoid division by zero
+        elif actual > max_val:
+            # HIGH: how far above target
+            deviation = (actual - max_val) / (max_val + 1)
+        else:
+            # OK: no deviation
+            deviation = 0.0
+        
+        macro_penalty += deviation
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # CALCULATE HARD CONSTRAINT PENALTY (all HARD, not just macro)
+    # ════════════════════════════════════════════════════════════════════════
+    
+    hard_penalty = 0.0
+    
     for nutrient_name, constraint in hard_constraints.items():
         if constraint.get('constraint_type') == 'unlimited':
             continue
@@ -529,20 +813,25 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         if nutrient_name not in total_nutrition:
             continue
         
+        value = total_nutrition[nutrient_name]
         min_val = constraint.get('min', 0)
         max_val = constraint.get('max', float('inf'))
-        value = total_nutrition[nutrient_name]
         
-        if value < min_val:
-            penalty = (min_val - value) * 5000
-            total_penalty += penalty
-        elif value > max_val:
-            penalty = (value - max_val) * 5000
-            total_penalty += penalty
+        # Tolerance: 80% - 120%
+        min_tolerance = 0.8 * min_val
+        max_tolerance = 1.2 * max_val
+        
+        if value < min_tolerance:
+            hard_penalty += (min_tolerance - value)
+        elif value > max_tolerance:
+            hard_penalty += (value - max_tolerance)
     
     # ════════════════════════════════════════════════════════════════════════
-    # SOFT CONSTRAINTS: penalty 50x
+    # CALCULATE SOFT CONSTRAINT PENALTY (quality, after feasibility)
     # ════════════════════════════════════════════════════════════════════════
+    
+    soft_penalty = 0.0
+    
     for nutrient_name, constraint in soft_constraints.items():
         if constraint.get('constraint_type') == 'unlimited':
             continue
@@ -555,19 +844,35 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         value = total_nutrition[nutrient_name]
         
         if value < min_val:
-            penalty = (min_val - value) * 50
-            total_penalty += penalty
+            soft_penalty += (min_val - value)
         elif value > max_val:
-            penalty = (value - max_val) * 50
-            total_penalty += penalty
+            soft_penalty += (value - max_val)
     
     # ════════════════════════════════════════════════════════════════════════
-    # DUPLICATE PENALTY
+    # TASK 5 - DIVERSITY PENALTY (prevent food repetition)
     # ════════════════════════════════════════════════════════════════════════
+    
+    diversity_penalty = 0.0
+    
     if 'food_name' in solution.columns:
-        unique_foods = solution['food_name'].nunique()
-        duplicate_count = len(solution) - unique_foods
-        total_penalty += duplicate_count * DUPLICATE_PENALTY_WEIGHT
+        food_counts = solution['food_name'].value_counts()
+        # Penalize foods appearing > 2 times
+        for food_name, count in food_counts.items():
+            if count > 2:
+                # Each extra appearance costs penalty
+                excess = count - 2
+                diversity_penalty += excess * DUPLICATE_PENALTY_WEIGHT
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # COMBINE ALL PENALTIES WITH MACRO DOMINATION
+    # ════════════════════════════════════════════════════════════════════════
+    
+    total_penalty = (
+        (macro_penalty * 5000) +      # MACRO: DOMINANT (highest weight)
+        (hard_penalty * 10000) +      # HARD: Very important (ensures feasibility)
+        (soft_penalty * 100) +        # SOFT: Lower priority (quality only)
+        diversity_penalty             # DIVERSITY: Food repetition penalty
+    )
     
     return total_penalty
 
@@ -724,16 +1029,27 @@ def analyze_nutrition_detailed(solution: pd.DataFrame, guidelines: Dict) -> pd.D
 
 def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
     """
-    TASK 8 - TABEL UTAMA FINAL: Display nutrisi dengan format profesional
+    TASK 4-6 - TABEL UTAMA FINAL dengan FEASIBILITY CHECK
     
     Format: | Nutrient (TYPE) | Actual | Min | Max | Fulfill % | Status | Details |
     Urutan: HARD dulu, lalu SOFT
     
-    Tambahan: Calculate total fulfillment score
+    NEW: Display FEASIBILITY status first
+    - VALID: All HARD constraints within tolerance (0.8-1.2 range)
+    - INVALID: At least 1 HARD constraint violated
+    
+    TASK 4 - Total Score Calculation:
     - HARD_avg = mean of HARD fulfill%
     - SOFT_avg = mean of SOFT fulfill%
-    - TOTAL_SCORE = (HARD_avg * 0.7) + (SOFT_avg * 0.3)
-    - STATUS: EXCELLENT (>=90), GOOD (>=75), FAIR (>=60), POOR (<60)
+    - Only calculated if FEASIBLE
+    
+    TASK 5 - Score Interpretation:
+    IF FEASIBLE:
+        TOTAL_SCORE = (HARD_avg * 0.7) + (SOFT_avg * 0.3)
+        STATUS: EXCELLENT (>=90), GOOD (>=75), FAIR (>=60), POOR (<60)
+    
+    ELSE:
+        STATUS = POOR (due to HARD violations)
     """
     df = analyze_nutrition_detailed(solution, guidelines)
     
@@ -741,7 +1057,20 @@ def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
         print("No constraints found.")
         return
     
+    # ════════════════════════════════════════════════════════════════════════
+    # FEASIBILITY CHECK (TASK 1)
+    # ════════════════════════════════════════════════════════════════════════
+    is_valid, hard_violations = is_feasible(solution, guidelines)
+    feasibility_status = "VALID" if is_valid else "INVALID"
+    feasibility_detail = "(Semua HARD constraints OK)" if is_valid else f"(Melanggar {len(hard_violations)} HARD constraint)"
+    
     print(f"\n{'='*140}")
+    print(f"{'FEASIBILITY STATUS':^140}")
+    print(f"{'-'*140}")
+    print(f"{'':30} {feasibility_status:<20} {feasibility_detail}")
+    print(f"{'='*140}\n")
+    
+    print(f"{'='*140}")
     print(f"{'NUTRITION ANALYSIS - 100g BASIS':^140}")
     print(f"{'='*140}\n")
     
@@ -788,30 +1117,44 @@ def display_nutrition_analysis_table(solution: pd.DataFrame, guidelines: Dict):
     print(f"{'='*140}\n")
     
     # ════════════════════════════════════════════════════════════════════════
-    # TOTAL FULFILLMENT SCORE SUMMARY
+    # TOTAL FULFILLMENT SCORE SUMMARY (TASK 4-5)
     # ════════════════════════════════════════════════════════════════════════
     
     hard_avg = np.mean(hard_fulfill_list) if hard_fulfill_list else 0
     soft_avg = np.mean(soft_fulfill_list) if soft_fulfill_list else 0
-    total_score = (hard_avg * 0.7) + (soft_avg * 0.3)
     
-    # Determine status based on total score
-    if total_score >= 90:
-        status_text = "EXCELLENT"
-    elif total_score >= 75:
-        status_text = "GOOD"
-    elif total_score >= 60:
-        status_text = "FAIR"
+    # TASK 5: Only calculate total score if VALID
+    if is_valid:
+        total_score = (hard_avg * 0.7) + (soft_avg * 0.3)
+        
+        # Determine status based on total score
+        if total_score >= 90:
+            status_text = "EXCELLENT"
+        elif total_score >= 75:
+            status_text = "GOOD"
+        elif total_score >= 60:
+            status_text = "FAIR"
+        else:
+            status_text = "POOR"
     else:
+        # INVALID solution: automatic POOR status
+        total_score = 0.0
         status_text = "POOR"
     
     print(f"{'TOTAL FULFILLMENT SUMMARY':^140}")
     print(f"{'-'*140}")
+    print(f"{'FEASIBILITY':30} {feasibility_status:<20}")
     print(f"{'HARD Avg':30} {hard_avg:>10.2f}%")
     print(f"{'SOFT Avg':30} {soft_avg:>10.2f}%")
-    print(f"{'TOTAL SCORE (70% HARD + 30% SOFT)':30} {total_score:>10.2f}%")
+    
+    if is_valid:
+        print(f"{'TOTAL SCORE (70% HARD + 30% SOFT)':30} {total_score:>10.2f}%")
+    else:
+        print(f"{'TOTAL SCORE':30} {'N/A (INVALID)':>20}")
+    
     print(f"{'STATUS':30} {status_text:>10}")
     print(f"{'='*140}\n")
+
 
 
 
@@ -1033,7 +1376,7 @@ def run_ga(
     
     if verbose:
         print(f"\n{'='*70}")
-        print(f"GENETIC ALGORITHM - MEAL PLANNING OPTIMIZATION")
+        print(f"GENETIC ALGORITHM - IMPROVED (MACRO-AWARE, GUIDED)")
         print(f"{'='*70}")
         print(f"Pop Size: {pop_size} | Generations: {generations}")
         print(f"Elite Ratio: {elite_ratio} | Mutation Rate: {mutation_rate}")
@@ -1042,20 +1385,50 @@ def run_ga(
             print(f"Target TDEE: {tdee:.0f} kcal/day (HARD constraint)")
         print(f"{'='*70}\n")
     
-    # STEP 1: Initialize populasi random
+    # ════════════════════════════════════════════════════════════════════════
+    # TASK 4 - FILTER EXTREME FOODS (preprocessing)
+    # ════════════════════════════════════════════════════════════════════════
+    
+    food_df_clean = filter_extreme_foods(food_df, verbose=verbose)
+    
+    if len(food_df_clean) < CHROMOSOME_SIZE:
+        if verbose:
+            print(f"⚠️  Warning: After filtering, only {len(food_df_clean)} foods available")
+            print(f"   Using original food database for completeness\n")
+        food_df_clean = food_df
+    
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 1 - GUIDED INITIAL POPULATION (TASK 1)
+    # ════════════════════════════════════════════════════════════════════════
+    
     if verbose:
-        print("[STEP 1] Initializing population...")
+        print("[STEP 1] Initializing population (guided toward HARD constraints)...")
     
     population = []
-    for _ in range(pop_size):
-        solution = random_solution(food_df)
+    
+    # First: 50% guided solutions (toward macro targets)
+    for i in range(max(1, pop_size // 2)):
+        solution = guided_solution(food_df_clean, guidelines)
         population.append(solution)
+    
+    # Remaining: 50% random (for diversity)
+    for i in range(max(1, pop_size - len(population))):
+        solution = random_solution(food_df_clean)
+        population.append(solution)
+    
+    if verbose:
+        print(f"   ✓ Generated {len(population)} initial solutions")
+        print(f"   - Guided (toward macro): {max(1, pop_size // 2)} solutions")
+        print(f"   - Random (diversity): {pop_size - max(1, pop_size // 2)} solutions\n")
     
     # Track best solution ever found
     best_solution = population[0].copy()
     best_fitness = fitness(best_solution, guidelines, tdee=tdee)
     
-    # STEP 2: Main GA loop
+    # ════════════════════════════════════════════════════════════════════════
+    # STEP 2 - MAIN GA LOOP
+    # ════════════════════════════════════════════════════════════════════════
+    
     if verbose:
         print(f"[STEP 2] Running {generations} generations...")
         print(f"{'Gen':<5} | {'Best Fitness':<15} | {'Avg Fitness':<15}")
@@ -1100,7 +1473,7 @@ def run_ga(
             
             # Mutation (probabilitas mutation_rate)
             # [ENHANCED] Pass guidelines & tdee untuk guided nutrient-based mutation
-            child = mutation(child, food_df, mutation_rate=mutation_rate, 
+            child = mutation(child, food_df_clean, mutation_rate=mutation_rate, 
                            guidelines=guidelines, tdee=tdee)
             
             # Add to new population
@@ -1146,6 +1519,58 @@ def run_ga(
 
 
 # ═════════════════════════════════════════════════════════════════════════════
+# 6.5 CALCULATE TOTAL HARD DEVIATION - Global evaluation metric
+# ═════════════════════════════════════════════════════════════════════════════
+
+def calculate_total_hard_deviation(solution: pd.DataFrame, guidelines: Dict) -> float:
+    """
+    TASK 1 - Calculate total HARD constraint deviation (global metric)
+    
+    Deviation = how much current solution violates HARD constraints
+    
+    For each HARD nutrient:
+    - if actual < min: deviation += (min - actual)
+    - if actual > max: deviation += (actual - max)
+    - else: deviation += 0 (OK)
+    
+    Args:
+        solution: DataFrame 10 items
+        guidelines: {'hard': {...}, 'soft': {...}}
+    
+    Returns:
+        float: Total deviation (0 = fully feasible, higher = more violations)
+    
+    Example:
+        old_dev = calculate_total_hard_deviation(old_solution, guidelines)  # 500
+        new_dev = calculate_total_hard_deviation(new_solution, guidelines)  # 300
+        improvement = old_dev - new_dev  # 200 (good!)
+    """
+    total_nutrition = calculate_total_nutrition(solution)
+    hard_constraints = guidelines.get('hard', {})
+    
+    total_deviation = 0.0
+    
+    for nutrient, constraint in hard_constraints.items():
+        if constraint.get('constraint_type') == 'unlimited':
+            continue
+        
+        if nutrient not in total_nutrition:
+            continue
+        
+        actual = total_nutrition[nutrient]
+        min_val = constraint.get('min', 0)
+        max_val = constraint.get('max', float('inf'))
+        
+        # Calculate individual nutrient deviation
+        if actual < min_val:
+            total_deviation += (min_val - actual)
+        elif actual > max_val:
+            total_deviation += (actual - max_val)
+    
+    return total_deviation
+
+
+# ═════════════════════════════════════════════════════════════════════════════
 # 7. LOCAL SEARCH - Fine-tuning setelah GA untuk memperbaiki solusi locally
 # ═════════════════════════════════════════════════════════════════════════════
 
@@ -1158,15 +1583,15 @@ def local_search(
     verbose: bool = False
 ) -> pd.DataFrame:
     """
-    TASK 4 - LOCAL SEARCH HARD-AWARE (100g basis, no scaling)
+    TASK 1-6 - LOCAL SEARCH dengan GLOBAL HARD DEVIATION EVALUATION
     
-    Priority: HARD constraints dulu, baru SOFT
-    
-    Algoritma:
-    1. Identify SEMUA HARD constraint yang belum terpenuhi
-    2. Urutkan berdasarkan terbesar deviasi dari range
-    3. Pilih kandidat yang fix HARD tanpa break HARD lain
-    4. Terakhir: perbaiki SOFT constraints
+    NEW Algoritma (NO PING-PONG EFFECT):
+    1. Calculate TOTAL HARD DEVIATION untuk solusi (TASK 1)
+    2. Untuk setiap violation, cari kandidat yang improve TOTAL deviation
+    3. TASK 2: Accept HANYA jika total_deviation berkurang (global evaluation)
+    4. TASK 3: Reject jika overcorrection (actual > 1.2*max atau < 0.8*min)
+    5. TASK 5: Stop jika 2 iterasi berturut-turut tanpa improvement
+    6. TASK 6: Log setiap swap dan improvement
     
     Args:
         solution: GA result (10 items, 100g basis)
@@ -1182,7 +1607,7 @@ def local_search(
     
     if verbose:
         print(f"\n{'='*70}")
-        print(f"LOCAL SEARCH - HARD-AWARE (100g basis)")
+        print(f"LOCAL SEARCH - STABLE (GLOBAL HARD DEVIATION)")
         print(f"{'='*70}")
     
     # Filter junk foods
@@ -1202,23 +1627,23 @@ def local_search(
         print(f"[SETUP] Candidates: {len(food_df_clean)} items (clean)")
     
     best_solution = solution.copy()
-    best_fitness = fitness(best_solution, guidelines, tdee=None)  # 100g basis
-    
     hard_constraints = guidelines.get('hard', {})
-    soft_constraints = guidelines.get('soft', {})
     
     improvements = 0
-    no_improve_count = 0
     iteration = 0
+    no_improvement_count = 0  # TASK 5: Stop after 2 consecutive iterations without improvement
     
-    while iteration < iterations and no_improve_count < 5:
+    while iteration < iterations:
         iteration += 1
         
         # ════════════════════════════════════════════════════════════════
-        # TASK 4: Identifikasi HARD violations (100g basis)
+        # TASK 1: Calculate OLD total HARD deviation (global metric)
         # ════════════════════════════════════════════════════════════════
         
+        old_total_deviation = calculate_total_hard_deviation(best_solution, guidelines)
         current_nutrition = calculate_total_nutrition(best_solution)
+        
+        # Identify HARD violations
         hard_violations = []
         
         for nutrient, constraint in hard_constraints.items():
@@ -1238,7 +1663,8 @@ def local_search(
                     'nutrient': nutrient,
                     'type': 'LOW',
                     'actual': actual,
-                    'target': min_val,
+                    'min': min_val,
+                    'max': max_val,
                     'deviation': deviation
                 })
             elif actual > max_val:
@@ -1247,7 +1673,8 @@ def local_search(
                     'nutrient': nutrient,
                     'type': 'HIGH',
                     'actual': actual,
-                    'target': max_val,
+                    'min': min_val,
+                    'max': max_val,
                     'deviation': deviation
                 })
         
@@ -1255,138 +1682,165 @@ def local_search(
         hard_violations.sort(key=lambda x: x['deviation'], reverse=True)
         
         if verbose and iteration == 1:
-            print(f"\n[HARD VIOLATIONS (100g basis)]")
-            for v in hard_violations[:3]:  # Show top 3
-                print(f"  {v['nutrient']}: {v['type']} by {v['deviation']:.1f}g")
+            print(f"\n[INITIAL HARD DEVIATIONS]")
+            print(f"  Total deviation: {old_total_deviation:.1f}")
+            for v in hard_violations[:3]:
+                print(f"    {v['nutrient']:25} {v['type']:4} by {v['deviation']:8.1f}g")
         
-        # ════════════════════════════════════════════════════════════════
-        # Jika HARD OK, perbaiki SOFT (optional)
-        # ════════════════════════════════════════════════════════════════
-        
-        target_violation = None  # Initialize to None
-        
+        # Jika tidak ada violation, stop
         if len(hard_violations) == 0:
-            # HARD OK, cek SOFT
-            target_nutrient = None
-            for nutrient, constraint in soft_constraints.items():
-                if constraint.get('constraint_type') == 'unlimited':
-                    continue
-                
-                if nutrient not in current_nutrition:
-                    continue
-                
-                actual = current_nutrition[nutrient]
-                min_val = constraint.get('min', 0)
-                max_val = constraint.get('max', float('inf'))
-                
-                if actual < min_val or actual > max_val:
-                    target_nutrient = nutrient
-                    # Create a soft violation object for consistency
-                    if actual < min_val:
-                        target_violation = {
-                            'nutrient': nutrient,
-                            'type': 'LOW',
-                            'actual': actual,
-                            'target': min_val,
-                            'deviation': min_val - actual,
-                            'is_soft': True
-                        }
-                    else:
-                        target_violation = {
-                            'nutrient': nutrient,
-                            'type': 'HIGH',
-                            'actual': actual,
-                            'target': max_val,
-                            'deviation': actual - max_val,
-                            'is_soft': True
-                        }
-                    break
-            
-            if not target_violation:
-                if verbose:
-                    print(f"[ITER {iteration}] All constraints OK! Stopping.")
-                break
-        
-        else:
-            # Fix HARD dulu
-            target_violation = hard_violations[0]
-            target_violation['is_soft'] = False
-            target_nutrient = target_violation['nutrient']
+            if verbose:
+                print(f"\n[ITER {iteration}] ✓ All HARD constraints OK! Total deviation: 0.0")
+            break
         
         # ════════════════════════════════════════════════════════════════
-        # Select gene yang perlu di-replace
+        # Select TARGET nutrient (biggest violation)
         # ════════════════════════════════════════════════════════════════
         
-        if target_violation['type'] == 'LOW':
-            # Cari gene dengan nutrient TERENDAH (highest deficit)
-            values = best_solution[target_nutrient].values if target_nutrient in best_solution.columns else None
-            if values is not None:
-                gene_idx = int(np.argmin(values))
-            else:
-                gene_idx = random.randint(0, len(best_solution) - 1)
+        target_violation = hard_violations[0]
+        target_nutrient = target_violation['nutrient']
+        target_type = target_violation['type']
+        
+        if verbose:
+            print(f"\n[ITER {iteration}] Target: {target_nutrient:25} ({target_type})")
+            print(f"  Old deviation: {old_total_deviation:.1f}")
+        
+        # ════════════════════════════════════════════════════════════════
+        # CREATE CANDIDATE POOL based on target
+        # ════════════════════════════════════════════════════════════════
+        
+        if target_type == 'LOW':
+            min_threshold = target_violation['min'] * 0.5
+            candidate_pool = food_df_clean[food_df_clean[target_nutrient] >= min_threshold].copy()
+            candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=False)
         else:  # HIGH
-            # Cari gene dengan nutrient TERTINGGI (highest excess)
-            values = best_solution[target_nutrient].values if target_nutrient in best_solution.columns else None
-            if values is not None:
-                gene_idx = int(np.argmax(values))
-            else:
-                gene_idx = random.randint(0, len(best_solution) - 1)
+            max_threshold = target_violation['max'] * 1.2
+            candidate_pool = food_df_clean[food_df_clean[target_nutrient] <= max_threshold].copy()
+            candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=True)
         
-        # ════════════════════════════════════════════════════════════════
-        # Find candidates
-        # ════════════════════════════════════════════════════════════════
-        
-        slot_name = SLOT_NAMES[gene_idx]
-        expected_label = SLOT_LABEL_MAP.get(gene_idx, 'Main Course')
-        
-        candidates = food_df_clean[food_df_clean['consumption_label'] == expected_label].copy()
-        
-        if len(candidates) == 0:
-            no_improve_count += 1
+        if len(candidate_pool) == 0:
+            if verbose:
+                print(f"  ✗ No suitable candidates found")
+            no_improvement_count += 1
+            if no_improvement_count >= 2:
+                if verbose:
+                    print(f"\n[STOP] No improvement for 2 consecutive iterations")
+                break
             continue
         
-        # Filter untuk fix problem
-        if target_violation['type'] == 'LOW':
-            # Cari HIGH nutrient untuk LOW case
-            min_threshold = target_violation['target'] / 2  # At least half of target
-            filtered = candidates[candidates[target_nutrient] >= min_threshold].copy()
-        else:  # HIGH
-            # Cari LOW nutrient untuk HIGH case
-            max_threshold = target_violation['target'] * 0.8  # At most 80% of limit
-            filtered = candidates[candidates[target_nutrient] <= max_threshold].copy()
-        
-        if len(filtered) == 0:
-            candidates_to_use = candidates
-        else:
-            candidates_to_use = filtered
-        
         # ════════════════════════════════════════════════════════════════
-        # Test replacement
+        # TRY SWAPS - Find best swap that reduces TOTAL HARD DEVIATION
         # ════════════════════════════════════════════════════════════════
         
-        current_food = best_solution.iloc[gene_idx]
-        new_food = candidates_to_use.sample(n=1).iloc[0]
+        best_swap = None
+        best_new_deviation = old_total_deviation
         
-        test_solution = best_solution.copy()
-        test_solution.iloc[gene_idx] = new_food
-        test_fitness = fitness(test_solution, guidelines, tdee=None)  # 100g basis
-        
-        # Accept jika fitness improves
-        if test_fitness < best_fitness:
-            best_solution = test_solution
-            best_fitness = test_fitness
-            improvements += 1
-            no_improve_count = 0
+        # Try each slot in chromosome
+        for gene_idx in range(len(best_solution)):
+            expected_label = SLOT_LABEL_MAP.get(gene_idx, 'Main Course')
             
+            # Filter candidates by consumption label
+            slot_candidates = candidate_pool[candidate_pool['consumption_label'] == expected_label].copy()
+            
+            if len(slot_candidates) == 0:
+                continue
+            
+            current_food = best_solution.iloc[gene_idx]
+            current_value = current_food.get(target_nutrient, 0) or 0
+            
+            # Try up to 5 best candidates
+            for idx_cand in range(min(5, len(slot_candidates))):
+                new_food = slot_candidates.iloc[idx_cand]
+                new_value = new_food.get(target_nutrient, 0) or 0
+                
+                # Skip if not an improvement in target nutrient
+                if target_type == 'LOW' and new_value <= current_value:
+                    continue
+                if target_type == 'HIGH' and new_value >= current_value:
+                    continue
+                
+                # ════════════════════════════════════════════════════════
+                # TEST SWAP
+                # ════════════════════════════════════════════════════════
+                test_solution = best_solution.copy()
+                test_solution.iloc[gene_idx] = new_food
+                test_nutrition = calculate_total_nutrition(test_solution)
+                
+                # TASK 3: CHECK OVERCORRECTION (prevent extreme swings)
+                # Reject jika actual > 1.2 * max ATAU actual < 0.8 * min
+                overcorrected = False
+                for nutrient, constraint in hard_constraints.items():
+                    if nutrient not in test_nutrition:
+                        continue
+                    
+                    actual_test = test_nutrition[nutrient]
+                    min_val = constraint.get('min', 0)
+                    max_val = constraint.get('max', float('inf'))
+                    
+                    # Check extreme bounds
+                    if actual_test > 1.2 * max_val or actual_test < 0.8 * min_val:
+                        overcorrected = True
+                        break
+                
+                if overcorrected:
+                    continue  # Skip this candidate
+                
+                # TASK 1-2: Calculate NEW total HARD deviation
+                new_total_deviation = calculate_total_hard_deviation(test_solution, guidelines)
+                
+                # TASK 2: ACCEPTANCE RULE - Accept ONLY if deviation decreases
+                if new_total_deviation < best_new_deviation:
+                    best_new_deviation = new_total_deviation
+                    best_swap = {
+                        'gene_idx': gene_idx,
+                        'current_food': current_food,
+                        'new_food': new_food,
+                        'test_solution': test_solution,
+                        'old_deviation': old_total_deviation,
+                        'new_deviation': new_total_deviation,
+                        'improvement': old_total_deviation - new_total_deviation
+                    }
+        
+        # ════════════════════════════════════════════════════════════════
+        # TASK 2-4: EXECUTE SWAP (if any improvement found)
+        # ════════════════════════════════════════════════════════════════
+        
+        if best_swap is not None and best_swap['improvement'] > 0:
+            # Accept the swap
+            best_solution = best_swap['test_solution'].copy()
+            improvements += 1
+            no_improvement_count = 0
+            
+            # TASK 6: LOGGING
             if verbose:
-                print(f"[ITER {iteration}] Improved: {current_food.get('food_name', '?')} → {new_food.get('food_name', '?')}")
-                print(f"  Fitness: {best_fitness:.2f}")
+                old_name = best_swap['current_food'].get('food_name', '?')
+                new_name = best_swap['new_food'].get('food_name', '?')
+                print(f"  ✓ Swap at slot {best_swap['gene_idx']}: {old_name} → {new_name}")
+                print(f"    Old deviation: {best_swap['old_deviation']:.1f}")
+                print(f"    New deviation: {best_swap['new_deviation']:.1f}")
+                print(f"    Improvement:   {best_swap['improvement']:+.1f}")
+                print(f"    Accepted: True")
         else:
-            no_improve_count += 1
+            # No improvement found
+            if verbose:
+                print(f"  ✗ No swap improved total deviation")
+                print(f"    Accepted: False")
+            
+            no_improvement_count += 1
+            
+            # TASK 5: STOPPING CONDITION - Stop after 2 consecutive no-improvement
+            if no_improvement_count >= 2:
+                if verbose:
+                    print(f"\n[STOP] No improvement for {no_improvement_count} consecutive iterations")
+                break
     
     if verbose:
+        final_deviation = calculate_total_hard_deviation(best_solution, guidelines)
         print(f"\n{'='*70}")
-        print(f"Improvements: {improvements}, Iterations: {iteration}")
+        print(f"✓ Local Search Complete")
+        print(f"  Improvements: {improvements}")
+        print(f"  Iterations: {iteration}")
+        print(f"  Final HARD deviation: {final_deviation:.1f}")
         print(f"{'='*70}\n")
     
     return best_solution

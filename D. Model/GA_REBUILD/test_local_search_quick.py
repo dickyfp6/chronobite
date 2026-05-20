@@ -54,10 +54,11 @@ food_df = nutrition_result['food_data']['dataframe']
 guidelines_all = nutrition_result['guidelines']['nutrients']
 tdee = nutrition_result['energy']['tdee']
 
-# Create guidelines dict
-guidelines = {'hard': {}, 'soft': guidelines_all}
-for nutrient, constraint in guidelines_all.items():
-    guidelines['soft'][nutrient] = constraint
+# Split guidelines berdasarkan hard_soft_type
+guidelines = {
+    'hard': {k: v for k, v in guidelines_all.items() if v.get('hard_soft_type') == 'HARD'},
+    'soft': {k: v for k, v in guidelines_all.items() if v.get('hard_soft_type') != 'HARD'}
+}
 
 print(f"[OK] TDEE calculated: {tdee:.0f} kcal")
 print(f"[OK] Food database loaded: {len(food_df)} items")
