@@ -84,8 +84,20 @@ def analyze_profile(user_data):
     Returns:
         dict with {success, anthropometrics, energy, guidelines}
     """
+    normalized_user_data = dict(user_data)
+
+    if 'activity_factor' not in normalized_user_data:
+        activity_value = normalized_user_data.get('activity', 1.845)
+        try:
+            normalized_user_data['activity_factor'] = float(activity_value)
+        except (TypeError, ValueError):
+            normalized_user_data['activity_factor'] = 1.845
+
+    if 'disease' not in normalized_user_data and 'diseases' in normalized_user_data:
+        normalized_user_data['disease'] = normalized_user_data.get('diseases', ['normal'])
+
     service = _get_nutrition_service()
-    return service.calculate_nutrition_needs(user_data)
+    return service.calculate_nutrition_needs(normalized_user_data)
 
 
 def generate_menu(menu_request):

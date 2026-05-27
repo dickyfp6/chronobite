@@ -24,6 +24,9 @@ type GuidelineItem = {
   min: number | string | null;
   max: number | string | null;
   unit: string;
+  source?: string;
+  hard_soft_type?: string; // 'HARD' | 'SOFT'
+  diseases?: string[];
 };
 
 const conditionLabels: Record<string, string> = {
@@ -135,6 +138,9 @@ function getGuidelineItems(guidelines: any): GuidelineItem[] {
     min: value.min,
     max: value.max,
     unit: value.unit || '',
+    source: value.source || null,
+    hard_soft_type: value.hard_soft_type || (value.tipe && ['range','max'].includes(value.tipe) ? 'HARD' : 'SOFT'),
+    diseases: value.diseases || [],
   }));
 }
 
@@ -222,6 +228,20 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
   const idealMax = (24.9 * (userData.height / 100) ** 2).toFixed(1);
   const healthConditions = userData.healthConditions.filter((condition) => condition !== 'normal');
   const hasDiseaseGuidelines = healthConditions.length > 0;
+  
+  // Prepare guideline items and prioritize disease-specific HARD constraints
+  const _allGuidelineItems = getGuidelineItems(analysis?.guidelines).filter((item) => !['carbohydrate_g', 'protein_g', 'fat_g'].includes(item.key));
+  const diseaseSpecificHardItems = hasDiseaseGuidelines
+    ? _allGuidelineItems.filter((it) => it.hard_soft_type === 'HARD' && it.diseases && it.diseases.some((d: string) => healthConditions.includes(d)))
+    : [];
+
+  const remainingGuidelineItems = _allGuidelineItems.filter((it) => !diseaseSpecificHardItems.includes(it));
+  remainingGuidelineItems.sort((a, b) => {
+    const aHard = a.hard_soft_type === 'HARD' ? 0 : 1;
+    const bHard = b.hard_soft_type === 'HARD' ? 0 : 1;
+    if (aHard !== bHard) return aHard - bHard;
+    return a.label.localeCompare(b.label);
+  });
   useEffect(() => {
     async function fetchAnalysis() {
       try {
@@ -386,20 +406,35 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
                   ))}
                 </div>
 
+                {/* Priority: show disease-specific HARD guidelines in their own container */}
+                {diseaseSpecificHardItems.length > 0 && (
+                  <div className="rounded-xl bg-red-50 dark:bg-red-900/10 p-4 border border-red-200 dark:border-red-800 mb-4">
+                    <p className="text-sm font-semibold text-red-800 dark:text-red-200 mb-3">Priority guidelines for your condition</p>
+                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                      {diseaseSpecificHardItems.map((item) => (
+                        <div key={item.key} className="rounded-lg bg-white dark:bg-slate-800 p-2 border border-gray-200 dark:border-slate-600">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white">{item.label}</p>
+                          </div>
+                          <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{formatGuidelineDisplay(item)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="rounded-xl bg-gray-50 dark:bg-slate-700/60 p-4">
                   <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Other nutrient limits</p>
-                  {getGuidelineItems(analysis?.guidelines).filter((item) => !['carbohydrate_g', 'protein_g', 'fat_g'].includes(item.key)).length > 0 ? (
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {getGuidelineItems(analysis?.guidelines)
-                        .filter((item) => !['carbohydrate_g', 'protein_g', 'fat_g'].includes(item.key))
-                        .map((item) => (
-                          <div key={item.key} className="rounded-lg bg-white dark:bg-slate-800 p-3 border border-gray-200 dark:border-slate-600">
+                  {remainingGuidelineItems.length > 0 ? (
+                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                      {remainingGuidelineItems.map((item) => (
+                        <div key={item.key} className="rounded-lg bg-white dark:bg-slate-800 p-2 border border-gray-200 dark:border-slate-600">
+                          <div className="flex items-center justify-between">
                             <p className="text-sm font-semibold text-gray-900 dark:text-white">{item.label}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
-                              {formatGuidelineDisplay(item)}
-                            </p>
                           </div>
-                        ))}
+                          <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{formatGuidelineDisplay(item)}</p>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <p className="text-sm text-gray-600 dark:text-gray-300">No additional nutrient limits available.</p>

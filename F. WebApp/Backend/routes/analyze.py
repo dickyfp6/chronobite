@@ -42,6 +42,13 @@ def analyze():
         
         # Call system_bridge
         result = analyze_profile(data)
+
+        # The service returns a pandas DataFrame for internal use; remove it before JSON serialization.
+        food_data = result.get("food_data")
+        if isinstance(food_data, dict):
+            food_data = dict(food_data)
+            food_data.pop("dataframe", None)
+            result["food_data"] = food_data
         
         return jsonify(result), 200
         

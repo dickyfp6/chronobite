@@ -154,17 +154,26 @@ const normalizeMenuResult = (raw: Record<string, any>): MenuResult => {
 };
 
 // Determine API base URL based on environment
-const getAPIBase = (): string => {
-  if (import.meta.env.DEV) {
-    return 'http://localhost:5000';
+const getAPIBase = (): string => import.meta.env.VITE_API_URL || '';
+
+const getApiUrl = (path: string): string => {
+  const base = getAPIBase().replace(/\/$/, '');
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+
+  if (!base) {
+    return normalizedPath;
   }
-  // Production: use relative URL or Render backend URL
-  return import.meta.env.VITE_API_URL || '';
+
+  if (base.endsWith('/api') && normalizedPath.startsWith('/api/')) {
+    return `${base}${normalizedPath.slice(4)}`;
+  }
+
+  return `${base}${normalizedPath}`;
 };
 
 export const api = {
   async analyzeProfile(formData: FormData): Promise<AnalysisResult> {
-    const response = await fetch(`${getAPIBase()}/api/analyze`, {
+    const response = await fetch(getApiUrl('/api/analyze'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
@@ -179,7 +188,7 @@ export const api = {
   },
 
   async generateMenu(menuRequest: MenuRequest): Promise<MenuResult> {
-    const response = await fetch(`${getAPIBase()}/api/generate-menu`, {
+    const response = await fetch(getApiUrl('/api/generate-menu'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(menuRequest),
