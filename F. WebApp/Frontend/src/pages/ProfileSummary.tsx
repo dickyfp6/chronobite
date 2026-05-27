@@ -29,6 +29,10 @@ type GuidelineItem = {
   diseases?: string[];
 };
 
+const priorityMacroKeys = ['energy_kcal', 'carbohydrate_g', 'protein_g', 'fat_g'];
+
+const isEnergyOrMacroKey = (key: string) => priorityMacroKeys.includes(key);
+
 const conditionLabels: Record<string, string> = {
   normal: 'General / No Condition',
   dm2: 'Diabetes Mellitus Type 2',
@@ -163,7 +167,7 @@ function formatGuidelineDisplay(item: GuidelineItem) {
     const maxNumeric = typeof item.max === 'number' ? item.max : Number(item.max);
 
     if (Number.isFinite(minNumeric) && Number.isFinite(maxNumeric) && minNumeric === maxNumeric) {
-      return `Around ${minText} ${item.unit}`.trim();
+      return `± ${minText} ${item.unit}`.trim();
     }
   }
 
@@ -230,12 +234,20 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
   const hasDiseaseGuidelines = healthConditions.length > 0;
   
   // Prepare guideline items and prioritize disease-specific HARD constraints
-  const _allGuidelineItems = getGuidelineItems(analysis?.guidelines).filter((item) => !['carbohydrate_g', 'protein_g', 'fat_g'].includes(item.key));
+  const allGuidelineItems = getGuidelineItems(analysis?.guidelines);
+  const guidelineByKey = new Map(allGuidelineItems.map((item) => [item.key, item]));
+  const priorityMacroItems = priorityMacroKeys
+    .map((key) => guidelineByKey.get(key))
+    .filter((item): item is GuidelineItem => Boolean(item));
+
+  const _allGuidelineItems = allGuidelineItems.filter((item) => !priorityMacroKeys.includes(item.key));
   const diseaseSpecificHardItems = hasDiseaseGuidelines
     ? _allGuidelineItems.filter((it) => it.hard_soft_type === 'HARD' && it.diseases && it.diseases.some((d: string) => healthConditions.includes(d)))
     : [];
 
-  const remainingGuidelineItems = _allGuidelineItems.filter((it) => !diseaseSpecificHardItems.includes(it));
+  const priorityGuidelineItems = [...priorityMacroItems, ...diseaseSpecificHardItems];
+
+  const remainingGuidelineItems = _allGuidelineItems.filter((it) => !priorityGuidelineItems.includes(it));
   remainingGuidelineItems.sort((a, b) => {
     const aHard = a.hard_soft_type === 'HARD' ? 0 : 1;
     const bHard = b.hard_soft_type === 'HARD' ? 0 : 1;
@@ -310,7 +322,7 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/30 p-4 border border-emerald-200 dark:border-emerald-700">
+                <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950 p-4 border border-emerald-200 dark:border-emerald-800">
                   <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">Estimated daily calories</p>
                   <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{dailyNeeds.calories} kcal/day</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
@@ -351,7 +363,7 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
                 </div>
 
                 {!isNormalBmi && (
-                  <div className="rounded-xl bg-gray-50 dark:bg-slate-700/60 p-4 sm:w-[220px] flex-shrink-0">
+                  <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4 sm:w-[220px] flex-shrink-0">
                     <p className="text-sm text-gray-600 dark:text-gray-400">Recommended weight range</p>
                     <p className="text-lg font-bold text-gray-900 dark:text-white">{idealMin} kg - {idealMax} kg</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{bmiInfo.note}</p>
@@ -378,55 +390,35 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
               </div>
 
               <div className="space-y-5">
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {(analysis?.macros ? [
-                    { key: 'carbs', label: 'Carbohydrates', min: analysis.macros.carbs.pct[0], max: analysis.macros.carbs.pct[1], unit: '%', tone: 'orange' },
-                    { key: 'protein', label: 'Protein', min: analysis.macros.protein.pct[0], max: analysis.macros.protein.pct[1], unit: '%', tone: 'red' },
-                    { key: 'fat', label: 'Fat', min: analysis.macros.fat.pct[0], max: analysis.macros.fat.pct[1], unit: '%', tone: 'yellow' },
-                  ] : []).map((item) => (
-                    <div
-                      key={item.key}
-                      className={`rounded-xl p-4 border ${item.tone === 'orange' ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800/50' : item.tone === 'red' ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50' : 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/50'}`}
-                    >
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <p className={`text-sm font-semibold ${item.tone === 'orange' ? 'text-orange-800 dark:text-orange-300' : item.tone === 'red' ? 'text-red-800 dark:text-red-300' : 'text-yellow-800 dark:text-yellow-300'}`}>
-                          {item.label}
-                        </p>
-                        <span className={`text-xs px-2 py-0.5 rounded font-bold ${item.tone === 'orange' ? 'bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-200' : item.tone === 'red' ? 'bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-200' : 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200'}`}>
-                          {item.min}% - {item.max}%
-                        </span>
-                      </div>
-                      <p className={`text-2xl font-bold ${item.tone === 'orange' ? 'text-orange-700 dark:text-orange-400' : item.tone === 'red' ? 'text-red-700 dark:text-red-400' : 'text-yellow-700 dark:text-yellow-400'}`}>
-                        ~{item.key === 'carbs' ? analysis.macros.carbs.gram : item.key === 'protein' ? analysis.macros.protein.gram : analysis.macros.fat.gram} g
-                      </p>
-                      <p className={`text-xs mt-1 ${item.tone === 'orange' ? 'text-orange-600/80 dark:text-orange-400/80' : item.tone === 'red' ? 'text-red-600/80 dark:text-red-400/80' : 'text-yellow-600/80 dark:text-yellow-400/80'}`}>
-                        Recommended daily target
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Priority: show disease-specific HARD guidelines in their own container */}
-                {diseaseSpecificHardItems.length > 0 && (
-                  <div className="rounded-xl bg-red-50 dark:bg-red-900/10 p-4 border border-red-200 dark:border-red-800 mb-4">
+                {priorityGuidelineItems.length > 0 && (
+                  <div className="rounded-xl bg-transparent dark:bg-transparent p-4 border border-red-300 dark:border-red-700 mb-4">
                     <p className="text-sm font-semibold text-red-800 dark:text-red-200 mb-3">Priority guidelines for your condition</p>
-                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                      {diseaseSpecificHardItems.map((item) => (
-                        <div key={item.key} className="rounded-lg bg-white dark:bg-slate-800 p-2 border border-gray-200 dark:border-slate-600">
+                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-3 lg:grid-cols-6">
+                      {priorityGuidelineItems.map((item) => (
+                        <div
+                          key={item.key}
+                          className={
+                            item.key === 'energy_kcal'
+                              ? 'rounded-lg bg-[#228B22] dark:bg-[#1b6f1b] p-2 border border-[#2f9a2f] dark:border-[#257d25] shadow-sm'
+                              : isEnergyOrMacroKey(item.key)
+                                ? 'rounded-lg bg-[#CD1C18] dark:bg-[#a31612] p-2 border border-[#d84b46] dark:border-[#bd3f39] shadow-sm'
+                                : 'rounded-lg bg-red-50 dark:bg-red-950/40 p-2 border border-red-200 dark:border-red-800'
+                          }
+                        >
                           <div className="flex items-center justify-between">
-                            <p className="text-sm font-semibold text-gray-900 dark:text-white">{item.label}</p>
+                            <p className={isEnergyOrMacroKey(item.key) ? 'text-sm font-semibold text-white' : 'text-sm font-semibold text-gray-900 dark:text-white'}>{item.label}</p>
                           </div>
-                          <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{formatGuidelineDisplay(item)}</p>
+                          <p className={isEnergyOrMacroKey(item.key) ? 'text-xs text-white/85 mt-1' : 'text-xs text-gray-600 dark:text-gray-300 mt-1'}>{formatGuidelineDisplay(item)}</p>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                <div className="rounded-xl bg-gray-50 dark:bg-slate-700/60 p-4">
+                <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4">
                   <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Other nutrient limits</p>
                   {remainingGuidelineItems.length > 0 ? (
-                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-3 lg:grid-cols-6">
                       {remainingGuidelineItems.map((item) => (
                         <div key={item.key} className="rounded-lg bg-white dark:bg-slate-800 p-2 border border-gray-200 dark:border-slate-600">
                           <div className="flex items-center justify-between">
@@ -442,7 +434,7 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
                 </div>
 
                 {hasDiseaseGuidelines && (
-                  <div className="rounded-xl border border-emerald-200 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 p-4">
+                  <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950 p-4">
                     <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
                       Guidelines above were adjusted for your health conditions: {healthConditions
                         .map((condition) => conditionLabels[condition] || condition)
@@ -477,17 +469,17 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
               </div>
 
               <div className="grid sm:grid-cols-3 gap-4">
-                <div className="rounded-xl bg-gray-50 dark:bg-slate-700/60 p-4">
+                <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">Food preferences</p>
                   <p className="font-semibold text-gray-900 dark:text-white">
                     {userData.foodPreferences.length > 0 ? userData.foodPreferences.join(', ') : 'All cuisines'}
                   </p>
                 </div>
-                <div className="rounded-xl bg-gray-50 dark:bg-slate-700/60 p-4">
+                <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">Activity level</p>
                   <p className="font-semibold text-gray-900 dark:text-white capitalize">{userData.activity || 'Not selected'}</p>
                 </div>
-                <div className="rounded-xl bg-gray-50 dark:bg-slate-700/60 p-4">
+                <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">Demographics</p>
                   <p className="font-semibold text-gray-900 dark:text-white">
                     {userData.gender === 'male' ? 'Male' : 'Female'} • {userData.age} yrs • {userData.weight} kg • {userData.height} cm
