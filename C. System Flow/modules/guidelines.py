@@ -61,9 +61,9 @@ class GuidelineProcessor:
                 max_val = row['max']
                 basis = row['basis']
                 
-                # Convert nilai
+                # Convert nilai (pass nutrient untuk TDEE divisor yang tepat)
                 converted = self.calc.convert_guideline_value(
-                    min_val, max_val, basis, user_params
+                    min_val, max_val, basis, user_params, nutrient_name=nutrient
                 )
                 
                 if nutrient not in guidelines_dict:

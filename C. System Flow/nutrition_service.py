@@ -158,8 +158,15 @@ class NutritionService:
             }
             
             # 3. Calculate energy (BMR, TDEE)
+            # LOGIC: Pilih BB untuk BMR berdasarkan BMI category
+            # - Jika BMI Normal (18.5-25): gunakan BB aktual
+            # - Selain itu (Underweight/Obese): gunakan BBI (Ideal Weight)
+            weight_for_bmr = weight
+            if bmi_calc['category'] != "Healthy Weight":
+                weight_for_bmr = bbi
+            
             disease_status_for_bmr = 'normal' if set(disease) == {'normal'} else 'diseased'
-            bmr = self.calculator.calculate_bmr(weight, height, age, gender, disease_status_for_bmr)
+            bmr = self.calculator.calculate_bmr(weight_for_bmr, height, age, gender, disease_status_for_bmr)
             tdee = self.calculator.calculate_tdee(bmr, activity_factor)
             
             result['energy'] = {
@@ -194,9 +201,9 @@ class NutritionService:
                 tipe = guideline_data.get('tipe', 'range')  # Get tipe from guideline
                 diseases_list = guideline_data['diseases']
                 
-                # Convert nilai
+                # Convert nilai (pass nutrient_name untuk TDEE divisor yang tepat)
                 converted = self.calculator.convert_guideline_value(
-                    min_val, max_val, basis, user_params
+                    min_val, max_val, basis, user_params, nutrient_name=nutrient
                 )
                 
                 # Infer unit from nutrient name

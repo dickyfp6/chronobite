@@ -336,7 +336,7 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
               <div className="space-y-4">
                 <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950 p-4 border border-emerald-200 dark:border-emerald-800">
                   <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">Estimated daily calories</p>
-                  <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{dailyNeeds.calories} kcal/day</p>
+                  <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{(analysis && analysis.energy && typeof analysis.energy.tdee === 'number' ? Math.round(analysis.energy.tdee) : Math.round(dailyNeeds.calories))} kcal/day</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                     Your calorie needs are derived from BMI, BMR, TDEE, activity level, and aligned with your selected health conditions.
                   </p>

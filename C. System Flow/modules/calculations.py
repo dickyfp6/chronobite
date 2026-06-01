@@ -178,7 +178,26 @@ class NutritionCalculator:
             }
     
     @staticmethod
-    def convert_guideline_value(min_val, max_val, basis, user_params):
+    def _get_tdee_divisor(nutrient_name):
+        """
+        Determine kalori divisor untuk nutrient berdasarkan macronutrient type
+        
+        Args:
+            nutrient_name: str (nama nutrient dari guideline)
+        
+        Returns:
+            int: Divisor (4 untuk carbs/protein, 9 untuk fat)
+        """
+        # Fat nutrients: 1g = 9 kcal
+        fat_nutrients = ['fat_g', 'saturated_fat_g', 'trans_fat_g']
+        if nutrient_name in fat_nutrients:
+            return 9
+        
+        # Carbs & Protein: 1g = 4 kcal (default)
+        return 4
+    
+    @staticmethod
+    def convert_guideline_value(min_val, max_val, basis, user_params, nutrient_name=None):
         """
         Konversi nilai guideline berdasarkan basis
         
@@ -187,6 +206,7 @@ class NutritionCalculator:
             max_val: float atau str (nilai maximum)
             basis: str ('1', 'TDEE', 'BB', 'BBI')
             user_params: dict dengan keys: tdee, weight, bbi
+            nutrient_name: str (optional, untuk TDEE conversion dengan divisor tepat)
         
         Returns:
             dict dengan keys: min_converted, max_converted, constraint_type
@@ -225,13 +245,15 @@ class NutritionCalculator:
                 'constraint_type': 'absolute' if min_float is not None and max_float is not None else 'partial_absolute'
             }
         
-        # Basis: TDEE (multiply by TDEE)
+        # Basis: TDEE (multiply by TDEE, convert to grams)
         elif basis == 'TDEE':
                 tdee = user_params.get('tdee', 2000)
+                
+                # Determine divisor based on nutrient type (4 untuk carbs/protein, 9 untuk fat)
+                divisor = NutritionCalculator._get_tdee_divisor(nutrient_name) if nutrient_name else 4
 
-                # asumsi default: protein & karbo
-                min_gram = (min_float * tdee / 4) if min_float is not None else 0
-                max_gram = (max_float * tdee / 4) if max_float is not None else float('inf')
+                min_gram = (min_float * tdee / divisor) if min_float is not None else 0
+                max_gram = (max_float * tdee / divisor) if max_float is not None else float('inf')
 
                 return {
                     'min_converted': round(min_gram, 2) if min_float is not None else 0,
