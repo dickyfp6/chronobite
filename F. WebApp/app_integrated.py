@@ -8,7 +8,7 @@ Integration dengan:
 - Frontend (React with Vite)
 """
 
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sys
 import os
@@ -44,8 +44,8 @@ try:
 except Exception as e:
     print(f"❌ Failed to import GreedyAlgorithmInterface: {e}")
 
-# Initialize Flask app
-app = Flask(__name__, static_folder='static', static_url_path='/static')
+# Initialize Flask app (pure API, no static files)
+app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 # Enable CORS for React frontend (Vercel deployment)
@@ -238,31 +238,13 @@ ALGORITHM_LABELS = {
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# ROUTES: STATIC PAGES
+# HEALTH CHECK ENDPOINT
 # ═══════════════════════════════════════════════════════════════════════════════
 
-@app.route("/")
-def landing():
-    """Landing page"""
-    return render_template("landing.html")
-
-
-@app.route("/app")
-def index():
-    """Main application"""
-    return render_template("index_comprehensive.html")
-
-
-@app.route("/manifest.json")
-def manifest():
-    """Serve manifest.json untuk PWA"""
-    return send_from_directory('static', 'manifest.json', mimetype='application/manifest+json')
-
-
-@app.route("/sw.js")
-def service_worker():
-    """Serve service worker"""
-    return send_from_directory('static/js', 'sw.js', mimetype='application/javascript')
+@app.route("/health", methods=["GET"])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({"status": "healthy", "service": "Nutrition DSS Backend API"}), 200
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -510,7 +492,7 @@ def refresh_menu():
 
 
 @app.route("/api/health-check", methods=["GET"])
-def health_check():
+def health_check_services():
     """Health check endpoint untuk debugging"""
     return jsonify({
         "status": "ok",
