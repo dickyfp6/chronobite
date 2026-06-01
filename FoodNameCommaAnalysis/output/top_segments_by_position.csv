@@ -1,0 +1,149 @@
+position_after_base,segment,count,percentage_at_position
+1,raw,147,3.8053
+1,canned,141,3.65
+1,cooked,113,2.9252
+1,frozen,96,2.4851
+1,white,68,1.7603
+1,sweet,62,1.605
+1,mature seeds,44,1.139
+1,new zealand,43,1.1131
+1,chocolate,37,0.9578
+1,broilers or fryers,37,0.9578
+1,quaker,36,0.9319
+1,whole,28,0.7248
+1,immature seeds,26,0.6731
+1,plain,24,0.6213
+1,yellow,24,0.6213
+1,green,23,0.5954
+1,snap,23,0.5954
+1,winter,22,0.5695
+1,dried,21,0.5436
+1,vanilla,20,0.5177
+2,canned,150,4.6012
+2,cooked,138,4.2331
+2,raw,137,4.2025
+2,boiled,87,2.6687
+2,mature seeds,75,2.3006
+2,dry mix,73,2.2393
+2,frozen,65,1.9939
+2,commercially prepared,48,1.4724
+2,imported,45,1.3804
+2,dried,41,1.2577
+2,white,39,1.1963
+2,yellow,36,1.1043
+2,unsweetened,35,1.0736
+2,boneless,35,1.0736
+2,dry,34,1.0429
+2,prepared from recipe,34,1.0429
+2,plain,33,1.0123
+2,red,28,0.8589
+2,fluid,27,0.8282
+2,unprepared,26,0.7975
+3,cooked,163,7.3889
+3,boiled,103,4.6691
+3,raw,92,4.1704
+3,drained,89,4.0345
+3,canned,70,3.1732
+3,frozen,58,2.6292
+3,regular,44,1.9946
+3,solids and liquids,41,1.8586
+3,condensed,34,1.5413
+3,prepared with equal volume water,31,1.4053
+3,meat and skin,30,1.3599
+3,with salt,22,0.9973
+3,separable lean only,22,0.9973
+3,boneless,22,0.9973
+3,without salt,20,0.9066
+3,separable lean and fat,19,0.8613
+3,meat only,19,0.8613
+3,instant,18,0.816
+3,baked,18,0.816
+3,enriched,18,0.816
+4,drained,89,7.0691
+4,boiled,87,6.9102
+4,cooked,85,6.7514
+4,with salt,69,5.4805
+4,without salt,68,5.4011
+4,raw,44,3.4948
+4,solids and liquids,39,3.0977
+4,separable lean and fat,33,2.6211
+4,frozen,24,1.9063
+4,enriched,23,1.8268
+4,"trimmed to 1/8"" fat",21,1.668
+4,separable lean only,21,1.668
+4,unenriched,15,1.1914
+4,baked,15,1.1914
+4,unprepared,12,0.9531
+4,"trimmed to 0"" fat",12,0.9531
+4,prepared with whole milk,11,0.8737
+4,fried,11,0.8737
+4,plain,10,0.7943
+4,denver cut,10,0.7943
+5,with salt,71,11.4332
+5,without salt,68,10.9501
+5,drained,49,7.8905
+5,boiled,35,5.6361
+5,raw,28,4.5089
+5,cooked,27,4.3478
+5,fried,23,3.7037
+5,"trimmed to 0"" fat",21,3.3816
+5,choice,15,2.4155
+5,solids and liquids,13,2.0934
+5,dry,12,1.9324
+5,all grades,11,1.7713
+5,unprepared,10,1.6103
+5,separable lean and fat,10,1.6103
+5,drained solids,9,1.4493
+5,enriched,8,1.2882
+5,"trimmed to 1/8"" fat",7,1.1272
+5,roasted,7,1.1272
+5,regular pack,6,0.9662
+5,no salt added,6,0.9662
+6,without salt,35,14.2857
+6,with salt,32,13.0612
+6,drained,25,10.2041
+6,cooked,24,9.7959
+6,raw,17,6.9388
+6,"trimmed to 0"" fat",11,4.4898
+6,boiled,10,4.0816
+6,all grades,10,4.0816
+6,choice,10,4.0816
+6,select,8,3.2653
+6,batter,8,3.2653
+6,flour,8,3.2653
+6,solids and liquids,4,1.6327
+6,braised,4,1.6327
+6,fast roasted,4,1.6327
+6,fast fried,4,1.6327
+6,with added vitamin d,3,1.2245
+6,separable lean and fat,3,1.2245
+6,heated in oven,2,0.8163
+6,or baked,2,0.8163
+7,raw,21,19.8113
+7,without salt,16,15.0943
+7,with salt,16,15.0943
+7,grilled,11,10.3774
+7,cooked,10,9.434
+7,drained,8,7.5472
+7,roasted,6,5.6604
+7,choice,4,3.7736
+7,all grades,4,3.7736
+7,select,3,2.8302
+7,pan-fried,1,0.9434
+7,vitamins b6 and b12,1,0.9434
+7,braised,1,0.9434
+7,strawberry),1,0.9434
+7,fast fried,1,0.9434
+7,separable lean and fat,1,0.9434
+7,without added sodium or vitamin a,1,0.9434
+8,grilled,7,23.3333
+8,raw,6,20.0
+8,with salt,5,16.6667
+8,cooked,5,16.6667
+8,without salt,3,10.0
+8,slow roasted,2,6.6667
+8,roasted,1,3.3333
+8,"trimmed to 1/8"" fat",1,3.3333
+9,grilled,5,83.3333
+9,cooked,1,16.6667
+10,roasted,1,100.0

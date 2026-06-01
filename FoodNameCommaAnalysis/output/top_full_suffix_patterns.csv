@@ -1,0 +1,21 @@
+pattern,count
+raw,110
+cooked | boiled | drained | without salt,38
+cooked | boiled | drained | with salt,37
+canned,14
+frozen | unprepared,13
+cooked,12
+frozen | cooked | boiled | drained | with salt,11
+frozen | cooked | boiled | drained | without salt,11
+mature seeds | cooked | boiled | with salt,10
+mature seeds | cooked | boiled | without salt,9
+mature seeds | raw,9
+coleslaw,7
+fresh,7
+french fries,6
+green | raw,6
+canned | heavy syrup pack | solids and liquids,6
+canned | solids and liquids,6
+canned | heavy syrup | drained,5
+frozen,5
+immature seeds | raw,5

@@ -1,0 +1,21 @@
+last3_pattern,count
+boiled | drained | with salt,120
+boiled | drained | without salt,118
+cooked | boiled | with salt,33
+cooked | boiled | without salt,32
+"trimmed to 0"" fat | choice | raw",13
+"trimmed to 0"" fat | all grades | raw",11
+cooked | fried | batter,11
+cooked | fried | flour,11
+canned | no salt added | solids and liquids,9
+canned | regular pack | solids and liquids,9
+all grades | cooked | grilled,9
+canned | heavy syrup pack | solids and liquids,8
+"trimmed to 0"" fat | select | raw",8
+canned | light syrup pack | solids and liquids,8
+canned | water pack | solids and liquids,8
+choice | cooked | grilled,8
+meat only | cooked | fried,8
+meat and skin | cooked | roasted,7
+canned | heavy syrup | drained,6
+canned | extra heavy syrup pack | solids and liquids,6

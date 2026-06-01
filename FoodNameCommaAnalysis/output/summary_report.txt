@@ -1,0 +1,34 @@
+FOOD NAME COMMA ANALYSIS REPORT
+========================================
+Input file: c:\Users\USERR\Documents\0. Mata Kuliah\8 -TA\Code\TugasAkhirDSS\A. Data\Data Processed\05_final_dataset.csv
+Total valid food names: 3920
+
+Distribusi jumlah koma:
+- 0 koma: 57 (1.45%)
+- 1 koma: 603 (15.38%)
+- 2 koma: 1054 (26.89%)
+- 3 koma: 947 (24.16%)
+- 4 koma: 638 (16.28%)
+- 5 koma: 375 (9.57%)
+- 6 koma: 140 (3.57%)
+- 7 koma: 76 (1.94%)
+- 8 koma: 24 (0.61%)
+- 9 koma: 5 (0.13%)
+- 10 koma: 1 (0.03%)
+
+Temuan pola:
+- Segmen setelah koma menunjukkan descriptor berulang (state/proses/salt/grade).
+- Last-2 pattern reused >=5x: 1015/3260 (31.1%).
+- Ini menunjukkan penggunaan koma bersifat terstruktur, bukan random.
+
+Top 10 pola 2 segmen terakhir:
+- drained | with salt: 120x
+- drained | without salt: 118x
+- boiled | without salt: 33x
+- boiled | with salt: 33x
+- canned | condensed: 32x
+- canned | prepared with equal volume water: 32x
+- frozen | unprepared: 30x
+- mature seeds | raw: 29x
+- cooked | grilled: 26x
+- choice | raw: 20x
