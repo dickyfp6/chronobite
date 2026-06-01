@@ -84,6 +84,25 @@ def init_services():
 # LEGACY HELPER FUNCTIONS (For compatibility)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# HELPER FUNCTIONS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def sanitize_infinity(obj):
+    """
+    Recursively replace float('inf') dengan null untuk JSON serialization
+    """
+    if isinstance(obj, dict):
+        return {k: sanitize_infinity(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_infinity(v) for v in obj]
+    elif isinstance(obj, float):
+        if obj == float('inf'):
+            return None
+        return obj
+    return obj
+
+
 def calculate_bmi(weight, height):
     h = height / 100
     bmi = weight / (h ** 2)
@@ -225,6 +244,20 @@ ACTIVITY_LABELS = {
     "2.2":   "Vigorous or Vigorously Active",
 }
 
+# Map activity labels (from Frontend) to numeric factors
+ACTIVITY_MAP = {
+    "sedentary": 1.545,
+    "light": 1.545,
+    "moderate": 1.845,
+    "active": 1.845,
+    "vigorous": 2.2,
+    "very_active": 2.2,
+    # Also accept numeric strings directly
+    "1.545": 1.545,
+    "1.845": 1.845,
+    "2.2": 2.2,
+}
+
 FOOD_PREFERENCES_LABELS = {
     "Western":       "Western",
     "Asian":         "Asian",
@@ -307,13 +340,21 @@ def analyze():
         
         data = request.get_json()
         
+        # Parse activity level (map label to numeric if needed)
+        activity_input = data.get('activity', '1.845')
+        if isinstance(activity_input, str):
+            activity_input = activity_input.lower()
+            activity_factor = ACTIVITY_MAP.get(activity_input, 1.845)
+        else:
+            activity_factor = float(activity_input)
+        
         # Parse user input
         user_input = {
             'gender': data.get('gender', 'M'),
             'age': int(data.get('age', 30)),
             'weight': float(data.get('weight', 70)),
             'height': float(data.get('height', 170)),
-            'activity_factor': float(data.get('activity', 1.845)),
+            'activity_factor': activity_factor,
             'disease': data.get('diseases', ['normal']),
             'food_preferences': data.get('food_preferences', [])
         }
@@ -328,15 +369,18 @@ def analyze():
             errors.append("Weight must be positive")
         
         if errors:
+            error_msg = ", ".join(errors)
+            print(f"⚠️ /api/analyze validation error: {error_msg}")
             return jsonify({
                 "success": False,
-                "error": ", ".join(errors)
+                "error": error_msg
             }), 400
         
         # Calculate nutrition needs
         result = nutrition_service.calculate_nutrition_needs(user_input)
         
         if not result.get('success'):
+            print(f"⚠️ /api/analyze calculation error: {result.get('error', 'Unknown error')}")
             return jsonify(result), 400
         
         # Add meal distribution untuk display
@@ -350,6 +394,9 @@ def analyze():
         # Remove non-JSON-serializable objects before response
         if isinstance(result.get('food_data'), dict):
             result['food_data'].pop('dataframe', None)
+        
+        # Sanitize infinity values to null for JSON serialization
+        result = sanitize_infinity(result)
         
         return jsonify(result), 200
     
@@ -465,6 +512,9 @@ def generate_menu():
         
         # Convert to frontend-friendly dict for JSON response
         menu_dict = _menu_plan_to_frontend(menu_plan)
+        
+        # Sanitize infinity values to null for JSON serialization
+        menu_dict = sanitize_infinity(menu_dict)
         
         return jsonify({
             "success": True,

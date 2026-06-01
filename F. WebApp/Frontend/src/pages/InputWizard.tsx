@@ -23,7 +23,7 @@ interface InputWizardProps {
 
 export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
   const [step, setStep] = useState(() => {
-    const saved = localStorage.getItem('dss_wizard_step');
+    const saved = sessionStorage.getItem('dss_wizard_step');
     return saved ? parseInt(saved, 10) : 0;
   });
 
@@ -32,8 +32,9 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
   const { t } = useI18n();
 
   // Persist step to localStorage
+  // Persist step to sessionStorage so refresh keeps the current wizard step in this tab only
   useEffect(() => {
-    localStorage.setItem('dss_wizard_step', step.toString());
+    sessionStorage.setItem('dss_wizard_step', step.toString());
   }, [step]);
 
   const steps = t.input.steps;
@@ -41,7 +42,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
   const canProceed = () => {
     switch (step) {
       case 0: return !!data.gender;
-      case 1: return !!(data.age > 0 && data.weight > 0 && data.height > 0);
+      case 1: return !!(data.age >= 18 && data.weight >= 30 && data.height >= 100);
       case 2: return !!data.activity;
       case 3: return data.healthConditions.length > 0;
       case 4: return true;

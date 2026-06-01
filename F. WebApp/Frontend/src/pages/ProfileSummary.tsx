@@ -155,6 +155,10 @@ function formatGuidelineBound(value: number | string | null | undefined) {
   if (typeof value === 'number' && !Number.isFinite(value)) {
     return 'No limit';
   }
+  // Format angka dengan 2 decimal places jika perlu, otherwise integer
+  if (typeof value === 'number') {
+    return value % 1 === 0 ? value.toString() : value.toFixed(2);
+  }
   return value;
 }
 
@@ -166,20 +170,28 @@ function formatGuidelineDisplay(item: GuidelineItem) {
     const minNumeric = typeof item.min === 'number' ? item.min : Number(item.min);
     const maxNumeric = typeof item.max === 'number' ? item.max : Number(item.max);
 
+    // Exact value (min === max)
     if (Number.isFinite(minNumeric) && Number.isFinite(maxNumeric) && minNumeric === maxNumeric) {
       return `± ${minText} ${item.unit}`.trim();
     }
+
+    // Both min and max are finite (range)
+    if (Number.isFinite(minNumeric) && Number.isFinite(maxNumeric)) {
+      return `${minText}-${maxText} ${item.unit}`.trim();
+    }
   }
 
-  if (maxText === 'No limit') {
-    return `Min ${minText} ${item.unit}`.trim();
+  // Only max is unlimited (min only)
+  if (maxText === 'No limit' && minText !== 'No limit') {
+    return `min. ${minText} ${item.unit}`.trim();
   }
 
-  if (minText === 'No limit') {
-    return `Max ${maxText} ${item.unit}`.trim();
+  // Only min is unlimited (max only - rare case)
+  if (minText === 'No limit' && maxText !== 'No limit') {
+    return `max. ${maxText} ${item.unit}`.trim();
   }
 
-  return `${minText} - ${maxText} ${item.unit}`.trim();
+  return `${minText}-${maxText} ${item.unit}`.trim();
 }
 
 // Fallback logic representing Python's DISEASE_MACROS logic if API fails

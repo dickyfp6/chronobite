@@ -105,7 +105,7 @@ export function Landing({ onStart }: { onStart: () => void }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-center mt-8 sm:mt-12 mb-4"
+            className="text-center mt-8 sm:mt-12 mb-4 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
           >
             <button
               onClick={onStart}
