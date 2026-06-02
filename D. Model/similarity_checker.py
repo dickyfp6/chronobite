@@ -174,7 +174,7 @@ class SimilarityChecker:
         snack_key = 'snack'
         foods_by_slot[snack_key] = [
             item.food_name for item in menu_plan.snack.candidates
-        ]
+        ] if menu_plan.snack is not None else []
         
         return foods_by_slot
     
