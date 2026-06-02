@@ -20,14 +20,17 @@ import importlib.util
 # Add parent directories untuk imports (F. WebApp is one level deep, so one .. to get to root)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'C. System Flow'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Greedy Algorithm'))
 
 # Import system components
 try:
     from nutrition_service import NutritionService  # pyright: ignore
-    print("✓ NutritionService imported successfully")
+    from meal_schema import FoodItem  # type: ignore
+    print("✓ NutritionService and FoodItem imported successfully")
 except ImportError as e:
-    print(f"❌ Failed to import NutritionService: {e}")
+    print(f"❌ Failed to import NutritionService or FoodItem: {e}")
     NutritionService = None
+    FoodItem = None
 
 # Special handling for Greedy Algorithm (folder has space in name)
 GreedyAlgorithmInterface = None
@@ -138,7 +141,7 @@ def calculate_tdee(bmr, activity):
 
 
 def _course_to_item(course):
-    candidate = course.candidates[0] if getattr(course, 'candidates', None) else None
+    candidate = course.candidates[0] if getattr(course, 'candidates', None) and len(course.candidates) > 0 else None
     if candidate is None:
         return {
             'name': course.course_type,
@@ -150,16 +153,19 @@ def _course_to_item(course):
         }
 
     return {
+        'fdc_id': getattr(candidate, 'fdc_id', 'unknown'),
         'name': candidate.food_name,
-        'serving_size': getattr(candidate, 'portion_gram', 100),
-        'calories': getattr(candidate, 'energy_kcal', 0),
+        'food_group': getattr(candidate, 'food_group', 'Unknown'),
+        'cuisine_label': getattr(candidate, 'cuisine_label', 'Unknown'),
+        'serving_size': round(getattr(candidate, 'portion_gram', 100), 1),
+        'calories': round(getattr(candidate, 'energy_kcal', 0), 1),
         'score': 100,
         'food_category': getattr(candidate, 'consumption_label', course.course_type),
         'main_ingredients': [candidate.food_name],
         'macros': {
-            'carbs': getattr(candidate, 'carbohydrate_g', 0),
-            'protein': getattr(candidate, 'protein_g', 0),
-            'fat': getattr(candidate, 'fat_g', 0),
+            'carbs': round(getattr(candidate, 'carbohydrate_g', 0), 2),
+            'protein': round(getattr(candidate, 'protein_g', 0), 2),
+            'fat': round(getattr(candidate, 'fat_g', 0), 2),
         },
         'micronutrients': [],
         'halal_status': 'unknown',
@@ -408,6 +414,154 @@ def analyze():
             "success": False,
             "error": str(e)
         }), 500
+
+
+@app.route("/api/get-drinks", methods=["POST"])
+def get_drinks():
+    """
+    PHASE 1: Generate 3 drink options for each meal
+    """
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"success": False, "error": "No data provided"}), 400
+            
+        analysis_data = data.get('analysis_data', {})
+        user_input = data.get('user_input') or {}
+        tdee = analysis_data.get('energy', {}).get('tdee', 2100)
+        
+        init_services()
+        
+        if greedy_algorithm is None:
+            return jsonify({"success": False, "error": "Greedy Algorithm not available"}), 500
+        
+        # Setup database
+        food_database = None
+        if nutrition_service and nutrition_service.guideline_loader and nutrition_service.guideline_loader.food_df is not None:
+            food_database = nutrition_service.guideline_loader.food_df.copy()
+            
+        if food_database is None:
+            return jsonify({"success": False, "error": "Food database not available"}), 500
+            
+        # Initialize
+        nutrition_guidelines = analysis_data.get('guidelines', {})
+        greedy_algorithm.initialize(food_database, nutrition_guidelines)
+        
+        # Generate drinks
+        drinks = greedy_algorithm.generate_drink_options(
+            meal_distribution={
+                'breakfast': 0.2375,
+                'lunch': 0.3375,
+                'snack': 0.1375,
+                'dinner': 0.2875
+            },
+            user_tdee=tdee
+        )
+        
+        if not drinks:
+            return jsonify({"success": False, "error": "No drinks found"}), 500
+            
+        # Format for frontend
+        formatted_drinks = {}
+        for meal_time, items in drinks.items():
+            formatted_drinks[meal_time] = []
+            for item in items:
+                # Wrap in a fake MealCourse for _course_to_item to work
+                # Use local import for MealCourse to avoid circularity if any
+                from meal_schema import MealCourse
+                temp_course = MealCourse(course_type='Drink', candidates=[item], 
+                                         total_calories=item.energy_kcal, total_protein_g=item.protein_g,
+                                         total_carb_g=item.carbohydrate_g, total_fat_g=item.fat_g)
+                formatted_drinks[meal_time].append(_course_to_item(temp_course))
+                
+        return jsonify({
+            "success": True,
+            "drinks": formatted_drinks
+        }), 200
+        
+    except Exception as e:
+        print(f"❌ /api/get-drinks error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/generate-final-menu", methods=["POST"])
+def generate_final_menu():
+    """
+    PHASE 2: Generate final menu with fixed-drink selection
+    """
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"success": False, "error": "No data provided"}), 400
+            
+        analysis_data = data.get('analysis_data', {})
+        user_input = data.get('user_input') or {}
+        selected_drinks_json = data.get('selected_drinks', {})
+        tdee = analysis_data.get('energy', {}).get('tdee', 2100)
+        
+        # Reconstruct FoodItems from JSON
+        selected_drinks = {}
+        if FoodItem is None:
+            return jsonify({"success": False, "error": "FoodItem schema missing"}), 500
+            
+        for meal_time, drink_json in selected_drinks_json.items():
+            if drink_json:
+                selected_drinks[meal_time.lower()] = FoodItem(
+                    fdc_id=str(drink_json.get('fdc_id', '0')),
+                    food_name=drink_json.get('name', ''),
+                    food_group=drink_json.get('food_group', ''),
+                    consumption_label='Drink',
+                    cuisine_label=drink_json.get('cuisine_label', ''),
+                    portion_gram=float(drink_json.get('serving_size', 100)),
+                    energy_kcal=float(drink_json.get('calories', 0)),
+                    protein_g=float(drink_json.get('macros', {}).get('protein', 0)),
+                    carbohydrate_g=float(drink_json.get('macros', {}).get('carbs', 0)),
+                    fat_g=float(drink_json.get('macros', {}).get('fat', 0))
+                )
+        
+        init_services()
+        
+        if greedy_algorithm is None:
+            return jsonify({"success": False, "error": "Greedy Algorithm not available"}), 500
+        
+        # Setup database
+        food_database = None
+        if nutrition_service and nutrition_service.guideline_loader and nutrition_service.guideline_loader.food_df is not None:
+            food_database = nutrition_service.guideline_loader.food_df.copy()
+            
+        if food_database is None:
+            return jsonify({"success": False, "error": "Food database not available"}), 500
+            
+        # Initialize
+        nutrition_guidelines = analysis_data.get('guidelines', {})
+        greedy_algorithm.initialize(food_database, nutrition_guidelines)
+        
+        # Generate final plan
+        menu_plan = greedy_algorithm.generate_menu_with_drinks(
+            user_profile=user_input,
+            meal_distribution={
+                'breakfast': 0.2375,
+                'lunch': 0.3375,
+                'snack': 0.1375,
+                'dinner': 0.2875
+            },
+            user_tdee=tdee,
+            selected_drinks=selected_drinks
+        )
+        
+        if not menu_plan:
+            return jsonify({
+                "success": False, 
+                "error": "Failed to generate menu with chosen drinks. The drinks might be too caloric."
+            }), 500
+            
+        return jsonify({
+            "success": True,
+            "menu_plan": _menu_plan_to_frontend(menu_plan)
+        }), 200
+        
+    except Exception as e:
+        print(f"❌ /api/generate-final-menu error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @app.route("/api/generate-menu", methods=["POST"])

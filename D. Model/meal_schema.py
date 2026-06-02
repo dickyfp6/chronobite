@@ -96,7 +96,7 @@ class MenuPlan:
     breakfast: Meal
     lunch: Meal
     dinner: Meal
-    snack: SnackMeal
+    snack: Optional[SnackMeal]
     total_daily_calories: float
     total_daily_protein_g: float
     total_daily_carb_g: float
@@ -111,7 +111,7 @@ class MenuPlan:
         breakfast: Meal,
         lunch: Meal,
         dinner: Meal,
-        snack: SnackMeal,
+        snack: Optional[SnackMeal],
         total_daily_calories: float = 0,
         total_daily_protein_g: float = 0,
         total_daily_carb_g: float = 0,
@@ -147,7 +147,7 @@ class MenuPlan:
                 'breakfast': self.breakfast.to_dict(),
                 'lunch': self.lunch.to_dict(),
                 'dinner': self.dinner.to_dict(),
-                'snack': self.snack.to_dict()
+                'snack': self.snack.to_dict() if self.snack else None
             },
             'daily_totals': {
                 'calories': round(self.total_daily_calories, 2),

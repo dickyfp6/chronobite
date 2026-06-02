@@ -1,175 +1,118 @@
-"""
-Greedy Algorithm Interface
-Wrapper untuk integrate Greedy Algorithm dengan NutritionService dan main system
-Maintains API compatibility: initialize(food_db, constraint_bag) → generate_menu_plan()
+﻿"""
+Interface for Greedy Algorithm to connect with NutritionService.
+Standardizes input from system space to algorithm space.
+
+REDESIGNED ARCHITECTURE:
+- Phase 1: Food Selection (generate diverse candidates)
+- Phase 2: Portion Optimization (calculate realistic portions + scale nutrients)
+- Phase 3: Post-Selection Portion Rebalancing (optional, after user substitutions)
 """
 
 import sys
 import os
 import pandas as pd
-from typing import Dict, Optional
+from typing import Dict, List, Any, Optional
 
-# Add current and parent directories untuk imports
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-
-from greedy_optimizer import GreedyOptimizer
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from meal_schema import MenuPlan
-
+from greedy_optimizer import GreedyOptimizer
+from portion_rebalancer import PortionRebalancer
 
 class GreedyAlgorithmInterface:
-    """
-    Interface untuk Greedy Algorithm
-    Digunakan oleh app_integrated.py untuk generate menu recommendations
-    
-    API Contract:
-    1. initialize(food_database, constraint_bag) - setup dengan data dari NutritionService
-    2. generate_menu_plan(user_profile, meal_distribution, user_tdee) - generate menu
-    """
-    
-    def __init__(self):
-        """Initialize interface"""
-        self.optimizer = None
-        self.last_result = None
-    
-    def initialize(self, food_database: pd.DataFrame, constraint_bag: Dict) -> bool:
+    def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):
         """
-        Initialize optimizer dengan food database dan constraint bag dari NutritionService
+        Initialize the interface with data from NutritionService
         
         Args:
-            food_database: DataFrame dari result['food_data']['dataframe']
-            constraint_bag: Dict dari result['guidelines'] (already contains disease, nutrients)
-                {
-                    'disease': ['dm2'],
-                    'nutrients': {
-                        'energy_kcal': {'min': 1800, 'max': 2200, 'hard_soft_type': 'HARD', ...},
-                        ...
-                    }
-                }
-        
-        Returns:
-            True jika success, False jika error
+            food_database: Complete food database (per-100g basis)
+            constraint_bag: Nutrition constraints and guidelines
         """
-        try:
-            if food_database is None or food_database.empty:
-                raise ValueError("Food database is empty")
-            if constraint_bag is None:
-                raise ValueError("Constraint bag is None")
-            
-            self.optimizer = GreedyOptimizer(food_database, constraint_bag)
-            print("✅ Greedy Algorithm Interface initialized")
-            return True
-        except Exception as e:
-            print(f"❌ Greedy Algorithm initialization failed: {e}")
-            import traceback
-            traceback.print_exc()
-            return False
+        self.food_db = food_database
+        self.constraint_bag = constraint_bag
+        self.optimizer = GreedyOptimizer(food_database, constraint_bag)
+        print("[OK] Greedy Algorithm Interface initialized (DSS Architecture)")
     
-    def generate_menu_plan(
-        self,
-        user_profile: Dict,
-        meal_distribution: Dict,
-        user_tdee: float
-    ) -> Optional[MenuPlan]:
+    def initialize(self, food_database: pd.DataFrame, constraint_bag: Dict):
+        """Reinitialize with new data"""
+        self.food_db = food_database
+        self.constraint_bag = constraint_bag
+        self.optimizer.initialize(food_database, constraint_bag)
+    
+    def generate_menu_plan(self, user_profile: Dict, tdee: float) -> Optional[MenuPlan]:
         """
-        Generate complete menu plan untuk user dengan constraint satisfaction
+        PHASE 1 + 2: Generate complete menu plan using TDEE.
+        
+        The optimizer will:
+        1. Calculate meal targets from TDEE using validated percentages
+        2. Generate diverse food candidates for each course
+        3. Optimize portions and scale all nutrients
         
         Args:
-            user_profile: User demographics & health dari NutritionService
-            meal_distribution: Dict dengan meal time distribution
-                e.g., {'breakfast': 0.2375, 'lunch': 0.3375, 'snack': 0.1375, 'dinner': 0.2875}
-            user_tdee: Total Daily Energy Expenditure (kcal)
+            user_profile: User demographic and health info
+            tdee: Total Daily Energy Expenditure in kcal
         
         Returns:
-            MenuPlan object (dengan feasible flag dan violations list) atau None jika gagal
+            MenuPlan with all courses and scaled nutrients, or None if failed
         """
-        
-        if self.optimizer is None:
-            print("❌ Optimizer not initialized. Call initialize() first.")
-            return None
+        print("\n[GENERAT] Greedy Algorithm (DSS): Generating menu plan")
+        print(f"   User: {user_profile.get('age', '?')}y {user_profile.get('gender', '?')}")
+        print(f"   TDEE: {tdee:.0f} kcal")
         
         try:
-            # Calculate meal targets berdasarkan TDEE dan meal distribution
-            # meal_distribution dapat berupa:
-            # - Percentages: {'breakfast': 0.2375, ...} → multiply by TDEE
-            # - Absolute values: {'breakfast': 734.84, ...} → use as-is
-            
-            breakfast_dist = meal_distribution.get('breakfast', 0.2375)
-            if breakfast_dist < 1.0:  # Percentage
-                meal_targets = {
-                    'breakfast': int(user_tdee * meal_distribution.get('breakfast', 0.2375)),
-                    'lunch': int(user_tdee * meal_distribution.get('lunch', 0.3375)),
-                    'snack': int(user_tdee * meal_distribution.get('snack', 0.1375)),
-                    'dinner': int(user_tdee * meal_distribution.get('dinner', 0.2875)),
-                }
-            else:  # Absolute calorie values
-                meal_targets = {
-                    'breakfast': int(meal_distribution.get('breakfast', 600)),
-                    'lunch': int(meal_distribution.get('lunch', 800)),
-                    'snack': int(meal_distribution.get('snack', 400)),
-                    'dinner': int(meal_distribution.get('dinner', 800)),
-                }
-            
-            print(f"\n🎯 Greedy Algorithm: Generating menu plan")
-            print(f"   TDEE: {user_tdee:.0f} kcal")
-            print(f"   Breakfast: {meal_targets['breakfast']} kcal")
-            print(f"   Lunch: {meal_targets['lunch']} kcal")
-            print(f"   Snack: {meal_targets['snack']} kcal")
-            print(f"   Dinner: {meal_targets['dinner']} kcal")
-            print(f"   Total target: {sum(meal_targets.values())} kcal")
-            
-            # Generate menu menggunakan greedy algorithm
-            menu_plan = self.optimizer.optimize_full_menu(user_profile, meal_targets)
+            menu_plan = self.optimizer.generate_menu(user_profile, tdee)
             
             if menu_plan:
-                self.last_result = menu_plan
-                
-                # Print results
-                print(f"\n✅ Greedy Algorithm: Menu generated successfully!")
-                print(f"   Total daily calories: {menu_plan.total_daily_calories:.0f} kcal")
-                print(f"   Total daily protein: {menu_plan.total_daily_protein_g:.1f}g")
-                print(f"   Total daily carbs: {menu_plan.total_daily_carb_g:.1f}g")
-                print(f"   Total daily fat: {menu_plan.total_daily_fat_g:.1f}g")
-                print(f"   Feasible: {'✅ YES' if menu_plan.feasible else '⚠️  NO'}")
-                
-                if menu_plan.violations:
-                    print(f"   Violations: {len(menu_plan.violations)}")
-                    for violation in menu_plan.violations[:3]:
-                        print(f"     - {violation}")
-                    if len(menu_plan.violations) > 3:
-                        print(f"     ... and {len(menu_plan.violations) - 3} more")
-                
-                return menu_plan
-            else:
-                print("❌ Greedy Algorithm: Failed to generate menu (insufficient candidates)")
-                return None
-        
+                print(f"\n[OK] Menu generated successfully")
+                print(f"   Daily Total: {menu_plan.total_daily_calories:.0f} kcal")
+                print(f"   Protein: {menu_plan.total_daily_protein_g:.1f}g")
+            
+            return menu_plan
+            
         except Exception as e:
-            print(f"❌ Greedy Algorithm error: {e}")
+            print(f"[ERROR] Greedy Algorithm error: {str(e)}")
             import traceback
             traceback.print_exc()
             return None
     
-    def get_last_result(self) -> Optional[MenuPlan]:
-        """Return last generated MenuPlan"""
-        return self.last_result
+    def rebalance_portions(
+        self,
+        breakfast,
+        lunch,
+        dinner,
+        snack,
+        target_nutrition: Dict[str, float],
+        current_nutrition: Dict[str, float]
+    ):
+        """
+        PHASE 3: Post-selection portion rebalancing.
+        
+        After user makes substitutions (e.g., selects Water instead of drink),
+        adjust portions of remaining foods to recover nutritional deficits.
+        
+        IMPORTANT: Does NOT change which foods are selected, only portions.
+        
+        Args:
+            breakfast, lunch, dinner, snack: Current meals after substitutions
+            target_nutrition: Target daily nutrition
+            current_nutrition: Current nutrition after substitutions
+        
+        Returns:
+            PortionRebalanceResult with before/after comparison
+        """
+        print("\n[REBALANCE] Portion Rebalancing: Recovering nutritional deficits...")
+        
+        result = PortionRebalancer.rebalance_menu(
+            breakfast, lunch, dinner, snack,
+            target_nutrition, current_nutrition
+        )
+        
+        print(f"   Before: Energy {result.nutrition_coverage_before.get('energy', 0):.0f}%")
+        print(f"   After: Energy {result.nutrition_coverage_after.get('energy', 0):.0f}%")
+        print(f"   Changes: {len(result.rebalanced_items)} portions adjusted")
+        
+        return result
 
 
-# Singleton untuk convenience
-_instance = None
-
-def get_greedy_algorithm() -> GreedyAlgorithmInterface:
-    """Get or create singleton instance"""
-    global _instance
-    if _instance is None:
-        _instance = GreedyAlgorithmInterface()
-    return _instance
-
-
-__all__ = ['GreedyAlgorithmInterface', 'get_greedy_algorithm']
-
+def get_greedy_algorithm(food_database: pd.DataFrame, constraint_bag: Dict) -> GreedyAlgorithmInterface:
+    """Factory function for integration"""
+    return GreedyAlgorithmInterface(food_database, constraint_bag)

@@ -38,14 +38,17 @@ class CandidateGenerator:
         Returns:
             Main ingredient keyword (lowercase), atau None
         """
-        words = food_name.lower().split()
+        # Remove commas and split
+        food_name_clean = food_name.replace(',', ' ')
+        words = food_name_clean.lower().split()
         
         # Skip common cooking descriptors
         skip_words = {
             'cooked', 'raw', 'fried', 'boiled', 'grilled', 'baked', 'steamed',
             'fresh', 'frozen', 'ready-to-eat', 'ready', 'toasted', 'microwaved',
             'commercially', 'prepared', 'toasted', 'roasted', 'sauteed', 'sautéed',
-            'sliced', 'diced', 'chopped', 'made', 'with', 'and', 'or', 'the'
+            'sliced', 'diced', 'chopped', 'made', 'with', 'and', 'or', 'the',
+            'from', 'in', 'as', 'added', 'shelf', 'stable'
         }
         
         # Ambil word pertama yang meaningful (bukan descriptor)
@@ -222,13 +225,15 @@ class CandidateGenerator:
             return []
         
         # Generate candidates
-        return CandidateGenerator.generate_candidates(
+        candidates = CandidateGenerator.generate_candidates(
             candidates_df=candidates_df,
             target_calories=target_calories,
             num_candidates=num_candidates,
             exclusion_list=exclusion_names,
             ingredient_diversity=True
         )
+        
+        return candidates
 
 
 # Test
