@@ -1,62 +1,4 @@
-﻿"""
-GREEDY ALGORITHM - CLI TEST INTERFACE
-======================================
-
-Comprehensive CLI for testing the 7-Phase DSS Meal Optimization Pipeline:
-1. User Profile → 2. Nutrition Constraints → 3. Greedy Optimization
-4. Portion Optimization → 5. Nutrition Recalculation → 6. Final Recommendation
-7. User Substitution (stub for future implementation)
-
-USAGE MODES:
-============
-
-1. Normal User (Default):
-   $ python test_cli.py
-   or
-   $ python test_cli.py normal
-
-2. Interactive Mode (Custom Input):
-   $ python test_cli.py interactive
-   
-   Then enter:
-   - Gender (M/F)
-   - Age
-   - Weight (kg)
-   - Height (cm)
-   - Activity Factor
-   - Disease (normal, dm2, hypertension, ckd, obesity)
-
-3. Pre-configured Disease Tests:
-   $ python test_cli.py disease       # Diabetes (dm2)
-   $ python test_cli.py hypertension  # Hypertension
-   $ python test_cli.py ckd           # Chronic Kidney Disease
-   $ python test_cli.py obesity       # Obesity
-
-OUTPUT:
-=======
-
-For each meal (Breakfast, Lunch, Dinner, Snack):
-- Main Course (3 candidates with scaled portions & nutrients)
-- Side Dish (3 candidates with scaled portions & nutrients)
-- Drink (3 candidates with scaled portions & nutrients)
-- Snack (3 candidates with scaled portions & nutrients)
-
-Daily Totals:
-- Total Calories, Protein, Carbs, Fat
-- All scaled to actual portion sizes (NOT per 100g)
-
-ARCHITECTURE:
-=============
-
-Phase 1: Generate 3 diverse food candidates per course (per-100g basis)
-Phase 2: Optimize portions → portion_g = (target_kcal / kcal_per_100g) * 100
-Phase 3: Scale all nutrients → nutrient_actual = nutrient_per_100g * (portion_g / 100)
-Phase 4: Return MenuPlan with all courses having scaled values
-
-All values in output are ACTUAL portions (grams/ml) with SCALED nutrients.
-"""
-
-import sys
+﻿import sys
 import os
 
 # Add model to path explicitly and ensure correct directory context
@@ -133,62 +75,18 @@ def test_greedy_algorithm():
         ns = NutritionService()
         print("[OK] NutritionService loaded")
         
-        print("\n[2/4] Creating user profile...")
-        # Support multiple input modes
-        test_mode = sys.argv[1] if len(sys.argv) > 1 else "normal"
+        print("\n[2/4] Creating sample user profile...")
+        test_type = sys.argv[1] if len(sys.argv) > 1 else "normal"
         
-        if test_mode == "interactive":
-            # Interactive mode: ask user for input
-            print("\nEnter user profile (or press Enter for defaults):")
-            gender = input("Gender (M/F) [M]: ").strip().upper() or "M"
-            age = int(input("Age [25]: ").strip() or "25")
-            weight = float(input("Weight (kg) [70.0]: ").strip() or "70.0")
-            height = float(input("Height (cm) [175.0]: ").strip() or "175.0")
-            activity = float(input("Activity Factor [1.6]: ").strip() or "1.6")
-            
-            print("\nAvailable diseases: normal, dm2, hypertension, ckd, obesity")
-            disease = input("Disease [normal]: ").strip().lower() or "normal"
-            
-            user = {
-                'age': age, 'gender': gender, 'weight_kg': weight, 'height_cm': height,
-                'activity_factor': activity, 'disease': disease
-            }
-            print(f"[OK] User profile created: {gender} {age}y {weight}kg {height}cm Activity:{activity} Disease:{disease}")
-        
-        elif test_mode == "disease":
-            # Pre-configured diabetes test
+        if test_type == "disease":
+            # Diabetes user
             user = {
                 'age': 45, 'gender': 'F', 'weight_kg': 65.0, 'height_cm': 160.0,
                 'activity_factor': 1.4, 'disease': 'dm2'
             }
             print("Profile: Female, 45y, 65kg, 160cm, Activity: 1.4, Disease: dm2")
-        
-        elif test_mode == "hypertension":
-            # Pre-configured hypertension test
-            user = {
-                'age': 50, 'gender': 'M', 'weight_kg': 85.0, 'height_cm': 180.0,
-                'activity_factor': 1.5, 'disease': 'hypertension'
-            }
-            print("Profile: Male, 50y, 85kg, 180cm, Activity: 1.5, Disease: hypertension")
-        
-        elif test_mode == "ckd":
-            # Pre-configured CKD test
-            user = {
-                'age': 55, 'gender': 'M', 'weight_kg': 75.0, 'height_cm': 172.0,
-                'activity_factor': 1.4, 'disease': 'ckd'
-            }
-            print("Profile: Male, 55y, 75kg, 172cm, Activity: 1.4, Disease: ckd")
-        
-        elif test_mode == "obesity":
-            # Pre-configured obesity test
-            user = {
-                'age': 40, 'gender': 'F', 'weight_kg': 95.0, 'height_cm': 162.0,
-                'activity_factor': 1.3, 'disease': 'obesity'
-            }
-            print("Profile: Female, 40y, 95kg, 162cm, Activity: 1.3, Disease: obesity")
-        
         else:
-            # Default: normal user
+            # Normal user
             user = {
                 'age': 25, 'gender': 'M', 'weight_kg': 70.0, 'height_cm': 175.0,
                 'activity_factor': 1.6, 'disease': 'normal'
