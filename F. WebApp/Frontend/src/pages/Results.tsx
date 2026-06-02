@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, RefreshCw } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
-import { generateRandomMealOptions, calculateNutrition, calculateDailyNeeds } from '../utils/mockData';
+import { mealDatabase, calculateNutrition, calculateDailyNeeds } from '../utils/mockData';
 import type { UserInputData } from './InputWizard';
 
 interface ResultsProps {
@@ -21,49 +21,26 @@ export function Results({ userData, onViewReport }: ResultsProps) {
     userData.activity!
   );
 
-  const [mealOptions, setMealOptions] = useState({
+  const mealOptions = {
     breakfast: {
-      mainCourse: generateRandomMealOptions('breakfast', 'mainCourse'),
-      sideDish: generateRandomMealOptions('breakfast', 'sideDish'),
-      drink: generateRandomMealOptions('breakfast', 'drink'),
+      mainCourse: mealDatabase.breakfast.mainCourse.slice(0, 3),
+      sideDish: mealDatabase.breakfast.sideDish.slice(0, 3),
+      drink: mealDatabase.breakfast.drink.slice(0, 3),
     },
     lunch: {
-      mainCourse: generateRandomMealOptions('lunch', 'mainCourse'),
-      sideDish: generateRandomMealOptions('lunch', 'sideDish'),
-      drink: generateRandomMealOptions('lunch', 'drink'),
+      mainCourse: mealDatabase.lunch.mainCourse.slice(0, 3),
+      sideDish: mealDatabase.lunch.sideDish.slice(0, 3),
+      drink: mealDatabase.lunch.drink.slice(0, 3),
     },
     dinner: {
-      mainCourse: generateRandomMealOptions('dinner', 'mainCourse'),
-      sideDish: generateRandomMealOptions('dinner', 'sideDish'),
-      drink: generateRandomMealOptions('dinner', 'drink'),
+      mainCourse: mealDatabase.dinner.mainCourse.slice(0, 3),
+      sideDish: mealDatabase.dinner.sideDish.slice(0, 3),
+      drink: mealDatabase.dinner.drink.slice(0, 3),
     },
-    snack: generateRandomMealOptions('snack', 'snack'),
-  });
+    snack: mealDatabase.snack.slice(0, 3),
+  };
 
   const [selected, setSelected] = useState<any>({});
-  const [refreshing, setRefreshing] = useState<string>('');
-
-  const refreshMeal = (meal: string, category: string) => {
-    const key = `${meal}_${category}`;
-    setRefreshing(key);
-    setMealOptions((prev) => ({
-      ...prev,
-      [meal]: {
-        ...prev[meal as keyof typeof prev],
-        [category]: generateRandomMealOptions(meal, category),
-      },
-    }));
-    setTimeout(() => setRefreshing(''), 500);
-  };
-
-  const refreshSnack = () => {
-    setRefreshing('snack');
-    setMealOptions((prev) => ({
-      ...prev,
-      snack: generateRandomMealOptions('snack', 'snack'),
-    }));
-    setTimeout(() => setRefreshing(''), 500);
-  };
 
   const handleSelect = (meal: string, category: string, id: string) => {
     const key = `${meal}_${category}`;
@@ -106,17 +83,11 @@ export function Results({ userData, onViewReport }: ResultsProps) {
 
                   return (
                     <div key={category}>
-                      <div className="flex items-center justify-between mb-3">
+                      <div className="mb-3">
                         <h3 className="font-medium text-gray-900 dark:text-white">
                           {t.results.meals[category as keyof typeof t.results.meals]}
                           {category === 'drink' && <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">(Optional)</span>}
                         </h3>
-                        <button
-                          onClick={() => refreshMeal(meal, category)}
-                          className="p-2 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-lg transition-all text-emerald-600 dark:text-emerald-400"
-                        >
-                          <RefreshCw className={`w-4 h-4 ${refreshing === key ? 'animate-spin' : ''}`} />
-                        </button>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -147,14 +118,8 @@ export function Results({ userData, onViewReport }: ResultsProps) {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
             <h2 className="text-2xl font-bold mb-6 text-emerald-700 dark:text-emerald-400">{t.results.meals.snack}</h2>
 
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-medium text-gray-900 dark:text-white">Options</h3>
-              <button
-                onClick={refreshSnack}
-                className="p-2 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-lg transition-all text-emerald-600 dark:text-emerald-400"
-              >
-                <RefreshCw className={`w-4 h-4 ${refreshing === 'snack' ? 'animate-spin' : ''}`} />
-              </button>
+            <div className="mb-3">
+              <h3 className="font-medium text-gray-900 dark:text-white">3 static options</h3>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

@@ -1,208 +1,197 @@
+#!/usr/bin/env python3
 """
-Greedy Algorithm Usage Example
-Demonstrates how to use Greedy Algorithm untuk generate menu recommendations
+CLEAN EXAMPLE: How to use Greedy Algorithm
+==============================================
+
+Data Flow:
+1. User input (gender, age, weight, height, activity, disease)
+2. NutritionService.calculate_nutrition_needs() → returns constraint_bag
+3. GreedyAlgorithmInterface.initialize(food_db, constraint_bag)
+4. GreedyAlgorithmInterface.generate_menu_plan() → returns MenuPlan
+
+This example shows the complete workflow.
 """
 
-from greedy_interface import GreedyAlgorithmInterface, get_greedy_algorithm
-import json
+import sys
+import os
+
+# Add directories
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+root_dir = os.path.dirname(parent_dir)
+system_flow_dir = os.path.join(root_dir, 'C. System Flow')
+
+sys.path.insert(0, current_dir)
+sys.path.insert(0, parent_dir)
+sys.path.insert(0, root_dir)
+sys.path.insert(0, system_flow_dir)
 
 
-def example_greedy_with_nutrition_service():
+def main():
     """
-    Example: Integrate Greedy Algorithm dengan NutritionService
-    
-    Ini adalah cara recommended untuk menggunakan Greedy Algorithm dari main sistem.
+    Complete example: From user input to menu generation
     """
     
-    print("=" * 70)
-    print("EXAMPLE: Greedy Algorithm dengan NutritionService")
-    print("=" * 70)
+    print("\n" + "="*80)
+    print("GREEDY ALGORITHM - USAGE EXAMPLE")
+    print("="*80 + "\n")
     
-    # 1. Setup NutritionService (dari main sistem)
-    try:
-        from nutrition_service import NutritionService
-    except ImportError:
-        print("❌ Tidak bisa import NutritionService, run dari project root")
-        return
+    # ========== STEP 1: USER INPUT ==========
+    print("STEP 1: Prepare User Input")
+    print("-" * 80)
     
-    # 2. User input simulasi
     user_input = {
         'gender': 'M',
-        'age': 30,
-        'weight': 70.0,
-        'height': 170.0,
-        'activity_factor': 1.845,  # FAO/WHO/UNU sedang
+        'age': 35,
+        'weight': 75.0,
+        'height': 175.0,
+        'activity_factor': 1.55,  # Lightly active
         'disease': 'normal',
-        'food_preferences': ['Asian']
+        'food_preferences': ['Indonesian', 'Asian']
     }
     
-    # 3. Load nutrition service
+    print(f"User: {user_input['gender']}, {user_input['age']}y, {user_input['weight']}kg")
+    print(f"Height: {user_input['height']}cm, Activity: {user_input['activity_factor']}")
+    print(f"Disease: {user_input['disease']}\n")
+    
+    
+    # ========== STEP 2: CALCULATE NUTRITION NEEDS ==========
+    print("\nSTEP 2: Get Nutrition Guidelines from NutritionService")
+    print("-" * 80)
+    
+    from nutrition_service import NutritionService
+    
     service = NutritionService()
     result = service.calculate_nutrition_needs(user_input)
     
-    if not result['success']:
-        print(f"❌ Nutrition calculation failed: {result.get('error')}")
+    if not result.get('success'):
+        print(f"Error: {result.get('error')}")
         return
     
-    print(f"\n✓ User Profile:")
-    print(f"  Name: {result.get('anthropometrics', {}).get('bmi', 'N/A')}")
-    print(f"  TDEE: {result.get('energy', {}).get('tdee', 'N/A')} kcal/day")
+    tdee = result['energy']['tdee']
+    constraint_bag = result['guidelines']  # ← This is what we pass to algorithm
+    food_database = result['food_data']['dataframe']
     
-    # 4. Initialize Greedy Algorithm
-    greedy = GreedyAlgorithmInterface()
+    print(f"✓ TDEE: {tdee:.0f} kcal/day")
+    print(f"✓ BMR: {result['energy'].get('bmr', 'N/A'):.0f} kcal")
+    print(f"✓ BMI: {result['anthropometrics'].get('bmi', 'N/A')}")
+    print(f"✓ Constraint bag: {len(constraint_bag.get('nutrients', {}))} nutrient constraints")
+    print(f"✓ Food database: {len(food_database)} items\n")
     
-    success = greedy.initialize(
-        food_database=result.get('food_data', {}).get('dataframe'),
-        nutrition_guidelines=result.get('guidelines', {})
-    )
     
-    if not success:
-        print("❌ Failed to initialize Greedy Algorithm")
+    # ========== STEP 3: INITIALIZE GREEDY ALGORITHM ==========
+    print("\nSTEP 3: Initialize Greedy Algorithm")
+    print("-" * 80)
+    
+    from greedy_interface import get_greedy_algorithm
+    
+    greedy = get_greedy_algorithm()
+    
+    if not greedy.initialize(food_database, constraint_bag):
+        print("Failed to initialize Greedy Algorithm")
         return
     
-    # 5. Generate menu
-    tdee = result.get('energy', {}).get('tdee', 2000)
+    print("✓ Greedy Algorithm initialized\n")
     
-    # Standard meal distribution (breakfast, lunch, snack, dinner)
-    meal_distribution = {
-        'breakfast': 0.25,
-        'lunch': 0.35,
-        'snack': 0.10,
-        'dinner': 0.30,
-    }
+    
+    # ========== STEP 4: GENERATE MENU PLAN ==========
+    print("\nSTEP 4: Generate Menu Plan")
+    print("-" * 80)
+    
+    # Get meal distribution from NutritionService
+    meal_distribution = result['user_params'].get('meal_distribution', {
+        'breakfast': 0.2375,
+        'lunch': 0.3375,
+        'snack': 0.1375,
+        'dinner': 0.2875
+    })
+    
+    print(f"Meal distribution: {meal_distribution}\n")
     
     menu_plan = greedy.generate_menu_plan(
-        user_profile=result.get('anthropometrics', {}),
+        user_profile=user_input,
         meal_distribution=meal_distribution,
         user_tdee=tdee
     )
     
-    if menu_plan:
-        print(f"\n✅ Menu Plan Generated!")
-        print(f"\nFull Menu Output:")
-        print(json.dumps(menu_plan.to_dict(), indent=2, default=str))
-    else:
-        print("❌ Failed to generate menu plan")
-
-
-def example_greedy_minimal():
-    """
-    Minimal example: Direct usage tanpa NutritionService
-    (Untuk testing/debugging hanya)
-    """
+    if not menu_plan:
+        print("Failed to generate menu plan")
+        return
     
-    print("\n" + "=" * 70)
-    print("EXAMPLE: Greedy Algorithm Minimal (Direct Usage)")
-    print("=" * 70)
     
-    # Simulate minimal inputs
-    print("Note: This is for development/debugging only")
-    print("In production, use example_greedy_with_nutrition_service() instead")
-
-
-# ========================================
-# COMPARISON: Greedy vs Genetic
-# ========================================
-
-def comparison_algorithms():
-    """
-    Comparison between Greedy dan Genetic Algorithm
-    """
+    # ========== STEP 5: DISPLAY RESULTS ==========
+    print("\nSTEP 5: Display Generated Menu Plan")
+    print("-" * 80)
     
-    print("\n" + "=" * 70)
-    print("ALGORITHM COMPARISON")
-    print("=" * 70)
+    print("\n📋 DAILY NUTRITIONAL SUMMARY:")
+    print(f"  Calories: {menu_plan.total_daily_calories:.0f} kcal / {tdee:.0f} kcal target")
+    print(f"  Protein: {menu_plan.total_daily_protein_g:.1f}g")
+    print(f"  Carbs: {menu_plan.total_daily_carb_g:.1f}g")
+    print(f"  Fat: {menu_plan.total_daily_fat_g:.1f}g")
     
-    print("""
-╔══════════════════════════════════════════════════════════════════════╗
-║                     GREEDY ALGORITHM                                ║
-╚══════════════════════════════════════════════════════════════════════╝
-
-  Strategi: Locally Optimal Choice (pick terbaik di setiap step)
-  
-  Mekanisme:
-  1. Untuk setiap meal slot (Breakfast Main, Breakfast Side, dst)
-  2. Generate candidates dengan similarity check
-  3. Score setiap candidate berdasarkan:
-     - Calorie match (60% weight)
-     - Nutrient satisfaction (30% weight)
-     - Ingredient diversity (10% weight)
-  4. Pick candidate dengan score tertinggi
-  5. Update exclusion list untuk diversity di slot berikutnya
-  
-  Kecepatan: CEPAT (O(n) per slot)
-  Kompleksitas: LOW
-  Memori: LOW
-  
-  Keuntungan:
-  ✓ Cepat (real-time response mungkin)
-  ✓ Deterministic (hasil konsisten untuk input sama)
-  ✓ Mudah di-debug
-  ✓ Cocok untuk MVP/prototype
-  
-  Kekurangan:
-  ✗ Tidak global optimal (local maxima)
-  ✗ Tidak explore kombinasi kompleks
-  ✗ Tidak bisa backtrack kalau pilihan awal buruk
-
-
-╔══════════════════════════════════════════════════════════════════════╗
-║                     GENETIC ALGORITHM                               ║
-╚══════════════════════════════════════════════════════════════════════╝
-
-  Strategi: Population-based Evolution (explore banyak kombinasi)
-  
-  Mekanisme:
-  1. Buat populasi awal menu plans random
-  2. Evaluasi fitness setiap menu dengan scoring kompleks
-  3. Selection: pick best-scored menus
-  4. Crossover: combine characteristics dari 2 parents
-  5. Mutation: random change untuk explore space
-  6. Repeat sampai convergent
-  
-  Kecepatan: LAMBAT (O(generations × population × slots))
-  Kompleksitas: HIGH
-  Memori: HIGH
-  
-  Keuntungan:
-  ✓ Global optimization (explore banyak area)
-  ✓ Bisa handle constraint kompleks
-  ✓ Adaptive (parameter bisa di-tune)
-  ✓ Production-grade solution
-  
-  Kekurangan:
-  ✗ Lambat (butuh multiple minutes)
-  ✗ Non-deterministic (hasil beda per run)
-  ✗ Kompleks untuk debug
-  ✗ Susah tune parameter
-
-╔══════════════════════════════════════════════════════════════════════╗
-║                     REKOMENDASI PENGGUNAAN                          ║
-╚══════════════════════════════════════════════════════════════════════╝
-
-Web Application / Real-time Response:
-  → Gunakan GREEDY (response dalam <500ms)
-
-Batch Processing / Pembuatan Laporan Mingguan:
-  → Gunakan GENETIC (quality lebih tinggi, waktu tidak kritis)
-
-Mobile App / Limited Resource:
-  → Gunakan GREEDY (hemat memory & CPU)
-
-Academic Research / Publication:
-  → GENETIC lebih impressive, GREEDY bisa sebagai baseline
-
-User Preference (Frontend Option):
-  → "Fast & Simple" → GREEDY
-  → "Optimal & Detailed" → GENETIC
-    """)
+    print(f"\n🍽️ MEALS:")
+    
+    # Breakfast
+    if hasattr(menu_plan, 'breakfast') and menu_plan.breakfast:
+        breakfast = menu_plan.breakfast
+        print(f"  Breakfast ({breakfast.actual_calories:.0f}kcal):")
+        if hasattr(breakfast, 'courses'):
+            for course_name, course in breakfast.courses.items():
+                if course and hasattr(course, 'candidates'):
+                    for item in course.candidates:
+                        print(f"    • {item.food_name}")
+    
+    # Lunch
+    if hasattr(menu_plan, 'lunch') and menu_plan.lunch:
+        lunch = menu_plan.lunch
+        print(f"  Lunch ({lunch.actual_calories:.0f}kcal):")
+        if hasattr(lunch, 'courses'):
+            for course_name, course in lunch.courses.items():
+                if course and hasattr(course, 'candidates'):
+                    for item in course.candidates:
+                        print(f"    • {item.food_name}")
+    
+    # Snack
+    if hasattr(menu_plan, 'snack') and menu_plan.snack:
+        snack = menu_plan.snack
+        print(f"  Snack ({snack.actual_calories:.0f}kcal):")
+        if hasattr(snack, 'candidates'):
+            for item in snack.candidates:
+                print(f"    • {item.food_name}")
+    
+    # Dinner
+    if hasattr(menu_plan, 'dinner') and menu_plan.dinner:
+        dinner = menu_plan.dinner
+        print(f"  Dinner ({dinner.actual_calories:.0f}kcal):")
+        if hasattr(dinner, 'courses'):
+            for course_name, course in dinner.courses.items():
+                if course and hasattr(course, 'candidates'):
+                    for item in course.candidates:
+                        print(f"    • {item.food_name}")
+    
+    # Constraint feasibility
+    print(f"\n✅ CONSTRAINT FEASIBILITY:")
+    if hasattr(menu_plan, 'feasible'):
+        status = "FEASIBLE ✅" if menu_plan.feasible else "INFEASIBLE ⚠️"
+        print(f"  Status: {status}")
+        
+        if hasattr(menu_plan, 'violations') and menu_plan.violations:
+            print(f"  Violations: {len(menu_plan.violations)}")
+            for violation in menu_plan.violations[:3]:
+                print(f"    - {violation}")
+    
+    print("\n" + "="*80)
+    print("✅ EXAMPLE COMPLETE")
+    print("="*80 + "\n")
 
 
 if __name__ == "__main__":
-    print("✓ Greedy Algorithm Examples Module")
-    print("\nRun one of these functions to test:")
-    print("  - example_greedy_with_nutrition_service()")
-    print("  - example_greedy_minimal()")
+    try:
+        main()
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
     print("  - comparison_algorithms()")
     
     # Print comparison untuk reference

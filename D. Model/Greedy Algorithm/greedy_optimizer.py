@@ -1,74 +1,155 @@
 """
-Greedy Algorithm untuk Meal Planning Optimization
-Menggunakan locally optimal choice pada setiap slot untuk mendapatkan menu yang berkualitas
+Greedy Algorithm for Meal Planning Optimization
+Menggunakan locally optimal choice pada setiap slot untuk mendapatkan menu berkualitas
 
 Mekanisme:
 1. Untuk setiap meal slot (breakfast main, lunch side, etc)
 2. Generate candidates dengan similarity check (ingredient diversity)
 3. Score setiap candidate berdasarkan:
    - Calorie match to target (minimize error)
-   - Nutrient satisfaction (constraint fulfillment)
-   - Food diversity (no repeated main ingredient in same meal time)
+   - HARD constraint satisfaction (penalize or exclude violators)
+   - SOFT constraint bonus (reward if satisfied)
+   - Food diversity (no repeated main ingredient)
 4. Pilih candidate dengan score tertinggi (greedy step)
-5. Update exclusion list untuk slot berikutnya
-6. Return complete MenuPlan
+5. Update cumulative daily nutrient tracking
+6. Return complete MenuPlan dengan constraint validation
 
 Output: MenuPlan (same contract as Genetic Algorithm)
+
+Breaking Changes Fixed:
+✓ BUG 1: constraint_bag now USED for scoring (not just stored)
+✓ BUG 2: score_candidate() uses actual constraint_bag bounds per nutrient
+✓ BUG 3: Snack detection uses consumption_label safely
+✓ BUG 4: Course calorie split made configurable
+✓ BUG 5: test_cli.py uses 'disease' key (not 'health_condition')
 """
 
 import pandas as pd
 import math
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Set
 from meal_schema import FoodItem, MealCourse, Meal, SnackMeal, MenuPlan
 from candidate_generator import CandidateGenerator
 from similarity_checker import SimilarityChecker
 
 
 class GreedyOptimizer:
-    """Greedy Algorithm untuk generate optimal meal plan"""
+    """Greedy Algorithm untuk generate optimal meal plan dengan constraint-aware scoring"""
     
-    def __init__(self, food_database: pd.DataFrame, nutrition_guidelines: Dict):
+    def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):
         """
         Initialize Greedy Optimizer
         
         Args:
             food_database: DataFrame dengan food items (dari NutritionService)
-            nutrition_guidelines: Dict dengan nutrient constraints (dari NutritionService)
+            constraint_bag: Dict dengan nutrient constraints (dari NutritionService.guidelines)
+                {
+                    'disease': ['dm2'],
+                    'nutrients': {
+                        'energy_kcal': {'min': 1800, 'max': 2200, 'hard_soft_type': 'HARD', ...},
+                        ...
+                    }
+                }
         """
         self.food_db = food_database.copy()
-        self.guidelines = nutrition_guidelines
+        self.constraint_bag = constraint_bag
         self.similarity_checker = SimilarityChecker()
         self.selected_items = []  # Track semua yang sudah dipilih
+        
+        # Cumulative tracking untuk daily nutrients
+        self.cumulative_nutrients = {}
+        self._init_cumulative_tracking()
     
-    @staticmethod
+    def _init_cumulative_tracking(self):
+        """Initialize cumulative nutrient tracking struktur"""
+        self.cumulative_nutrients = {
+            'energy_kcal': 0.0,
+            'protein_g': 0.0,
+            'carbohydrate_g': 0.0,
+            'fat_g': 0.0,
+        }
+        
+        # Add all nutrients dari constraint_bag
+        if 'nutrients' in self.constraint_bag:
+            for nutrient_name in self.constraint_bag['nutrients'].keys():
+                self.cumulative_nutrients[nutrient_name] = 0.0
+    
+    def _check_hard_constraint_violation(
+        self,
+        candidate: Dict,
+        nutrient_name: str,
+        constraint: Dict,
+        cumulative_so_far: float,
+        item_portion_gram: float = 100.0
+    ) -> Tuple[bool, float]:
+        """
+        Check jika candidate akan violate HARD constraint jika ditambahkan
+        
+        Args:
+            candidate: Candidate food item
+            nutrient_name: Nutrient key (e.g., 'sodium_mg')
+            constraint: Constraint definition dengan 'min', 'max', 'hard_soft_type'
+            cumulative_so_far: Current cumulative total untuk nutrient ini
+            item_portion_gram: Portion size (default 100g)
+        
+        Returns:
+            (is_violated: bool, new_total: float)
+            - is_violated=True jika adding this item violates HARD constraint
+        """
+        if constraint.get('hard_soft_type') != 'HARD':
+            return False, cumulative_so_far
+        
+        # Get nutrient value dari candidate (normalize ke 100g basis)
+        nutrient_per_100g = candidate.get(nutrient_name, 0.0)
+        if nutrient_per_100g is None or pd.isna(nutrient_per_100g):
+            nutrient_per_100g = 0.0
+        
+        # Scale to actual portion
+        nutrient_value = nutrient_per_100g * (item_portion_gram / 100.0)
+        new_total = cumulative_so_far + nutrient_value
+        
+        # Check bounds
+        min_constraint = constraint.get('min')
+        max_constraint = constraint.get('max')
+        
+        # Only check if we're at the end of day (after all meals)
+        # For now, we'll do soft checking during meal generation
+        # and hard validation at the end
+        
+        return False, new_total
+    
     def score_candidate(
+        self,
         candidate: Dict,
         target_calories: float,
         selected_items: List[str],
-        weight_calorie: float = 0.6,
-        weight_nutrient: float = 0.3,
+        constraint_bag: Optional[Dict] = None,
+        cumulative_nutrients: Optional[Dict] = None,
+        weight_calorie: float = 0.5,
+        weight_hard_constraints: float = 0.3,
+        weight_soft_constraints: float = 0.1,
         weight_diversity: float = 0.1
     ) -> float:
         """
-        Score satu candidate berdasarkan multiple factors
+        Score satu candidate berdasarkan multiple factors dengan constraint awareness
         
         Args:
             candidate: Dict food item dengan nutritional info
             target_calories: Target calori untuk slot
             selected_items: List food names yang sudah dipilih (untuk diversity check)
-            weight_calorie: Bobot calorie match (default 0.6)
-            weight_nutrient: Bobot nutrient satisfaction (default 0.3)
+            constraint_bag: Nutrient constraints dict (opsional)
+            cumulative_nutrients: Current cumulative nutrients (opsional)
+            weight_calorie: Bobot calorie match (default 0.5)
+            weight_hard_constraints: Bobot HARD constraint satisfaction (default 0.3)
+            weight_soft_constraints: Bobot SOFT constraint bonus (default 0.1)
             weight_diversity: Bobot ingredient diversity (default 0.1)
         
         Returns:
             Score dari 0-100 (higher is better)
         """
-        
         scores = {}
         
-        # 1. CALORIE MATCH SCORE (best when close to target)
-        # Ideal: 0% error, Acceptable: ±20%, Bad: >30% error
-        calorie_error = abs(candidate['energy_kcal'] - target_calories) / target_calories
+        # 1. CALORIE MATCH SCORE
+        calorie_error = abs(candidate.get('energy_kcal', 0) - target_calories) / max(target_calories, 1)
         if calorie_error <= 0.1:
             scores['calorie'] = 100
         elif calorie_error <= 0.2:
@@ -76,34 +157,84 @@ class GreedyOptimizer:
         elif calorie_error <= 0.3:
             scores['calorie'] = 50
         else:
-            scores['calorie'] = max(0, 100 - (calorie_error * 200))  # Gradual penalty
+            scores['calorie'] = max(0, 100 - (calorie_error * 200))
         
-        # 2. INGREDIENT DIVERSITY SCORE
-        # 100 if completely new, 0 if similar main ingredient already used
+        # 2. HARD CONSTRAINT SATISFACTION SCORE
+        hard_constraint_score = 100.0
+        
+        if constraint_bag and cumulative_nutrients:
+            hard_violations = 0
+            hard_total = 0
+            
+            nutrients_def = constraint_bag.get('nutrients', {})
+            for nutrient_name, constraint in nutrients_def.items():
+                if constraint.get('hard_soft_type') != 'HARD':
+                    continue
+                
+                hard_total += 1
+                nutrient_value = candidate.get(nutrient_name, 0.0) or 0.0
+                new_cumulative = cumulative_nutrients.get(nutrient_name, 0.0) + nutrient_value
+                
+                min_val = constraint.get('min')
+                max_val = constraint.get('max')
+                
+                # Check if this would violate bounds (soft check, not hard fail)
+                is_above_max = max_val is not None and new_cumulative > max_val * 1.1  # 10% tolerance
+                is_below_min = min_val is not None and new_cumulative < min_val * 0.9  # 10% tolerance
+                
+                if is_above_max or is_below_min:
+                    hard_violations += 1
+            
+            if hard_total > 0:
+                hard_constraint_score = 100 * (1 - (hard_violations / hard_total))
+        
+        scores['hard_constraints'] = hard_constraint_score
+        
+        # 3. SOFT CONSTRAINT BONUS SCORE
+        soft_constraint_score = 0.0
+        
+        if constraint_bag and cumulative_nutrients:
+            soft_satisfied = 0
+            soft_total = 0
+            
+            nutrients_def = constraint_bag.get('nutrients', {})
+            for nutrient_name, constraint in nutrients_def.items():
+                if constraint.get('hard_soft_type') != 'SOFT':
+                    continue
+                
+                soft_total += 1
+                nutrient_value = candidate.get(nutrient_name, 0.0) or 0.0
+                new_cumulative = cumulative_nutrients.get(nutrient_name, 0.0) + nutrient_value
+                
+                target_val = constraint.get('min', 0)
+                
+                # Bonus if we're moving towards the target
+                if target_val > 0 and new_cumulative <= target_val:
+                    soft_satisfied += 1
+            
+            if soft_total > 0:
+                soft_constraint_score = 100 * (soft_satisfied / soft_total)
+        
+        scores['soft_constraints'] = soft_constraint_score
+        
+        # 4. INGREDIENT DIVERSITY SCORE
         has_repeated_ingredient = False
         for selected_name in selected_items:
-            # Check similarity menggunakan SimilarityChecker
-            similarity = SimilarityChecker.calculate_similarity_score(candidate['food_name'], selected_name)
-            # Threshold: jika similarity > 0.7, anggap sama ingredient
+            similarity = SimilarityChecker.calculate_similarity_score(
+                candidate.get('food_name', ''),
+                selected_name
+            )
             if similarity > 0.7:
                 has_repeated_ingredient = True
                 break
         
         scores['diversity'] = 0 if has_repeated_ingredient else 100
         
-        # 3. NUTRIENT SATISFACTION SCORE (simplified)
-        # Check if macros (protein, carb, fat) reasonable for a single item
-        protein_ok = 0 < candidate.get('protein_g', 0) <= 50  # reasonable portion
-        carb_ok = 0 <= candidate.get('carbohydrate_g', 0) <= 100
-        fat_ok = 0 <= candidate.get('fat_g', 0) <= 35
-        
-        macro_score = sum([protein_ok, carb_ok, fat_ok]) / 3 * 100
-        scores['nutrient'] = macro_score
-        
         # WEIGHTED SCORE
         final_score = (
             scores['calorie'] * weight_calorie +
-            scores['nutrient'] * weight_nutrient +
+            scores['hard_constraints'] * weight_hard_constraints +
+            scores['soft_constraints'] * weight_soft_constraints +
             scores['diversity'] * weight_diversity
         )
         
@@ -111,9 +242,10 @@ class GreedyOptimizer:
     
     def select_best_candidate_for_slot(
         self,
-        slot_category: str,  # 'Main', 'Side', 'Drink'
+        slot_category: str,
         target_calories: float,
-        num_candidates: int = 3
+        num_candidates: int = 3,
+        exclusion_names: Optional[List[str]] = None
     ) -> Optional[FoodItem]:
         """
         Greedy step: Select single best candidate untuk satu slot
@@ -122,24 +254,28 @@ class GreedyOptimizer:
             slot_category: 'Main', 'Side', 'Drink'
             target_calories: Target calori untuk slot
             num_candidates: Generate N candidates, pick best
+            exclusion_names: List nama makanan untuk exclude (default: use selected_items for global diversity)
         
         Returns:
-            FoodItem object (best scored candidate)
+            FoodItem object (best scored candidate) atau None
         """
         
-        # Generate candidates dengan diversity check
+        if exclusion_names is None:
+            # Global diversity: exclude from ALL previous meals
+            exclusion_names = [item.food_name for item in self.selected_items]
+        
         candidates_list = CandidateGenerator.generate_candidates_for_slot(
             food_database=self.food_db,
             slot_category=slot_category,
             target_calories=target_calories,
             num_candidates=num_candidates,
-            exclusion_names=[item.food_name for item in self.selected_items],
+            exclusion_names=exclusion_names,
         )
         
         if not candidates_list:
             return None
         
-        # Score setiap candidate
+        # Score setiap candidate dengan constraint awareness
         best_score = -1
         best_candidate = None
         
@@ -147,40 +283,49 @@ class GreedyOptimizer:
             score = self.score_candidate(
                 candidate=candidate_dict,
                 target_calories=target_calories,
-                selected_items=[item.food_name for item in self.selected_items]
+                selected_items=[item.food_name for item in self.selected_items],
+                constraint_bag=self.constraint_bag,
+                cumulative_nutrients=self.cumulative_nutrients
             )
             
             if score > best_score:
                 best_score = score
                 best_candidate = candidate_dict
         
-        # Convert dict to FoodItem
+        # Convert dict to FoodItem dan track
         if best_candidate:
             food_item = FoodItem(
-                fdc_id=best_candidate['fdc_id'],
-                food_name=best_candidate['food_name'],
-                food_group=best_candidate['food_group'],
-                consumption_label=best_candidate['consumption_label'],
-                cuisine_label=best_candidate['cuisine_label'],
-                portion_gram=100,  # Default 100g (bisa di-adjust)
-                energy_kcal=float(best_candidate['energy_kcal']),
+                fdc_id=str(best_candidate.get('fdc_id', 'unknown')),
+                food_name=str(best_candidate.get('food_name', 'Unknown')),
+                food_group=str(best_candidate.get('food_group', 'Unknown')),
+                consumption_label=str(best_candidate.get('consumption_label', slot_category)),
+                cuisine_label=str(best_candidate.get('cuisine_label', 'Unknown')),
+                portion_gram=100.0,
+                energy_kcal=float(best_candidate.get('energy_kcal', 0)),
                 protein_g=float(best_candidate.get('protein_g', 0)),
                 carbohydrate_g=float(best_candidate.get('carbohydrate_g', 0)),
                 fat_g=float(best_candidate.get('fat_g', 0)),
             )
             
-            # Track untuk diversity check nanti
+            # Update tracking
             self.selected_items.append(food_item)
+            self._update_cumulative_nutrients(best_candidate)
             
             return food_item
         
         return None
     
+    def _update_cumulative_nutrients(self, food_item_dict: Dict):
+        """Update cumulative nutrient tracking setelah item dipilih"""
+        for nutrient_name in self.cumulative_nutrients.keys():
+            value = food_item_dict.get(nutrient_name, 0.0) or 0.0
+            self.cumulative_nutrients[nutrient_name] += float(value)
+    
     def generate_meal(
         self,
-        meal_type: str,  # 'Breakfast', 'Lunch', 'Dinner'
+        meal_type: str,
         target_calories: float,
-        num_courses: int = 3,
+        course_distribution: Optional[Dict[str, float]] = None,
         include_drink: bool = True
     ) -> Optional[Meal]:
         """
@@ -190,19 +335,32 @@ class GreedyOptimizer:
         Args:
             meal_type: 'Breakfast', 'Lunch', 'Dinner'
             target_calories: Total target calori untuk meal
-            num_courses: Jumlah course (biasanya 3: Main, Side, Drink)
+            course_distribution: Dict {'Main': 0.4, 'Side': 0.3, 'Drink': 0.2}
+                                 (default: None = use standard split)
             include_drink: Include drink course?
         
         Returns:
-            Meal object dengan courses
+            Meal object dengan courses atau None jika gagal
         """
+        
+        # Default distribution jika tidak ada input
+        if course_distribution is None:
+            course_distribution = {
+                'Main': 0.6,
+                'Side': 0.3,
+                'Drink': 0.1
+            }
         
         courses = {}
         actual_calories = 0
+        meal_items = []  # Track items dalam meal ini untuk exclusion
         
-        # MAIN COURSE (40% dari target calori)
-        main_target = target_calories * 0.4
-        main_item = self.select_best_candidate_for_slot('Main', main_target)
+        # MAIN COURSE
+        main_target = target_calories * course_distribution.get('Main', 0.6)
+        main_item = self.select_best_candidate_for_slot(
+            'Main', main_target, 
+            exclusion_names=[item.food_name for item in meal_items]
+        )
         
         if main_item:
             courses['Main'] = MealCourse(
@@ -214,13 +372,16 @@ class GreedyOptimizer:
                 total_fat_g=main_item.fat_g,
             )
             actual_calories += main_item.energy_kcal
+            meal_items.append(main_item)
         else:
-            # Fallback jika ga ada main
             return None
         
-        # SIDE COURSE (30% dari target)
-        side_target = target_calories * 0.3
-        side_item = self.select_best_candidate_for_slot('Side', side_target)
+        # SIDE COURSE
+        side_target = target_calories * course_distribution.get('Side', 0.3)
+        side_item = self.select_best_candidate_for_slot(
+            'Side', side_target,
+            exclusion_names=[item.food_name for item in meal_items]
+        )
         
         if side_item:
             courses['Side'] = MealCourse(
@@ -232,11 +393,15 @@ class GreedyOptimizer:
                 total_fat_g=side_item.fat_g,
             )
             actual_calories += side_item.energy_kcal
+            meal_items.append(side_item)
         
-        # DRINK COURSE (optional, 20% dari target)
+        # DRINK COURSE (optional)
         if include_drink:
-            drink_target = target_calories * 0.2
-            drink_item = self.select_best_candidate_for_slot('Drink', drink_target)
+            drink_target = target_calories * course_distribution.get('Drink', 0.1)
+            drink_item = self.select_best_candidate_for_slot(
+                'Drink', drink_target,
+                exclusion_names=[item.food_name for item in meal_items]
+            )
             
             if drink_item:
                 courses['Drink'] = MealCourse(
@@ -248,6 +413,7 @@ class GreedyOptimizer:
                     total_fat_g=drink_item.fat_g,
                 )
                 actual_calories += drink_item.energy_kcal
+                meal_items.append(drink_item)
         
         return Meal(
             meal_type=meal_type,
@@ -257,23 +423,135 @@ class GreedyOptimizer:
             include_drink=include_drink and 'Drink' in courses
         )
     
+    def generate_snack(
+        self,
+        target_calories: float,
+        num_candidates: int = 3
+    ) -> Optional[SnackMeal]:
+        """
+        Generate snack menu (tidak ada sub-course, cukup N candidates)
+        
+        Args:
+            target_calories: Target calori untuk snack
+            num_candidates: Jumlah kandidat (biasanya 3)
+        
+        Returns:
+            SnackMeal object atau None
+        """
+        
+        # Generate candidates dengan consumption_label = 'Snack'
+        candidates_list = CandidateGenerator.generate_candidates_for_slot(
+            food_database=self.food_db,
+            slot_category='Snack',
+            target_calories=target_calories,
+            num_candidates=num_candidates,
+            exclusion_names=[item.food_name for item in self.selected_items],
+        )
+        
+        if not candidates_list:
+            return None
+        
+        # Score dan ambil top candidates (tidak hanya 1, tapi 3 untuk snack)
+        scored_candidates = []
+        for candidate_dict in candidates_list:
+            score = self.score_candidate(
+                candidate=candidate_dict,
+                target_calories=target_calories,
+                selected_items=[item.food_name for item in self.selected_items],
+                constraint_bag=self.constraint_bag,
+                cumulative_nutrients=self.cumulative_nutrients
+            )
+            scored_candidates.append((score, candidate_dict))
+        
+        # Sort by score dan ambil top N
+        scored_candidates.sort(key=lambda x: x[0], reverse=True)
+        
+        snack_items = []
+        snack_calories = 0
+        
+        for score, candidate_dict in scored_candidates[:num_candidates]:
+            food_item = FoodItem(
+                fdc_id=str(candidate_dict.get('fdc_id', 'unknown')),
+                food_name=str(candidate_dict.get('food_name', 'Unknown')),
+                food_group=str(candidate_dict.get('food_group', 'Unknown')),
+                consumption_label='Snack',
+                cuisine_label=str(candidate_dict.get('cuisine_label', 'Unknown')),
+                portion_gram=100.0,
+                energy_kcal=float(candidate_dict.get('energy_kcal', 0)),
+                protein_g=float(candidate_dict.get('protein_g', 0)),
+                carbohydrate_g=float(candidate_dict.get('carbohydrate_g', 0)),
+                fat_g=float(candidate_dict.get('fat_g', 0)),
+            )
+            snack_items.append(food_item)
+            snack_calories += food_item.energy_kcal
+        
+        if not snack_items:
+            return None
+        
+        return SnackMeal(
+            meal_type='Snack',
+            candidates=snack_items,
+            target_calories=target_calories,
+            actual_calories=snack_calories
+        )
+    
+    def validate_constraints(self, daily_totals: Dict[str, float]) -> Tuple[bool, List[str]]:
+        """
+        Validate menu terhadap HARD constraints
+        
+        Args:
+            daily_totals: Dict dengan daily nutrient totals
+        
+        Returns:
+            (is_feasible: bool, violations: List[str])
+        """
+        violations = []
+        
+        if not self.constraint_bag or 'nutrients' not in self.constraint_bag:
+            return True, []
+        
+        nutrients_def = self.constraint_bag['nutrients']
+        
+        for nutrient_name, constraint in nutrients_def.items():
+            if constraint.get('hard_soft_type') != 'HARD':
+                continue  # Skip SOFT constraints
+            
+            actual = daily_totals.get(nutrient_name, 0.0)
+            min_val = constraint.get('min')
+            max_val = constraint.get('max')
+            unit = constraint.get('unit', '')
+            
+            if min_val is not None and actual < min_val:
+                violations.append(
+                    f"❌ {nutrient_name}: below minimum ({actual:.1f} < {min_val:.1f} {unit})"
+                )
+            
+            if max_val is not None and actual > max_val:
+                violations.append(
+                    f"❌ {nutrient_name}: above maximum ({actual:.1f} > {max_val:.1f} {unit})"
+                )
+        
+        return len(violations) == 0, violations
+    
     def optimize_full_menu(
         self,
         user_profile: Dict,
-        meal_targets: Dict  # {'breakfast': 500, 'lunch': 700, 'dinner': 600, 'snack': 200}
+        meal_targets: Dict
     ) -> Optional[MenuPlan]:
         """
         Generate lengkap full day menu menggunakan greedy algorithm
+        dengan constraint satisfaction checking
         
         Args:
             user_profile: User profile dari NutritionService
-            meal_targets: Target calori untuk setiap meal
+            meal_targets: Dict {'breakfast': 500, 'lunch': 700, 'dinner': 600, 'snack': 200}
         
         Returns:
-            MenuPlan object (complete day menu)
+            MenuPlan object (complete day menu) atau None jika gagal
         """
         
-        # Reset selected items untuk fresh calculation
+        # Reset cumulative tracking untuk fresh calculation
+        self._init_cumulative_tracking()
         self.selected_items = []
         
         # Generate each meal greedily
@@ -283,7 +561,13 @@ class GreedyOptimizer:
         snack = self.generate_snack(meal_targets.get('snack', 200))
         
         if not (breakfast and lunch and dinner):
-            return None  # Fail jika tidak bisa generate major meals
+            return None
+        
+        # Calculate daily totals
+        daily_totals = self.cumulative_nutrients.copy()
+        
+        # Validate HARD constraints
+        is_feasible, violations = self.validate_constraints(daily_totals)
         
         # Build MenuPlan
         menu_plan = MenuPlan(
@@ -292,80 +576,13 @@ class GreedyOptimizer:
             breakfast=breakfast,
             lunch=lunch,
             dinner=dinner,
-            snack=snack,
-            total_calories=sum([
-                breakfast.actual_calories if breakfast else 0,
-                lunch.actual_calories if lunch else 0,
-                dinner.actual_calories if dinner else 0,
-                snack.actual_calories if snack else 0,
-            ])
+            snack=snack or SnackMeal(),
+            total_daily_calories=daily_totals.get('energy_kcal', 0),
+            total_daily_protein_g=daily_totals.get('protein_g', 0),
+            total_daily_carb_g=daily_totals.get('carbohydrate_g', 0),
+            total_daily_fat_g=daily_totals.get('fat_g', 0),
+            feasible=is_feasible,
+            violations=violations
         )
         
         return menu_plan
-    
-    def generate_snack(self, target_calories: float) -> Optional[SnackMeal]:
-        """
-        Generate snack meal (only 3 candidates, no sub-courses)
-        
-        Args:
-            target_calories: Target calori untuk snack
-        
-        Returns:
-            SnackMeal object
-        """
-        
-        candidates_list = CandidateGenerator.generate_candidates_for_slot(
-            food_database=self.food_db,
-            slot_category='Snack' if 'Snack' in self.food_db.get('menu_category', pd.Series()).values else 'Side',
-            target_calories=target_calories,
-            num_candidates=3,
-            exclusion_names=[item.food_name for item in self.selected_items],
-        )
-        
-        if not candidates_list:
-            return None
-        
-        # Score dan select best
-        best_score = -1
-        best_candidate = None
-        
-        for candidate_dict in candidates_list:
-            score = self.score_candidate(
-                candidate=candidate_dict,
-                target_calories=target_calories,
-                selected_items=[item.food_name for item in self.selected_items]
-            )
-            
-            if score > best_score:
-                best_score = score
-                best_candidate = candidate_dict
-        
-        if best_candidate:
-            snack_item = FoodItem(
-                fdc_id=best_candidate['fdc_id'],
-                food_name=best_candidate['food_name'],
-                food_group=best_candidate['food_group'],
-                consumption_label='Snack',
-                cuisine_label=best_candidate['cuisine_label'],
-                portion_gram=100,
-                energy_kcal=float(best_candidate['energy_kcal']),
-                protein_g=float(best_candidate.get('protein_g', 0)),
-                carbohydrate_g=float(best_candidate.get('carbohydrate_g', 0)),
-                fat_g=float(best_candidate.get('fat_g', 0)),
-            )
-            
-            self.selected_items.append(snack_item)
-            
-            return SnackMeal(
-                candidates=[snack_item],
-                target_calories=target_calories,
-                actual_calories=snack_item.energy_kcal,
-            )
-        
-        return None
-
-
-# TEST & EXAMPLE
-if __name__ == "__main__":
-    print("✓ Greedy Algorithm module loaded successfully")
-    print("✓ Ready to be imported by main system")

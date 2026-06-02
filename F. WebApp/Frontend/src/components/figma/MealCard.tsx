@@ -1,6 +1,4 @@
-import { RefreshCw } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
 
 interface MealOption {
   id: string;
@@ -16,31 +14,16 @@ interface MealCardProps {
   options: MealOption[];
   selected?: string;
   onSelect?: (id: string) => void;
-  onRefresh?: () => void;
   optional?: boolean;
 }
 
-export function MealCard({ category, options, selected, onSelect, onRefresh, optional }: MealCardProps) {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    onRefresh?.();
-    setTimeout(() => setIsRefreshing(false), 500);
-  };
-
+export function MealCard({ category, options, selected, onSelect, optional }: MealCardProps) {
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div>
         <h4 className="font-medium text-emerald-900">
           {category} {optional && <span className="text-xs text-emerald-600">(Optional)</span>}
         </h4>
-        <button
-          onClick={handleRefresh}
-          className="p-2 hover:bg-emerald-100 rounded-lg transition-all text-emerald-600 hover:text-emerald-700"
-        >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-        </button>
       </div>
 
       <div className="grid grid-cols-1 gap-2">

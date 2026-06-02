@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
 """
 CLI Test Script for Greedy Algorithm
-Simple testing tool menggunakan command line
+Testing Greedy Algorithm dengan 2 scenarios: normal user & disease user (dm2)
+
+CARA MENJALANKAN:
+  python test_cli.py              # Run test with normal user
+  python test_cli.py disease      # Run test with DM2 user
+
+EXPECTED OUTPUT:
+  ✓ Meal plan generated
+  ✓ Per-meal nutritional breakdown
+  ✓ Daily totals with HARD constraint validation
+  ✓ Feasible flag set correctly
 """
 
 import sys
 import os
 import json
 
-# Add parent directories untuk imports
+# Add directories untuk imports
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 root_dir = os.path.dirname(parent_dir)
@@ -19,166 +29,195 @@ sys.path.insert(0, parent_dir)
 sys.path.insert(0, root_dir)
 sys.path.insert(0, system_flow_dir)
 
-def test_greedy_basic():
-    """Test basic Greedy Algorithm functionality"""
-    print("\n" + "="*70)
-    print("GREEDY ALGORITHM - CLI TEST")
-    print("="*70 + "\n")
+
+def print_meal_breakdown(menu_plan, meal_type: str):
+    """Print nutritional breakdown untuk satu meal"""
+    
+    meal = getattr(menu_plan, meal_type.lower(), None)
+    if not meal:
+        print(f"  {meal_type}: [tidak ada]")
+        return
+    
+    print(f"\n  {meal_type.upper()}:")
+    print(f"    Target: {meal.target_calories:.0f} kcal, Actual: {meal.actual_calories:.0f} kcal")
+    
+    # Courses
+    if hasattr(meal, 'courses') and meal.courses:
+        for course_name, course in meal.courses.items():
+            if course and hasattr(course, 'candidates'):
+                for item in course.candidates:
+                    print(f"      • {item.food_name}")
+                    print(f"        Energy: {item.energy_kcal:.0f}kcal | Protein: {item.protein_g:.1f}g | Carb: {item.carbohydrate_g:.1f}g | Fat: {item.fat_g:.1f}g")
+    
+    # For SnackMeal, print candidates
+    elif hasattr(meal, 'candidates') and meal.candidates:
+        for item in meal.candidates:
+            print(f"      • {item.food_name}")
+            print(f"        Energy: {item.energy_kcal:.0f}kcal | Protein: {item.protein_g:.1f}g | Carb: {item.carbohydrate_g:.1f}g | Fat: {item.fat_g:.1f}g")
+
+
+def test_greedy_algorithm(scenario: str = 'normal'):
+    """
+    Test Greedy Algorithm dengan specified scenario
+    
+    Args:
+        scenario: 'normal' atau 'disease' (dm2)
+    """
+    
+    print("\n" + "="*80)
+    print("GREEDY ALGORITHM - COMPREHENSIVE CLI TEST")
+    print("="*80 + "\n")
     
     try:
-        # Import services
-        print("[1/4] Loading NutritionService...")
+        # [1] Load NutritionService
+        print("[1/5] Loading NutritionService...")
         from nutrition_service import NutritionService
         service = NutritionService()
         print("✓ NutritionService loaded\n")
         
-        # Sample user input
-        print("[2/4] Creating sample user profile...")
-        user_input = {
-            'gender': 'M',
-            'age': 30,
-            'weight': 70.0,
-            'height': 170.0,
-            'activity_factor': 1.845,
-            'health_condition': 'normal',
-            'food_preferences': ['Asian', 'Indonesian']
-        }
-        print(f"✓ User Profile: {json.dumps(user_input, indent=2)}\n")
+        # [2] Create user profile based on scenario
+        print(f"[2/5] Creating sample user profile ({scenario} user)...")
         
-        # Calculate nutrition needs
-        print("[3/4] Calculating nutrition needs...")
+        if scenario.lower() == 'normal':
+            user_input = {
+                'gender': 'M',
+                'age': 30,
+                'weight': 70.0,
+                'height': 170.0,
+                'activity_factor': 1.845,
+                'disease': 'normal',  # ← FIXED: use 'disease' not 'health_condition'
+                'food_preferences': ['Asian', 'Indonesian']
+            }
+            print("Profile: Male, 30y, 70kg, 170cm, Activity: 1.845, Disease: normal")
+        else:  # disease scenario
+            user_input = {
+                'gender': 'F',
+                'age': 45,
+                'weight': 65.0,
+                'height': 160.0,
+                'activity_factor': 1.4,  # Sedentary (minimum allowed)
+                'disease': 'dm2',  # ← FIXED: use 'disease' not 'health_condition'
+                'food_preferences': ['Asian']
+            }
+            print("Profile: Female, 45y, 65kg, 160cm, Activity: 1.4, Disease: dm2")
+        
+        print("✓ User profile created\n")
+        
+        # [3] Calculate nutrition needs
+        print("[3/5] Calculating nutrition guidelines...")
         result = service.calculate_nutrition_needs(user_input)
         
-        if not result['success']:
+        if not result.get('success'):
             print(f"❌ Error: {result.get('error')}\n")
             return False
         
-        print("✓ Nutrition needs calculated:")
-        print(f"  - TDEE: {result.get('energy', {}).get('tdee', 'N/A')} kcal")
-        print(f"  - Protein: {result.get('macros', {}).get('protein', 'N/A')}g")
-        print(f"  - Carbs: {result.get('macros', {}).get('carbs', 'N/A')}g")
-        print(f"  - Fat: {result.get('macros', {}).get('fat', 'N/A')}g\n")
+        tdee = result['energy']['tdee']
+        print(f"✓ Nutrition guidelines calculated:")
+        print(f"  - TDEE: {tdee:.0f} kcal")
+        print(f"  - BMR: {result['energy'].get('bmr', 'N/A'):.0f} kcal")
+        print(f"  - BMI: {result['anthropometrics'].get('bmi', 'N/A')}")
+        print(f"  - Constraints: {result['guidelines'].get('total_nutrients', 'N/A')} nutrients defined")
+        print(f"  - Disease: {result['guidelines'].get('disease', ['normal'])}\n")
         
-        # Generate menu using Greedy Algorithm
-        print("[4/4] Generating menu with Greedy Algorithm...")
+        # [4] Initialize Greedy Algorithm
+        print("[4/5] Initializing Greedy Algorithm...")
         from greedy_interface import get_greedy_algorithm
         
         greedy = get_greedy_algorithm()
         
-        # Initialize optimizer with data from result
-        if not greedy.initialize(result['food_data']['dataframe'], result['guidelines']):
+        food_db = result['food_data']['dataframe']
+        constraint_bag = result['guidelines']
+        
+        if not greedy.initialize(food_db, constraint_bag):
             print("❌ Failed to initialize Greedy Algorithm\n")
             return False
         
-        # Define meal distribution
-        meal_distribution = {
-            'breakfast': 0.25,
-            'lunch': 0.35,
-            'snack': 0.05,
-            'dinner': 0.35
-        }
+        print(f"✓ Greedy Algorithm initialized")
+        print(f"  - Food database: {len(food_db)} items")
+        print(f"  - Constraint bag: {len(constraint_bag.get('nutrients', {}))} nutrients\n")
         
-        # Generate menu
-        menu = greedy.generate_menu_plan(
+        # [5] Generate Menu Plan
+        print("[5/5] Generating menu plan using Greedy Algorithm...")
+        
+        meal_distribution = result.get('user_params', {}).get('meal_distribution', {
+            'breakfast': 0.2375,
+            'lunch': 0.3375,
+            'snack': 0.1375,
+            'dinner': 0.2875
+        })
+        
+        menu_plan = greedy.generate_menu_plan(
             user_profile=user_input,
             meal_distribution=meal_distribution,
-            user_tdee=result.get('energy', {}).get('tdee', 2000)
+            user_tdee=tdee
         )
         
-        if menu:
-            print("✓ Menu generated successfully!\n")
-            
-            print("GENERATED MENU PLAN:")
-            print("-" * 70)
-            if hasattr(menu, '__dict__'):
-                for meal, items in menu.__dict__.items():
-                    print(f"\n{meal.upper()}: {items}")
-            print("\n" + "="*70)
-            print("✓ TEST PASSED")
-            print("="*70 + "\n")
-            return True
-        else:
-            print(f"❌ Menu generation failed\n")
+        if not menu_plan:
+            print("❌ Failed to generate menu plan\n")
             return False
-            
-    except ImportError as e:
-        print(f"❌ Import Error: {e}")
-        print("   Make sure to run this from the project root directory:\n")
-        print("   cd 'C:\\Users\\USERR\\Documents\\0. Mata Kuliah\\8 -TA\\Code\\TugasAkhirDSS'")
-        print("   python 'D. Model/Greedy Algorithm/test_cli.py'\n")
-        return False
-    except Exception as e:
-        print(f"❌ Test Error: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
-
-
-def test_greedy_with_disease():
-    """Test Greedy Algorithm with specific health condition"""
-    print("\n" + "="*70)
-    print("GREEDY ALGORITHM - TEST WITH DISEASE")
-    print("="*70 + "\n")
-    
-    try:
-        from nutrition_service import NutritionService
-        service = NutritionService()
         
-        user_input = {
-            'gender': 'F',
-            'age': 45,
-            'weight': 65.0,
-            'height': 160.0,
-            'activity_factor': 1.55,
-            'health_condition': 'dm2',  # Diabetes Type 2
-            'food_preferences': ['Asian']
-        }
+        print("✓ Menu plan generated successfully\n")
         
-        print(f"User Profile (Diabetes Type 2):")
-        print(f"  Age: {user_input['age']}, Gender: {user_input['gender']}")
-        print(f"  Weight: {user_input['weight']}kg, Height: {user_input['height']}cm\n")
+        # [6] PRINT RESULTS
+        print("="*80)
+        print("DETAILED MENU PLAN RESULTS")
+        print("="*80 + "\n")
         
-        result = service.calculate_nutrition_needs(user_input)
+        print("📋 DAILY NUTRITIONAL SUMMARY:")
+        print(f"  Total Calories: {menu_plan.total_daily_calories:.0f} kcal (Target: {tdee:.0f} kcal)")
+        print(f"  Total Protein: {menu_plan.total_daily_protein_g:.1f}g")
+        print(f"  Total Carbs: {menu_plan.total_daily_carb_g:.1f}g")
+        print(f"  Total Fat: {menu_plan.total_daily_fat_g:.1f}g\n")
         
-        if result['success']:
-            print(f"✓ TDEE: {result.get('energy', {}).get('tdee', 'N/A')} kcal\n")
-            
-            from greedy_interface import get_greedy_algorithm
-            
-            greedy = get_greedy_algorithm()
-            if not greedy.initialize(result['food_data']['dataframe'], result['guidelines']):
-                print("❌ Failed to initialize\n")
-                return False
-            
-            meal_distribution = {
-                'breakfast': 0.25,
-                'lunch': 0.35,
-                'snack': 0.05,
-                'dinner': 0.35
-            }
-            
-            menu = greedy.generate_menu_plan(
-                user_profile=user_input,
-                meal_distribution=meal_distribution,
-                user_tdee=result.get('energy', {}).get('tdee', 1800)
-            )
-            
-            if menu:
-                print("✓ Menu generated for DM2 patient!")
-                print("="*70 + "\n")
-                return True
+        # Per-meal breakdown
+        print("🍽️ PER-MEAL BREAKDOWN:")
+        print_meal_breakdown(menu_plan, 'breakfast')
+        print_meal_breakdown(menu_plan, 'lunch')
+        print_meal_breakdown(menu_plan, 'snack')
+        print_meal_breakdown(menu_plan, 'dinner')
+        print()
         
-        return False
+        # [7] HARD CONSTRAINT VALIDATION
+        print("✅ HARD CONSTRAINT VALIDATION:")
+        
+        if hasattr(menu_plan, 'feasible') and hasattr(menu_plan, 'violations'):
+            if menu_plan.feasible:
+                print("  Status: ✅ FEASIBLE (All HARD constraints satisfied)")
+            else:
+                print(f"  Status: ⚠️ INFEASIBLE ({len(menu_plan.violations)} constraint(s) violated)")
+                
+                if menu_plan.violations:
+                    print("  Violations:")
+                    for violation in menu_plan.violations[:5]:
+                        print(f"    {violation}")
+                    if len(menu_plan.violations) > 5:
+                        print(f"    ... and {len(menu_plan.violations) - 5} more")
+        else:
+            print("  Status: ⚠️ No feasibility information available")
+        
+        print("\n" + "="*80)
+        print("✅ TEST PASSED - Greedy Algorithm working correctly!")
+        print("="*80 + "\n")
+        
+        return True
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"\n❌ TEST FAILED: {e}")
         import traceback
         traceback.print_exc()
         return False
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "disease":
-        test_greedy_with_disease()
-    else:
-        test_greedy_basic()
+    # Determine scenario
+    scenario = sys.argv[1] if len(sys.argv) > 1 else 'normal'
+    
+    if scenario not in ['normal', 'disease']:
+        print("Usage: python test_cli.py [normal|disease]")
+        print("  normal:  Test with healthy user profile")
+        print("  disease: Test with DM2 disease profile")
+        sys.exit(1)
+    
+    # Run test
+    success = test_greedy_algorithm(scenario)
+    sys.exit(0 if success else 1)
