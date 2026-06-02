@@ -106,7 +106,7 @@ print("Dataset setelah filter haram:", data_no_haram.shape)
 # HAPUS KATEGORI TERTENTU
 # =====================
 
-categories_to_remove = ["Alcoholic Beverages", "Baby Foods"]
+categories_to_remove = ["Alcoholic Beverages", "Baby Foods", "Pork Products", "Spices and Herbs"]
 
 data_cleaned = data_no_haram[
 ~data_no_haram["food_group"].isin(categories_to_remove)

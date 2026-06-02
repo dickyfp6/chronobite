@@ -110,7 +110,7 @@ class FoodClassifier:
             f1_macro = f1_score(y_test, y_pred, average='macro')
             
             if verbose:
-                print(f"\n✓ Consumption model trained")
+                print(f"\n[OK] Consumption model trained")
                 print(f"  Training samples: {len(X_train)} | Test samples: {len(X_test)}")
                 print(f"  Test Accuracy: {acc:.4f}")
                 print(f"  F1-score (weighted): {f1_weighted:.4f}")
@@ -185,7 +185,7 @@ class FoodClassifier:
             f1_macro = f1_score(y_test, y_pred, average='macro')
             
             if verbose:
-                print(f"\n✓ Cuisine model trained (with IMBALANCE handling)")
+                print(f"\n[OK] Cuisine model trained (with IMBALANCE handling)")
                 print(f"  Training samples: {len(X_train)} | Test samples: {len(X_test)}")
                 print(f"  Test Accuracy: {acc:.4f}")
                 print(f"  F1-score (weighted): {f1_weighted:.4f}")
@@ -253,26 +253,217 @@ class FoodClassifier:
         # Combine
         return np.hstack([numeric_X, cat_X, text_X])
     
+    def _classify_consumption_rule(self, df):
+        """
+        Deterministic rule-based consumption label classification.
+        Replaces ML model with priority-ordered rules derived from dataset patterns.
+        
+        Rules organized in 3 tiers:
+        - Tier 1: Direct mapping (high confidence)
+        - Tier 2: Group-level classification (medium confidence)
+        - Tier 3: Keyword-based (medium confidence with decision trees)
+        """
+        
+        def contains_keyword(text, keywords):
+            """Case-insensitive substring matching"""
+            text_lower = str(text).lower()
+            return any(kw in text_lower for kw in keywords)
+        
+        def classify_item(food_name, food_group):
+            """Classify single item using rules"""
+            
+            # ===== TIER 1: DIRECT FOOD_GROUP MAPPING =====
+            tier1_direct = {
+                'Beverages': 'Drink',
+                'Fats and Oils': 'Side Dish',
+                'Spices and Herbs': 'Side Dish',
+                'Sweets': 'Snack',
+            }
+            tier1_main_proteins = [
+                'Beef Products',
+                'Poultry Products',
+                'Finfish and Shellfish Products',
+                'Lamb, Veal, and Game Products',
+                'Sausages and Luncheon Meats'
+            ]
+            
+            food_group_lower = str(food_group).lower()
+            
+            # Direct mappings
+            for group, label in tier1_direct.items():
+                if group.lower() in food_group_lower:
+                    return (label, 'high')
+            
+            # Main proteins
+            for group in tier1_main_proteins:
+                if group.lower() in food_group_lower:
+                    return ('Main Course', 'high')
+            
+            # Vegetables with juice = Drink
+            if 'Vegetables and Vegetable Products' in food_group:
+                if contains_keyword(food_name, ['juice', 'nectar']):
+                    return ('Drink', 'high')
+                else:
+                    return ('Side Dish', 'high')
+            
+            # ===== TIER 2: GROUP-LEVEL CLASSIFICATION =====
+            tier2_main = [
+                'Cereal Grains and Pasta',
+                'Fast Foods',
+                'Meals, Entrees, and Side Dishes',
+                'Restaurant Foods'
+            ]
+            
+            for group in tier2_main:
+                if group.lower() in food_group_lower:
+                    return ('Main Course', 'medium')
+            
+            # Breakfast Cereals → Tier approach based on preparation & type
+            if 'Breakfast Cereals' in food_group:
+                # Tier A: Explicitly prepared/cooked cereals (highest confidence)
+                if contains_keyword(food_name, ['prepared with', 'cooked with']):
+                    return ('Main Course', 'high')
+                
+                # Tier B: Specific hot cereal brands (medium-high confidence)
+                hot_cereal_keywords = [
+                    "grit", "grits",              # Corn grits - always cooked preparation
+                    "cream of wheat",              # Cream of Wheat brand - always hot cereal
+                    "cream of rice",               # Cream of Rice brand - always hot cereal
+                    "farina",                      # Farina - always hot cereal
+                    "wheatena",                    # WHEATENA brand - always hot cereal
+                ]
+                if any(kw in food_name.lower() for kw in hot_cereal_keywords):
+                    return ('Main Course', 'medium')
+                
+                # Tier C: Default ready-to-eat breakfast cereals → Side Dish
+                # (Semantic: breakfast items are Main/Side, not Snack)
+                return ('Side Dish', 'medium')
+            
+            # ===== TIER 3: KEYWORD-BASED (Ambiguous Groups) =====
+            
+            # Fruits and Fruit Juices
+            if 'Fruits and Fruit Juices' in food_group:
+                if contains_keyword(food_name, ['juice', 'concentrate', 'bottled', 'nectar']):
+                    return ('Drink', 'high')
+                else:
+                    return ('Snack', 'high')
+            
+            # Dairy and Egg Products (complex multi-branch)
+            if 'Dairy and Egg Products' in food_group:
+                # Priority 1: Fluid milk products → Drink
+                if contains_keyword(food_name, ['fluid', 'milk', 'buttermilk']):
+                    return ('Drink', 'high')
+                
+                # Priority 2: Cheese, butter, cream → Side Dish
+                if contains_keyword(food_name, ['cheese', 'butter', 'cream']):
+                    return ('Side Dish', 'high')
+                
+                # Priority 3: Egg, cottage products → Main Course
+                if contains_keyword(food_name, ['egg', 'cottage']):
+                    return ('Main Course', 'high')
+                
+                # Priority 4: Yogurt, ice → Snack
+                if contains_keyword(food_name, ['yogurt', 'ice cream', 'ice milk']):
+                    return ('Snack', 'high')
+                
+                # Default for dairy
+                return ('Snack', 'medium')
+            
+            # Baked Products (detailed rules)
+            if 'Baked Products' in food_group:
+                # Snack category: cookies, crackers, cakes, pastries, donuts, waffles
+                if contains_keyword(food_name, ['cookie', 'cracker', 'cake', 'waffle', 'donut', 'pastry', 'brownie', 'muffin']):
+                    return ('Snack', 'high')
+                
+                # Main Course: tortillas, flatbread, naan
+                if contains_keyword(food_name, ['tortilla', 'flatbread', 'naan', 'pita']):
+                    return ('Main Course', 'medium')
+                
+                # Side Dish: bread (priority over tortilla logic above)
+                if contains_keyword(food_name, ['bread']) and not contains_keyword(food_name, ['tortilla']):
+                    return ('Side Dish', 'medium')
+                
+                # Default
+                return ('Snack', 'medium')
+            
+            # Soups, Sauces, and Gravies (decision tree)
+            if 'Soups, Sauces, and Gravies' in food_group:
+                # Soups → Main Course
+                if contains_keyword(food_name, ['soup']):
+                    return ('Main Course', 'high')
+                
+                # Gravy, broth → Side Dish
+                if contains_keyword(food_name, ['gravy', 'broth']):
+                    return ('Side Dish', 'high')
+                
+                # Dry/powdered sauces → Snack
+                if contains_keyword(food_name, ['sauce']) and contains_keyword(food_name, ['dry', 'mix', 'powder']):
+                    return ('Snack', 'medium')
+                
+                # Regular sauces → Side Dish
+                if contains_keyword(food_name, ['sauce']):
+                    return ('Side Dish', 'medium')
+                
+                # Default: Main Course (most conservative)
+                return ('Main Course', 'medium')
+            
+            # Legumes and Legume Products
+            if 'Legumes and Legume Products' in food_group:
+                # Soymilk → Drink
+                if contains_keyword(food_name, ['soymilk']):
+                    return ('Drink', 'high')
+                
+                # Peanut, peanut butter, peanut flour → Snack
+                if contains_keyword(food_name, ['peanut']):
+                    return ('Snack', 'high')
+                
+                # Beans, seeds → Main Course
+                if contains_keyword(food_name, ['bean', 'seed', 'lentil']):
+                    return ('Main Course', 'high')
+                
+                # Default: Main Course
+                return ('Main Course', 'medium')
+            
+            # Nut and Seed Products → Snack (typically snacking items)
+            if 'Nut and Seed Products' in food_group:
+                return ('Snack', 'medium')
+            
+            # Restaurant Foods → Main Course
+            if 'Restaurant Foods' in food_group:
+                return ('Main Course', 'medium')
+            
+            # Breakfast Cereals → Main Course
+            if 'Breakfast Cereals' in food_group:
+                return ('Main Course', 'medium')
+            
+            # =====DEFAULT FALLBACK =====
+            return ('Snack', 'low')
+        
+        # Apply rule to all items
+        results = []
+        for _, row in df.iterrows():
+            food_name = row.get('food_name', '')
+            food_group = row.get('food_group', '')
+            label, confidence = classify_item(food_name, food_group)
+            results.append(label)
+        
+        return np.array(results)
+    
     def predict(self, df, return_both=False):
-        """Predict consumption and/or cuisine labels"""
+        """Predict consumption and/or cuisine labels
         
-        if self.consumption_model is None and self.cuisine_model is None:
-            raise ValueError("Belum ada model yang di-train")
-        
-        X_features = self._extract_features(df, fit=False)
+        Consumption: Uses deterministic rule-based classification (always available)
+        Cuisine: Uses ML model (if trained)
+        """
         
         results = {}
         
-        # Predict consumption
-        if self.consumption_model is not None:
-            assert self.consumption_scaler is not None, "Scaler should not be None if model is trained"
-            assert self.consumption_label_encoder is not None, "Encoder should not be None if model is trained"
-            X_consumption_scaled = self.consumption_scaler.transform(X_features)
-            y_consumption_pred = self.consumption_model.predict(X_consumption_scaled)
-            results['consumption_label'] = self.consumption_label_encoder.inverse_transform(y_consumption_pred)
+        # Predict consumption using RULES (always available, no ML model needed)
+        results['consumption_label'] = self._classify_consumption_rule(df)
         
-        # Predict cuisine
+        # Predict cuisine using ML (unchanged)
         if self.cuisine_model is not None:
+            X_features = self._extract_features(df, fit=False)
             assert self.cuisine_scaler is not None, "Scaler should not be None if model is trained"
             assert self.cuisine_label_encoder is not None, "Encoder should not be None if model is trained"
             X_cuisine_scaled = self.cuisine_scaler.transform(X_features)
@@ -280,9 +471,9 @@ class FoodClassifier:
             results['cuisine_label'] = self.cuisine_label_encoder.inverse_transform(y_cuisine_pred)
         
         # Return format
-        if return_both or (self.consumption_model is not None and self.cuisine_model is not None):
+        if return_both or ('consumption_label' in results and 'cuisine_label' in results):
             return results
-        elif self.consumption_model is not None:
+        elif 'consumption_label' in results:
             return results['consumption_label']
         else:
             return results['cuisine_label']
@@ -334,7 +525,7 @@ class FoodClassifier:
         with open(filepath, 'wb') as f:
             pickle.dump(model_data, f)
         
-        print(f"✓ Model saved: {filepath}")
+        print(f"[OK] Model saved: {filepath}")
         return filepath
     
     @staticmethod
@@ -354,7 +545,7 @@ class FoodClassifier:
         classifier.tfidf = model_data.get('tfidf')
         classifier.encoders = model_data.get('encoders', {})
         
-        print(f"✓ Model loaded: {filepath}")
+        print(f"[OK] Model loaded: {filepath}")
         return classifier
 
 
@@ -373,8 +564,8 @@ if __name__ == "__main__":
     label_makanan = pd.read_csv("../../A. Data/Data Raw/label_makanan.csv", sep=';')
     label_cuisine = pd.read_csv("../../A. Data/Data Raw/label_cuisine.csv")
     
-    print(f"✓ Loaded label_makanan: {len(label_makanan)} items")
-    print(f"✓ Loaded label_cuisine: {len(label_cuisine)} items")
+    print(f"[OK] Loaded label_makanan: {len(label_makanan)} items")
+    print(f"[OK] Loaded label_cuisine: {len(label_cuisine)} items")
     
     # Merge both datasets for training
     print("\n[2/3] Merging datasets...")
@@ -384,7 +575,7 @@ if __name__ == "__main__":
         on='fdc_id',
         how='left'
     )
-    print(f"✓ Merged dataset: {len(merged)} items")
+    print(f"[OK] Merged dataset: {len(merged)} items")
     print(f"  - With cuisine labels: {merged['cuisine_manual'].notna().sum() + merged['cuisine_auto'].notna().sum()}")
     
     # Train classifier
@@ -397,7 +588,7 @@ if __name__ == "__main__":
     classifier.save(model_path)
     
     print("\n" + "="*70)
-    print("✓ TRAINING COMPLETE")
+    print("[OK] TRAINING COMPLETE")
     print("="*70)
     print(f"Model path: {model_path}")
     print("Ready untuk digunakan di 05_final_dataset.py")

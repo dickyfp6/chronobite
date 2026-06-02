@@ -26,12 +26,12 @@ print("="*70)
 print("\n[1/4] Loading ML classifier...")
 model_path = Path(__file__).parent / 'ML Klasifikasi/food_classifier_model.pkl'
 classifier = FoodClassifier.load(str(model_path))
-print(f"✓ Model loaded: {model_path}")
+print(f"[OK] Model loaded: {model_path}")
 
 print(f"\n[2/4] Loading raw data (03_dataset_halal.csv)...")
 input_file = Path(__file__).parent.parent / 'A. Data/Data Processed/03_dataset_halal.csv'
 data = pd.read_csv(input_file)
-print(f"✓ Loaded {len(data)} items")
+print(f"[OK] Loaded {len(data)} items")
 
 print(f"\n[3/4] Predicting consumption and cuisine labels...")
 predictions = classifier.predict(data, return_both=True)
@@ -42,7 +42,7 @@ data['cuisine_label'] = predictions.get('cuisine_label', 'Generic')
 if 'cuisine_label' in data.columns:
     data['cuisine_label'] = data['cuisine_label'].str.strip()
 
-print(f"✓ Labels predicted")
+print(f"[OK] Labels predicted")
 
 print(f"\nJumlah data awal: {len(data)}")
 
@@ -159,9 +159,9 @@ output_file = Path(__file__).parent.parent / 'A. Data/Data Processed/05_final_da
 filtered.to_csv(output_file, index=False)
 
 print("\n" + "="*70)
-print("✓ COMPLETE - Dataset berhasil disimpan")
+print("[OK] COMPLETE - Dataset berhasil disimpan")
 print("="*70)
-print(f"\n📊 SUMMARY:")
+print(f"\nSUMMARY:")
 print(f"  Total items: {len(filtered)}")
 print(f"  Output file: {output_file}")
 print("\n" + "="*70)

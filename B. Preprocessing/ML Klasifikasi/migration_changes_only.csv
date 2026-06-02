@@ -1,0 +1,613 @@
+fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confidence,label_changed
+167533,"Bagels, wheat",Baked Products,Side Dish,Snack,medium,True
+167634,"Mutton, cooked, roasted (Navajo)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+167637,"Stew, steamed corn (Navajo)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+167656,Corned beef and potatoes in tortilla (Apache),American Indian/Alaska Native Foods,Main Course,Snack,low,True
+167675,"Restaurant, Chinese, general tso's chicken",Restaurant Foods,Snack,Main Course,medium,True
+167679,"Restaurant, Chinese, orange chicken",Restaurant Foods,Snack,Main Course,medium,True
+167688,"Cream substitute, powdered, light",Dairy and Egg Products,Snack,Side Dish,high,True
+167693,"Salad dressing, french dressing, reduced calorie",Fats and Oils,Snack,Side Dish,high,True
+167695,"Mayonnaise, made with tofu",Fats and Oils,Main Course,Side Dish,high,True
+167699,"Salad dressing, blue or roquefort cheese dressing, fat-free",Fats and Oils,Snack,Side Dish,high,True
+167700,"Salad Dressing, mayonnaise-like, fat-free",Fats and Oils,Snack,Side Dish,high,True
+167703,"Cheese, cottage, lowfat, 1% milkfat, lactose reduced",Dairy and Egg Products,Main Course,Drink,medium,True
+167708,"Tomato and vegetable juice, low sodium",Vegetables and Vegetable Products,Side Dish,Drink,high,True
+167715,"Cereals ready-to-eat, POST, Shredded Wheat n' Bran, spoon-size",Breakfast Cereals,Snack,Side Dish,medium,True
+167716,"Cheese, cottage, lowfat, 1% milkfat, with vegetables",Dairy and Egg Products,Main Course,Drink,medium,True
+167724,"Millet, puffed",Breakfast Cereals,Snack,Side Dish,medium,True
+167725,"Cereals ready-to-eat, OAT BRAN FLAKES, HEALTH VALLEY",Breakfast Cereals,Snack,Side Dish,medium,True
+167753,"Prune juice, canned",Fruits and Fruit Juices,Snack,Drink,high,True
+167765,"Watermelon, raw",Fruits and Fruit Juices,Drink,Snack,high,True
+167767,"Pineapple, canned, juice pack, drained",Fruits and Fruit Juices,Snack,Drink,high,True
+167785,"Mango nectar, canned",Fruits and Fruit Juices,Drink,Snack,high,True
+167786,"Tamarind nectar, canned",Fruits and Fruit Juices,Drink,Snack,high,True
+167791,Horned melon (Kiwano),Fruits and Fruit Juices,Drink,Snack,high,True
+167939,"Garlic bread, frozen",Baked Products,Main Course,Snack,medium,True
+168009,"Schar, Gluten-Free, Wheat-Free, Classic White Bread",Baked Products,Main Course,Side Dish,medium,True
+168041,"Tortilla, includes plain and from mutton sandwich (Navajo)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+168042,"Stew, dumpling with mutton (Navajo)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+168043,"Stew, hominy with mutton (Navajo)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+168044,"Stew, mutton, corn, squash (Navajo)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+168061,Acorn stew (Apache),American Indian/Alaska Native Foods,Main Course,Snack,low,True
+168063,"Restaurant, Latino, arroz con leche (rice pudding)",Restaurant Foods,Snack,Main Course,medium,True
+168071,"Restaurant, Latino, bunuelos (fried yeast bread)",Restaurant Foods,Snack,Main Course,medium,True
+168081,"Restaurant, Chinese, sweet and sour chicken",Restaurant Foods,Snack,Main Course,medium,True
+168087,"Restaurant, Chinese, sesame chicken",Restaurant Foods,Snack,Main Course,medium,True
+168097,"Cream substitute, liquid, light",Dairy and Egg Products,Drink,Side Dish,high,True
+168106,Papad,Legumes and Legume Products,Snack,Main Course,medium,True
+168114,"Cheese, cottage, lowfat, 1% milkfat, no sodium added",Dairy and Egg Products,Main Course,Drink,medium,True
+168126,"Rolls, pumpernickel",Baked Products,Main Course,Snack,medium,True
+168138,"Cereals ready-to-eat, POST, HONEY BUNCHES OF OATS, honey roasted",Breakfast Cereals,Snack,Side Dish,medium,True
+168161,"Prunes, dehydrated (low-moisture), stewed",Fruits and Fruit Juices,Side Dish,Snack,high,True
+168166,"Raisins, seeded",Fruits and Fruit Juices,Main Course,Snack,high,True
+168175,"Sugar-apples, (sweetsop), raw",Fruits and Fruit Juices,Main Course,Snack,high,True
+168184,"Tangerines, (mandarin oranges), canned, juice pack, drained",Fruits and Fruit Juices,Snack,Drink,high,True
+168185,"Peach nectar, canned, with added ascorbic acid",Fruits and Fruit Juices,Drink,Snack,high,True
+168188,"Apple juice, frozen concentrate, unsweetened, undiluted, with added ascorbic acid",Fruits and Fruit Juices,Snack,Drink,high,True
+168193,"Pineapple, raw, traditional varieties",Fruits and Fruit Juices,Drink,Snack,high,True
+168196,"Guanabana nectar, canned",Fruits and Fruit Juices,Drink,Snack,high,True
+168199,"Plantains, green, fried",Fruits and Fruit Juices,Main Course,Snack,high,True
+168216,"Plantains, green, boiled",Fruits and Fruit Juices,Main Course,Snack,high,True
+168217,Raspberry juice concentrate,Fruits and Fruit Juices,Snack,Drink,high,True
+168589,"Nuts, chestnuts, japanese, boiled and steamed",Nut and Seed Products,Side Dish,Snack,medium,True
+168590,"Nuts, chestnuts, japanese, roasted",Nut and Seed Products,Side Dish,Snack,medium,True
+168591,"Seeds, lotus seeds, raw",Nut and Seed Products,Main Course,Snack,medium,True
+168794,"Desserts, rennin, tablets, unsweetened",Sweets,Side Dish,Snack,high,True
+168810,"Ice creams, strawberry",Sweets,Main Course,Snack,high,True
+168812,"Frozen novelties, ice type, italian, restaurant-prepared",Sweets,Side Dish,Snack,high,True
+168821,"Pectin, unsweetened, dry mix",Sweets,Side Dish,Snack,high,True
+168824,"Pie fillings, canned, cherry",Sweets,Side Dish,Snack,high,True
+168850,"Snacks, beef sticks, smoked",Snacks,Main Course,Snack,low,True
+168905,"Noodles, chinese, chow mein",Cereal Grains and Pasta,Snack,Main Course,medium,True
+168955,"Pasta mix, Italian lasagna, unprepared","Meals, Entrees, and Side Dishes",Snack,Main Course,medium,True
+168998,"Rose Hips, wild (Northern Plains Indians)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+169005,"Wocas, tuber, cooked, Oregon, yellow pond lily (Klamath)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+169006,"Stew, pinto bean and hominy, badufsuki (Hopi)",American Indian/Alaska Native Foods,Side Dish,Snack,low,True
+169020,"APPLEBEE'S, coleslaw",Restaurant Foods,Snack,Main Course,medium,True
+169021,"CRACKER BARREL, onion rings, thick-cut",Restaurant Foods,Snack,Main Course,medium,True
+169023,"DENNY'S, coleslaw",Restaurant Foods,Snack,Main Course,medium,True
+169026,"Restaurant, family style, coleslaw",Restaurant Foods,Snack,Main Course,medium,True
+169027,"Restaurant, family style, onion rings",Restaurant Foods,Snack,Main Course,medium,True
+169040,"Cereals ready-to-eat, WEETABIX whole grain cereal",Breakfast Cereals,Snack,Side Dish,medium,True
+169041,"Cereals ready-to-eat, POST, GREAT GRAINS, Raisin, Date & Pecan",Breakfast Cereals,Snack,Side Dish,medium,True
+169045,"Gums, seed gums (includes locust bean, guar)",Sweets,Side Dish,Snack,high,True
+169064,"Pretzels, soft",Snacks,Main Course,Snack,low,True
+169075,"Cereals ready-to-eat, ALPEN",Breakfast Cereals,Snack,Side Dish,medium,True
+169076,"Cereals ready-to-eat, FAMILIA",Breakfast Cereals,Snack,Side Dish,medium,True
+169077,"Cereals ready-to-eat, wheat and bran, presweetened with nuts and fruits",Breakfast Cereals,Snack,Side Dish,medium,True
+169078,"Cheese, cottage, with vegetables",Dairy and Egg Products,Main Course,Side Dish,high,True
+169094,"Olives, ripe, canned (small-extra large)",Fruits and Fruit Juices,Main Course,Snack,high,True
+169095,"Olives, ripe, canned (jumbo-super colossal)",Fruits and Fruit Juices,Main Course,Snack,high,True
+169096,"Olives, pickled, canned or bottled, green",Fruits and Fruit Juices,Main Course,Drink,high,True
+169107,"Papaya nectar, canned",Fruits and Fruit Juices,Drink,Snack,high,True
+169117,"Peach nectar, canned, with sucralose, without added ascorbic acid",Fruits and Fruit Juices,Drink,Snack,high,True
+169126,"Pineapple, canned, juice pack, solids and liquids",Fruits and Fruit Juices,Snack,Drink,high,True
+169408,"Nuts, chestnuts, japanese, dried",Nut and Seed Products,Main Course,Snack,medium,True
+169409,"Nuts, coconut milk, frozen (liquid expressed from grated meat and water)",Nut and Seed Products,Side Dish,Snack,medium,True
+169413,"Nuts, chestnuts, japanese, raw",Nut and Seed Products,Side Dish,Snack,medium,True
+169593,"Cocoa, dry powder, unsweetened",Sweets,Side Dish,Snack,high,True
+169594,"Cocoa, dry powder, unsweetened, processed with alkali",Sweets,Side Dish,Snack,high,True
+169613,"Frozen novelties, ice type, fruit, no sugar added",Sweets,Drink,Snack,high,True
+169698,Cornstarch,Cereal Grains and Pasta,Snack,Main Course,medium,True
+169705,Oats (Includes foods for USDA's Food Distribution Program),Cereal Grains and Pasta,Snack,Main Course,medium,True
+169717,"Tapioca, pearl, dry",Cereal Grains and Pasta,Snack,Main Course,medium,True
+169724,"Wheat flour, white, tortilla mix, enriched",Cereal Grains and Pasta,Snack,Main Course,medium,True
+169735,"Noodles, flat, crunchy, Chinese restaurant",Cereal Grains and Pasta,Snack,Main Course,medium,True
+169741,"Oat flour, partially debranned",Cereal Grains and Pasta,Snack,Main Course,medium,True
+169776,"Macaroni or noodles with cheese, microwaveable, unprepared","Meals, Entrees, and Side Dishes",Snack,Main Course,medium,True
+169826,"Wocas, dried seeds, Oregon, yellow pond lily (Klamath)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+169829,"Tortilla, blue corn, Sakwavikaviki (Hopi)",American Indian/Alaska Native Foods,Main Course,Snack,low,True
+169840,"APPLEBEE'S, crunchy onion rings",Restaurant Foods,Snack,Main Course,medium,True
+169843,"CRACKER BARREL, coleslaw",Restaurant Foods,Snack,Main Course,medium,True
+169844,"DENNY'S, onion rings",Restaurant Foods,Snack,Main Course,medium,True
+169859,"Cereals ready-to-eat, POST, HONEY BUNCHES OF OATS, with almonds",Breakfast Cereals,Snack,Side Dish,medium,True
+169862,"Cereals ready-to-eat, POST, GREAT GRAINS Crunchy Pecan Cereal",Breakfast Cereals,Snack,Side Dish,medium,True
+169870,"Cereals ready-to-eat, POST GREAT GRAINS Banana Nut Crunch",Breakfast Cereals,Snack,Side Dish,medium,True
+169877,"Salad dressing, caesar, low calorie",Fats and Oils,Snack,Side Dish,high,True
+169884,"Vermicelli, made from soy",Legumes and Legume Products,Snack,Main Course,medium,True
+169894,"Butter replacement, without fat, powder",Fats and Oils,Snack,Side Dish,high,True
+169895,"Salad dressing, buttermilk, lite",Fats and Oils,Main Course,Side Dish,high,True
+169899,"Whipped cream substitute, dietetic, made from powdered mix",Dairy and Egg Products,Drink,Side Dish,high,True
+169912,"Melon balls, frozen",Fruits and Fruit Juices,Drink,Snack,high,True
+169922,"Orange juice, frozen concentrate, unsweetened, undiluted, with added calcium",Fruits and Fruit Juices,Snack,Drink,high,True
+169923,"Orange juice, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Snack,Drink,high,True
+169930,"Peaches, canned, juice pack, solids and liquids",Fruits and Fruit Juices,Snack,Drink,high,True
+169933,"Peaches, dehydrated (low-moisture), sulfured, stewed",Fruits and Fruit Juices,Side Dish,Snack,high,True
+169936,"Pears, canned, juice pack, solids and liquids",Fruits and Fruit Juices,Snack,Drink,high,True
+169948,"Pineapple juice, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Snack,Drink,high,True
+169951,"Plums, canned, purple, juice pack, solids and liquids",Fruits and Fruit Juices,Snack,Drink,high,True
+170051,"Tomatoes, red, ripe, canned, packed in tomato juice",Vegetables and Vegetable Products,Side Dish,Drink,high,True
+170088,"Sweet potato, cooked, candied, home-prepared",Vegetables and Vegetable Products,Snack,Side Dish,high,True
+170138,"Tomatoes, red, ripe, canned, packed in tomato juice, no salt added",Vegetables and Vegetable Products,Side Dish,Drink,high,True
+170144,"Seeds, breadfruit seeds, raw",Nut and Seed Products,Main Course,Snack,medium,True
+170145,"Seeds, breadfruit seeds, boiled",Nut and Seed Products,Main Course,Snack,medium,True
+170146,"Seeds, cottonseed flour, low fat (glandless)",Nut and Seed Products,Main Course,Snack,medium,True
+170149,"Seeds, lotus seeds, dried",Nut and Seed Products,Main Course,Snack,medium,True
+170156,"Seeds, sunflower seed flour, partially defatted",Nut and Seed Products,Main Course,Snack,medium,True
+170157,"Nuts, acorns, raw",Nut and Seed Products,Main Course,Snack,medium,True
+170164,"Nuts, chestnuts, chinese, raw",Nut and Seed Products,Main Course,Snack,medium,True
+170165,"Nuts, chestnuts, chinese, dried",Nut and Seed Products,Main Course,Snack,medium,True
+170166,"Nuts, chestnuts, chinese, boiled and steamed",Nut and Seed Products,Main Course,Snack,medium,True
+170167,"Nuts, chestnuts, european, dried, peeled",Nut and Seed Products,Main Course,Snack,medium,True
+170168,"Nuts, chestnuts, european, boiled and steamed",Nut and Seed Products,Side Dish,Snack,medium,True
+170172,"Nuts, coconut milk, raw (liquid expressed from grated meat and water)",Nut and Seed Products,Main Course,Snack,medium,True
+170173,"Nuts, coconut milk, canned (liquid expressed from grated meat and water)",Nut and Seed Products,Side Dish,Snack,medium,True
+170300,"Fast foods, coleslaw",Fast Foods,Snack,Main Course,medium,True
+170340,"KFC, Coleslaw",Fast Foods,Snack,Main Course,medium,True
+170355,"Yogurt parfait, lowfat, with fruit and granola",Fast Foods,Snack,Main Course,medium,True
+170415,"Onion rings, breaded, par fried, frozen, prepared, heated in oven",Vegetables and Vegetable Products,Snack,Side Dish,high,True
+170491,"Carrot juice, canned",Vegetables and Vegetable Products,Side Dish,Drink,high,True
+170552,"Seeds, breadnut tree seeds, raw",Nut and Seed Products,Main Course,Snack,medium,True
+170559,"Seeds, safflower seed meal, partially defatted",Nut and Seed Products,Main Course,Snack,medium,True
+170560,"Seeds, sesame flour, low-fat",Nut and Seed Products,Main Course,Snack,medium,True
+170573,"Nuts, chestnuts, chinese, roasted",Nut and Seed Products,Main Course,Snack,medium,True
+170574,"Nuts, chestnuts, european, raw, unpeeled",Nut and Seed Products,Main Course,Snack,medium,True
+170575,"Nuts, chestnuts, european, raw, peeled",Nut and Seed Products,Side Dish,Snack,medium,True
+170576,"Nuts, chestnuts, european, dried, unpeeled",Nut and Seed Products,Main Course,Snack,medium,True
+170580,"Nuts, coconut cream, raw (liquid expressed from grated meat)",Nut and Seed Products,Main Course,Snack,medium,True
+170590,"Nuts, pilinuts, dried",Nut and Seed Products,Side Dish,Snack,medium,True
+170595,"Seeds, breadfruit seeds, roasted",Nut and Seed Products,Main Course,Snack,medium,True
+170677,"Syrups, chocolate, HERSHEY'S Sugar free, Genuine Chocolate Flavored, Lite Syrup",Sweets,Side Dish,Snack,high,True
+170684,Arrowroot flour,Cereal Grains and Pasta,Snack,Main Course,medium,True
+170697,"Fast foods, onion rings, breaded and fried",Fast Foods,Snack,Main Course,medium,True
+170700,"BURGER KING, Vanilla Shake",Fast Foods,Snack,Main Course,medium,True
+170771,"BURGER KING, Onion Rings",Fast Foods,Snack,Main Course,medium,True
+170775,"Fast foods, strawberry banana smoothie made with ice and low-fat yogurt",Fast Foods,Snack,Main Course,medium,True
+170845,"Cheese, mozzarella, whole milk",Dairy and Egg Products,Side Dish,Drink,medium,True
+170846,"Cheese, mozzarella, whole milk, low moisture",Dairy and Egg Products,Side Dish,Drink,medium,True
+170847,"Cheese, mozzarella, part skim milk",Dairy and Egg Products,Side Dish,Drink,medium,True
+170851,"Cheese, ricotta, whole milk",Dairy and Egg Products,Side Dish,Drink,medium,True
+170857,"Cream, fluid, light (coffee cream or table cream)",Dairy and Egg Products,Side Dish,Drink,high,True
+170858,"Cream, fluid, light whipping",Dairy and Egg Products,Side Dish,Drink,high,True
+170859,"Cream, fluid, heavy whipping",Dairy and Egg Products,Side Dish,Drink,high,True
+170860,"Cream, whipped, cream topping, pressurized",Dairy and Egg Products,Snack,Side Dish,high,True
+170866,"Dessert topping, powdered, 1.5 ounce prepared with 1/2 cup milk",Dairy and Egg Products,Snack,Drink,medium,True
+170876,"Milk, dry, whole, with added vitamin D",Dairy and Egg Products,Snack,Drink,medium,True
+170877,"Milk, dry, nonfat, regular, without added vitamin A and vitamin D",Dairy and Egg Products,Snack,Drink,medium,True
+170878,"Milk, canned, evaporated, nonfat, with added vitamin A and vitamin D",Dairy and Egg Products,Snack,Drink,medium,True
+170881,"Milk, chocolate, lowfat, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Snack,low,True
+170882,"Milk, sheep, fluid",Dairy and Egg Products,Main Course,Drink,high,True
+170884,"Milk shakes, thick vanilla",Dairy and Egg Products,Snack,Drink,medium,True
+170886,"Yogurt, plain, low fat",Dairy and Egg Products,Drink,Snack,medium,True
+170890,"Milk dessert bar, frozen, made from lowfat milk",Dairy and Egg Products,Snack,Drink,medium,True
+170892,"Nutritional supplement for people with diabetes, liquid",Dairy and Egg Products,Main Course,Snack,low,True
+170894,"Yogurt, Greek, plain, nonfat (Includes foods for USDA's Food Distribution Program)",Dairy and Egg Products,Main Course,Snack,medium,True
+170895,"Egg, white, dried, stabilized, glucose reduced",Dairy and Egg Products,Side Dish,Main Course,high,True
+170902,"Yogurt, Greek, vanilla, nonfat",Dairy and Egg Products,Drink,Snack,medium,True
+170903,"Yogurt, Greek, plain, lowfat",Dairy and Egg Products,Main Course,Snack,medium,True
+170904,"Kefir, lowfat, plain, LIFEWAY",Dairy and Egg Products,Drink,Snack,low,True
+170905,"Yogurt, Greek, fruit, whole milk",Dairy and Egg Products,Snack,Drink,medium,True
+170907,"Yogurt, Greek, vanilla, lowfat",Dairy and Egg Products,Drink,Snack,medium,True
+170910,"Milk, chocolate, lowfat, reduced sugar",Dairy and Egg Products,Drink,Snack,low,True
+170911,"Ice cream, lowfat, no sugar added, cone, added peanuts and chocolate sauce",Dairy and Egg Products,Snack,Side Dish,high,True
+170917,"Spices, bay leaf",Spices and Herbs,Snack,Side Dish,high,True
+170920,"Spices, celery seed",Spices and Herbs,Snack,Side Dish,high,True
+170921,"Spices, coriander leaf, dried",Spices and Herbs,Snack,Side Dish,high,True
+170923,"Spices, cumin seed",Spices and Herbs,Snack,Side Dish,high,True
+170927,"Spices, mace, ground",Spices and Herbs,Snack,Side Dish,high,True
+170929,"Spices, mustard seed, ground",Spices and Herbs,Snack,Side Dish,high,True
+170930,"Spices, parsley, dried",Spices and Herbs,Snack,Side Dish,high,True
+170932,"Spices, pepper, red or cayenne",Spices and Herbs,Snack,Side Dish,high,True
+170933,"Spices, pepper, white",Spices and Herbs,Main Course,Side Dish,high,True
+170934,"Spices, saffron",Spices and Herbs,Main Course,Side Dish,high,True
+171005,"Salad dressing, russian dressing",Fats and Oils,Snack,Side Dish,high,True
+171007,"Salad dressing, russian dressing, low calorie",Fats and Oils,Snack,Side Dish,high,True
+171008,"Salad dressing, thousand island dressing, reduced fat",Fats and Oils,Snack,Side Dish,high,True
+171020,"Salad dressing, french dressing, commercial, regular, without salt",Fats and Oils,Snack,Side Dish,high,True
+171021,"Salad dressing, french dressing, reduced fat, without salt",Fats and Oils,Snack,Side Dish,high,True
+171034,"Salad dressing, honey mustard dressing, reduced calorie",Fats and Oils,Snack,Side Dish,high,True
+171043,"Salad dressing, honey mustard, regular",Fats and Oils,Snack,Side Dish,high,True
+171044,"Salad dressing, poppyseed, creamy",Fats and Oils,Snack,Side Dish,high,True
+171045,"Salad dressing, caesar, fat-free",Fats and Oils,Snack,Side Dish,high,True
+171046,"Dressing, honey mustard, fat-free",Fats and Oils,Snack,Side Dish,high,True
+171165,"Soup, onion, dry, mix","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171166,"Soup, cream of vegetable, dry, powder","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171167,"Sauce, teriyaki, ready-to-serve","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171170,"Gravy, mushroom, canned","Soups, Sauces, and Gravies",Main Course,Side Dish,high,True
+171171,"Gravy, mushroom, dry, powder","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171172,"Gravy, onion, dry, mix","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171177,"Soup, ramen noodle, any flavor, dry","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171179,"Soup, SWANSON, beef broth, lower sodium","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171180,"Soup, SWANSON, vegetable broth","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171186,"Sauce, hot chile, sriracha","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171187,"Sauce, hot chile, sriracha, CHA! BY TEXAS PETE","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171188,"Sauce, hot chile, sriracha, TUONG OT SRIRACHA","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171191,"Sauce, cheese, ready-to-serve","Soups, Sauces, and Gravies",Main Course,Side Dish,medium,True
+171248,"Cheese, ricotta, part skim milk",Dairy and Egg Products,Side Dish,Drink,medium,True
+171255,"Cream, fluid, half and half",Dairy and Egg Products,Side Dish,Drink,high,True
+171258,Eggnog,Dairy and Egg Products,Drink,Main Course,high,True
+171261,"Cream substitute, liquid, with hydrogenated vegetable oil and soy protein",Dairy and Egg Products,Snack,Side Dish,high,True
+171263,"Cream substitute, powdered",Dairy and Egg Products,Snack,Side Dish,high,True
+171272,"Milk, dry, nonfat, instant, with added vitamin A and vitamin D",Dairy and Egg Products,Snack,Drink,medium,True
+171273,"Milk, dry, nonfat, calcium reduced",Dairy and Egg Products,Snack,Drink,medium,True
+171274,"Milk, buttermilk, dried",Dairy and Egg Products,Snack,Drink,medium,True
+171275,"Milk, canned, condensed, sweetened",Dairy and Egg Products,Snack,Drink,medium,True
+171276,"Milk, canned, evaporated, with added vitamin D and without added vitamin A",Dairy and Egg Products,Side Dish,Drink,medium,True
+171277,"Milk, chocolate beverage, hot cocoa, homemade",Dairy and Egg Products,Drink,Snack,low,True
+171280,"Milk, indian buffalo, fluid",Dairy and Egg Products,Main Course,Drink,high,True
+171286,"Yogurt, fruit, low fat, 11g protein/8 oz",Dairy and Egg Products,Main Course,Snack,medium,True
+171293,"Ice cream, light, soft serve, chocolate",Dairy and Egg Products,Snack,Side Dish,high,True
+171294,"Ice cream bar, stick or nugget, with crunch coating",Dairy and Egg Products,Snack,Side Dish,high,True
+171296,"Yogurt, Greek, nonfat, vanilla, CHOBANI",Dairy and Egg Products,Drink,Snack,medium,True
+171301,"Kefir, lowfat, strawberry, LIFEWAY",Dairy and Egg Products,Drink,Snack,low,True
+171302,"Milk, evaporated, 2% fat, with added vitamin A and vitamin D",Dairy and Egg Products,Snack,Drink,medium,True
+171304,"Yogurt, Greek, plain, whole milk",Dairy and Egg Products,Side Dish,Drink,medium,True
+171305,"Ice cream bar, covered with chocolate and nuts",Dairy and Egg Products,Snack,Side Dish,high,True
+171306,Ice cream sundae cone,Dairy and Egg Products,Snack,Side Dish,high,True
+171307,"Light ice cream, Creamsicle",Dairy and Egg Products,Snack,Side Dish,high,True
+171308,"Cream, half and half, lowfat",Dairy and Egg Products,Drink,Side Dish,high,True
+171319,"Spices, chili powder",Spices and Herbs,Snack,Side Dish,high,True
+171324,"Spices, fenugreek seed",Spices and Herbs,Main Course,Side Dish,high,True
+171325,"Spices, garlic powder",Spices and Herbs,Snack,Side Dish,high,True
+171326,"Spices, nutmeg, ground",Spices and Herbs,Snack,Side Dish,high,True
+171327,"Spices, onion powder",Spices and Herbs,Snack,Side Dish,high,True
+171329,"Spices, paprika",Spices and Herbs,Snack,Side Dish,high,True
+171330,"Spices, poppy seed",Spices and Herbs,Snack,Side Dish,high,True
+171332,"Spices, pumpkin pie spice",Spices and Herbs,Snack,Side Dish,high,True
+171402,"Salad dressing, thousand island, commercial, regular",Fats and Oils,Snack,Side Dish,high,True
+171404,"Salad dressing, french dressing, reduced fat",Fats and Oils,Snack,Side Dish,high,True
+171414,"Salad dressing, french dressing, commercial, regular",Fats and Oils,Snack,Side Dish,high,True
+171420,"Salad dressing, french dressing, fat-free",Fats and Oils,Snack,Side Dish,high,True
+171538,"Soup, beef broth or bouillon canned, ready-to-serve","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171542,"Soup, chicken broth, canned, condensed","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171557,"Soup, tomato rice, canned, condensed","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171559,"Soup, chunky vegetable, canned, ready-to-serve","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171560,"Soup, beef broth or bouillon, powder, dry","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171561,"Soup, beef broth, cubed, dry","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171562,"Soup, chicken broth or bouillon, dry","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171563,"Soup, chicken broth cubes, dry","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171564,"Gravy, beef, canned, ready-to-serve","Soups, Sauces, and Gravies",Main Course,Side Dish,high,True
+171565,"Gravy, brown, dry","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171566,"Gravy, chicken, canned or bottled, ready-to-serve","Soups, Sauces, and Gravies",Main Course,Side Dish,high,True
+171567,"Gravy, chicken, dry","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171568,"Gravy, turkey, canned, ready-to-serve","Soups, Sauces, and Gravies",Main Course,Side Dish,high,True
+171569,"Gravy, turkey, dry","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171570,"Gravy, unspecified type, dry","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171575,"Sauce, peanut, made from coconut, water, sugar, peanuts","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171583,"Soup, vegetable broth, ready to serve","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171587,"Soup, tomato, canned, condensed, reduced sodium","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171588,"Gravy, brown instant, dry","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171589,"Gravy, instant beef, dry","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171590,"Gravy, instant turkey, dry","Soups, Sauces, and Gravies",Snack,Side Dish,high,True
+171591,"Soup, tomato, low sodium, with water","Soups, Sauces, and Gravies",Drink,Main Course,high,True
+171594,"Soup, vegetable soup, condensed, low sodium, prepared with equal volume water","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171595,"Sauce, tomato chili sauce, bottled, with salt","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171597,"Sauce, pasta, spaghetti/marinara, ready-to-serve, low sodium","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171598,"Gravy, meat or poultry, low sodium, prepared","Soups, Sauces, and Gravies",Main Course,Side Dish,high,True
+171599,"Gravy, HEINZ Home Style, savory beef","Soups, Sauces, and Gravies",Main Course,Side Dish,high,True
+171600,"Gravy, CAMPBELL'S, chicken","Soups, Sauces, and Gravies",Main Course,Side Dish,high,True
+171608,"Potato soup, instant, dry mix","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171609,"Soup, chicken broth, low sodium, canned","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+171613,"Soup, bouillon cubes and granules, low sodium, dry","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171614,"Soup, ramen noodle, beef flavor, dry","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171615,"Soup, ramen noodle, chicken flavor, dry","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+171641,"Cereals ready-to-eat, POST, ALPHA-BITS",Breakfast Cereals,Snack,Side Dish,medium,True
+171642,"Cereals ready-to-eat, QUAKER, CAP'N CRUNCH",Breakfast Cereals,Snack,Side Dish,medium,True
+171643,"Cereals ready-to-eat, QUAKER, CAP'N CRUNCH with CRUNCHBERRIES",Breakfast Cereals,Snack,Side Dish,medium,True
+171644,"Cereals ready-to-eat, QUAKER, CAP'N CRUNCH'S PEANUT BUTTER CRUNCH",Breakfast Cereals,Snack,Side Dish,medium,True
+171645,"Cereals ready-to-eat, POST, FRUITY PEBBLES",Breakfast Cereals,Snack,Side Dish,medium,True
+171646,"Cereals ready-to-eat, granola, homemade",Breakfast Cereals,Snack,Side Dish,medium,True
+171647,"Cereals ready-to-eat, POST, GRAPE-NUTS Cereal",Breakfast Cereals,Snack,Side Dish,medium,True
+171648,"Cereals ready-to-eat, POST, GRAPE-NUTS Flakes",Breakfast Cereals,Snack,Side Dish,medium,True
+171649,"Cereals ready-to-eat, QUAKER, SWEET CRUNCH/QUISP",Breakfast Cereals,Snack,Side Dish,medium,True
+171650,"Cereals ready-to-eat, POST Raisin Bran Cereal",Breakfast Cereals,Snack,Side Dish,medium,True
+171651,"Cereals ready-to-eat, QUAKER, QUAKER Puffed Rice",Breakfast Cereals,Snack,Side Dish,medium,True
+171652,"Cereals ready-to-eat, POST, GOLDEN CRISP",Breakfast Cereals,Snack,Side Dish,medium,True
+171653,"Cereals ready-to-eat, SUN COUNTRY, KRETSCHMER Honey Crunch Wheat Germ",Breakfast Cereals,Snack,Side Dish,medium,True
+171661,"Cereals, oats, instant, fortified, plain, dry",Breakfast Cereals,Main Course,Side Dish,medium,True
+171664,"Cereals, oats, instant, fortified, with cinnamon and spice, dry",Breakfast Cereals,Snack,Side Dish,medium,True
+171667,"Cereals, whole wheat hot natural cereal, dry",Breakfast Cereals,Main Course,Side Dish,medium,True
+171669,"Cereals ready-to-eat, QUAKER, QUAKER Puffed Wheat",Breakfast Cereals,Snack,Side Dish,medium,True
+171704,"Apricot nectar, canned, with added ascorbic acid",Fruits and Fruit Juices,Drink,Snack,high,True
+171705,"Avocados, raw, all commercial varieties",Fruits and Fruit Juices,Main Course,Snack,high,True
+171706,"Avocados, raw, California",Fruits and Fruit Juices,Main Course,Snack,high,True
+171707,"Avocados, raw, Florida",Fruits and Fruit Juices,Main Course,Snack,high,True
+171717,"Cherries, sour, red, canned, extra heavy syrup pack, solids and liquids",Fruits and Fruit Juices,Main Course,Snack,high,True
+171823,"Sauce, duck, ready-to-serve","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171825,"Sauce, steak, tomato based","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+171831,Wasabi,"Soups, Sauces, and Gravies",Snack,Main Course,low,True
+171844,"Bread, chapati or roti, plain, commercially prepared",Baked Products,Main Course,Snack,medium,True
+171845,"Bread, naan, plain, commercially prepared, refrigerated",Baked Products,Main Course,Snack,medium,True
+171977,"Mollusks, clam, mixed species, canned, liquid",Finfish and Shellfish Products,Drink,Main Course,high,True
+172023,Millet flour,Cereal Grains and Pasta,Snack,Main Course,medium,True
+172035,"Fast foods, french toast sticks",Fast Foods,Snack,Main Course,medium,True
+172057,"Fast foods, griddle cake sandwich, sausage",Fast Foods,Snack,Main Course,medium,True
+172059,"McDONALD'S, Sausage McGRIDDLES",Fast Foods,Snack,Main Course,medium,True
+172061,"McDONALD'S, Vanilla Reduced Fat Ice Cream Cone",Fast Foods,Snack,Main Course,medium,True
+172062,"McDONALD'S, Strawberry Sundae",Fast Foods,Snack,Main Course,medium,True
+172075,"McDONALD'S, Fruit 'n Yogurt Parfait",Fast Foods,Snack,Main Course,medium,True
+172077,"BURGER KING, french toast sticks",Fast Foods,Snack,Main Course,medium,True
+172079,"Fast foods, miniature cinnamon rolls",Fast Foods,Snack,Main Course,medium,True
+172085,"Light Ice Cream, soft serve, blended with cookie pieces",Fast Foods,Snack,Main Course,medium,True
+172086,"POPEYES, biscuit",Fast Foods,Snack,Main Course,medium,True
+172087,"POPEYES, Coleslaw",Fast Foods,Snack,Main Course,medium,True
+172179,"Cheese, cottage, creamed, large or small curd",Dairy and Egg Products,Main Course,Side Dish,high,True
+172180,"Cheese, cottage, creamed, with fruit",Dairy and Egg Products,Main Course,Side Dish,high,True
+172181,"Cheese, cottage, nonfat, uncreamed, dry, large or small curd",Dairy and Egg Products,Main Course,Side Dish,high,True
+172182,"Cheese, cottage, lowfat, 2% milkfat",Dairy and Egg Products,Side Dish,Drink,medium,True
+172183,"Egg, white, raw, fresh",Dairy and Egg Products,Side Dish,Main Course,high,True
+172184,"Egg, yolk, raw, fresh",Dairy and Egg Products,Side Dish,Main Course,high,True
+172188,"Egg, whole, dried",Dairy and Egg Products,Side Dish,Main Course,high,True
+172194,"Milk, canned, evaporated, with added vitamin A",Dairy and Egg Products,Main Course,Drink,medium,True
+172195,"Milk, dry, nonfat, regular, with added vitamin A and vitamin D",Dairy and Egg Products,Snack,Drink,medium,True
+172196,"Milk, dry, nonfat, instant, without added vitamin A and vitamin D",Dairy and Egg Products,Snack,Drink,medium,True
+172198,"Cheese substitute, mozzarella",Dairy and Egg Products,Snack,Side Dish,high,True
+172212,"Cream, half and half, fat free",Dairy and Egg Products,Drink,Side Dish,high,True
+172214,"Cream substitute, flavored, powdered",Dairy and Egg Products,Snack,Side Dish,high,True
+172218,"Yogurt, fruit, lowfat, with low calorie sweetener, fortified with vitamin D",Dairy and Egg Products,Main Course,Snack,medium,True
+172226,Ice cream sandwich,Dairy and Egg Products,Snack,Side Dish,high,True
+172227,Ice cream cookie sandwich,Dairy and Egg Products,Snack,Side Dish,high,True
+172228,"Ice cream cone, chocolate covered, with nuts, flavors other than chocolate",Dairy and Egg Products,Snack,Side Dish,high,True
+172229,"Ice cream sandwich, made with light ice cream, vanilla",Dairy and Egg Products,Snack,Side Dish,high,True
+172230,"Ice cream sandwich, vanilla, light, no sugar added",Dairy and Egg Products,Snack,Side Dish,high,True
+172231,"Spices, turmeric, ground",Spices and Herbs,Main Course,Side Dish,high,True
+172356,"Salad dressing, thousand island dressing, fat-free",Fats and Oils,Snack,Side Dish,high,True
+172435,"Peanut flour, low fat",Legumes and Legume Products,Main Course,Snack,high,True
+172440,"Soybeans, mature seeds, roasted, salted",Legumes and Legume Products,Snack,Main Course,high,True
+172441,"Soybeans, mature seeds, dry roasted",Legumes and Legume Products,Snack,Main Course,high,True
+172450,"Tofu, dried-frozen (koyadofu)",Legumes and Legume Products,Snack,Main Course,medium,True
+172664,"Bagels, cinnamon-raisin",Baked Products,Side Dish,Snack,medium,True
+172666,"Bagels, oat bran",Baked Products,Main Course,Snack,medium,True
+172667,"Biscuits, plain or buttermilk, frozen, baked",Baked Products,Main Course,Snack,medium,True
+172670,"Biscuits, plain or buttermilk, prepared from recipe",Baked Products,Main Course,Snack,medium,True
+172671,"Biscuits, mixed grain, refrigerated dough",Baked Products,Side Dish,Snack,medium,True
+172672,"Bread, cracked-wheat",Baked Products,Main Course,Side Dish,medium,True
+172673,"Bread, egg",Baked Products,Main Course,Snack,medium,True
+172674,"Bread, egg, toasted",Baked Products,Main Course,Snack,medium,True
+172675,"Bread, french or vienna (includes sourdough)",Baked Products,Side Dish,Snack,medium,True
+172680,"Bread, raisin, enriched",Baked Products,Side Dish,Snack,medium,True
+172682,"Bread, reduced-calorie, oat bran",Baked Products,Main Course,Snack,medium,True
+172683,"Bread, reduced-calorie, oat bran, toasted",Baked Products,Side Dish,Snack,medium,True
+172684,"Bread, rye",Baked Products,Main Course,Snack,medium,True
+172685,"Bread, rye, toasted",Baked Products,Side Dish,Snack,medium,True
+172687,"Bread, wheat, toasted",Baked Products,Snack,Side Dish,medium,True
+172689,"Bread, whole-wheat, commercially prepared, toasted",Baked Products,Snack,Side Dish,medium,True
+172690,"Bread, whole-wheat, prepared from recipe",Baked Products,Main Course,Side Dish,medium,True
+172691,"Bread, whole-wheat, prepared from recipe, toasted",Baked Products,Snack,Side Dish,medium,True
+172693,"Bread, stuffing, cornbread, dry mix, prepared",Baked Products,Side Dish,Snack,medium,True
+172694,"Cake, angelfood, commercially prepared",Baked Products,Main Course,Snack,high,True
+172699,"Cake, coffeecake, cheese",Baked Products,Main Course,Snack,high,True
+172703,"Cake, pineapple upside-down, prepared from recipe",Baked Products,Main Course,Snack,high,True
+172707,"Cake, sponge, prepared from recipe",Baked Products,Main Course,Snack,high,True
+172712,"Cake, cheesecake, prepared from mix, no-bake type",Baked Products,Main Course,Snack,high,True
+172761,"Muffins, English, wheat",Baked Products,Main Course,Snack,medium,True
+172763,"French toast, frozen, ready-to-heat",Baked Products,Main Course,Snack,medium,True
+172764,"Muffins, plain, prepared from recipe, made with low fat (2%) milk",Baked Products,Main Course,Snack,medium,True
+172768,"Muffins, blueberry, prepared from recipe, made with low fat (2%) milk",Baked Products,Main Course,Snack,medium,True
+172773,"Pancakes, blueberry, prepared from recipe",Baked Products,Main Course,Snack,high,True
+172775,"Pancakes, special dietary, dry mix",Baked Products,Main Course,Snack,high,True
+172776,"Pancakes, whole-wheat, dry mix, incomplete",Baked Products,Main Course,Snack,high,True
+172779,"Pie, blueberry, prepared from recipe",Baked Products,Side Dish,Snack,medium,True
+172781,"Pie, cherry, prepared from recipe",Baked Products,Side Dish,Snack,medium,True
+172782,"Pie, coconut custard, commercially prepared",Baked Products,Main Course,Snack,medium,True
+172786,"Pie, pecan, prepared from recipe",Baked Products,Main Course,Snack,medium,True
+172788,"Pie, pumpkin, prepared from recipe",Baked Products,Main Course,Snack,medium,True
+172791,Phyllo dough,Baked Products,Main Course,Snack,medium,True
+172792,"Popovers, dry mix, enriched",Baked Products,Main Course,Snack,medium,True
+172795,"Rolls, french",Baked Products,Main Course,Snack,medium,True
+172798,"Sweet rolls, cinnamon, refrigerated dough with frosting",Baked Products,Side Dish,Snack,medium,True
+172799,"Sweet rolls, cinnamon, refrigerated dough with frosting, baked",Baked Products,Side Dish,Snack,medium,True
+172802,Wonton wrappers (includes egg roll wrappers),Baked Products,Main Course,Snack,medium,True
+172809,"Bread, protein, (includes gluten), toasted",Baked Products,Main Course,Snack,medium,True
+172810,"Rolls, dinner, plain, prepared from recipe, made with low fat (2%) milk",Baked Products,Main Course,Snack,medium,True
+172816,"Bread, pita, white, unenriched",Baked Products,Main Course,Snack,medium,True
+172817,"Bread, raisin, unenriched",Baked Products,Main Course,Snack,medium,True
+172818,"Bread, white, commercially prepared, low sodium, no salt",Baked Products,Side Dish,Snack,medium,True
+172821,"Cookies, ladyfingers, without lemon juice and rind",Baked Products,Main Course,Snack,high,True
+172825,"Danish pastry, fruit, unenriched (includes apple, cinnamon, raisin, strawberry)",Baked Products,Main Course,Snack,high,True
+172826,"Bread, white, commercially prepared, toasted, low sodium no salt",Baked Products,Main Course,Snack,medium,True
+172827,"Danish pastry, lemon, unenriched",Baked Products,Main Course,Snack,high,True
+172828,"English muffins, plain, unenriched, with calcium propionate (includes sourdough)",Baked Products,Main Course,Snack,medium,True
+172880,"Sauce, pizza, canned, ready-to-serve","Soups, Sauces, and Gravies",Main Course,Side Dish,medium,True
+172882,"Soup, tomato, canned, condensed","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+172883,"Soup, stock, beef, home-prepared","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+172884,"Soup, stock, chicken, home-prepared","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+172886,"Sauce, hoisin, ready-to-serve","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+172889,"Soup, beef broth, less/reduced sodium, ready to serve","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+172890,"Sauce, teriyaki, ready-to-serve, reduced sodium","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+172922,"Soup, beef broth or bouillon, powder, prepared with water","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+172923,"Soup, beef broth, cubed, prepared with water","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+172924,"Soup, chicken broth or bouillon, dry, prepared with water","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+172972,"Cereals, QUAKER, QUAKER MultiGrain Oatmeal, dry",Breakfast Cereals,Main Course,Side Dish,medium,True
+172973,"Cereals ready-to-eat, chocolate-flavored frosted puffed corn",Breakfast Cereals,Snack,Side Dish,medium,True
+172974,"Cereals ready-to-eat, QUAKER, Toasted Multigrain Crisps",Breakfast Cereals,Snack,Side Dish,medium,True
+172975,"Cereals ready-to-eat, QUAKER, QUAKER 100% Natural Granola with Oats, Wheat, Honey, and Raisins",Breakfast Cereals,Snack,Side Dish,medium,True
+172976,"Cereals ready-to-eat, QUAKER, Low Fat 100% Natural Granola with Raisins",Breakfast Cereals,Snack,Side Dish,medium,True
+172981,"Cereals ready-to-eat, HEALTH VALLEY, FIBER 7 Flakes",Breakfast Cereals,Snack,Side Dish,medium,True
+172985,"Cereals ready-to-eat, QUAKER, MOTHER'S PEANUT BUTTER BUMPERS Cereal",Breakfast Cereals,Snack,Side Dish,medium,True
+172986,"Cereals ready-to-eat, QUAKER, MOTHER'S Toasted Oat Bran cereal",Breakfast Cereals,Snack,Side Dish,medium,True
+172987,"Cereals ready-to-eat, QUAKER, Shredded Wheat, bagged cereal",Breakfast Cereals,Snack,Side Dish,medium,True
+172988,"Cereals ready-to-eat, SUN COUNTRY, KRETSCHMER Wheat Germ, Regular",Breakfast Cereals,Snack,Side Dish,medium,True
+172989,"Cereals, QUAKER, Quick Oats, Dry",Breakfast Cereals,Main Course,Side Dish,medium,True
+172991,"Cereals, QUAKER, Instant Oatmeal, Raisin and Spice, dry",Breakfast Cereals,Snack,Side Dish,medium,True
+173002,"Cereals ready-to-eat, RALSTON Enriched Wheat Bran flakes",Breakfast Cereals,Snack,Side Dish,medium,True
+173003,"Cereals ready-to-eat, RALSTON Corn Biscuits",Breakfast Cereals,Snack,Side Dish,medium,True
+173005,"Cereals ready-to-eat, POST GREAT GRAINS Cranberry Almond Crunch",Breakfast Cereals,Snack,Side Dish,medium,True
+173015,"Cereals ready-to-eat, POST, HONEY BUNCHES OF OATS with vanilla bunches",Breakfast Cereals,Snack,Side Dish,medium,True
+173017,"Cereals ready-to-eat, NATURE'S PATH, Organic FLAX PLUS flakes",Breakfast Cereals,Snack,Side Dish,medium,True
+173019,"Cereals ready-to-eat, POST, HONEY BUNCHES OF OATS, with real strawberries",Breakfast Cereals,Snack,Side Dish,medium,True
+173025,"Figs, canned, extra heavy syrup pack, solids and liquids",Fruits and Fruit Juices,Side Dish,Snack,high,True
+173034,"Grapefruit, raw, white, Florida",Fruits and Fruit Juices,Drink,Snack,high,True
+173035,"Grapefruit, sections, canned, water pack, solids and liquids",Fruits and Fruit Juices,Drink,Snack,high,True
+173216,"Lemonade, frozen concentrate, white",Beverages,Snack,Drink,high,True
+173226,"Shake, fast food, vanilla",Beverages,Snack,Drink,high,True
+173238,"English muffins, plain, unenriched, without calcium propionate (includes sourdough)",Baked Products,Main Course,Snack,medium,True
+173239,"Pie, apple, commercially prepared, unenriched flour",Baked Products,Main Course,Snack,medium,True
+173274,"Fast foods, vanilla, light, soft-serve ice cream, with cone",Fast Foods,Snack,Main Course,medium,True
+173299,"McDONALD'S, Hotcakes (plain)",Fast Foods,Snack,Main Course,medium,True
+173301,"McDONALD'S, Hot Caramel Sundae",Fast Foods,Snack,Main Course,medium,True
+173302,"McDONALD'S, Hot Fudge Sundae",Fast Foods,Snack,Main Course,medium,True
+173303,"McDONALD'S, McFLURRY with M&M'S CANDIES",Fast Foods,Snack,Main Course,medium,True
+173304,"McDONALD'S, McFLURRY with OREO cookies",Fast Foods,Snack,Main Course,medium,True
+173309,"McDONALD'S, Deluxe Breakfast, with syrup and margarine",Fast Foods,Snack,Main Course,medium,True
+173310,"McDONALD'S, Hotcakes and Sausage",Fast Foods,Snack,Main Course,medium,True
+173311,"McDONALD'S, Hotcakes (with 2 pats margarine & syrup)",Fast Foods,Snack,Main Course,medium,True
+173313,"McDONALD'S, Fruit 'n Yogurt Parfait (without granola)",Fast Foods,Snack,Main Course,medium,True
+173324,"Light Ice Cream, soft serve, blended with milk chocolate candies",Fast Foods,Snack,Main Course,medium,True
+173340,"Macaroni and cheese dinner with dry sauce mix, boxed, uncooked","Meals, Entrees, and Side Dishes",Snack,Main Course,medium,True
+173343,Potato salad with egg,"Meals, Entrees, and Side Dishes",Snack,Main Course,medium,True
+173417,"Cheese, cottage, lowfat, 1% milkfat",Dairy and Egg Products,Side Dish,Drink,medium,True
+173421,"Egg, yolk, raw, frozen, pasteurized",Dairy and Egg Products,Side Dish,Main Course,high,True
+173422,"Egg, yolk, raw, frozen, sugared, pasteurized",Dairy and Egg Products,Side Dish,Main Course,high,True
+173425,"Egg, whole, dried, stabilized, glucose reduced",Dairy and Egg Products,Side Dish,Main Course,high,True
+173426,"Egg, white, dried, flakes, stabilized, glucose reduced",Dairy and Egg Products,Side Dish,Main Course,high,True
+173427,"Egg, white, dried, powder, stabilized, glucose reduced",Dairy and Egg Products,Side Dish,Main Course,high,True
+173428,"Egg, yolk, dried",Dairy and Egg Products,Side Dish,Main Course,high,True
+173429,"Egg substitute, powder",Dairy and Egg Products,Side Dish,Main Course,high,True
+173436,"Egg, yolk, raw, frozen, salted, pasteurized",Dairy and Egg Products,Side Dish,Main Course,high,True
+173451,"Yogurt, fruit, lowfat, with low calorie sweetener",Dairy and Egg Products,Main Course,Snack,medium,True
+173453,"Cream substitute, flavored, liquid",Dairy and Egg Products,Snack,Side Dish,high,True
+173454,"Milk, dry, whole, without added vitamin D",Dairy and Egg Products,Snack,Drink,medium,True
+173459,"Protein supplement, milk based, Muscle Milk, powder",Dairy and Egg Products,Snack,Drink,medium,True
+173460,"Protein supplement, milk based, Muscle Milk Light, powder",Dairy and Egg Products,Snack,Drink,medium,True
+173463,"Yogurt, vanilla flavor, lowfat milk, sweetened with low calorie sweetener",Dairy and Egg Products,Snack,Drink,medium,True
+173465,"Ice cream, soft serve, chocolate",Dairy and Egg Products,Snack,Side Dish,high,True
+173466,"Ice cream, bar or stick, chocolate covered",Dairy and Egg Products,Snack,Side Dish,high,True
+173470,"Thyme, fresh",Spices and Herbs,Main Course,Side Dish,high,True
+173471,Vanilla extract,Spices and Herbs,Snack,Side Dish,high,True
+173590,"Salad dressing, italian dressing, fat-free",Fats and Oils,Drink,Side Dish,high,True
+173593,"Salad dressing, ranch dressing, reduced fat",Fats and Oils,Main Course,Side Dish,high,True
+173666,"Lemonade, frozen concentrate, pink",Beverages,Snack,Drink,high,True
+173756,"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw",Legumes and Legume Products,Snack,Main Course,high,True
+173884,"Cereals ready-to-eat, GENERAL MILLS, CHEERIOS",Breakfast Cereals,Snack,Side Dish,medium,True
+173885,"Cereals ready-to-eat, POST, COCOA PEBBLES",Breakfast Cereals,Snack,Side Dish,medium,True
+173886,"Cereals ready-to-eat, QUAKER, QUAKER CRUNCHY BRAN",Breakfast Cereals,Snack,Side Dish,medium,True
+173887,"Cereals ready-to-eat, RALSTON CRISP RICE",Breakfast Cereals,Snack,Side Dish,medium,True
+173888,"Cereals ready-to-eat, POST Bran Flakes",Breakfast Cereals,Snack,Side Dish,medium,True
+173889,"Cereals ready-to-eat, POST, Honeycomb Cereal",Breakfast Cereals,Snack,Side Dish,medium,True
+173890,"Cereals ready-to-eat, QUAKER, KING VITAMAN",Breakfast Cereals,Snack,Side Dish,medium,True
+173891,"Cereals ready-to-eat, QUAKER, QUAKER OAT LIFE, plain",Breakfast Cereals,Snack,Side Dish,medium,True
+173892,"Cereals ready-to-eat, QUAKER, 100% Natural Granola, Oats, Wheat and Honey",Breakfast Cereals,Snack,Side Dish,medium,True
+173893,"Cereals ready-to-eat, RALSTON TASTEEOS",Breakfast Cereals,Snack,Side Dish,medium,True
+173894,"Cereals ready-to-eat, POST, Honey Nut Shredded Wheat",Breakfast Cereals,Snack,Side Dish,medium,True
+173896,"Cereals ready-to-eat, wheat germ, toasted, plain",Breakfast Cereals,Snack,Side Dish,medium,True
+173904,"Cereals, oats, regular and quick, not fortified, dry",Breakfast Cereals,Main Course,Side Dish,medium,True
+173906,"Cereals, oats, instant, fortified, with cinnamon and spice, prepared with water",Breakfast Cereals,Snack,Main Course,high,True
+173907,"Cereals, QUAKER, Instant Oatmeal, maple and brown sugar, dry",Breakfast Cereals,Snack,Side Dish,medium,True
+173908,"Cereals, oats, instant, fortified, with raisins and spice, prepared with water",Breakfast Cereals,Snack,Main Course,high,True
+173912,"Cereals ready-to-eat, rice, puffed, fortified",Breakfast Cereals,Snack,Side Dish,medium,True
+173913,"Cereals ready-to-eat, wheat, puffed, fortified",Breakfast Cereals,Snack,Side Dish,medium,True
+173918,"Cereals ready-to-eat, POST, Shredded Wheat, lightly frosted, spoon-size",Breakfast Cereals,Snack,Side Dish,medium,True
+173919,"Cereals ready-to-eat, POST SELECTS Blueberry Morning",Breakfast Cereals,Snack,Side Dish,medium,True
+173920,"Cereals, oats, instant, fortified, maple and brown sugar, dry",Breakfast Cereals,Snack,Side Dish,medium,True
+173927,"Cereals ready-to-eat, MOM'S BEST, Sweetened WHEAT-FULS",Breakfast Cereals,Snack,Side Dish,medium,True
+173934,"Apple juice, frozen concentrate, unsweetened, undiluted, without added ascorbic acid",Fruits and Fruit Juices,Snack,Drink,high,True
+173937,"Apricots, canned, juice pack, with skin, solids and liquids",Fruits and Fruit Juices,Snack,Drink,high,True
+173940,"Apricots, dehydrated (low-moisture), sulfured, stewed",Fruits and Fruit Juices,Side Dish,Snack,high,True
+173958,"Cherries, sweet, canned, juice pack, solids and liquids",Fruits and Fruit Juices,Snack,Drink,high,True
+173963,"Currants, european black, raw",Fruits and Fruit Juices,Side Dish,Snack,high,True
+174066,"Sauce, sweet and sour, ready-to-serve","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+174068,"Dip, salsa con queso, cheese and salsa- medium","Soups, Sauces, and Gravies",Side Dish,Main Course,low,True
+174069,"Dip, TOSTITOS, salsa con queso, medium","Soups, Sauces, and Gravies",Side Dish,Main Course,low,True
+174070,"Sauce, peanut, made from peanut butter, water, soy sauce","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+174072,"Gravy, HEINZ Home Style, classic chicken","Soups, Sauces, and Gravies",Main Course,Side Dish,high,True
+174075,"Bread, chapati or roti, whole wheat, commercially prepared, frozen",Baked Products,Main Course,Side Dish,medium,True
+174076,"Bread, paratha, whole wheat, commercially prepared, frozen",Baked Products,Snack,Side Dish,medium,True
+174077,"Bread, naan, whole wheat, commercially prepared, refrigerated",Baked Products,Main Course,Side Dish,medium,True
+174078,"Bread, roll, Mexican, bollilo",Baked Products,Main Course,Side Dish,medium,True
+174085,"Waffles, whole wheat, lowfat, frozen, ready-to-heat",Baked Products,Side Dish,Snack,high,True
+174091,"Bread, french or vienna, whole wheat",Baked Products,Main Course,Side Dish,medium,True
+174093,"English muffins, whole grain white",Baked Products,Main Course,Snack,medium,True
+174100,"Bread, gluten-free, white, made with rice flour, corn starch, and/or tapioca",Baked Products,Main Course,Snack,medium,True
+174105,"Waffles, gluten-free, frozen, ready-to-heat",Baked Products,Side Dish,Snack,high,True
+174260,"Peanuts, all types, cooked, boiled, with salt",Legumes and Legume Products,Main Course,Snack,high,True
+174267,"Peanut flour, defatted",Legumes and Legume Products,Main Course,Snack,high,True
+174270,"Soybeans, mature seeds, raw",Legumes and Legume Products,Snack,Main Course,high,True
+174300,"Soybeans, mature seeds, roasted, no salt added",Legumes and Legume Products,Snack,Main Course,high,True
+174301,"Soy protein concentrate, produced by acid wash",Legumes and Legume Products,Snack,Main Course,medium,True
+174303,"Tofu, dried-frozen (koyadofu), prepared with calcium sulfate",Legumes and Legume Products,Snack,Main Course,medium,True
+174523,"Sauce, barbecue","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+174536,"Soup, chicken broth, ready-to-serve","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+174543,"Sauce, sweet and sour, prepared-from-recipe","Soups, Sauces, and Gravies",Snack,Side Dish,medium,True
+174547,"CAMPBELL'S, Tomato Soup, condensed","Soups, Sauces, and Gravies",Snack,Main Course,high,True
+174551,"Soup, chicken broth, canned, prepared with equal volume water","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+174566,"Soup, chicken broth cubes, dry, prepared with water","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+174568,"Soup, onion, dry, mix, prepared with water","Soups, Sauces, and Gravies",Side Dish,Main Course,high,True
+174620,"Cereals ready-to-eat, QUAKER, QUAKER OAT CINNAMON LIFE",Breakfast Cereals,Snack,Side Dish,medium,True
+174622,"Cereals ready-to-eat, QUAKER, Oatmeal Squares",Breakfast Cereals,Snack,Side Dish,medium,True
+174623,"Cereals ready-to-eat, QUAKER, Oatmeal Squares, cinnamon",Breakfast Cereals,Snack,Side Dish,medium,True
+174624,"Cereals, QUAKER, Instant Oatmeal, fruit and cream variety, dry",Breakfast Cereals,Snack,Side Dish,medium,True
+174625,"Cereals, QUAKER, Instant Oatmeal, raisins, dates and walnuts, dry",Breakfast Cereals,Snack,Side Dish,medium,True
+174626,"Cereals, QUAKER, Oat Bran, QUAKER/MOTHER'S Oat Bran, dry",Breakfast Cereals,Main Course,Side Dish,medium,True
+174628,"Cereals ready-to-eat, Post, Waffle Crisp",Breakfast Cereals,Snack,Side Dish,medium,True
+174632,"Cereals ready-to-eat, QUAKER, MOTHER'S Cinnamon Oat Crunch",Breakfast Cereals,Snack,Side Dish,medium,True
+174634,"Cereals ready-to-eat, QUAKER, MOTHER'S COCOA BUMPERS",Breakfast Cereals,Snack,Side Dish,medium,True
+174635,"Cereals ready-to-eat, SUN COUNTRY, KRETSCHMER Toasted Wheat Bran",Breakfast Cereals,Main Course,Side Dish,medium,True
+174636,"Cereals, QUAKER, Instant Oatmeal, Cinnamon-Spice, dry",Breakfast Cereals,Snack,Side Dish,medium,True
+174639,"Cereals ready-to-eat, UNCLE SAM CEREAL",Breakfast Cereals,Snack,Side Dish,medium,True
+174644,"Cereals ready-to-eat, MOM'S BEST, Honey Nut TOASTY O'S",Breakfast Cereals,Snack,Side Dish,medium,True
+174648,"Cereals ready-to-eat, RALSTON Corn Flakes",Breakfast Cereals,Snack,Side Dish,medium,True
+174649,"Cereals ready-to-eat, RALSTON Crispy Hexagons",Breakfast Cereals,Snack,Side Dish,medium,True
+174652,"Cereals ready-to-eat, QUAKER, Christmas Crunch",Breakfast Cereals,Snack,Side Dish,medium,True
+174653,"Cereals ready-to-eat, POST SELECTS Maple Pecan Crunch",Breakfast Cereals,Snack,Side Dish,medium,True
+174654,"Cereals ready-to-eat, NATURE'S PATH, Organic FLAX PLUS, Pumpkin Granola",Breakfast Cereals,Snack,Side Dish,medium,True
+174656,"Incaparina, dry mix (corn and soy flours), unprepared",Breakfast Cereals,Snack,Side Dish,medium,True
+174663,"Cereals ready-to-eat, POST, HONEY BUNCHES OF OATS, pecan bunches",Breakfast Cereals,Snack,Side Dish,medium,True
+174670,"Fruit salad, (peach and pear and apricot and pineapple and cherry), canned, juice pack, solids and liquids",Fruits and Fruit Juices,Snack,Drink,high,True
+174674,"Grapefruit, raw, pink and red, California and Arizona",Fruits and Fruit Juices,Drink,Snack,high,True
+174677,"Grapefruit, raw, white, California",Fruits and Fruit Juices,Drink,Snack,high,True
+174680,"Grapefruit juice, white, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Snack,Drink,high,True
+174684,"Grapes, canned, thompson seedless, water pack, solids and liquids",Fruits and Fruit Juices,Drink,Snack,high,True
+174790,"Pretzels, soft, unsalted",Snacks,Main Course,Snack,low,True
+174901,"Bagels, egg",Baked Products,Main Course,Snack,medium,True
+174903,"Biscuits, plain or buttermilk, dry mix, prepared",Baked Products,Main Course,Snack,medium,True
+174906,"Bread, banana, prepared from recipe, made with margarine",Baked Products,Main Course,Snack,medium,True
+174907,"Bread, boston brown, canned",Baked Products,Main Course,Snack,medium,True
+174910,"Bread, cornbread, prepared from recipe, made with low fat (2%) milk",Baked Products,Side Dish,Snack,medium,True
+174911,"Bread, french or vienna, toasted (includes sourdough)",Baked Products,Main Course,Snack,medium,True
+174912,"Bread, irish soda, prepared from recipe",Baked Products,Main Course,Snack,medium,True
+174913,"Bread, Italian",Baked Products,Side Dish,Snack,medium,True
+174915,"Bread, pita, white, enriched",Baked Products,Main Course,Snack,medium,True
+174916,"Bread, pita, whole-wheat",Baked Products,Main Course,Side Dish,medium,True
+174917,"Bread, protein (includes gluten)",Baked Products,Main Course,Snack,medium,True
+174918,"Bread, pumpernickel",Baked Products,Main Course,Snack,medium,True
+174919,"Bread, reduced-calorie, oatmeal",Baked Products,Main Course,Snack,medium,True
+174920,"Bread, reduced-calorie, rye",Baked Products,Main Course,Snack,medium,True
+174921,"Bread, reduced-calorie, wheat",Baked Products,Main Course,Side Dish,medium,True
+174922,"Bread, reduced-calorie, white",Baked Products,Side Dish,Snack,medium,True
+174923,"Bread, rice bran",Baked Products,Side Dish,Snack,medium,True
+174926,"Bread, white, prepared from recipe, made with nonfat dry milk",Baked Products,Main Course,Snack,medium,True
+174927,"Bread, white, prepared from recipe, made with low fat (2%) milk",Baked Products,Main Course,Snack,medium,True
+174931,"Bread, stuffing, dry mix, prepared",Baked Products,Main Course,Snack,medium,True
+174936,"Cake, coffeecake, creme-filled with chocolate frosting",Baked Products,Main Course,Snack,high,True
+174937,"Cake, coffeecake, fruit",Baked Products,Main Course,Snack,high,True
+174941,"Cake, shortcake, biscuit-type, prepared from recipe",Baked Products,Side Dish,Snack,high,True
+174951,"Cookies, fudge, cake-type (includes trolley cakes)",Baked Products,Main Course,Snack,high,True
+174981,"Crackers, rusk toast",Baked Products,Main Course,Snack,high,True
+174986,"Cream puff shell, prepared from recipe",Baked Products,Main Course,Snack,medium,True
+174988,"Croissants, apple",Baked Products,Main Course,Snack,medium,True
+174994,"Muffins, English, plain, enriched, with ca prop (includes sourdough)",Baked Products,Main Course,Snack,medium,True
+174995,"Muffins, English, plain, toasted, enriched, with calcium propionate (includes sourdough)",Baked Products,Main Course,Snack,medium,True
+174996,"Muffins, English, mixed-grain (includes granola)",Baked Products,Main Course,Snack,medium,True
+174998,"French toast, prepared from recipe, made with low fat (2%) milk",Baked Products,Main Course,Snack,medium,True
+174999,"Hush puppies, prepared from recipe",Baked Products,Main Course,Snack,medium,True
+175003,"Muffins, corn, dry mix, prepared",Baked Products,Main Course,Snack,medium,True
+175004,"Muffins, corn, toaster-type",Baked Products,Main Course,Snack,medium,True
+175005,"Muffins, corn, prepared from recipe, made with low fat (2%) milk",Baked Products,Side Dish,Snack,medium,True
+175006,"Pancakes, plain, dry mix, complete, prepared",Baked Products,Main Course,Snack,high,True
+175007,"Pancakes, plain, dry mix, incomplete (includes buttermilk)",Baked Products,Main Course,Snack,high,True
+175008,"Pancakes, plain, dry mix, incomplete, prepared",Baked Products,Main Course,Snack,high,True
+175009,"Pancakes, plain, prepared from recipe",Baked Products,Main Course,Snack,high,True
+175010,"Pancakes, whole-wheat, dry mix, incomplete, prepared",Baked Products,Main Course,Snack,high,True
+175012,"Pie, apple, prepared from recipe",Baked Products,Side Dish,Snack,medium,True
+175013,"Pie, banana cream, prepared from mix, no-bake type",Baked Products,Main Course,Snack,medium,True
+175015,"Pie, chocolate mousse, prepared from mix, no-bake type",Baked Products,Main Course,Snack,medium,True
+175017,"Pie, coconut cream, prepared from mix, no-bake type",Baked Products,Main Course,Snack,medium,True
+175018,"Pie, lemon meringue, prepared from recipe",Baked Products,Main Course,Snack,medium,True
+175027,"Rolls, dinner, egg",Baked Products,Main Course,Snack,medium,True
+175029,"Rolls, dinner, rye",Baked Products,Main Course,Snack,medium,True
+175030,"Rolls, dinner, wheat",Baked Products,Main Course,Snack,medium,True
+175031,"Rolls, hard (includes kaiser)",Baked Products,Main Course,Snack,medium,True
+175033,"Sweet rolls, cheese",Baked Products,Main Course,Snack,medium,True
+175039,"Waffles, plain, prepared from recipe",Baked Products,Main Course,Snack,high,True
+175042,"Leavening agents, yeast, baker's, compressed",Baked Products,Main Course,Snack,medium,True
+175043,"Leavening agents, yeast, baker's, active dry",Baked Products,Main Course,Snack,medium,True
+175044,"Bread, rice bran, toasted",Baked Products,Side Dish,Snack,medium,True
+175047,"Pancakes, buttermilk, prepared from recipe",Baked Products,Main Course,Snack,high,True
+175049,"Bagels, plain, enriched, without calcium propionate (includes onion, poppy, sesame)",Baked Products,Main Course,Snack,medium,True
+175050,"Bagels, plain, unenriched, with calcium propionate (includes onion, poppy, sesame)",Baked Products,Main Course,Snack,medium,True
+175051,"Bagels, plain, unenriched, without calcium propionate(includes onion, poppy, sesame)",Baked Products,Main Course,Snack,medium,True
+175061,"Danish pastry, raspberry, unenriched",Baked Products,Main Course,Snack,high,True
+175063,"English muffins, plain, enriched, without calcium propionate(includes sourdough)",Baked Products,Main Course,Snack,medium,True
+175066,"Popovers, dry mix, unenriched",Baked Products,Main Course,Snack,medium,True
+175118,"Fish, herring, Atlantic, pickled",Finfish and Shellfish Products,Side Dish,Main Course,high,True
