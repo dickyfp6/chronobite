@@ -20,7 +20,7 @@ import importlib.util
 # Add parent directories untuk imports (F. WebApp is one level deep, so one .. to get to root)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'C. System Flow'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Greedy Algorithm'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'greedy'))
 
 # Import system components
 try:
@@ -77,7 +77,7 @@ def init_services():
     
     if greedy_algorithm is None and GreedyAlgorithmInterface:
         try:
-            greedy_algorithm = GreedyAlgorithmInterface()
+            greedy_algorithm = GreedyAlgorithmInterface(pd.DataFrame(), {})
             print("✓ GreedyAlgorithmInterface initialized")
         except Exception as e:
             print(f"❌ Failed to initialize GreedyAlgorithmInterface: {e}")
@@ -140,69 +140,69 @@ def calculate_tdee(bmr, activity):
     return round(bmr * float(activity), 0)
 
 
-def _course_to_item(course):
-    candidate = course.candidates[0] if getattr(course, 'candidates', None) and len(course.candidates) > 0 else None
-    if candidate is None:
-        return {
-            'name': course.course_type,
-            'serving_size': 100,
-            'calories': 0,
-            'score': 0,
-            'main_ingredients': [],
-            'macros': {'carbs': 0, 'protein': 0, 'fat': 0},
-        }
-
-    return {
-        'fdc_id': getattr(candidate, 'fdc_id', 'unknown'),
-        'name': candidate.food_name,
-        'food_group': getattr(candidate, 'food_group', 'Unknown'),
-        'cuisine_label': getattr(candidate, 'cuisine_label', 'Unknown'),
-        'serving_size': round(getattr(candidate, 'portion_gram', 100), 1),
-        'calories': round(getattr(candidate, 'energy_kcal', 0), 1),
-        'score': 100,
-        'food_category': getattr(candidate, 'consumption_label', course.course_type),
-        'main_ingredients': [candidate.food_name],
-        'macros': {
-            'carbs': round(getattr(candidate, 'carbohydrate_g', 0), 2),
+def _course_to_all_candidates(course):
+    """Return all 3 candidates for a course"""
+    if not getattr(course, 'candidates', None):
+        return []
+    
+    candidates = []
+    for idx, candidate in enumerate(course.candidates):
+        candidates.append({
+            'fdc_id': getattr(candidate, 'fdc_id', 'unknown'),
+            'name': candidate.food_name,
+            'food_group': getattr(candidate, 'food_group', ''),
+            'cuisine_label': getattr(candidate, 'cuisine_label', ''),
+            'consumption_label': getattr(candidate, 'consumption_label', ''),
+            'serving_size': round(getattr(candidate, 'portion_gram', 100), 1),
+            'calories': round(getattr(candidate, 'energy_kcal', 0), 1),
             'protein': round(getattr(candidate, 'protein_g', 0), 2),
+            'carbs': round(getattr(candidate, 'carbohydrate_g', 0), 2),
             'fat': round(getattr(candidate, 'fat_g', 0), 2),
-        },
-        'micronutrients': [],
-        'halal_status': 'unknown',
-    }
-
-
-def _meal_to_frontend(meal):
-    items = []
-    if getattr(meal, 'courses', None):
-        for course in meal.courses.values():
-            items.append(_course_to_item(course))
-
-    total_calories = sum(item['calories'] for item in items)
-    total_carbs = sum(item['macros']['carbs'] for item in items)
-    total_protein = sum(item['macros']['protein'] for item in items)
-    total_fat = sum(item['macros']['fat'] for item in items)
-
-    return {
-        'total_calories': total_calories,
-        'items': items,
-        'macros': {
-            'carbs': total_carbs,
-            'protein': total_protein,
-            'fat': total_fat,
-        }
-    }
+            'is_selected': idx == 0,
+        })
+    return candidates
 
 
 def _menu_plan_to_frontend(menu_plan):
+    def meal_to_dict(meal):
+        if meal is None:
+            return None
+        
+        if getattr(meal, 'meal_type', '') == 'Snack':
+            return {
+                'meal_type': 'Snack',
+                'target_calories': round(getattr(meal, 'target_calories', 0), 1),
+                'actual_calories': round(getattr(meal, 'actual_calories', 0), 1),
+                'candidates': _course_to_all_candidates(
+                    type('obj', (object,), {'candidates': meal.candidates})()
+                )
+            }
+        
+        courses = {}
+        if getattr(meal, 'courses', None):
+            for course_type, course in meal.courses.items():
+                courses[course_type] = {
+                    'course_type': course_type,
+                    'candidates': _course_to_all_candidates(course)
+                }
+        
+        return {
+            'meal_type': getattr(meal, 'meal_type', ''),
+            'target_calories': round(getattr(meal, 'target_calories', 0), 1),
+            'actual_calories': round(getattr(meal, 'actual_calories', 0), 1),
+            'courses': courses
+        }
+    
     return {
         'algorithm_used': getattr(menu_plan, 'algorithm_used', 'Greedy'),
-        'user_profile': getattr(menu_plan, 'user_profile', {}),
-        'breakfast': _meal_to_frontend(getattr(menu_plan, 'breakfast', None)),
-        'lunch': _meal_to_frontend(getattr(menu_plan, 'lunch', None)),
-        'dinner': _meal_to_frontend(getattr(menu_plan, 'dinner', None)),
-        'snack': _meal_to_frontend(getattr(menu_plan, 'snack', None)),
-        'total_calories': getattr(menu_plan, 'total_calories', getattr(menu_plan, 'total_daily_calories', 0)),
+        'breakfast': meal_to_dict(getattr(menu_plan, 'breakfast', None)),
+        'lunch': meal_to_dict(getattr(menu_plan, 'lunch', None)),
+        'dinner': meal_to_dict(getattr(menu_plan, 'dinner', None)),
+        'snack': meal_to_dict(getattr(menu_plan, 'snack', None)),
+        'total_daily_calories': round(getattr(menu_plan, 'total_daily_calories', 0), 1),
+        'total_daily_protein_g': round(getattr(menu_plan, 'total_daily_protein_g', 0), 2),
+        'total_daily_carb_g': round(getattr(menu_plan, 'total_daily_carb_g', 0), 2),
+        'total_daily_fat_g': round(getattr(menu_plan, 'total_daily_fat_g', 0), 2),
         'feasible': getattr(menu_plan, 'feasible', True),
         'violations': getattr(menu_plan, 'violations', []),
     }
@@ -601,6 +601,12 @@ def generate_menu():
             }), 500
         
         data = request.get_json()
+        
+        # DEBUG: Dump the payload to see what the browser is sending
+        import json
+        with open('debug_request.json', 'w') as f:
+            json.dump(data, f, indent=2)
+            
         algorithm_choice = data.get('algorithm', 'greedy')
         
         if algorithm_choice != 'greedy':
@@ -622,40 +628,46 @@ def generate_menu():
             base_df = nutrition_service.guideline_loader.food_df
             if base_df is not None:
                 food_database = base_df.copy()
+        
+        print(f"[DEBUG] food_database size before preferences: {len(food_database) if food_database is not None else 0}")
+        print(f"[DEBUG] food_preferences: {user_input.get('food_preferences', [])}")
 
         # Optional cuisine filtering from user preferences
         food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
         if food_database is not None and food_preferences:
+            # Normalize preferences to title case to match database (e.g. 'asian' -> 'Asian')
+            normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
+            
             if 'cuisine' in food_database.columns:
-                food_database = food_database[food_database['cuisine'].isin(food_preferences)].copy()
+                food_database = food_database[food_database['cuisine'].isin(normalized_prefs)].copy()
             elif 'cuisine_label' in food_database.columns:
-                food_database = food_database[food_database['cuisine_label'].isin(food_preferences)].copy()
+                food_database = food_database[food_database['cuisine_label'].isin(normalized_prefs)].copy()
+
+        print(f"[DEBUG] food_database size after preferences: {len(food_database) if food_database is not None else 0}")
 
         nutrition_guidelines = analysis_data.get('guidelines', {})
         
+        if food_database is None or len(food_database) == 0:
+            print("[ERROR] food_database is EMPTY before initializing Greedy Algorithm!")
+            
         if food_database is None or nutrition_guidelines is None:
             return jsonify({
                 "success": False,
                 "error": "Missing food database or guidelines"
             }), 400
         
-        success = greedy_algorithm.initialize(food_database, nutrition_guidelines)
-        if not success:
+        try:
+            greedy_algorithm.initialize(food_database, nutrition_guidelines)
+        except Exception as init_err:
             return jsonify({
                 "success": False,
-                "error": "Failed to initialize algorithm"
+                "error": f"Failed to initialize algorithm: {init_err}"
             }), 500
         
         # Generate menu
         menu_plan = greedy_algorithm.generate_menu_plan(
             user_profile=user_input,
-            meal_distribution={
-                'breakfast': 0.2375,
-                'lunch': 0.3375,
-                'snack': 0.1375,
-                'dinner': 0.2875
-            },
-            user_tdee=tdee
+            tdee=tdee
         )
         
         if menu_plan is None:

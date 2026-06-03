@@ -142,16 +142,15 @@ class CandidateGenerator:
         # Step 1: Filter by calorie range
         filtered = CandidateGenerator.filter_by_calorie_range(candidates_df, target_calories, tolerance=tolerance)
         
-        if len(filtered) == 0:
-            # Fallback: jika tidak ada yang cocok range, ambil terdekat
+        if len(filtered) < num_candidates:
+            # Fallback: jika jumlah kurang dari yang diminta, ambil terdekat untuk memenuhi kuota
             filtered = candidates_df.copy()
             filtered['calorie_distance'] = abs(filtered['energy_kcal'] - target_calories)
-            filtered = filtered.nsmallest(num_candidates + len(exclusion_list), 'calorie_distance')
+            filtered = filtered.nsmallest(num_candidates + len(exclusion_list) + 10, 'calorie_distance')
         
         # Step 2: Remove exclusions based on ingredient similarity
+        result_candidates = []
         if ingredient_diversity and len(exclusion_list) > 0:
-            result_candidates = []
-            
             for idx, row in filtered.iterrows():
                 food_name = str(row['food_name'])
                 is_excluded = False
@@ -162,7 +161,7 @@ class CandidateGenerator:
                     if food_name.lower() == excluded_name.lower():
                         is_excluded = True
                         break
-                    # Check 2: ingredient similarity (existing logic)
+                    # Check 2: ingredient similarity
                     if CandidateGenerator.is_similar_ingredient(food_name, excluded_name):
                         is_excluded = True
                         break
@@ -172,7 +171,13 @@ class CandidateGenerator:
                     if len(result_candidates) >= num_candidates:
                         break
             
-            result = pd.DataFrame(result_candidates) if result_candidates else pd.DataFrame()
+            # SAFEGUARD: Jika setelah di-exclude ternyata habis/kurang dari 3, 
+            # abaikan aturan exclusion dan ambil kandidat terbaik yang ada.
+            if len(result_candidates) < min(3, num_candidates):
+                result_candidates = filtered.head(num_candidates).to_dict('records')
+                result = pd.DataFrame(result_candidates)
+            else:
+                result = pd.DataFrame(result_candidates)
         else:
             # Tanpa exclusion, ambil top num_candidates
             result = filtered.head(num_candidates)

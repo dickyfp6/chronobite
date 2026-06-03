@@ -13,25 +13,6 @@ interface ReportProps {
   userData: UserInputData;
 }
 
-const sampleMeals = {
-  breakfast: [
-    { type: 'main', item: 'Oatmeal with Berries', portion: '200g' },
-    { type: 'side', item: 'Greek Yogurt', portion: '150g' },
-  ],
-  lunch: [
-    { type: 'main', item: 'Grilled Chicken Breast', portion: '150g' },
-    { type: 'side', item: 'Brown Rice', portion: '100g' },
-    { type: 'side', item: 'Steamed Broccoli', portion: '80g' },
-  ],
-  dinner: [
-    { type: 'main', item: 'Baked Salmon', portion: '120g' },
-    { type: 'side', item: 'Roasted Vegetables', portion: '100g' },
-  ],
-  snack: [
-    { type: 'main', item: 'Apple Slices', portion: '1 medium' },
-  ],
-};
-
 const dietTips = {
   dm2: [
     'Monitor carbohydrate intake and choose complex carbs over simple sugars',
@@ -64,6 +45,30 @@ export function Report({ userData }: ReportProps) {
   const [activeTab, setActiveTab] = useState(0);
   const { t, language } = useI18n();
 
+  const [selectedItems] = useState<Record<string, any>>(() => {
+    const saved = sessionStorage.getItem('dss_selected_items');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const [actualNutrients] = useState<any>(() => {
+    const saved = sessionStorage.getItem('dss_actual_nutrients');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const getMealItems = (mealName: string) => {
+    return Object.keys(selectedItems)
+      .filter(key => key.startsWith(`${mealName}_`))
+      .map(key => {
+        const item = selectedItems[key];
+        const category = key.split('_')[1];
+        return {
+          type: category.toLowerCase(),
+          item: item.name || item.food_name,
+          portion: `${item.serving_size || item.portion_gram}g`,
+        };
+      });
+  };
+
   const dailyNeeds = useMemo(
     () =>
       calculateDailyNeeds(
@@ -80,30 +85,30 @@ export function Report({ userData }: ReportProps) {
     () => [
       {
         nutrient: t.results.protein,
-        actual: Math.round(dailyNeeds.protein * 0.85),
+        actual: Math.round(actualNutrients?.protein || dailyNeeds.protein * 0.85),
         min: Math.round(dailyNeeds.protein * 0.8),
         max: Math.round(dailyNeeds.protein * 1.2),
       },
       {
         nutrient: t.results.carbs,
-        actual: Math.round(dailyNeeds.carbs * 0.92),
+        actual: Math.round(actualNutrients?.carbs || dailyNeeds.carbs * 0.92),
         min: Math.round(dailyNeeds.carbs * 0.85),
         max: Math.round(dailyNeeds.carbs * 1.15),
       },
       {
         nutrient: t.results.fat,
-        actual: Math.round(dailyNeeds.fat * 0.78),
+        actual: Math.round(actualNutrients?.fat || dailyNeeds.fat * 0.78),
         min: Math.round(dailyNeeds.fat * 0.7),
         max: Math.round(dailyNeeds.fat * 1.0),
       },
       {
         nutrient: t.results.fiber,
-        actual: 22,
+        actual: 22, // Fiber is static for now unless provided by backend
         min: Math.round(dailyNeeds.fiber * 0.8),
         max: Math.round(dailyNeeds.fiber * 1.2),
       },
     ],
-    [dailyNeeds, t]
+    [dailyNeeds, t, actualNutrients]
   );
 
   // Group nutrients by category
@@ -160,31 +165,31 @@ export function Report({ userData }: ReportProps) {
     const mealsData = [
       {
         meal: t.results.meals.breakfast,
-        items: sampleMeals.breakfast.map(item => ({
-          type: item.type === 'main' ? t.results.meals.mainCourse : t.results.meals.sideDish,
+        items: getMealItems('breakfast').map(item => ({
+          type: item.type === 'main' ? t.results.meals.mainCourse : item.type === 'drink' ? 'Drink' : t.results.meals.sideDish,
           item: item.item,
           portion: item.portion,
         }))
       },
       {
         meal: t.results.meals.lunch,
-        items: sampleMeals.lunch.map(item => ({
-          type: item.type === 'main' ? t.results.meals.mainCourse : t.results.meals.sideDish,
+        items: getMealItems('lunch').map(item => ({
+          type: item.type === 'main' ? t.results.meals.mainCourse : item.type === 'drink' ? 'Drink' : t.results.meals.sideDish,
           item: item.item,
           portion: item.portion,
         }))
       },
       {
         meal: t.results.meals.dinner,
-        items: sampleMeals.dinner.map(item => ({
-          type: item.type === 'main' ? t.results.meals.mainCourse : t.results.meals.sideDish,
+        items: getMealItems('dinner').map(item => ({
+          type: item.type === 'main' ? t.results.meals.mainCourse : item.type === 'drink' ? 'Drink' : t.results.meals.sideDish,
           item: item.item,
           portion: item.portion,
         }))
       },
       {
         meal: t.results.meals.snack,
-        items: sampleMeals.snack.map(item => ({
+        items: getMealItems('snack').map(item => ({
           type: item.type,
           item: item.item,
           portion: item.portion,
@@ -192,19 +197,19 @@ export function Report({ userData }: ReportProps) {
       }
     ];
 
-    // Calculate actual nutrients (mock data matching the UI display)
-    const actualNutrients = {
-      calories: Math.round(dailyNeeds.calories * 0.85),
-      protein: Math.round(dailyNeeds.protein * 0.85),
-      carbs: Math.round(dailyNeeds.carbs * 0.92),
-      fat: Math.round(dailyNeeds.fat * 0.78),
+    // Calculate actual nutrients
+    const actualPDFNutrients = {
+      calories: actualNutrients?.calories || Math.round(dailyNeeds.calories * 0.85),
+      protein: actualNutrients?.protein || Math.round(dailyNeeds.protein * 0.85),
+      carbs: actualNutrients?.carbs || Math.round(dailyNeeds.carbs * 0.92),
+      fat: actualNutrients?.fat || Math.round(dailyNeeds.fat * 0.78),
     };
 
     await generateNutritionPDF({
       userName: userData.gender === 'male' ? 'User' : 'User',
       meals: mealsData,
       dailyNeeds,
-      nutrients: actualNutrients,
+      nutrients: actualPDFNutrients,
       healthConditions: userConditions,
       dietTips,
       language,
@@ -265,16 +270,16 @@ export function Report({ userData }: ReportProps) {
                 {/* Breakfast */}
                 <div>
                   <h3 className="text-lg font-bold mb-3 text-emerald-700 dark:text-emerald-400">Breakfast</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {sampleMeals.breakfast.map((item, i) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {getMealItems('breakfast').map((item, i) => (
                       <div
                         key={i}
                         className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1">
-                              {item.type === 'main' ? 'Main Course' : 'Side Dish'}
+                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 capitalize">
+                              {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
                             </p>
                             <p className="font-bold text-gray-900 dark:text-white mb-1">{item.item}</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">{item.portion}</p>
@@ -289,15 +294,15 @@ export function Report({ userData }: ReportProps) {
                 <div>
                   <h3 className="text-lg font-bold mb-3 text-emerald-700 dark:text-emerald-400">Lunch</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {sampleMeals.lunch.map((item, i) => (
+                    {getMealItems('lunch').map((item, i) => (
                       <div
                         key={i}
                         className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1">
-                              {item.type === 'main' ? 'Main Course' : 'Side Dish'}
+                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 capitalize">
+                              {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
                             </p>
                             <p className="font-bold text-gray-900 dark:text-white mb-1">{item.item}</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">{item.portion}</p>
@@ -311,16 +316,16 @@ export function Report({ userData }: ReportProps) {
                 {/* Dinner */}
                 <div>
                   <h3 className="text-lg font-bold mb-3 text-emerald-700 dark:text-emerald-400">Dinner</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {sampleMeals.dinner.map((item, i) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {getMealItems('dinner').map((item, i) => (
                       <div
                         key={i}
                         className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1">
-                              {item.type === 'main' ? 'Main Course' : 'Side Dish'}
+                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 capitalize">
+                              {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
                             </p>
                             <p className="font-bold text-gray-900 dark:text-white mb-1">{item.item}</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">{item.portion}</p>
@@ -335,15 +340,15 @@ export function Report({ userData }: ReportProps) {
                 <div>
                   <h3 className="text-lg font-bold mb-3 text-emerald-700 dark:text-emerald-400">Snack</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {sampleMeals.snack.map((item, i) => (
+                    {getMealItems('snack').map((item, i) => (
                       <div
                         key={i}
                         className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1">
-                              {item.type === 'main' ? 'Main Course' : 'Side Dish'}
+                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 capitalize">
+                              {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
                             </p>
                             <p className="font-bold text-gray-900 dark:text-white mb-1">{item.item}</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">{item.portion}</p>

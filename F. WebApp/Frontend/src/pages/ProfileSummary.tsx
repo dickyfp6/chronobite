@@ -9,6 +9,7 @@ interface ProfileSummaryProps {
   userData: UserInputData;
   onBack: () => void;
   onContinue: () => void;
+  onAnalysisComplete?: (result: any) => void;
 }
 
 type BmiInfo = {
@@ -143,7 +144,7 @@ function getGuidelineItems(guidelines: any): GuidelineItem[] {
     max: value.max,
     unit: value.unit || '',
     source: value.source || null,
-    hard_soft_type: value.hard_soft_type || (value.tipe && ['range','max'].includes(value.tipe) ? 'HARD' : 'SOFT'),
+    hard_soft_type: value.hard_soft_type || (value.tipe && ['range', 'max'].includes(value.tipe) ? 'HARD' : 'SOFT'),
     diseases: value.diseases || [],
   }));
 }
@@ -207,7 +208,7 @@ const DISEASE_MACROS: Record<string, { carbs: [number, number], protein: [number
 function calculateFallbackMacros(tdee: number, diseases: string[]) {
   const macros = { carbs: [0, 100], protein: [0, 100], fat: [0, 100] };
   const activeDiseases = diseases.length > 0 ? diseases : ['normal'];
-  
+
   for (const d of activeDiseases) {
     const limits = DISEASE_MACROS[d] || DISEASE_MACROS.normal;
     macros.carbs[0] = Math.max(macros.carbs[0], limits.carbs[0]);
@@ -217,7 +218,7 @@ function calculateFallbackMacros(tdee: number, diseases: string[]) {
     macros.fat[0] = Math.max(macros.fat[0], limits.fat[0]);
     macros.fat[1] = Math.min(macros.fat[1], limits.fat[1]);
   }
-  
+
   return {
     carbs: { pct: macros.carbs, gram: Math.round(tdee * ((macros.carbs[0] + macros.carbs[1]) / 2) / 100 / 4) },
     protein: { pct: macros.protein, gram: Math.round(tdee * ((macros.protein[0] + macros.protein[1]) / 2) / 100 / 4) },
@@ -225,7 +226,7 @@ function calculateFallbackMacros(tdee: number, diseases: string[]) {
   };
 }
 
-export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryProps) {
+export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplete }: ProfileSummaryProps) {
   const [analysis, setAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -244,7 +245,7 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
   const idealMax = (24.9 * (userData.height / 100) ** 2).toFixed(1);
   const healthConditions = userData.healthConditions.filter((condition) => condition !== 'normal');
   const hasDiseaseGuidelines = healthConditions.length > 0;
-  
+
   // Prepare guideline items and prioritize disease-specific HARD constraints
   const allGuidelineItems = getGuidelineItems(analysis?.guidelines);
   const guidelineByKey = new Map(allGuidelineItems.map((item) => [item.key, item]));
@@ -280,6 +281,7 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
           algorithm: 'greedy'
         });
         setAnalysis(result);
+        if (onAnalysisComplete) onAnalysisComplete(result);
       } catch (err) {
         console.error("Failed to fetch from API, using fallback logic", err);
         setAnalysis({
@@ -315,7 +317,7 @@ export function ProfileSummary({ userData, onBack, onContinue }: ProfileSummaryP
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
-            
+
             {/* ROW 1: Daily Energy & BMI */}
             <motion.section
               initial={{ opacity: 0, y: 10 }}

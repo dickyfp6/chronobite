@@ -34,6 +34,8 @@ export default function App() {
     };
   });
 
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
+
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
   // Check if there's active progress (not on landing page)
@@ -110,12 +112,15 @@ export default function App() {
                 userData={userData}
                 onBack={() => setCurrentPage('input')}
                 onContinue={() => setCurrentPage('results')}
+                onAnalysisComplete={setAnalysisResult}
               />
             )}
 
             {currentPage === 'results' && (
               <Results
                 userData={userData}
+                algorithm={algorithm}
+                analysisResult={analysisResult}
                 onViewReport={() => setCurrentPage('report')}
               />
             )}
