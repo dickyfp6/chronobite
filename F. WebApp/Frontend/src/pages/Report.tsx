@@ -81,8 +81,14 @@ export function Report({ userData }: ReportProps) {
     [userData]
   );
 
-  const nutritionData = useMemo(
-    () => [
+  const [analysisGuidelines] = useState<any>(() => {
+    const saved = sessionStorage.getItem('dss_analysis_guidelines');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const { macroData, microData } = useMemo(() => {
+    // 1. Setup base macros
+    const macros = [
       {
         nutrient: t.results.protein,
         actual: Math.round(actualNutrients?.protein || dailyNeeds.protein * 0.85),
@@ -101,15 +107,60 @@ export function Report({ userData }: ReportProps) {
         min: Math.round(dailyNeeds.fat * 0.7),
         max: Math.round(dailyNeeds.fat * 1.0),
       },
-      {
+    ];
+
+    const micros: any[] = [];
+
+    if (analysisGuidelines?.nutrients) {
+      // 2. Map and inject HARD constraints only (Priority guidelines)
+      Object.entries(analysisGuidelines.nutrients).forEach(([key, rule]: [string, any]) => {
+        if (rule.hard_soft_type === 'HARD') {
+          // If it's a base nutrient, override the min/max accurately from guidelines
+          const baseMap: any = {
+            'energy_kcal': 'Calories',
+            'protein_g': t.results.protein,
+            'carbohydrate_g': t.results.carbs,
+            'fat_g': t.results.fat
+          };
+          
+          if (baseMap[key]) {
+            const mappedName = baseMap[key];
+            const existing = macros.find(b => b.nutrient === mappedName);
+            if (existing) {
+              existing.min = Math.round(rule.min || existing.min);
+              existing.max = Math.round(rule.max || existing.max);
+            }
+          } else {
+            // It's a Micronutrient Constraint! (e.g. fiber_g, zinc_mg, sodium_mg)
+            const friendlyName = t.nutrients[key as keyof typeof t.nutrients] || key.split('_')[0].toUpperCase();
+            const dataPoint = {
+              nutrient: friendlyName,
+              actual: Math.round(actualNutrients?.[key] || 0),
+              min: Math.round(rule.min || 0),
+              max: Math.round(rule.max || 0),
+            };
+
+            // Separate into Macro (g) or Micro (mg/mcg)
+            if (key.endsWith('_g')) {
+              macros.push(dataPoint);
+            } else {
+              micros.push(dataPoint);
+            }
+          }
+        }
+      });
+    } else {
+      // Fallback for fiber if no guidelines found
+      macros.push({
         nutrient: t.results.fiber,
-        actual: 22, // Fiber is static for now unless provided by backend
+        actual: Math.round(actualNutrients?.fiber_g || 22),
         min: Math.round(dailyNeeds.fiber * 0.8),
         max: Math.round(dailyNeeds.fiber * 1.2),
-      },
-    ],
-    [dailyNeeds, t, actualNutrients]
-  );
+      });
+    }
+
+    return { macroData: macros, microData: micros };
+  }, [dailyNeeds, t, actualNutrients, analysisGuidelines]);
 
   // Group nutrients by category
   const vitaminNutrients = [
@@ -379,7 +430,17 @@ export function Report({ userData }: ReportProps) {
                   <span className="text-gray-700 dark:text-gray-300">Min/Max Boundary</span>
                 </div>
               </div>
-              <NutritionChart data={nutritionData} />
+              <div className="mb-4">
+                <h3 className="text-lg font-bold mb-2 text-emerald-700 dark:text-emerald-400">Macronutrient Balance (g)</h3>
+                <NutritionChart data={macroData} />
+              </div>
+              
+              {microData.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-lg font-bold mb-2 text-emerald-700 dark:text-emerald-400">Micronutrient Analysis (mg)</h3>
+                  <NutritionChart data={microData} unit="mg" />
+                </div>
+              )}
             </div>
           )}
 

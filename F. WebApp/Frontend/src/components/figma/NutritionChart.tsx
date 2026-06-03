@@ -10,6 +10,7 @@ interface NutritionDataPoint {
   maxRange: number;
   actualValue: number;
   status: 'below' | 'within' | 'above';
+  unit: string;
 }
 
 interface NutritionChartProps {
@@ -19,6 +20,7 @@ interface NutritionChartProps {
     max: number;
     actual: number;
   }>;
+  unit?: string;
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
@@ -43,13 +45,13 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
       <p className="font-bold text-gray-900 dark:text-white mb-2">{label}</p>
       <div className="space-y-1 text-sm">
         <p className="text-gray-700 dark:text-gray-300">
-          <span className="font-medium">Min:</span> {data.minRange}g
+          <span className="font-medium">Min:</span> {data.minRange}{data.unit}
         </p>
         <p className="text-gray-700 dark:text-gray-300">
-          <span className="font-medium">Max:</span> {data.maxRange}g
+          <span className="font-medium">Max:</span> {data.maxRange}{data.unit}
         </p>
         <p className="text-emerald-700 dark:text-emerald-300 font-semibold">
-          <span className="font-medium">Actual:</span> {data.actualValue}g
+          <span className="font-medium">Actual:</span> {data.actualValue}{data.unit}
         </p>
         <p className={`font-semibold ${getStatusColor(data.status)}`}>
           {getStatusText(data.status)}
@@ -80,7 +82,7 @@ const CustomDot = (props: any) => {
   );
 };
 
-export function NutritionChart({ data }: NutritionChartProps) {
+export function NutritionChart({ data, unit = 'g' }: NutritionChartProps) {
   const chartData: NutritionDataPoint[] = useMemo(() => {
     return data.map((item, index) => {
       let status: 'below' | 'within' | 'above' = 'within';
@@ -96,9 +98,10 @@ export function NutritionChart({ data }: NutritionChartProps) {
         maxRange: item.max,
         actualValue: item.actual,
         status,
+        unit,
       };
     });
-  }, [data]);
+  }, [data, unit]);
 
   const { theme } = useTheme();
   const minAreaFill = theme === 'dark' ? '#1e293b' : '#f0fdf4';

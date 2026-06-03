@@ -540,6 +540,7 @@ class GreedyOptimizer:
             total_daily_protein_g=self.cumulative_nutrients['protein_g'],
             total_daily_carb_g=self.cumulative_nutrients['carbohydrate_g'],
             total_daily_fat_g=self.cumulative_nutrients['fat_g'],
+            daily_micronutrients=self.cumulative_nutrients,
             feasible=feasible,
             violations=violations
         )

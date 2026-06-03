@@ -33,8 +33,23 @@ export default function App() {
       foodPreferences: [],
     };
   });
+  const [analysisResult, _setAnalysisResult] = useState<any>(() => {
+    const saved = sessionStorage.getItem('dss_analysis_result_full');
+    return saved ? JSON.parse(saved) : null;
+  });
 
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const setAnalysisResult = (result: any) => {
+    _setAnalysisResult(result);
+    if (result) {
+      sessionStorage.setItem('dss_analysis_result_full', JSON.stringify(result));
+      if (result.guidelines) {
+        sessionStorage.setItem('dss_analysis_guidelines', JSON.stringify(result.guidelines));
+      }
+    } else {
+      sessionStorage.removeItem('dss_analysis_result_full');
+      sessionStorage.removeItem('dss_analysis_guidelines');
+    }
+  };
 
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 

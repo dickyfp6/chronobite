@@ -74,10 +74,10 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
 
       const meals = result.menu_plan.meals;
       const formattedMenu = {
-        breakfast: meals.Breakfast,
-        lunch: meals.Lunch,
-        dinner: meals.Dinner,
-        snack: meals.Snack,
+        breakfast: meals.breakfast,
+        lunch: meals.lunch,
+        dinner: meals.dinner,
+        snack: meals.snack,
       };
       
       setMenuData(formattedMenu);
@@ -90,8 +90,14 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
           protein: result.menu_plan.total_daily_protein_g,
           carbs: result.menu_plan.total_daily_carb_g,
           fat: result.menu_plan.total_daily_fat_g,
+          ...result.menu_plan.daily_micronutrients // include micronutrients!
         };
         sessionStorage.setItem('dss_actual_nutrients', JSON.stringify(actualNutrients));
+      }
+
+      // Store the analysis guidelines for the dynamic report
+      if (analysisResult?.guidelines) {
+        sessionStorage.setItem('dss_analysis_guidelines', JSON.stringify(analysisResult.guidelines));
       }
 
       // Initialize selected items (the first candidate for each course)
