@@ -127,8 +127,8 @@ export function Report({ userData }: ReportProps) {
             const mappedName = baseMap[key];
             const existing = macros.find(b => b.nutrient === mappedName);
             if (existing) {
-              existing.min = Math.round(rule.min || existing.min);
-              existing.max = Math.round(rule.max || existing.max);
+              existing.min = rule.min != null ? Math.round(rule.min) : existing.min;
+              existing.max = rule.max != null ? Math.round(rule.max) : null;
             }
           } else {
             // It's a Micronutrient Constraint! (e.g. fiber_g, zinc_mg, sodium_mg)
@@ -136,8 +136,8 @@ export function Report({ userData }: ReportProps) {
             const dataPoint = {
               nutrient: friendlyName,
               actual: Math.round(actualNutrients?.[key] || 0),
-              min: Math.round(rule.min || 0),
-              max: Math.round(rule.max || 0),
+              min: rule.min != null ? Math.round(rule.min) : 0,
+              max: rule.max != null ? Math.round(rule.max) : null,
             };
 
             // Separate into Macro (g) or Micro (mg/mcg)

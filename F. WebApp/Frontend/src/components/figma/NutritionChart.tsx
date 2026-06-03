@@ -7,7 +7,8 @@ interface NutritionDataPoint {
   id: string;
   name: string;
   minRange: number;
-  maxRange: number;
+  maxRange: number | null;
+  renderMax: number;
   actualValue: number;
   status: 'below' | 'within' | 'above';
   unit: string;
@@ -17,7 +18,7 @@ interface NutritionChartProps {
   data: Array<{
     nutrient: string;
     min: number;
-    max: number;
+    max: number | null;
     actual: number;
   }>;
   unit?: string;
@@ -48,7 +49,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
           <span className="font-medium">Min:</span> {data.minRange}{data.unit}
         </p>
         <p className="text-gray-700 dark:text-gray-300">
-          <span className="font-medium">Max:</span> {data.maxRange}{data.unit}
+          <span className="font-medium">Max:</span> {data.maxRange !== null ? `${data.maxRange}${data.unit}` : 'No limit'}
         </p>
         <p className="text-emerald-700 dark:text-emerald-300 font-semibold">
           <span className="font-medium">Actual:</span> {data.actualValue}{data.unit}
@@ -87,15 +88,19 @@ export function NutritionChart({ data, unit = 'g' }: NutritionChartProps) {
     return data.map((item, index) => {
       let status: 'below' | 'within' | 'above' = 'within';
       if (item.actual < item.min) status = 'below';
-      else if (item.actual > item.max) status = 'above';
+      else if (item.max !== null && item.actual > item.max) status = 'above';
 
       const id = `nutrient-${index}-${item.nutrient.toLowerCase().replace(/\s+/g, '-')}`;
+
+      // Visual maximum to fill the area indefinitely if there is no actual maximum
+      const visualMax = item.max !== null ? item.max : Math.max(item.actual, item.min) * 1.5;
 
       return {
         id,
         name: item.nutrient,
         minRange: item.min,
         maxRange: item.max,
+        renderMax: visualMax,
         actualValue: item.actual,
         status,
         unit,
@@ -147,10 +152,10 @@ export function NutritionChart({ data, unit = 'g' }: NutritionChartProps) {
 
           <Tooltip content={<CustomTooltip />} />
 
-          {/* Area 1: Dari 0 sampai max (background hijau) */}
+          {/* Area 1: Dari 0 sampai renderMax (background hijau) */}
           <Area
             type="monotone"
-            dataKey="maxRange"
+            dataKey="renderMax"
             stroke="#10b981"
             strokeWidth={2}
             strokeDasharray="5 5"
