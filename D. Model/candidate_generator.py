@@ -195,46 +195,55 @@ class CandidateGenerator:
     @staticmethod
     def generate_candidates_for_slot(
         food_database: pd.DataFrame,
-        slot_category: str,  # 'Main', 'Side', 'Drink'
+        slot_category: str,
         target_calories: float,
         num_candidates: int = 3,
         exclusion_names: Optional[List[str]] = None
     ) -> List[Dict]:
         """
-        Convenience method: Generate candidates untuk 1 slot (sudah filter kategori)
+        Generate candidates untuk 1 slot menggunakan consumption_label dari dataset.
         
-        Args:
-            food_database: Full food database dari NutritionService
-            slot_category: 'Main', 'Side', atau 'Drink'
-            target_calories: Target calorie untuk slot
-            num_candidates: Jumlah kandidat (default 3)
-            exclusion_names: List nama makanan yang exclude (untuk refresh)
-        
-        Returns:
-            List of Dict candidates
+        slot_category mapping:
+            'Main'  → consumption_label == 'Main Course'
+            'Side'  → consumption_label == 'Side Dish'
+            'Drink' → consumption_label == 'Drink'
+            'Snack' → consumption_label == 'Snack'
         """
-        from food_categorizer import FoodCategorizer
         
-        # Filter by category
-        if 'menu_category' not in food_database.columns:
-            food_database = FoodCategorizer.categorize_dataframe(food_database)
+        SLOT_TO_LABEL = {
+            'Main':  'Main Course',
+            'Side':  'Side Dish',
+            'Drink': 'Drink',
+            'Snack': 'Snack',
+        }
+
+        # TAMBAHKAN INI SEMENTARA:
+        print(f"[DEBUG] slot_category={slot_category}, label={SLOT_TO_LABEL.get(slot_category)}, candidates_df size will be filtered from consumption_label")
         
-        candidates_df = FoodCategorizer.filter_by_category(food_database, slot_category)
-        
-        if len(candidates_df) == 0:
+        label = SLOT_TO_LABEL.get(slot_category)
+        if label is None:
+            print(f"[WARN] Unknown slot_category: {slot_category}")
             return []
         
-        # Generate candidates
-        candidates = CandidateGenerator.generate_candidates(
+        if 'consumption_label' not in food_database.columns:
+            print(f"[ERROR] consumption_label column not found")
+            return []
+        
+        candidates_df = pd.DataFrame(
+            food_database[food_database['consumption_label'] == label].copy()
+        )
+        
+        if len(candidates_df) == 0:
+            print(f"[WARN] No candidates found for {slot_category} ({label})")
+            return []
+        
+        return CandidateGenerator.generate_candidates(
             candidates_df=candidates_df,
             target_calories=target_calories,
             num_candidates=num_candidates,
             exclusion_list=exclusion_names,
             ingredient_diversity=True
         )
-        
-        return candidates
-
 
 # Test
 if __name__ == "__main__":

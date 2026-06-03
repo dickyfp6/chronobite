@@ -14,7 +14,7 @@ import sys
 ml_path = Path(__file__).parent / 'ML Klasifikasi'
 sys.path.insert(0, str(ml_path))
 from food_classifier import FoodClassifier  # type: ignore
-
+from rule_based_classifier import RuleBasedFoodClassifier  # type: ignore
 
 # ======================
 # APPLY ML CLASSIFICATION
@@ -34,9 +34,17 @@ data = pd.read_csv(input_file)
 print(f"[OK] Loaded {len(data)} items")
 
 print(f"\n[3/4] Predicting consumption and cuisine labels...")
-predictions = classifier.predict(data, return_both=True)
-data['consumption_label'] = predictions.get('consumption_label', 'Snack')
-data['cuisine_label'] = predictions.get('cuisine_label', 'Generic')
+
+# consumption_label: rule-based (replaces unreliable ML)
+
+rule_clf = RuleBasedFoodClassifier()
+data['consumption_label'] = rule_clf.predict(data)
+print(f"  [rule-based] consumption_label assigned")
+
+# cuisine_label: still ML from pickle (unchanged)
+cuisine_preds = classifier.predict(data, return_both=True)
+data['cuisine_label'] = cuisine_preds.get('cuisine_label', 'Generic')
+print(f"  [ML] cuisine_label assigned")
 
 # Clean up cuisine labels (remove leading/trailing spaces)
 if 'cuisine_label' in data.columns:

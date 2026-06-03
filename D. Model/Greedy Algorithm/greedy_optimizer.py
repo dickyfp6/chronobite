@@ -290,11 +290,11 @@ class GreedyOptimizer:
         
         courses = {}
         actual_calories = 0.0
-        current_excluded = []
+        current_meal_excluded = []
         
         # Main Course
         main_candidates_per_100g = self.generate_candidates_for_course(
-            'Main', main_target, current_excluded
+            'Main', main_target, current_meal_excluded
         )
         if main_candidates_per_100g:
             main_per_100g = main_candidates_per_100g[0]
@@ -318,11 +318,11 @@ class GreedyOptimizer:
             )
             actual_calories += main_scaled.energy_kcal
             self._update_cumulative(main_scaled)
-            current_excluded.append(main_scaled.food_name)
+            current_meal_excluded.append(main_scaled.food_name)
         
         # Side Dish
         side_candidates_per_100g = self.generate_candidates_for_course(
-            'Side', side_target, current_excluded
+            'Side', side_target, current_meal_excluded
         )
         if side_candidates_per_100g:
             side_per_100g = side_candidates_per_100g[0]
@@ -345,7 +345,7 @@ class GreedyOptimizer:
             )
             actual_calories += side_scaled.energy_kcal
             self._update_cumulative(side_scaled)
-            current_excluded.append(side_scaled.food_name)
+            current_meal_excluded.append(side_scaled.food_name)
         
         # Drink (no global exclusion - drinks can repeat across meals)
         drink_candidates_per_100g = self.generate_candidates_for_course(
@@ -373,7 +373,7 @@ class GreedyOptimizer:
             )
             actual_calories += drink_scaled.energy_kcal
             self._update_cumulative(drink_scaled)
-            current_excluded.append(drink_scaled.food_name)
+            # current_meal_excluded.append(drink_scaled.food_name)
         
         return Meal(
             meal_type=meal_type,
@@ -447,6 +447,7 @@ class GreedyOptimizer:
         lunch = self.generate_meal('Lunch', lunch_target)
         dinner = self.generate_meal('Dinner', dinner_target)
         snack = self.generate_snack(snack_target)
+        
         
         # Create MenuPlan
         feasible = True

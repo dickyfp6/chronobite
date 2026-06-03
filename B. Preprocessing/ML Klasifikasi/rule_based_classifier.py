@@ -130,15 +130,18 @@ class RuleBasedFoodClassifier:
         
         # Rule 3.1: FRUITS AND FRUIT JUICES
         if food_group_lower == "fruits and fruit juices":
-            if "juice" in food_name_lower:
+            # Exclude: olive/pickle bukan minuman
+            if any(x in food_name_lower for x in ['olive', 'pickle']):
+                return ("Side Dish", "high")
+            # Exclude: concentrate undiluted = bahan masak
+            if 'concentrate' in food_name_lower and 'undiluted' in food_name_lower:
+                return ("Snack", "medium")
+            # Juice/nectar = Drink
+            if any(x in food_name_lower for x in ['juice', 'nectar', 'concentrate']):
                 return ("Drink", "high")
-            elif "concentrate" in food_name_lower:
-                return ("Drink", "high")
-            elif "bottled" in food_name_lower:
-                return ("Drink", "high")
-            else:
-                return ("Snack", "high")
-        
+            # Buah biasa = Snack
+            return ("Snack", "high")
+                
         # Rule 3.2: DAIRY AND EGG PRODUCTS
         if food_group_lower == "dairy and egg products":
             # Priority order: fluid > milk > cheese > egg > butter > cottage > yogurt/ice > else
@@ -148,7 +151,7 @@ class RuleBasedFoodClassifier:
                 return ("Drink", "high")
             
             # 3.2.2: milk (74% Drink, but check for chocolate which can be Snack)
-            if "milk" in food_name_lower and "chocolate" not in food_name_lower:
+            if "milk" in food_name_lower:
                 return ("Drink", "medium")
             
             # 3.2.3: cheese (80/107 Side Dish)
@@ -177,9 +180,12 @@ class RuleBasedFoodClassifier:
         # Rule 3.3: BAKED PRODUCTS
         if food_group_lower == "baked products":
             # Priority: sweet indicators > bread indicators > else
-            
+            # 3.3.0: Bread dengan kata "bread" di nama → Side Dish dulu
+            if "bread" in food_name_lower:
+                return ("Side Dish", "medium")
+
             # 3.3.1: Cookies, crackers, waffles (clearly Snack)
-            if any(x in food_name_lower for x in ["cookie", "cracker", "waffle"]):
+            if any(x in food_name_lower for x in ["cookie", "cracker", "waffle", "cake", "pastry"]):
                 return ("Snack", "high")
             
             # 3.3.2: Cake or pastry (Snack)
