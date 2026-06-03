@@ -159,12 +159,10 @@ class NutritionService:
             
             # 3. Calculate energy (BMR, TDEE)
             # LOGIC: Pilih BB untuk BMR berdasarkan BMI category
-            # - Jika BMI Normal (18.5-25): gunakan BB aktual
+            # - Jika BMI Normal (Healthy Weight): gunakan BB aktual
             # - Selain itu (Underweight/Obese): gunakan BBI (Ideal Weight)
-            weight_for_bmr = weight
-            if bmi_calc['category'] != "Healthy Weight":
-                weight_for_bmr = bbi
-            
+            weight_for_bmr = weight if bmi_calc['category'] == "Healthy Weight" else bbi
+
             disease_status_for_bmr = 'normal' if set(disease) == {'normal'} else 'diseased'
             bmr = self.calculator.calculate_bmr(weight_for_bmr, height, age, gender, disease_status_for_bmr)
             tdee = self.calculator.calculate_tdee(bmr, activity_factor)
@@ -227,16 +225,16 @@ class NutritionService:
                 }
             
             # Add DRI fallback untuk nutrients yang tidak ada di guideline
-            if dri_row is not None and disease != 'normal':
-                # DRI column mapping
+            # Berlaku untuk semua kondisi (normal maupun sakit) karena guideline.csv
+            # hanya mencakup hard constraint makronutrient, sedangkan micronutrient
+            # (vitamin, mineral, dll) diambil dari dri_micro.csv sebagai SOFT constraint
+            if dri_row is not None:
                 dri_columns = dri_row.keys()
                 for dri_col in dri_columns:
                     # Skip non-nutrient columns
                     if dri_col in ['age_min', 'age_max', 'gender']:
                         continue
                     
-                    # Normalize DRI column name ke guideline format
-                    # e.g., "vitamin_a_rae_mg" -> "vitamin_a_rae_mg"
                     nutrient_key = dri_col
                     
                     # Check if this nutrient already exists di guideline
@@ -263,7 +261,7 @@ class NutritionService:
                 'total_nutrients': len(nutrients_dict)
             }
             
-            # 5. Load food data (was step 5, now 6)
+            # 5. Load food data
             food_df = self.guideline_loader.food_df
             if food_df is not None:
                 # Count by cuisine
