@@ -203,6 +203,7 @@ def _menu_plan_to_frontend(menu_plan):
         'total_daily_protein_g': round(getattr(menu_plan, 'total_daily_protein_g', 0), 2),
         'total_daily_carb_g': round(getattr(menu_plan, 'total_daily_carb_g', 0), 2),
         'total_daily_fat_g': round(getattr(menu_plan, 'total_daily_fat_g', 0), 2),
+        'daily_micronutrients': getattr(menu_plan, 'daily_micronutrients', {}),
         'feasible': getattr(menu_plan, 'feasible', True),
         'violations': getattr(menu_plan, 'violations', []),
     }

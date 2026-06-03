@@ -120,6 +120,7 @@ class MenuPlan:
         feasible: bool = True,
         violations: Optional[List[str]] = None,
         total_calories: Optional[float] = None,
+        daily_micronutrients: Optional[Dict[str, float]] = None,
         **_kwargs,
     ):
         self.algorithm_used = algorithm_used
@@ -134,6 +135,7 @@ class MenuPlan:
         self.total_daily_fat_g = total_daily_fat_g
         self.feasible = feasible
         self.violations = violations or []
+        self.daily_micronutrients = daily_micronutrients or {}
 
     @property
     def total_calories(self):
@@ -154,7 +156,8 @@ class MenuPlan:
                 'calories': round(self.total_daily_calories, 2),
                 'protein_g': round(self.total_daily_protein_g, 2),
                 'carb_g': round(self.total_daily_carb_g, 2),
-                'fat_g': round(self.total_daily_fat_g, 2)
+                'fat_g': round(self.total_daily_fat_g, 2),
+                **{k: round(v, 2) for k, v in self.daily_micronutrients.items()}
             },
             'feasible': self.feasible,
             'violations': self.violations
