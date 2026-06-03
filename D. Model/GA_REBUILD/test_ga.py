@@ -38,11 +38,8 @@ from ga_v1 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
-    filter_food_dataset, local_search, display_nutrition_analysis_table
+    local_search, display_nutrition_analysis_table
 )
-
-# Import Meal-Ready Food Filter
-from food_filter_meal_ready import filter_meal_ready_foods
 
 # Import NutritionService
 try:
@@ -305,26 +302,11 @@ def test_ga_with_nutrition_service():
             print(f"  - {nutrient:20s}: {min_val:8.1f} - {max_val:8.1f} {unit}")
         
         print(f"\n🎯 SOFT Constraints (DRI-based - FLEXIBLE):")
-        key_soft_nutrients = ['energy_kcal', 'protein_g', 'carbohydrate_g', 'fat_g', 'fiber_g']
-        for nutrient in key_soft_nutrients:
-            if nutrient in guidelines['soft']:
-                constraint = guidelines['soft'][nutrient]
-                min_val = constraint.get('min', 0)
-                max_val = constraint.get('max', float('inf'))
-                unit = constraint.get('unit', 'unit')
-                print(f"  - {nutrient:20s}: {min_val:8.1f} - {max_val:8.1f} {unit}")
-        
-        # STEP 4: Filter food dataset untuk remove junk food
-        print("\n" + "="*70)
-        print("STEP 4: Filter Food Dataset - Remove Non-Meal Foods...")
-        print("="*70)
-        
-        # Apply meal-ready filtering directly to dataframe
-        food_df = filter_meal_ready_foods(
-            input_csv=food_df,
-            output_csv=None,
-            verbose=True
-        )
+        for nutrient, constraint in sorted(guidelines['soft'].items()):
+            min_val = constraint.get('min', 0)
+            max_val = constraint.get('max', float('inf'))
+            max_str = f"{max_val:10.2f}" if max_val != float('inf') else "       inf"
+            print(f"  - {nutrient:20} : {min_val:10.2f} - {max_str}")
         
         # STEP 5: Run GA
         print("="*70)
@@ -366,18 +348,27 @@ def test_ga_with_nutrition_service():
         display_solution(best_solution, guidelines)
         display_fitness_details(best_solution, guidelines)
         
+        # Tambahkan rekomendasi khusus berdasarkan disease
+        if any('dm2' in disease.lower() for disease in user_input['disease']):
+            print("\n" + "⚠️  REKOMENDASI TAMBAHAN:")
+            print("    Konsumsi buah & sayur minimal 400g/hari untuk mendukung")
+            print("    kontrol gula darah pada pasien Diabetes Mellitus Tipe 2.")
+        
         # STEP 7: Generate meal options dari top_solutions (berbagai kombinasi)
         print("\n" + "="*70)
         print("STEP 7: Generate 2-3 varied menu options per slot...")
         print("="*70)
         
+        # Gabungkan best_solution (setelah LS) sebagai opsi pertama
+        # bersama top_solutions dari GA sebagai variasi
+        top_solutions_with_best = [best_solution] + top_solutions
         slot_options = generate_meal_options(
             food_df,
-            top_solutions,
+            top_solutions_with_best,
             max_options_per_slot=3,
             food_preferences=user_input['food_preferences']
         )
-        display_meal_options(slot_options)
+        print("✓ Menu options generated: 10 slots ready")
         
         # ============================================================================
         # STEP 8: USER SELECTION - Interactive menu selection

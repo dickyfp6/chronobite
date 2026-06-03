@@ -173,81 +173,6 @@ def validate_final_solution(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
 
 
 # ═════════════════════════════════════════════════════════════════════════════
-# DATA FILTERING - Remove junk food sebelum GA
-# ═════════════════════════════════════════════════════════════════════════════
-
-def filter_food_dataset(food_df: pd.DataFrame, verbose: bool = True) -> pd.DataFrame:
-    """
-    Filter food dataset untuk remove:
-    1. Junk food (candy, chocolate, dessert, dll)
-    2. Unrealistic items (energy < 50 kcal, energy > 500 kcal @ 100g)
-    3. Pure fat/oil items
-    
-    Purpose: GA bekerja dengan makanan realistis, bukan junk food
-    
-    Args:
-        food_df: Full dataset
-        verbose: Print filtering stats
-    
-    Returns:
-        Filtered DataFrame dengan hanya makanan berkualitas
-    
-    Filtering logic:
-    1. Hapus junk food keywords
-    2. Hapus energy ekstrim (< 50 atau > 500 kcal @ 100g)
-    3. Hapus pure oil/fat items (fat > 90% of energy)
-    """
-    
-    initial_count = len(food_df)
-    
-    # STEP 1: Remove junk food keywords
-    junk_keywords = [
-        'candy', 'chocolate', 'dessert', 'cake', 'cookie', 'syrup', 'donut',
-        'candy bar', 'confection', 'sweet candy', 'caramel', 'fudge',
-        'pie', 'ice cream', 'pudding', 'mousse', 'brownie', 'wafer',
-        'candied', 'frosting', 'icing', 'glaze', 'cream cheese'
-    ]
-    junk_pattern = '|'.join(junk_keywords)
-    
-    filtered = food_df.copy()
-    if 'food_name' in filtered.columns:
-        filtered = cast(pd.DataFrame, filtered[
-            ~filtered['food_name'].str.lower().str.contains(junk_pattern, na=False)
-        ])
-    
-    junk_removed = initial_count - len(filtered)
-    
-    # STEP 2: Remove unrealistic energy values (per 100g)
-    # Normal food @ 100g: 50-500 kcal (water-based to oil-based)
-    filtered = cast(pd.DataFrame, filtered[
-        (filtered['energy_kcal'] >= 50) &
-        (filtered['energy_kcal'] <= 500)
-    ])
-    energy_removed = initial_count - junk_removed - len(filtered)
-    
-    # STEP 3: Remove pure oil/fat items
-    # Fat provides 9 kcal/g, so if fat > energy/9 * 0.85 = mostly fat → exclude
-    if 'fat_g' in filtered.columns and 'energy_kcal' in filtered.columns:
-        filtered = cast(pd.DataFrame, filtered[
-            filtered['fat_g'] <= (filtered['energy_kcal'] / 9 * 0.85)
-        ])
-    
-    oil_removed = initial_count - junk_removed - energy_removed - len(filtered)
-    
-    if verbose:
-        print(f"\n🧹 DATASET FILTERING:")
-        print(f"   Initial items: {initial_count}")
-        print(f"   - Junk food removed: {junk_removed}")
-        print(f"   - Extreme energy removed: {energy_removed}")
-        print(f"   - Pure fat/oil removed: {oil_removed}")
-        print(f"   ────────────────────")
-        print(f"   Final items: {len(filtered)} ({len(filtered)/initial_count*100:.1f}%)")
-        print(f"   ✓ Dataset cleaned, ready for GA\n")
-    
-    return filtered
-
-
-# ═════════════════════════════════════════════════════════════════════════════
 # CHROMOSOME STRUCTURE
 # ═════════════════════════════════════════════════════════════════════════════
 
@@ -392,65 +317,7 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
 
 
 # ═════════════════════════════════════════════════════════════════════════════
-# TASK 4 - FILTER EXTREME FOODS (before GA)
-# ═════════════════════════════════════════════════════════════════════════════
-
-def filter_extreme_foods(food_df: pd.DataFrame, verbose: bool = True) -> pd.DataFrame:
-    """
-    TASK 4 - Remove extreme foods sebelum GA
-    
-    Criteria:
-    - fat > 50g per 100g (pure fat) → REMOVE
-    - sugar > 40g per 100g (liquid sugar) → REMOVE  
-    - energy > 600 kcal per 100g (extreme) → REMOVE
-    - protein > 80g per 100g (impossible) → REMOVE
-    
-    Args:
-        food_df: Full food database
-        verbose: Print statistics
-    
-    Returns:
-        Cleaned DataFrame
-    """
-    if verbose:
-        print(f"\n🔍 [TASK 4] FILTERING EXTREME FOODS")
-        print(f"   Initial: {len(food_df)} items")
-    
-    filtered = food_df.copy()
-    
-    # Remove if fat > 50g per 100g
-    if 'fat_g' in filtered.columns:
-        before = len(filtered)
-        filtered = filtered[filtered['fat_g'] <= 50]
-        if verbose:
-            print(f"   - Fat > 50g/100g: {before - len(filtered)} removed")
-    
-    # Remove if sugar > 40g per 100g
-    if 'sugar_g' in filtered.columns:
-        before = len(filtered)
-        filtered = filtered[filtered['sugar_g'] <= 40]
-        if verbose:
-            print(f"   - Sugar > 40g/100g: {before - len(filtered)} removed")
-    
-    # Remove if energy > 600 kcal per 100g
-    if 'energy_kcal' in filtered.columns:
-        before = len(filtered)
-        filtered = filtered[filtered['energy_kcal'] <= 600]
-        if verbose:
-            print(f"   - Energy > 600 kcal/100g: {before - len(filtered)} removed")
-    
-    # Remove if protein > 80g per 100g (impossible)
-    if 'protein_g' in filtered.columns:
-        before = len(filtered)
-        filtered = filtered[filtered['protein_g'] <= 80]
-        if verbose:
-            print(f"   - Protein > 80g/100g: {before - len(filtered)} removed")
-    
-    if verbose:
-        print(f"   Final: {len(filtered)} items ({len(filtered)/len(food_df)*100:.1f}%)")
-        print(f"   ✓ Extreme foods filtered\n")
-    
-    return filtered
+# NOTE: filter_extreme_foods removed - dataset already filtered in preprocessing
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -807,6 +674,10 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
     hard_penalty = 0.0
     
     for nutrient_name, constraint in hard_constraints.items():
+        # Skip fruits_and_vegies_g - column doesn't exist in food dataset
+        if nutrient_name == 'fruits_and_vegies_g':
+            continue
+        
         if constraint.get('constraint_type') == 'unlimited':
             continue
         
@@ -1336,8 +1207,8 @@ def run_ga(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    generations: int = 50,
-    pop_size: int = 20,
+    generations: int = 100,
+    pop_size: int = 50,
     elite_ratio: float = 0.25,
     mutation_rate: float = 0.3,
     verbose: bool = True
@@ -1349,8 +1220,8 @@ def run_ga(
         food_df: DataFrame semua food items
         guidelines: Dict constraints dari NutritionService
         tdee: Target daily energy expenditure (kcal) - CRITICAL HARD constraint
-        generations: Jumlah generasi (default 50)
-        pop_size: Ukuran populasi (default 20)
+        generations: Jumlah generasi (default 100)
+        pop_size: Ukuran populasi (default 50)
         elite_ratio: Fraksi elite untuk breeding (default 0.25 = top 25%)
         mutation_rate: Probability mutasi (default 0.3 = 30%)
         verbose: Print progress? (default True)
@@ -1385,19 +1256,6 @@ def run_ga(
             print(f"Target TDEE: {tdee:.0f} kcal/day (HARD constraint)")
         print(f"{'='*70}\n")
     
-    # ════════════════════════════════════════════════════════════════════════
-    # TASK 4 - FILTER EXTREME FOODS (preprocessing)
-    # ════════════════════════════════════════════════════════════════════════
-    
-    food_df_clean = filter_extreme_foods(food_df, verbose=verbose)
-    
-    if len(food_df_clean) < CHROMOSOME_SIZE:
-        if verbose:
-            print(f"⚠️  Warning: After filtering, only {len(food_df_clean)} foods available")
-            print(f"   Using original food database for completeness\n")
-        food_df_clean = food_df
-    
-    # ════════════════════════════════════════════════════════════════════════
     # STEP 1 - GUIDED INITIAL POPULATION (TASK 1)
     # ════════════════════════════════════════════════════════════════════════
     
@@ -1408,12 +1266,12 @@ def run_ga(
     
     # First: 50% guided solutions (toward macro targets)
     for i in range(max(1, pop_size // 2)):
-        solution = guided_solution(food_df_clean, guidelines)
+        solution = guided_solution(food_df, guidelines)
         population.append(solution)
     
     # Remaining: 50% random (for diversity)
     for i in range(max(1, pop_size - len(population))):
-        solution = random_solution(food_df_clean)
+        solution = random_solution(food_df)
         population.append(solution)
     
     if verbose:
@@ -1473,7 +1331,7 @@ def run_ga(
             
             # Mutation (probabilitas mutation_rate)
             # [ENHANCED] Pass guidelines & tdee untuk guided nutrient-based mutation
-            child = mutation(child, food_df_clean, mutation_rate=mutation_rate, 
+            child = mutation(child, food_df, mutation_rate=mutation_rate, 
                            guidelines=guidelines, tdee=tdee)
             
             # Add to new population
@@ -1583,15 +1441,22 @@ def local_search(
     verbose: bool = False
 ) -> pd.DataFrame:
     """
-    TASK 1-6 - LOCAL SEARCH dengan GLOBAL HARD DEVIATION EVALUATION
+    TASK 1-6 - LOCAL SEARCH dengan UNIFIED FITNESS EVALUATION
     
-    NEW Algoritma (NO PING-PONG EFFECT):
-    1. Calculate TOTAL HARD DEVIATION untuk solusi (TASK 1)
-    2. Untuk setiap violation, cari kandidat yang improve TOTAL deviation
-    3. TASK 2: Accept HANYA jika total_deviation berkurang (global evaluation)
+    🔧 CRITICAL FIX: Consistent Metric with GA
+    Local Search sekarang menggunakan SAMA fitness() function seperti GA.
+    Ini menghilangkan ketidakkonsistenan dimana GA & LS mengoptimasi hal berbeda.
+    
+    NEW Algoritma:
+    1. Initialize dengan fitness score dari solusi GA (TASK 1)
+    2. Untuk setiap violation, cari kandidat yang improve fitness
+    3. TASK 2: Accept HANYA jika fitness berkurang (lower is better)
     4. TASK 3: Reject jika overcorrection (actual > 1.2*max atau < 0.8*min)
     5. TASK 5: Stop jika 2 iterasi berturut-turut tanpa improvement
-    6. TASK 6: Log setiap swap dan improvement
+    6. TASK 6: Log setiap swap dan improvement dengan fitness score
+    
+    Fitness Formula (same as GA):
+    fitness = (macro_penalty * 5000) + (hard_penalty * 10000) + (soft_penalty * 100) + diversity_penalty
     
     Args:
         solution: GA result (10 items, 100g basis)
@@ -1610,15 +1475,8 @@ def local_search(
         print(f"LOCAL SEARCH - STABLE (GLOBAL HARD DEVIATION)")
         print(f"{'='*70}")
     
-    # Filter junk foods
-    invalid_keywords = [
-        'spice', 'powder', 'yeast', 'sauce', 'extract',
-        'flavoring', 'dressing', 'seasoning', 'mix', 'condiment'
-    ]
-    
-    food_df_clean = food_df[
-        ~food_df['food_name'].str.lower().str.contains('|'.join(invalid_keywords), na=False)
-    ].copy()
+    # Use full food database (already cleaned in preprocessing)
+    food_df_clean = food_df.copy()
     
     if len(food_df_clean) < CHROMOSOME_SIZE:
         food_df_clean = food_df.copy()
@@ -1629,6 +1487,9 @@ def local_search(
     best_solution = solution.copy()
     hard_constraints = guidelines.get('hard', {})
     
+    # Initialize with fitness score (same metric as GA)
+    current_best_fitness = fitness(best_solution, guidelines, tdee)
+    
     improvements = 0
     iteration = 0
     no_improvement_count = 0  # TASK 5: Stop after 2 consecutive iterations without improvement
@@ -1637,10 +1498,9 @@ def local_search(
         iteration += 1
         
         # ════════════════════════════════════════════════════════════════
-        # TASK 1: Calculate OLD total HARD deviation (global metric)
+        # TASK 1: Get current solution's nutrition (for violation analysis)
         # ════════════════════════════════════════════════════════════════
         
-        old_total_deviation = calculate_total_hard_deviation(best_solution, guidelines)
         current_nutrition = calculate_total_nutrition(best_solution)
         
         # Identify HARD violations
@@ -1682,8 +1542,8 @@ def local_search(
         hard_violations.sort(key=lambda x: x['deviation'], reverse=True)
         
         if verbose and iteration == 1:
-            print(f"\n[INITIAL HARD DEVIATIONS]")
-            print(f"  Total deviation: {old_total_deviation:.1f}")
+            print(f"\n[INITIAL FITNESS & VIOLATIONS]")
+            print(f"  Current fitness score: {current_best_fitness:.1f}")
             for v in hard_violations[:3]:
                 print(f"    {v['nutrient']:25} {v['type']:4} by {v['deviation']:8.1f}g")
         
@@ -1703,14 +1563,17 @@ def local_search(
         
         if verbose:
             print(f"\n[ITER {iteration}] Target: {target_nutrient:25} ({target_type})")
-            print(f"  Old deviation: {old_total_deviation:.1f}")
+            print(f"  Current fitness: {current_best_fitness:.1f}")
         
         # ════════════════════════════════════════════════════════════════
         # CREATE CANDIDATE POOL based on target
         # ════════════════════════════════════════════════════════════════
         
         if target_type == 'LOW':
-            min_threshold = target_violation['min'] * 0.5
+            # Gunakan absolute threshold, bukan relative ke target total
+            # Target total dibagi 10 slot = rata-rata per item
+            avg_per_slot = target_violation['min'] / 10
+            min_threshold = avg_per_slot * 0.3
             candidate_pool = food_df_clean[food_df_clean[target_nutrient] >= min_threshold].copy()
             candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=False)
         else:  # HIGH
@@ -1718,22 +1581,26 @@ def local_search(
             candidate_pool = food_df_clean[food_df_clean[target_nutrient] <= max_threshold].copy()
             candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=True)
         
+        # Ambil top 50 kandidat terbaik, lalu shuffle untuk eksplorasi
+        top_n = min(50, len(candidate_pool))
+        candidate_pool = candidate_pool.head(top_n).sample(frac=1, random_state=None).reset_index(drop=True)
+        
         if len(candidate_pool) == 0:
             if verbose:
                 print(f"  ✗ No suitable candidates found")
             no_improvement_count += 1
-            if no_improvement_count >= 2:
+            if no_improvement_count >= 5:
                 if verbose:
-                    print(f"\n[STOP] No improvement for 2 consecutive iterations")
+                    print(f"\n[STOP] No improvement for 5 consecutive iterations")
                 break
             continue
         
         # ════════════════════════════════════════════════════════════════
-        # TRY SWAPS - Find best swap that reduces TOTAL HARD DEVIATION
+        # TRY SWAPS - Find best swap that improves fitness (same as GA)
         # ════════════════════════════════════════════════════════════════
         
         best_swap = None
-        best_new_deviation = old_total_deviation
+        best_new_fitness = current_best_fitness
         
         # Try each slot in chromosome
         for gene_idx in range(len(best_solution)):
@@ -1785,20 +1652,20 @@ def local_search(
                 if overcorrected:
                     continue  # Skip this candidate
                 
-                # TASK 1-2: Calculate NEW total HARD deviation
-                new_total_deviation = calculate_total_hard_deviation(test_solution, guidelines)
+                # TASK 1-2: Calculate NEW fitness (using same metric as GA)
+                new_fitness = fitness(test_solution, guidelines, tdee)
                 
-                # TASK 2: ACCEPTANCE RULE - Accept ONLY if deviation decreases
-                if new_total_deviation < best_new_deviation:
-                    best_new_deviation = new_total_deviation
+                # TASK 2: ACCEPTANCE RULE - Accept ONLY if fitness improves (lower is better)
+                if new_fitness < best_new_fitness:
+                    best_new_fitness = new_fitness
                     best_swap = {
                         'gene_idx': gene_idx,
                         'current_food': current_food,
                         'new_food': new_food,
                         'test_solution': test_solution,
-                        'old_deviation': old_total_deviation,
-                        'new_deviation': new_total_deviation,
-                        'improvement': old_total_deviation - new_total_deviation
+                        'old_fitness': current_best_fitness,
+                        'new_fitness': new_fitness,
+                        'improvement': current_best_fitness - new_fitness
                     }
         
         # ════════════════════════════════════════════════════════════════
@@ -1808,6 +1675,7 @@ def local_search(
         if best_swap is not None and best_swap['improvement'] > 0:
             # Accept the swap
             best_solution = best_swap['test_solution'].copy()
+            current_best_fitness = best_swap['new_fitness']  # Update fitness for next iteration
             improvements += 1
             no_improvement_count = 0
             
@@ -1816,31 +1684,31 @@ def local_search(
                 old_name = best_swap['current_food'].get('food_name', '?')
                 new_name = best_swap['new_food'].get('food_name', '?')
                 print(f"  ✓ Swap at slot {best_swap['gene_idx']}: {old_name} → {new_name}")
-                print(f"    Old deviation: {best_swap['old_deviation']:.1f}")
-                print(f"    New deviation: {best_swap['new_deviation']:.1f}")
-                print(f"    Improvement:   {best_swap['improvement']:+.1f}")
+                print(f"    Old fitness: {best_swap['old_fitness']:.1f}")
+                print(f"    New fitness: {best_swap['new_fitness']:.1f}")
+                print(f"    Improvement: {best_swap['improvement']:+.1f}")
                 print(f"    Accepted: True")
         else:
             # No improvement found
             if verbose:
-                print(f"  ✗ No swap improved total deviation")
+                print(f"  ✗ No swap improved fitness")
                 print(f"    Accepted: False")
             
             no_improvement_count += 1
             
-            # TASK 5: STOPPING CONDITION - Stop after 2 consecutive no-improvement
-            if no_improvement_count >= 2:
+            # TASK 5: STOPPING CONDITION - Stop after 5 consecutive no-improvement
+            if no_improvement_count >= 5:
                 if verbose:
                     print(f"\n[STOP] No improvement for {no_improvement_count} consecutive iterations")
                 break
     
     if verbose:
-        final_deviation = calculate_total_hard_deviation(best_solution, guidelines)
+        final_fitness = fitness(best_solution, guidelines, tdee)
         print(f"\n{'='*70}")
         print(f"✓ Local Search Complete")
         print(f"  Improvements: {improvements}")
         print(f"  Iterations: {iteration}")
-        print(f"  Final HARD deviation: {final_deviation:.1f}")
+        print(f"  Final fitness score: {final_fitness:.1f}")
         print(f"{'='*70}\n")
     
     return best_solution
@@ -1942,33 +1810,26 @@ def _apply_quality_filter(filtered: pd.DataFrame, expected_label: str) -> pd.Dat
     
     expected_lower = expected_label.strip().lower()
     
-    # JUNK FOOD BLACKLIST - exclude dari semua kategori
-    junk_keywords = ['candy', 'chocolate', 'dessert', 'cake', 'cookie', 'syrup', 
-                     'donut', 'confection', 'sweet candy', 'caramel', 'fudge',
-                     'pie', 'ice cream', 'pudding', 'mousse', 'brownie']
-    junk_pattern = '|'.join(junk_keywords)
-    
-    # Remove junk food
-    if 'food_name' in filtered.columns:
-        filtered = cast(pd.DataFrame, filtered[
-            ~filtered['food_name'].str.lower().str.contains(junk_pattern, na=False)
-        ])
+    # NOTE: Junk food keywords filtering removed - dataset already cleaned in preprocessing
     
     # ────────────────────────────────────────────────────────────────────
     # MAIN COURSE: VERY STRICT - harus ada balanced nutrients
     # ────────────────────────────────────────────────────────────────────
     if expected_lower == 'main course':
         # Main Course HARUS:
-        # - Energy 200-400 kcal (realistic portion @ 100g)
-        # - Protein >= 12g (adequate protein content)
-        # - Fat > 2g AND Fat < 40g (not fat-only, not too fatty)
-        # - NOT pure oil/fat items
+        # - Energy 150-400 kcal (realistic portion @ 100g, lowered from 200 to include carb-based foods)
+        # - Protein >= 3g (lowered from 12 to allow carb-based staples like rice, pasta, bread)
+        # - Fat <= 40g (not too fatty)
+        # - (Carbs + Protein) >= 15g (ensures macronutrient content for balanced meals)
+        # 
+        # Rationale: threshold protein >= 12g was too restrictive and filtered out
+        # important carb-based foods (rice, pasta, bread, tortilla) needed for daily carb targets
         filtered = cast(pd.DataFrame, filtered[
-            (filtered['energy_kcal'] >= 200) &
+            (filtered['energy_kcal'] >= 150) &
             (filtered['energy_kcal'] <= 400) &
-            (filtered['protein_g'] >= 12) &
-            (filtered['fat_g'] >= 2) &
-            (filtered['fat_g'] <= 40)
+            (filtered['protein_g'] >= 3) &
+            (filtered['fat_g'] <= 40) &
+            ((filtered['carbohydrate_g'] + filtered['protein_g']) >= 15)
         ])
     
     # ────────────────────────────────────────────────────────────────────
@@ -2094,8 +1955,9 @@ def generate_meal_options(
         dataset_items = cast(pd.DataFrame, _apply_quality_filter(dataset_items, expected_label))
         
         # Filter by cuisine jika ada preference
-        if allowed_cuisine and 'cuisine' in dataset_items.columns:
-            dataset_items = dataset_items[dataset_items['cuisine'].isin(allowed_cuisine)]
+        cuisine_col = 'cuisine_label' if 'cuisine_label' in dataset_items.columns else 'cuisine'
+        if allowed_cuisine and cuisine_col in dataset_items.columns:
+            dataset_items = dataset_items[dataset_items[cuisine_col].isin(allowed_cuisine)]
         
         # Sample max 20 items dari dataset untuk variasi
         if len(dataset_items) > 20:
@@ -2140,9 +2002,14 @@ def generate_meal_options(
         candidates = filtered_candidates
         
         # ────────────────────────────────────────────────────────────────────
-        # STEP 5: Shuffle ringan untuk variasi
+        # STEP 5: Prioritaskan candidates dari top_solutions (GA optimization)
         # ────────────────────────────────────────────────────────────────────
-        random.shuffle(candidates)
+        # Pisahkan candidates dari GA solutions vs dataset items untuk memastikan
+        # opsi yang ditampilkan mencerminkan hasil optimasi GA, bukan random dataset items
+        ga_candidates = candidates[:len(top_solutions)]
+        dataset_candidates = candidates[len(top_solutions):]
+        random.shuffle(dataset_candidates)  # Hanya shuffle dataset items untuk variasi
+        candidates = ga_candidates + dataset_candidates
         
         # ────────────────────────────────────────────────────────────────────
         # STEP 6: Ambil 3 opsi pertama
