@@ -210,20 +210,6 @@ SLOT_LABEL_MAP = {
     9: 'Snack'           # snack
 }
 
-# Legacy: kept for reference (tidak digunakan lagi, gunakan consumption_label)
-SLOT_FOOD_GROUP_MAPPING = {
-    0: ['main_course', 'staple', 'rice', 'bread'],           # breakfast_main
-    1: ['side_dish', 'vegetable', 'protein', 'legume'],      # breakfast_side
-    2: ['beverage', 'drink', 'juice', 'milk', 'tea'],        # breakfast_drink
-    3: ['main_course', 'staple', 'rice', 'noodle'],          # lunch_main
-    4: ['side_dish', 'vegetable', 'protein', 'legume'],      # lunch_side
-    5: ['beverage', 'drink', 'juice', 'milk', 'tea'],        # lunch_drink
-    6: ['main_course', 'staple', 'rice', 'noodle'],          # dinner_main
-    7: ['side_dish', 'vegetable', 'protein', 'legume'],      # dinner_side
-    8: ['beverage', 'drink', 'juice', 'milk', 'tea'],        # dinner_drink
-    9: ['snack', 'dessert', 'fruit', 'nut']                  # snack
-}
-
 # Nutrient weights - semakin tinggi weight semakin strict constraint-nya
 # SOFT CONSTRAINTS: Macronutrients (protein, carbs, fat) sangat penting - weight 2-3x
 # HARD CONSTRAINTS: Disease-related (sodium, cholesterol) - akan di-multiply 10-15x lagi di fitness
