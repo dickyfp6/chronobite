@@ -47,9 +47,12 @@ class RuleBasedFoodClassifier:
         
         # TIER 1: UNAMBIGUOUS FOOD_GROUPS (99%+ consistency)
         # ========================================================================
-        
+
         # Rule 1.1: Beverages
         if food_group_lower == "beverages":
+            # Concentrate undiluted = bahan masak, bukan minuman siap minum
+            if "concentrate" in food_name_lower:
+                return ("Snack", "medium")
             return ("Drink", "high")
         
         # Rule 1.2-1.3: Vegetables (with juice distinction)
@@ -144,39 +147,23 @@ class RuleBasedFoodClassifier:
                 
         # Rule 3.2: DAIRY AND EGG PRODUCTS
         if food_group_lower == "dairy and egg products":
-            # Priority order: fluid > milk > cheese > egg > butter > cottage > yogurt/ice > else
             
-            # 3.2.1: fluid (100% Drink indicator)
+            # Cream, butter, cheese → Side Dish DULU sebelum cek milk
+            if any(x in food_name_lower for x in ["cream", "cheese", "butter", "ricotta"]):
+                return ("Side Dish", "high")
+
+            # Fluid milk → Drink
             if "fluid" in food_name_lower:
                 return ("Drink", "high")
-            
-            # 3.2.2: milk (74% Drink, but check for chocolate which can be Snack)
+
+            # Milk dessert/frozen/bar → Snack, bukan Drink
             if "milk" in food_name_lower:
+                if any(x in food_name_lower for x in 
+                    ["dessert", "frozen", "bar", "topping", "shake", 
+                        "ice", "canned", "evaporated", "condensed"]):
+                    return ("Snack", "medium")
                 return ("Drink", "medium")
-            
-            # 3.2.3: cheese (80/107 Side Dish)
-            if "cheese" in food_name_lower:
-                return ("Side Dish", "high")
-            
-            # 3.2.4: butter or cream (Side Dish indicators)
-            if "butter" in food_name_lower or "cream" in food_name_lower:
-                return ("Side Dish", "high")
-            
-            # 3.2.5: egg (Main Course)
-            if "egg" in food_name_lower:
-                return ("Main Course", "high")
-            
-            # 3.2.6: cottage (Main Course)
-            if "cottage" in food_name_lower:
-                return ("Main Course", "medium")
-            
-            # 3.2.7: yogurt or ice (Snack)
-            if "yogurt" in food_name_lower or "ice" in food_name_lower:
-                return ("Snack", "medium")
-            
-            # 3.2.8: else (fallback)
-            return ("Snack", "low")
-        
+                    
         # Rule 3.3: BAKED PRODUCTS
         if food_group_lower == "baked products":
             # Priority: sweet indicators > bread indicators > else

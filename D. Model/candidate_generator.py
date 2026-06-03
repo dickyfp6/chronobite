@@ -157,6 +157,11 @@ class CandidateGenerator:
                 
                 # Check ingredient similarity dengan setiap item di exclusion list
                 for excluded_name in exclusion_list:
+                    # Exact name match
+                    if food_name.lower() == excluded_name.lower():
+                        is_excluded = True
+                        break
+                    # Ingredient similarity
                     if CandidateGenerator.is_similar_ingredient(food_name, excluded_name):
                         is_excluded = True
                         break
