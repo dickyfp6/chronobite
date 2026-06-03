@@ -35,7 +35,7 @@ except ImportError as e:
 # Special handling for Greedy Algorithm (folder has space in name)
 GreedyAlgorithmInterface = None
 try:
-    greedy_path = os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Greedy Algorithm', 'greedy_interface.py')
+    greedy_path = os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'greedy', 'greedy_interface.py')
     spec = importlib.util.spec_from_file_location("greedy_interface", greedy_path)
     if spec is not None and spec.loader is not None:
         greedy_module = importlib.util.module_from_spec(spec)
