@@ -106,9 +106,6 @@ def validate_final_solution(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
             for nutrient, val, min_val, max_val, sev in result['violations']:
                 print(f"  {nutrient}: {val} (range {min_val}-{max_val}) - {sev}")
     """
-    # Import disini untuk avoid circular dependency
-    from ga_v1 import calculate_total_nutrition
-    
     # Flatten guidelines
     guidelines_flat = merge_hard_soft_guidelines(guidelines)
     
