@@ -1,8 +1,8 @@
 import pandas as pd
 import os
 
-INPUT_FILE = r'C:\Users\Silfia\Documents\FILE TA\TugasAkhirDSS\A. Data\Data Processed\05_final_dataset-old.csv'
-OUTPUT_FILE = r'C:\Users\Silfia\Documents\FILE TA\TugasAkhirDSS\A. Data\Data Processed\05_final_dataset.csv'
+INPUT_FILE = r'C:\Users\Silfia\Documents\FILE TA\TugasAkhirDSS\A. Data\Data Processed\05_final_dataset.csv'
+OUTPUT_FILE = r'C:\Users\Silfia\Documents\FILE TA\TugasAkhirDSS\A. Data\Data Processed\06_final_dataset.csv'
 
 def bersihkan_dataset(input_file, output_file):
     if not os.path.exists(input_file):

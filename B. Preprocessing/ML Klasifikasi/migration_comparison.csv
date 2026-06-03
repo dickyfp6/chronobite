@@ -9,7 +9,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 167524,"Waffles, chocolate chip, frozen, ready-to-heat",Baked Products,Snack,Snack,high,False
 167525,"Tostada shells, corn",Baked Products,Snack,Snack,medium,False
 167526,"Bread, salvadoran sweet cheese (quesadilla salvadorena)",Baked Products,Side Dish,Side Dish,medium,False
-167527,"Bread, pound cake type, pan de torta salvadoran",Baked Products,Snack,Side Dish,medium,True
+167527,"Bread, pound cake type, pan de torta salvadoran",Baked Products,Side Dish,Side Dish,medium,False
 167528,"Pastry, Pastelitos de Guava (guava pastries)",Baked Products,Snack,Snack,high,False
 167530,"Crackers, cream, Gamesa Sabrosas",Baked Products,Snack,Snack,high,False
 167532,"Bread, white wheat",Baked Products,Side Dish,Side Dish,medium,False
@@ -99,7 +99,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 167678,"Restaurant, Chinese, chicken and vegetables",Restaurant Foods,Main Course,Main Course,medium,False
 167679,"Restaurant, Chinese, orange chicken",Restaurant Foods,Main Course,Main Course,medium,False
 167680,"Restaurant, Italian, spaghetti with meat sauce",Restaurant Foods,Main Course,Main Course,medium,False
-167681,"Beverages, fruit-flavored drink, dry powdered mix, low calorie, with aspartame",Beverages,Drink,Drink,high,False
+167681,"Beverages, fruit-flavored drink, dry powdered mix, low calorie, with aspartame",Beverages,Snack,Snack,medium,False
 167683,"Frozen novelties, ice cream type, vanilla ice cream, light, no sugar added, chocolate coated",Sweets,Snack,Snack,high,False
 167684,"Creamy dressing, made with sour cream and/or buttermilk and oil, reduced calorie",Fats and Oils,Side Dish,Side Dish,high,False
 167686,"Milk dessert, frozen, milk-fat free, chocolate",Sweets,Snack,Snack,high,False
@@ -109,18 +109,18 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 167692,"Salad dressing, blue or roquefort cheese dressing, light",Fats and Oils,Side Dish,Side Dish,high,False
 167693,"Salad dressing, french dressing, reduced calorie",Fats and Oils,Side Dish,Side Dish,high,False
 167695,"Mayonnaise, made with tofu",Fats and Oils,Side Dish,Side Dish,high,False
-167697,"Milk, buttermilk, fluid, cultured, reduced fat",Dairy and Egg Products,Drink,Drink,high,False
+167697,"Milk, buttermilk, fluid, cultured, reduced fat",Dairy and Egg Products,Side Dish,Side Dish,high,False
 167699,"Salad dressing, blue or roquefort cheese dressing, fat-free",Fats and Oils,Side Dish,Side Dish,high,False
 167700,"Salad Dressing, mayonnaise-like, fat-free",Fats and Oils,Side Dish,Side Dish,high,False
 167701,"Candies, MARS SNACKFOOD US, MILKY WAY Midnight Bar",Sweets,Snack,Snack,high,False
-167703,"Cheese, cottage, lowfat, 1% milkfat, lactose reduced",Dairy and Egg Products,Drink,Drink,medium,False
+167703,"Cheese, cottage, lowfat, 1% milkfat, lactose reduced",Dairy and Egg Products,Side Dish,Side Dish,high,False
 167705,"Cheese, parmesan, low sodium",Dairy and Egg Products,Side Dish,Side Dish,high,False
-167707,"Beverages, fruit-flavored drink, powder, with high vitamin C with other added vitamins, low calorie",Beverages,Drink,Drink,high,False
+167707,"Beverages, fruit-flavored drink, powder, with high vitamin C with other added vitamins, low calorie",Beverages,Snack,Snack,medium,False
 167708,"Tomato and vegetable juice, low sodium",Vegetables and Vegetable Products,Drink,Drink,high,False
 167711,"Beverages, Chocolate-flavored drink, whey and milk based",Beverages,Drink,Drink,high,False
 167714,"Hearts of palm, raw",Vegetables and Vegetable Products,Side Dish,Side Dish,high,False
 167715,"Cereals ready-to-eat, POST, Shredded Wheat n' Bran, spoon-size",Breakfast Cereals,Side Dish,Side Dish,medium,False
-167716,"Cheese, cottage, lowfat, 1% milkfat, with vegetables",Dairy and Egg Products,Drink,Drink,medium,False
+167716,"Cheese, cottage, lowfat, 1% milkfat, with vegetables",Dairy and Egg Products,Side Dish,Side Dish,high,False
 167717,Yeast extract spread,Vegetables and Vegetable Products,Side Dish,Side Dish,high,False
 167719,"Chicken, meatless, breaded, fried",Legumes and Legume Products,Main Course,Main Course,medium,False
 167721,"Frozen novelties, juice type, juice with cream",Sweets,Snack,Snack,high,False
@@ -138,7 +138,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 167744,"Mollusks, snail, raw",Finfish and Shellfish Products,Main Course,Main Course,high,False
 167746,"Lemons, raw, without peel",Fruits and Fruit Juices,Snack,Snack,high,False
 167747,"Lemon juice, raw",Fruits and Fruit Juices,Drink,Drink,high,False
-167748,"Lemon juice from concentrate, canned or bottled",Fruits and Fruit Juices,Drink,Drink,high,False
+167748,"Lemon juice from concentrate, canned or bottled",Fruits and Fruit Juices,Snack,Snack,medium,False
 167749,"Lemon peel, raw",Fruits and Fruit Juices,Snack,Snack,high,False
 167751,"Plums, dried (prunes), stewed, without added sugar",Fruits and Fruit Juices,Snack,Snack,high,False
 167752,"Plums, dried (prunes), stewed, with added sugar",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -162,7 +162,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 167772,"Applesauce, canned, unsweetened, with added ascorbic acid",Fruits and Fruit Juices,Snack,Snack,high,False
 167773,"Applesauce, canned, sweetened, with salt",Fruits and Fruit Juices,Snack,Snack,high,False
 167774,"Grapefruit juice, pink, raw",Fruits and Fruit Juices,Drink,Drink,high,False
-167775,"Apple juice, frozen concentrate, unsweetened, diluted with 3 volume water, with added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
+167775,"Apple juice, frozen concentrate, unsweetened, diluted with 3 volume water, with added ascorbic acid",Fruits and Fruit Juices,Snack,Snack,medium,False
 167776,"Pears, raw, bartlett (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Snack,Snack,high,False
 167777,"Pears, raw, red anjou",Fruits and Fruit Juices,Snack,Snack,high,False
 167778,"Pears, raw, bosc (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -177,12 +177,12 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 167791,Horned melon (Kiwano),Fruits and Fruit Juices,Snack,Snack,high,False
 167792,Orange Pineapple Juice Blend,Fruits and Fruit Juices,Drink,Drink,high,False
 167793,"Apples, raw, fuji, with skin (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Snack,Snack,high,False
-167794,"Orange juice, chilled, includes from concentrate, with added calcium and vitamins A, D, E",Fruits and Fruit Juices,Drink,Drink,high,False
+167794,"Orange juice, chilled, includes from concentrate, with added calcium and vitamins A, D, E",Fruits and Fruit Juices,Snack,Snack,medium,False
 167796,"Fruit juice smoothie, NAKED JUICE, GREEN MACHINE",Fruits and Fruit Juices,Drink,Drink,high,False
 167798,"Fruit juice smoothie, BOLTHOUSE FARMS, GREEN GOODNESS",Fruits and Fruit Juices,Drink,Drink,high,False
 167799,"Fruit juice smoothie, BOLTHOUSE FARMS, strawberry banana",Fruits and Fruit Juices,Drink,Drink,high,False
 167800,"Apple juice, canned or bottled, unsweetened, with added ascorbic acid, calcium, and potassium",Fruits and Fruit Juices,Drink,Drink,high,False
-167802,"Lemon juice from concentrate, bottled, REAL LEMON",Fruits and Fruit Juices,Drink,Drink,high,False
+167802,"Lemon juice from concentrate, bottled, REAL LEMON",Fruits and Fruit Juices,Snack,Snack,medium,False
 167808,"Raspberries, puree, seedless",Fruits and Fruit Juices,Snack,Snack,high,False
 167809,"Raspberries, puree, with seeds",Fruits and Fruit Juices,Snack,Snack,high,False
 167924,"Nabisco, Nabisco Snackwell's Fat Free Devil's Food Cookie Cakes",Baked Products,Snack,Snack,high,False
@@ -203,7 +203,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 167942,"Crackers, saltines, whole wheat (includes multi-grain)",Baked Products,Snack,Snack,high,False
 167943,"Bread, potato",Baked Products,Side Dish,Side Dish,medium,False
 167944,"Bread, cheese",Baked Products,Side Dish,Side Dish,medium,False
-167945,"Focaccia, Italian flatbread, plain",Baked Products,Main Course,Side Dish,medium,True
+167945,"Focaccia, Italian flatbread, plain",Baked Products,Side Dish,Side Dish,medium,False
 167946,"SCHIFF,TIGER'S MILK BAR",Sweets,Snack,Snack,high,False
 167947,"Candies, TOBLERONE, milk chocolate with honey and almond nougat",Sweets,Snack,Snack,high,False
 167948,"Snacks, corn-based, extruded, onion-flavor",Snacks,Snack,Snack,low,False
@@ -297,7 +297,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 168107,"Rice cake, cracker (include hain mini rice cakes)",Snacks,Snack,Snack,low,False
 168108,"Candies, MARS SNACKFOOD US, M&M's Almond Chocolate Candies",Sweets,Snack,Snack,high,False
 168112,"Salad dressing, mayonnaise and mayonnaise-type, low calorie",Fats and Oils,Side Dish,Side Dish,high,False
-168114,"Cheese, cottage, lowfat, 1% milkfat, no sodium added",Dairy and Egg Products,Drink,Drink,medium,False
+168114,"Cheese, cottage, lowfat, 1% milkfat, no sodium added",Dairy and Egg Products,Side Dish,Side Dish,high,False
 168115,"Mayonnaise, low sodium, low calorie or diet",Fats and Oils,Side Dish,Side Dish,high,False
 168116,"Snacks, tortilla chips, unsalted, white corn",Snacks,Snack,Snack,low,False
 168117,"Cranberry juice, unsweetened",Fruits and Fruit Juices,Drink,Drink,high,False
@@ -350,7 +350,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 168185,"Peach nectar, canned, with added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
 168186,"Pear nectar, canned, with added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
 168187,"Pineapple juice, canned or bottled, unsweetened, with added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
-168188,"Apple juice, frozen concentrate, unsweetened, undiluted, with added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
+168188,"Apple juice, frozen concentrate, unsweetened, undiluted, with added ascorbic acid",Fruits and Fruit Juices,Snack,Snack,medium,False
 168189,"Grapefruit juice, white, bottled, unsweetened, OCEAN SPRAY",Fruits and Fruit Juices,Drink,Drink,high,False
 168190,"Jackfruit, canned, syrup pack",Fruits and Fruit Juices,Snack,Snack,high,False
 168191,"Dates, medjool",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -366,7 +366,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 168202,"Apples, raw, golden delicious, with skin",Fruits and Fruit Juices,Snack,Snack,high,False
 168203,"Apples, raw, granny smith, with skin (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Snack,Snack,high,False
 168204,"Apples, raw, gala, with skin (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Snack,Snack,high,False
-168205,"Pineapple juice, canned, not from concentrate, unsweetened, with added vitamins A, C and E",Fruits and Fruit Juices,Drink,Drink,high,False
+168205,"Pineapple juice, canned, not from concentrate, unsweetened, with added vitamins A, C and E",Fruits and Fruit Juices,Snack,Snack,medium,False
 168207,"Grape juice, canned or bottled, unsweetened, with added ascorbic acid and calcium",Fruits and Fruit Juices,Drink,Drink,high,False
 168209,"Raspberries, frozen, red, unsweetened",Fruits and Fruit Juices,Snack,Snack,high,False
 168210,"Guava nectar, with sucralose, canned",Fruits and Fruit Juices,Drink,Drink,high,False
@@ -376,7 +376,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 168214,"Fruit juice smoothie, NAKED JUICE, strawberry banana",Fruits and Fruit Juices,Drink,Drink,high,False
 168215,"Plantains, green, raw",Fruits and Fruit Juices,Snack,Snack,high,False
 168216,"Plantains, green, boiled",Fruits and Fruit Juices,Snack,Snack,high,False
-168217,Raspberry juice concentrate,Fruits and Fruit Juices,Drink,Drink,high,False
+168217,Raspberry juice concentrate,Fruits and Fruit Juices,Snack,Snack,medium,False
 168384,"Alfalfa seeds, sprouted, raw",Vegetables and Vegetable Products,Side Dish,Side Dish,high,False
 168385,"Amaranth leaves, raw",Vegetables and Vegetable Products,Side Dish,Side Dish,high,False
 168386,"Artichokes, (globe or french), cooked, boiled, drained, without salt",Vegetables and Vegetable Products,Side Dish,Side Dish,high,False
@@ -838,15 +838,15 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 169091,"Mango, dried, sweetened",Fruits and Fruit Juices,Snack,Snack,high,False
 169092,"Melons, cantaloupe, raw",Fruits and Fruit Juices,Snack,Snack,high,False
 169093,"Melons, casaba, raw",Fruits and Fruit Juices,Snack,Snack,high,False
-169094,"Olives, ripe, canned (small-extra large)",Fruits and Fruit Juices,Snack,Snack,high,False
-169095,"Olives, ripe, canned (jumbo-super colossal)",Fruits and Fruit Juices,Snack,Snack,high,False
-169096,"Olives, pickled, canned or bottled, green",Fruits and Fruit Juices,Drink,Drink,high,False
+169094,"Olives, ripe, canned (small-extra large)",Fruits and Fruit Juices,Side Dish,Side Dish,high,False
+169095,"Olives, ripe, canned (jumbo-super colossal)",Fruits and Fruit Juices,Side Dish,Side Dish,high,False
+169096,"Olives, pickled, canned or bottled, green",Fruits and Fruit Juices,Side Dish,Side Dish,high,False
 169097,"Oranges, raw, all commercial varieties",Fruits and Fruit Juices,Snack,Snack,high,False
 169098,"Orange juice, raw (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Drink,Drink,high,False
 169099,"Orange juice, canned, unsweetened",Fruits and Fruit Juices,Drink,Drink,high,False
-169100,"Orange juice, chilled, includes from concentrate",Fruits and Fruit Juices,Drink,Drink,high,False
-169101,"Orange juice, chilled, includes from concentrate, with added calcium and vitamin D",Fruits and Fruit Juices,Drink,Drink,high,False
-169102,"Orange juice, frozen concentrate, unsweetened, diluted with 3 volume water",Fruits and Fruit Juices,Drink,Drink,high,False
+169100,"Orange juice, chilled, includes from concentrate",Fruits and Fruit Juices,Snack,Snack,medium,False
+169101,"Orange juice, chilled, includes from concentrate, with added calcium and vitamin D",Fruits and Fruit Juices,Snack,Snack,medium,False
+169102,"Orange juice, frozen concentrate, unsweetened, diluted with 3 volume water",Fruits and Fruit Juices,Snack,Snack,medium,False
 169103,"Orange peel, raw",Fruits and Fruit Juices,Snack,Snack,high,False
 169104,"Orange-grapefruit juice, canned or bottled, unsweetened",Fruits and Fruit Juices,Drink,Drink,high,False
 169105,"Tangerines, (mandarin oranges), raw",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -872,7 +872,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 169125,"Pineapple, canned, water pack, solids and liquids",Fruits and Fruit Juices,Snack,Snack,high,False
 169126,"Pineapple, canned, juice pack, solids and liquids",Fruits and Fruit Juices,Drink,Drink,high,False
 169127,"Pineapple, canned, light syrup pack, solids and liquids",Fruits and Fruit Juices,Snack,Snack,high,False
-169128,"Pineapple juice, frozen concentrate, unsweetened, diluted with 3 volume water",Fruits and Fruit Juices,Drink,Drink,high,False
+169128,"Pineapple juice, frozen concentrate, unsweetened, diluted with 3 volume water",Fruits and Fruit Juices,Snack,Snack,medium,False
 169130,"Plantains, yellow, raw",Fruits and Fruit Juices,Snack,Snack,high,False
 169131,"Plantains, yellow, baked",Fruits and Fruit Juices,Snack,Snack,high,False
 169132,"Plums, canned, purple, heavy syrup pack, solids and liquids",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -1317,11 +1317,11 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 169894,"Butter replacement, without fat, powder",Fats and Oils,Side Dish,Side Dish,high,False
 169895,"Salad dressing, buttermilk, lite",Fats and Oils,Side Dish,Side Dish,high,False
 169897,"Beverage, instant breakfast powder, chocolate, sugar-free, not reconstituted",Dairy and Egg Products,Snack,Snack,low,False
-169898,"Yogurt, fruit variety, nonfat",Dairy and Egg Products,Snack,Snack,medium,False
+169898,"Yogurt, fruit variety, nonfat",Dairy and Egg Products,Snack,Snack,low,False
 169899,"Whipped cream substitute, dietetic, made from powdered mix",Dairy and Egg Products,Side Dish,Side Dish,high,False
 169900,"Frozen novelties, ice cream type, sundae, prepackaged",Sweets,Snack,Snack,high,False
 169901,"Cheese, american cheddar, imitation",Dairy and Egg Products,Side Dish,Side Dish,high,False
-169904,"Eggs, scrambled, frozen mixture",Dairy and Egg Products,Main Course,Main Course,high,False
+169904,"Eggs, scrambled, frozen mixture",Dairy and Egg Products,Snack,Snack,low,False
 169908,"Loquats, raw",Fruits and Fruit Juices,Snack,Snack,high,False
 169909,"Mammy-apple, (mamey), raw",Fruits and Fruit Juices,Snack,Snack,high,False
 169910,"Mangos, raw",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -1332,10 +1332,10 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 169917,"Oranges, raw, navels (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Snack,Snack,high,False
 169918,"Oranges, raw, Florida",Fruits and Fruit Juices,Snack,Snack,high,False
 169919,"Oranges, raw, with peel",Fruits and Fruit Juices,Snack,Snack,high,False
-169920,"Orange juice, chilled, includes from concentrate, with added calcium",Fruits and Fruit Juices,Drink,Drink,high,False
-169921,"Orange juice, frozen concentrate, unsweetened, diluted with 3 volume water, with added calcium",Fruits and Fruit Juices,Drink,Drink,high,False
-169922,"Orange juice, frozen concentrate, unsweetened, undiluted, with added calcium",Fruits and Fruit Juices,Drink,Drink,high,False
-169923,"Orange juice, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Drink,Drink,high,False
+169920,"Orange juice, chilled, includes from concentrate, with added calcium",Fruits and Fruit Juices,Snack,Snack,medium,False
+169921,"Orange juice, frozen concentrate, unsweetened, diluted with 3 volume water, with added calcium",Fruits and Fruit Juices,Snack,Snack,medium,False
+169922,"Orange juice, frozen concentrate, unsweetened, undiluted, with added calcium",Fruits and Fruit Juices,Snack,Snack,medium,False
+169923,"Orange juice, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Snack,Snack,medium,False
 169924,"Tangerines, (mandarin oranges), canned, light syrup pack",Fruits and Fruit Juices,Snack,Snack,high,False
 169925,"Tangerine juice, raw",Fruits and Fruit Juices,Drink,Drink,high,False
 169926,"Papayas, raw",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -1358,7 +1358,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 169945,"Pineapple, canned, extra heavy syrup pack, solids and liquids",Fruits and Fruit Juices,Snack,Snack,high,False
 169946,"Pineapple, frozen, chunks, sweetened",Fruits and Fruit Juices,Snack,Snack,high,False
 169947,"Pineapple juice, canned or bottled, unsweetened, without added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
-169948,"Pineapple juice, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Drink,Drink,high,False
+169948,"Pineapple juice, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Snack,Snack,medium,False
 169949,"Plums, raw",Fruits and Fruit Juices,Snack,Snack,high,False
 169950,"Plums, canned, purple, water pack, solids and liquids",Fruits and Fruit Juices,Snack,Snack,high,False
 169951,"Plums, canned, purple, juice pack, solids and liquids",Fruits and Fruit Juices,Drink,Drink,high,False
@@ -2000,26 +2000,26 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 170818,"Beef, shoulder pot roast or steak, boneless, separable lean and fat, trimmed to 0"" fat, choice, raw",Beef Products,Main Course,Main Course,high,False
 170843,"Cheese, fontina",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170844,"Cheese, monterey",Dairy and Egg Products,Side Dish,Side Dish,high,False
-170845,"Cheese, mozzarella, whole milk",Dairy and Egg Products,Drink,Drink,medium,False
-170846,"Cheese, mozzarella, whole milk, low moisture",Dairy and Egg Products,Drink,Drink,medium,False
-170847,"Cheese, mozzarella, part skim milk",Dairy and Egg Products,Drink,Drink,medium,False
+170845,"Cheese, mozzarella, whole milk",Dairy and Egg Products,Side Dish,Side Dish,high,False
+170846,"Cheese, mozzarella, whole milk, low moisture",Dairy and Egg Products,Side Dish,Side Dish,high,False
+170847,"Cheese, mozzarella, part skim milk",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170848,"Cheese, parmesan, hard",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170849,"Cheese, port de salut",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170850,"Cheese, provolone",Dairy and Egg Products,Side Dish,Side Dish,high,False
-170851,"Cheese, ricotta, whole milk",Dairy and Egg Products,Drink,Drink,medium,False
+170851,"Cheese, ricotta, whole milk",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170852,"Cheese, tilsit",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170853,"Cheese, pasteurized process, American, fortified with vitamin D",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170854,"Cheese, pasteurized process, pimento",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170855,"Cheese, pasteurized process, swiss",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170856,"Cheese food, cold pack, American",Dairy and Egg Products,Side Dish,Side Dish,high,False
-170857,"Cream, fluid, light (coffee cream or table cream)",Dairy and Egg Products,Drink,Drink,high,False
-170858,"Cream, fluid, light whipping",Dairy and Egg Products,Drink,Drink,high,False
-170859,"Cream, fluid, heavy whipping",Dairy and Egg Products,Drink,Drink,high,False
+170857,"Cream, fluid, light (coffee cream or table cream)",Dairy and Egg Products,Side Dish,Side Dish,high,False
+170858,"Cream, fluid, light whipping",Dairy and Egg Products,Side Dish,Side Dish,high,False
+170859,"Cream, fluid, heavy whipping",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170860,"Cream, whipped, cream topping, pressurized",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170861,"Milk, filled, fluid, with blend of hydrogenated vegetable oils",Dairy and Egg Products,Drink,Drink,high,False
 170862,"Milk, filled, fluid, with lauric acid oil",Dairy and Egg Products,Drink,Drink,high,False
 170865,"Dessert topping, powdered",Dairy and Egg Products,Snack,Snack,low,False
-170866,"Dessert topping, powdered, 1.5 ounce prepared with 1/2 cup milk",Dairy and Egg Products,Drink,Drink,medium,False
+170866,"Dessert topping, powdered, 1.5 ounce prepared with 1/2 cup milk",Dairy and Egg Products,Snack,Snack,medium,False
 170867,"Dessert topping, pressurized",Dairy and Egg Products,Snack,Snack,low,False
 170868,"Dessert topping, semi solid, frozen",Dairy and Egg Products,Snack,Snack,low,False
 170869,"Sour cream, imitation, cultured",Dairy and Egg Products,Side Dish,Side Dish,high,False
@@ -2027,40 +2027,40 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 170871,"Milk, reduced fat, fluid, 2% milkfat, protein fortified, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,high,False
 170872,"Milk, lowfat, fluid, 1% milkfat, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,high,False
 170873,"Milk, lowfat, fluid, 1% milkfat, with added nonfat milk solids, vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,high,False
-170874,"Milk, buttermilk, fluid, cultured, lowfat",Dairy and Egg Products,Drink,Drink,high,False
+170874,"Milk, buttermilk, fluid, cultured, lowfat",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170875,"Milk, low sodium, fluid",Dairy and Egg Products,Drink,Drink,high,False
 170876,"Milk, dry, whole, with added vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
 170877,"Milk, dry, nonfat, regular, without added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
-170878,"Milk, canned, evaporated, nonfat, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
+170878,"Milk, canned, evaporated, nonfat, with added vitamin A and vitamin D",Dairy and Egg Products,Snack,Snack,medium,False
 170879,"Milk, chocolate, fluid, commercial, whole, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,high,False
 170880,"Milk, chocolate, fluid, commercial, reduced fat, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,high,False
 170881,"Milk, chocolate, lowfat, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
 170882,"Milk, sheep, fluid",Dairy and Egg Products,Drink,Drink,high,False
-170883,"Milk shakes, thick chocolate",Dairy and Egg Products,Drink,Drink,medium,False
-170884,"Milk shakes, thick vanilla",Dairy and Egg Products,Drink,Drink,medium,False
+170883,"Milk shakes, thick chocolate",Dairy and Egg Products,Snack,Snack,medium,False
+170884,"Milk shakes, thick vanilla",Dairy and Egg Products,Snack,Snack,medium,False
 170885,"Whey, acid, fluid",Dairy and Egg Products,Drink,Drink,high,False
-170886,"Yogurt, plain, low fat",Dairy and Egg Products,Snack,Snack,medium,False
+170886,"Yogurt, plain, low fat",Dairy and Egg Products,Snack,Snack,low,False
 170887,"Yogurt, plain, skim milk",Dairy and Egg Products,Drink,Drink,medium,False
-170888,"Yogurt, vanilla, low fat.",Dairy and Egg Products,Snack,Snack,medium,False
-170889,"Yogurt, fruit, low fat,9 g protein/8 oz",Dairy and Egg Products,Snack,Snack,medium,False
-170890,"Milk dessert bar, frozen, made from lowfat milk",Dairy and Egg Products,Drink,Drink,medium,False
+170888,"Yogurt, vanilla, low fat.",Dairy and Egg Products,Snack,Snack,low,False
+170889,"Yogurt, fruit, low fat,9 g protein/8 oz",Dairy and Egg Products,Snack,Snack,low,False
+170890,"Milk dessert bar, frozen, made from lowfat milk",Dairy and Egg Products,Snack,Snack,medium,False
 170892,"Nutritional supplement for people with diabetes, liquid",Dairy and Egg Products,Snack,Snack,low,False
-170893,"Egg, whole, raw, frozen, salted, pasteurized",Dairy and Egg Products,Main Course,Main Course,high,False
-170894,"Yogurt, Greek, plain, nonfat (Includes foods for USDA's Food Distribution Program)",Dairy and Egg Products,Snack,Snack,medium,False
-170895,"Egg, white, dried, stabilized, glucose reduced",Dairy and Egg Products,Main Course,Main Course,high,False
+170893,"Egg, whole, raw, frozen, salted, pasteurized",Dairy and Egg Products,Snack,Snack,low,False
+170894,"Yogurt, Greek, plain, nonfat (Includes foods for USDA's Food Distribution Program)",Dairy and Egg Products,Snack,Snack,low,False
+170895,"Egg, white, dried, stabilized, glucose reduced",Dairy and Egg Products,Snack,Snack,low,False
 170896,"Cheese spread, American or Cheddar cheese base, reduced fat",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170898,"Cheese, mexican, queso cotija",Dairy and Egg Products,Side Dish,Side Dish,high,False
 170900,"Cheese, mozzarella, low moisture, part-skim, shredded",Dairy and Egg Products,Side Dish,Side Dish,high,False
-170901,"Yogurt, Greek, strawberry, nonfat",Dairy and Egg Products,Snack,Snack,medium,False
-170902,"Yogurt, Greek, vanilla, nonfat",Dairy and Egg Products,Snack,Snack,medium,False
-170903,"Yogurt, Greek, plain, lowfat",Dairy and Egg Products,Snack,Snack,medium,False
+170901,"Yogurt, Greek, strawberry, nonfat",Dairy and Egg Products,Snack,Snack,low,False
+170902,"Yogurt, Greek, vanilla, nonfat",Dairy and Egg Products,Snack,Snack,low,False
+170903,"Yogurt, Greek, plain, lowfat",Dairy and Egg Products,Snack,Snack,low,False
 170904,"Kefir, lowfat, plain, LIFEWAY",Dairy and Egg Products,Snack,Snack,low,False
 170905,"Yogurt, Greek, fruit, whole milk",Dairy and Egg Products,Drink,Drink,medium,False
-170907,"Yogurt, Greek, vanilla, lowfat",Dairy and Egg Products,Snack,Snack,medium,False
-170908,"Yogurt, frozen, flavors other than chocolate, lowfat",Dairy and Egg Products,Snack,Snack,medium,False
+170907,"Yogurt, Greek, vanilla, lowfat",Dairy and Egg Products,Snack,Snack,low,False
+170908,"Yogurt, frozen, flavors other than chocolate, lowfat",Dairy and Egg Products,Snack,Snack,low,False
 170910,"Milk, chocolate, lowfat, reduced sugar",Dairy and Egg Products,Drink,Drink,medium,False
 170911,"Ice cream, lowfat, no sugar added, cone, added peanuts and chocolate sauce",Dairy and Egg Products,Side Dish,Side Dish,high,False
-170915,"Yogurt, Greek, nonfat, Fruit on Bottom, Strawberry, CHOBANI",Dairy and Egg Products,Snack,Snack,medium,False
+170915,"Yogurt, Greek, nonfat, Fruit on Bottom, Strawberry, CHOBANI",Dairy and Egg Products,Snack,Snack,low,False
 170917,"Spices, bay leaf",Spices and Herbs,Side Dish,Side Dish,high,False
 170918,"Spices, caraway seed",Spices and Herbs,Side Dish,Side Dish,high,False
 170920,"Spices, celery seed",Spices and Herbs,Side Dish,Side Dish,high,False
@@ -2191,17 +2191,17 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 171245,"Cheese, muenster",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171246,"Cheese, neufchatel",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171247,"Cheese, parmesan, grated",Dairy and Egg Products,Side Dish,Side Dish,high,False
-171248,"Cheese, ricotta, part skim milk",Dairy and Egg Products,Drink,Drink,medium,False
+171248,"Cheese, ricotta, part skim milk",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171249,"Cheese, romano",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171250,"Cheese, roquefort",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171251,"Cheese, swiss",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171252,"Cheese food, pasteurized process, American, vitamin D fortified",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171253,"Cheese food, pasteurized process, swiss",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171254,"Cheese spread, pasteurized process, American",Dairy and Egg Products,Side Dish,Side Dish,high,False
-171255,"Cream, fluid, half and half",Dairy and Egg Products,Drink,Drink,high,False
+171255,"Cream, fluid, half and half",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171256,"Cream, sour, reduced fat, cultured",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171257,"Cream, sour, cultured",Dairy and Egg Products,Side Dish,Side Dish,high,False
-171258,Eggnog,Dairy and Egg Products,Main Course,Main Course,high,False
+171258,Eggnog,Dairy and Egg Products,Snack,Snack,low,False
 171259,"Sour dressing, non-butterfat, cultured, filled cream-type",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171261,"Cream substitute, liquid, with hydrogenated vegetable oil and soy protein",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171262,"Cream substitute, liquid, with lauric acid oil and sodium caseinate",Dairy and Egg Products,Side Dish,Side Dish,high,False
@@ -2216,9 +2216,9 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 171271,"Milk, nonfat, fluid, protein fortified, with added vitamin A and vitamin D (fat free and skim)",Dairy and Egg Products,Drink,Drink,high,False
 171272,"Milk, dry, nonfat, instant, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
 171273,"Milk, dry, nonfat, calcium reduced",Dairy and Egg Products,Drink,Drink,medium,False
-171274,"Milk, buttermilk, dried",Dairy and Egg Products,Drink,Drink,medium,False
-171275,"Milk, canned, condensed, sweetened",Dairy and Egg Products,Drink,Drink,medium,False
-171276,"Milk, canned, evaporated, with added vitamin D and without added vitamin A",Dairy and Egg Products,Drink,Drink,medium,False
+171274,"Milk, buttermilk, dried",Dairy and Egg Products,Side Dish,Side Dish,high,False
+171275,"Milk, canned, condensed, sweetened",Dairy and Egg Products,Snack,Snack,medium,False
+171276,"Milk, canned, evaporated, with added vitamin D and without added vitamin A",Dairy and Egg Products,Snack,Snack,medium,False
 171277,"Milk, chocolate beverage, hot cocoa, homemade",Dairy and Egg Products,Drink,Drink,medium,False
 171278,"Milk, goat, fluid, with added vitamin D",Dairy and Egg Products,Drink,Drink,high,False
 171279,"Milk, human, mature, fluid",Dairy and Egg Products,Drink,Drink,high,False
@@ -2227,9 +2227,9 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 171282,"Whey, sweet, fluid",Dairy and Egg Products,Drink,Drink,high,False
 171283,"Whey, sweet, dried",Dairy and Egg Products,Snack,Snack,low,False
 171284,"Yogurt, plain, whole milk",Dairy and Egg Products,Drink,Drink,medium,False
-171285,"Yogurt, fruit, low fat, 10 grams protein per 8 ounce",Dairy and Egg Products,Snack,Snack,medium,False
-171286,"Yogurt, fruit, low fat, 11g protein/8 oz",Dairy and Egg Products,Snack,Snack,medium,False
-171287,"Egg, whole, raw, fresh",Dairy and Egg Products,Main Course,Main Course,high,False
+171285,"Yogurt, fruit, low fat, 10 grams protein per 8 ounce",Dairy and Egg Products,Snack,Snack,low,False
+171286,"Yogurt, fruit, low fat, 11g protein/8 oz",Dairy and Egg Products,Snack,Snack,low,False
+171287,"Egg, whole, raw, fresh",Dairy and Egg Products,Snack,Snack,low,False
 171288,"Cheese, Mexican blend",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171289,"Cheese product, pasteurized process, American, vitamin D fortified",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171290,"Cheese, pasteurized process, American, without added vitamin D",Dairy and Egg Products,Side Dish,Side Dish,high,False
@@ -2237,13 +2237,13 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 171292,"Cheese, cheddar, reduced fat (Includes foods for USDA's Food Distribution Program)",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171293,"Ice cream, light, soft serve, chocolate",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171294,"Ice cream bar, stick or nugget, with crunch coating",Dairy and Egg Products,Side Dish,Side Dish,high,False
-171296,"Yogurt, Greek, nonfat, vanilla, CHOBANI",Dairy and Egg Products,Snack,Snack,medium,False
-171297,"Yogurt, Greek, strawberry, DANNON OIKOS",Dairy and Egg Products,Snack,Snack,medium,False
-171298,"Yogurt, Greek, nonfat, vanilla, DANNON OIKOS",Dairy and Egg Products,Snack,Snack,medium,False
-171299,"Yogurt, Greek, nonfat, strawberry, DANNON OIKOS",Dairy and Egg Products,Snack,Snack,medium,False
-171300,"Yogurt, Greek, strawberry, lowfat",Dairy and Egg Products,Snack,Snack,medium,False
+171296,"Yogurt, Greek, nonfat, vanilla, CHOBANI",Dairy and Egg Products,Snack,Snack,low,False
+171297,"Yogurt, Greek, strawberry, DANNON OIKOS",Dairy and Egg Products,Snack,Snack,low,False
+171298,"Yogurt, Greek, nonfat, vanilla, DANNON OIKOS",Dairy and Egg Products,Snack,Snack,low,False
+171299,"Yogurt, Greek, nonfat, strawberry, DANNON OIKOS",Dairy and Egg Products,Snack,Snack,low,False
+171300,"Yogurt, Greek, strawberry, lowfat",Dairy and Egg Products,Snack,Snack,low,False
 171301,"Kefir, lowfat, strawberry, LIFEWAY",Dairy and Egg Products,Snack,Snack,low,False
-171302,"Milk, evaporated, 2% fat, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
+171302,"Milk, evaporated, 2% fat, with added vitamin A and vitamin D",Dairy and Egg Products,Snack,Snack,medium,False
 171304,"Yogurt, Greek, plain, whole milk",Dairy and Egg Products,Drink,Drink,medium,False
 171305,"Ice cream bar, covered with chocolate and nuts",Dairy and Egg Products,Side Dish,Side Dish,high,False
 171306,Ice cream sundae cone,Dairy and Egg Products,Side Dish,Side Dish,high,False
@@ -2476,7 +2476,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 171842,"Cookies, oatmeal sandwich, with creme filling",Baked Products,Snack,Snack,high,False
 171843,"Cookies, peanut butter, commercially prepared, sugar free",Baked Products,Snack,Snack,high,False
 171844,"Bread, chapati or roti, plain, commercially prepared",Baked Products,Side Dish,Side Dish,medium,False
-171845,"Bread, naan, plain, commercially prepared, refrigerated",Baked Products,Main Course,Side Dish,medium,True
+171845,"Bread, naan, plain, commercially prepared, refrigerated",Baked Products,Side Dish,Side Dish,medium,False
 171846,"Crackers, standard snack-type, with whole wheat",Baked Products,Snack,Snack,high,False
 171847,"Cookies, coconut macaroon",Baked Products,Snack,Snack,high,False
 171848,"Crackers, sandwich-type, peanut butter filled, reduced fat",Baked Products,Snack,Snack,high,False
@@ -2495,17 +2495,17 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 171870,"Beverages, Energy drink, RED BULL, sugar free, with added caffeine, niacin, pantothenic acid, vitamins B6 and B12",Beverages,Drink,Drink,high,False
 171873,"Beverages, chocolate drink, milk and soy based, ready to drink, fortified",Beverages,Drink,Drink,high,False
 171877,"Beverages, coffee, ready to drink, vanilla, light, milk based, sweetened",Beverages,Drink,Drink,high,False
-171879,"Beverages, chocolate-flavor beverage mix, powder, prepared with whole milk",Beverages,Drink,Drink,high,False
+171879,"Beverages, chocolate-flavor beverage mix, powder, prepared with whole milk",Beverages,Snack,Snack,medium,False
 171880,"Beverages, coffee, ready to drink, milk based, sweetened",Beverages,Drink,Drink,high,False
 171882,"Beverages, Clam and tomato juice, canned",Beverages,Drink,Drink,high,False
-171886,"Beverages, Cocoa mix, no sugar added, powder",Beverages,Drink,Drink,high,False
-171893,"Beverages, coffee, instant, regular, powder",Beverages,Drink,Drink,high,False
+171886,"Beverages, Cocoa mix, no sugar added, powder",Beverages,Snack,Snack,medium,False
+171893,"Beverages, coffee, instant, regular, powder",Beverages,Snack,Snack,medium,False
 171897,"Beverages, coffee, instant, with chicory",Beverages,Drink,Drink,high,False
 171902,"Beverages, cranberry-grape juice drink, bottled",Beverages,Drink,Drink,high,False
-171905,"Beverages, Eggnog-flavor mix, powder, prepared with whole milk",Beverages,Drink,Drink,high,False
+171905,"Beverages, Eggnog-flavor mix, powder, prepared with whole milk",Beverages,Snack,Snack,medium,False
 171909,"Beverages, OCEAN SPRAY, Cran Pomegranate",Beverages,Drink,Drink,high,False
-171912,"Beverages, citrus fruit juice drink, frozen concentrate",Beverages,Drink,Drink,high,False
-171913,"Beverages, citrus fruit juice drink, frozen concentrate, prepared with water",Beverages,Drink,Drink,high,False
+171912,"Beverages, citrus fruit juice drink, frozen concentrate",Beverages,Snack,Snack,medium,False
+171913,"Beverages, citrus fruit juice drink, frozen concentrate, prepared with water",Beverages,Snack,Snack,medium,False
 171918,"Beverages, tea, instant, lemon, with added ascorbic acid",Beverages,Drink,Drink,high,False
 171937,"Beverages, Energy drink, ROCKSTAR",Beverages,Drink,Drink,high,False
 171938,"Beverages, Energy drink, ROCKSTAR, sugar free",Beverages,Drink,Drink,high,False
@@ -2623,26 +2623,26 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 172179,"Cheese, cottage, creamed, large or small curd",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172180,"Cheese, cottage, creamed, with fruit",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172181,"Cheese, cottage, nonfat, uncreamed, dry, large or small curd",Dairy and Egg Products,Side Dish,Side Dish,high,False
-172182,"Cheese, cottage, lowfat, 2% milkfat",Dairy and Egg Products,Drink,Drink,medium,False
-172183,"Egg, white, raw, fresh",Dairy and Egg Products,Main Course,Main Course,high,False
-172184,"Egg, yolk, raw, fresh",Dairy and Egg Products,Main Course,Main Course,high,False
-172185,"Egg, whole, cooked, omelet",Dairy and Egg Products,Main Course,Main Course,high,False
-172186,"Egg, whole, cooked, poached",Dairy and Egg Products,Main Course,Main Course,high,False
-172187,"Egg, whole, cooked, scrambled",Dairy and Egg Products,Main Course,Main Course,high,False
-172188,"Egg, whole, dried",Dairy and Egg Products,Main Course,Main Course,high,False
-172189,"Egg, duck, whole, fresh, raw",Dairy and Egg Products,Main Course,Main Course,high,False
-172190,"Egg, goose, whole, fresh, raw",Dairy and Egg Products,Main Course,Main Course,high,False
-172191,"Egg, quail, whole, fresh, raw",Dairy and Egg Products,Main Course,Main Course,high,False
-172192,"Egg, turkey, whole, fresh, raw",Dairy and Egg Products,Main Course,Main Course,high,False
+172182,"Cheese, cottage, lowfat, 2% milkfat",Dairy and Egg Products,Side Dish,Side Dish,high,False
+172183,"Egg, white, raw, fresh",Dairy and Egg Products,Snack,Snack,low,False
+172184,"Egg, yolk, raw, fresh",Dairy and Egg Products,Snack,Snack,low,False
+172185,"Egg, whole, cooked, omelet",Dairy and Egg Products,Snack,Snack,low,False
+172186,"Egg, whole, cooked, poached",Dairy and Egg Products,Snack,Snack,low,False
+172187,"Egg, whole, cooked, scrambled",Dairy and Egg Products,Snack,Snack,low,False
+172188,"Egg, whole, dried",Dairy and Egg Products,Snack,Snack,low,False
+172189,"Egg, duck, whole, fresh, raw",Dairy and Egg Products,Snack,Snack,low,False
+172190,"Egg, goose, whole, fresh, raw",Dairy and Egg Products,Snack,Snack,low,False
+172191,"Egg, quail, whole, fresh, raw",Dairy and Egg Products,Snack,Snack,low,False
+172192,"Egg, turkey, whole, fresh, raw",Dairy and Egg Products,Snack,Snack,low,False
 172193,"Milk, reduced fat, fluid, 2% milkfat, with added nonfat milk solids, without added vitamin A",Dairy and Egg Products,Drink,Drink,high,False
-172194,"Milk, canned, evaporated, with added vitamin A",Dairy and Egg Products,Drink,Drink,medium,False
+172194,"Milk, canned, evaporated, with added vitamin A",Dairy and Egg Products,Snack,Snack,medium,False
 172195,"Milk, dry, nonfat, regular, with added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
 172196,"Milk, dry, nonfat, instant, without added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
 172197,"Cheese, goat, hard type",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172198,"Cheese substitute, mozzarella",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172200,"Cheese sauce, prepared from recipe",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172201,"Cheese, mexican, queso anejo",Dairy and Egg Products,Side Dish,Side Dish,high,False
-172202,"Egg, whole, raw, frozen, pasteurized (Includes foods for USDA's Food Distribution Program)",Dairy and Egg Products,Main Course,Main Course,high,False
+172202,"Egg, whole, raw, frozen, pasteurized (Includes foods for USDA's Food Distribution Program)",Dairy and Egg Products,Snack,Snack,low,False
 172205,"Milk, reduced fat, fluid, 2% milkfat, without added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,high,False
 172206,"Parmesan cheese topping, fat free",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172207,"Cheese, cream, fat free",Dairy and Egg Products,Side Dish,Side Dish,high,False
@@ -2652,13 +2652,13 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 172215,"Cheese, provolone, reduced fat",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172216,"Cheese, Mexican, blend, reduced fat",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172217,"Milk, whole, 3.25% milkfat, without added vitamin A and vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
-172218,"Yogurt, fruit, lowfat, with low calorie sweetener, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,medium,False
-172219,"Yogurt, vanilla, low fat, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,medium,False
+172218,"Yogurt, fruit, lowfat, with low calorie sweetener, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,low,False
+172219,"Yogurt, vanilla, low fat, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,low,False
 172220,"Yogurt, vanilla or lemon flavor, nonfat milk, sweetened with low-calorie sweetener, fortified with vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
 172222,"Cheese, dry white, queso seco",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172223,"Cheese, fresh, queso fresco",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172224,"Cheese, white, queso blanco",Dairy and Egg Products,Side Dish,Side Dish,high,False
-172225,"Milk, buttermilk, fluid, whole",Dairy and Egg Products,Drink,Drink,high,False
+172225,"Milk, buttermilk, fluid, whole",Dairy and Egg Products,Side Dish,Side Dish,high,False
 172226,Ice cream sandwich,Dairy and Egg Products,Side Dish,Side Dish,high,False
 172227,Ice cream cookie sandwich,Dairy and Egg Products,Side Dish,Side Dish,high,False
 172228,"Ice cream cone, chocolate covered, with nuts, flavors other than chocolate",Dairy and Egg Products,Side Dish,Side Dish,high,False
@@ -2712,7 +2712,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 172441,"Soybeans, mature seeds, dry roasted",Legumes and Legume Products,Main Course,Main Course,high,False
 172442,Miso,Legumes and Legume Products,Main Course,Main Course,medium,False
 172443,Natto,Legumes and Legume Products,Main Course,Main Course,medium,False
-172444,"Soy flour, low-fat",Legumes and Legume Products,Main Course,Snack,medium,True
+172444,"Soy flour, low-fat",Legumes and Legume Products,Snack,Snack,medium,False
 172445,"Soy meal, defatted, raw",Legumes and Legume Products,Main Course,Main Course,medium,False
 172448,"Tofu, firm, prepared with calcium sulfate and magnesium chloride (nigari)",Legumes and Legume Products,Main Course,Main Course,medium,False
 172449,"Tofu, soft, prepared with calcium sulfate and magnesium chloride (nigari)",Legumes and Legume Products,Main Course,Main Course,medium,False
@@ -2832,7 +2832,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 172736,"Cookies, sugar wafers with creme filling, regular",Baked Products,Snack,Snack,high,False
 172737,"Cookies, vanilla sandwich with creme filling",Baked Products,Snack,Snack,high,False
 172738,"Puff pastry, frozen, ready-to-bake, baked",Baked Products,Snack,Snack,high,False
-172739,"Crackers, crispbread, rye",Baked Products,Snack,Side Dish,medium,True
+172739,"Crackers, crispbread, rye",Baked Products,Side Dish,Side Dish,medium,False
 172740,"Crackers, matzo, plain",Baked Products,Snack,Snack,high,False
 172741,"Crackers, matzo, egg",Baked Products,Snack,Snack,high,False
 172742,"Crackers, matzo, whole-wheat",Baked Products,Snack,Snack,high,False
@@ -2901,8 +2901,8 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 172812,"Crackers, matzo, egg and onion",Baked Products,Snack,Snack,high,False
 172813,"Pie crust, cookie-type, prepared from recipe, vanilla wafer, chilled",Baked Products,Snack,Snack,high,False
 172814,"Pie crust, standard-type, prepared from recipe, unbaked",Baked Products,Snack,Snack,medium,False
-172815,"Bread, cornbread, dry mix, unenriched (includes corn muffin mix)",Baked Products,Snack,Side Dish,medium,True
-172816,"Bread, pita, white, unenriched",Baked Products,Main Course,Side Dish,medium,True
+172815,"Bread, cornbread, dry mix, unenriched (includes corn muffin mix)",Baked Products,Side Dish,Side Dish,medium,False
+172816,"Bread, pita, white, unenriched",Baked Products,Side Dish,Side Dish,medium,False
 172817,"Bread, raisin, unenriched",Baked Products,Side Dish,Side Dish,medium,False
 172818,"Bread, white, commercially prepared, low sodium, no salt",Baked Products,Side Dish,Side Dish,medium,False
 172819,"Cookies, butter, commercially prepared, unenriched",Baked Products,Snack,Snack,high,False
@@ -3061,22 +3061,22 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 173158,"Formulated Bar, SOUTH BEACH protein bar",Snacks,Snack,Snack,low,False
 173160,"Snacks, shrimp cracker",Snacks,Snack,Snack,low,False
 173161,Rice crackers,Snacks,Snack,Snack,low,False
-173167,"Beverages, ABBOTT, EAS whey protein powder",Beverages,Drink,Drink,high,False
+173167,"Beverages, ABBOTT, EAS whey protein powder",Beverages,Snack,Snack,medium,False
 173169,"Beverages, NESTLE, Boost plus, nutritional drink, ready-to-drink",Beverages,Drink,Drink,high,False
 173170,"Beverages, SLIMFAST, Meal replacement,  High Protein Shake, Ready-To-Drink, 3-2-1 plan",Beverages,Drink,Drink,high,False
 173171,"Beverages, UNILEVER, SLIMFAST, meal replacement, regular, ready-to-drink,  3-2-1 Plan",Beverages,Drink,Drink,high,False
-173172,"Beverages, UNILEVER, SLIMFAST Shake Mix, powder, 3-2-1 Plan",Beverages,Drink,Drink,high,False
+173172,"Beverages, UNILEVER, SLIMFAST Shake Mix, powder, 3-2-1 Plan",Beverages,Snack,Snack,medium,False
 173173,"Beverages, FUZE, orange mango, fortified with vitamins A, C, E, B6",Beverages,Drink,Drink,high,False
-173174,"Beverages, UNILEVER, SLIMFAST Shake Mix, high protein, whey powder, 3-2-1 Plan,",Beverages,Drink,Drink,high,False
+173174,"Beverages, UNILEVER, SLIMFAST Shake Mix, high protein, whey powder, 3-2-1 Plan,",Beverages,Snack,Snack,medium,False
 173175,"Beverages, Acai berry drink, fortified",Beverages,Drink,Drink,high,False
-173177,"Beverages, Whey protein powder isolate",Beverages,Drink,Drink,high,False
-173180,"Beverages, Protein powder whey based",Beverages,Drink,Drink,high,False
-173181,"Beverages, Protein powder soy based",Beverages,Drink,Drink,high,False
+173177,"Beverages, Whey protein powder isolate",Beverages,Snack,Snack,medium,False
+173180,"Beverages, Protein powder whey based",Beverages,Snack,Snack,medium,False
+173181,"Beverages, Protein powder soy based",Beverages,Snack,Snack,medium,False
 173187,"Beverages, chocolate almond milk, unsweetened, shelf-stable, fortified with vitamin D2 and E",Beverages,Drink,Drink,high,False
-173197,"Beverages, Mixed vegetable and fruit juice drink, with added nutrients",Beverages,Drink,Drink,high,False
+173197,"Beverages, Mixed vegetable and fruit juice drink, with added nutrients",Beverages,Snack,Snack,medium,False
 173206,"Beverages, carbonated, SPRITE, lemon-lime, without caffeine",Beverages,Drink,Drink,high,False
-173216,"Lemonade, frozen concentrate, white",Beverages,Drink,Drink,high,False
-173217,"Lemonade, frozen concentrate, white, prepared with water",Beverages,Drink,Drink,high,False
+173216,"Lemonade, frozen concentrate, white",Beverages,Snack,Snack,medium,False
+173217,"Lemonade, frozen concentrate, white, prepared with water",Beverages,Snack,Snack,medium,False
 173223,"Beverages, orange and apricot juice drink, canned",Beverages,Drink,Drink,high,False
 173224,"Beverages, pineapple and grapefruit juice drink, canned",Beverages,Drink,Drink,high,False
 173226,"Shake, fast food, vanilla",Beverages,Drink,Drink,high,False
@@ -3162,24 +3162,24 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 173414,"Cheese, cheddar (Includes foods for USDA's Food Distribution Program)",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173415,"Cheese, cheshire",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173416,"Cheese, colby",Dairy and Egg Products,Side Dish,Side Dish,high,False
-173417,"Cheese, cottage, lowfat, 1% milkfat",Dairy and Egg Products,Drink,Drink,medium,False
+173417,"Cheese, cottage, lowfat, 1% milkfat",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173418,"Cheese, cream",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173419,"Cheese, edam",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173420,"Cheese, feta",Dairy and Egg Products,Side Dish,Side Dish,high,False
-173421,"Egg, yolk, raw, frozen, pasteurized",Dairy and Egg Products,Main Course,Main Course,high,False
-173422,"Egg, yolk, raw, frozen, sugared, pasteurized",Dairy and Egg Products,Main Course,Main Course,high,False
-173423,"Egg, whole, cooked, fried",Dairy and Egg Products,Main Course,Main Course,high,False
-173424,"Egg, whole, cooked, hard-boiled",Dairy and Egg Products,Main Course,Main Course,high,False
-173425,"Egg, whole, dried, stabilized, glucose reduced",Dairy and Egg Products,Main Course,Main Course,high,False
-173426,"Egg, white, dried, flakes, stabilized, glucose reduced",Dairy and Egg Products,Main Course,Main Course,high,False
-173427,"Egg, white, dried, powder, stabilized, glucose reduced",Dairy and Egg Products,Main Course,Main Course,high,False
-173428,"Egg, yolk, dried",Dairy and Egg Products,Main Course,Main Course,high,False
-173429,"Egg substitute, powder",Dairy and Egg Products,Main Course,Main Course,high,False
+173421,"Egg, yolk, raw, frozen, pasteurized",Dairy and Egg Products,Snack,Snack,low,False
+173422,"Egg, yolk, raw, frozen, sugared, pasteurized",Dairy and Egg Products,Snack,Snack,low,False
+173423,"Egg, whole, cooked, fried",Dairy and Egg Products,Snack,Snack,low,False
+173424,"Egg, whole, cooked, hard-boiled",Dairy and Egg Products,Snack,Snack,low,False
+173425,"Egg, whole, dried, stabilized, glucose reduced",Dairy and Egg Products,Snack,Snack,low,False
+173426,"Egg, white, dried, flakes, stabilized, glucose reduced",Dairy and Egg Products,Snack,Snack,low,False
+173427,"Egg, white, dried, powder, stabilized, glucose reduced",Dairy and Egg Products,Snack,Snack,low,False
+173428,"Egg, yolk, dried",Dairy and Egg Products,Snack,Snack,low,False
+173429,"Egg substitute, powder",Dairy and Egg Products,Snack,Snack,low,False
 173430,"Butter, without salt",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173431,"Cheese, parmesan, shredded",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173432,"Milk, nonfat, fluid, without added vitamin A and vitamin D (fat free or skim)",Dairy and Egg Products,Drink,Drink,high,False
 173433,"Cheese, goat, semisoft type",Dairy and Egg Products,Side Dish,Side Dish,high,False
-173436,"Egg, yolk, raw, frozen, salted, pasteurized",Dairy and Egg Products,Main Course,Main Course,high,False
+173436,"Egg, yolk, raw, frozen, salted, pasteurized",Dairy and Egg Products,Snack,Snack,low,False
 173437,"Cheese, mexican, queso asadero",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173438,"Cheese, mexican, queso chihuahua",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173439,"Cheese, low fat, cheddar or colby",Dairy and Egg Products,Side Dish,Side Dish,high,False
@@ -3189,19 +3189,19 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 173443,"Sour cream, light",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173445,"Yogurt, vanilla or lemon flavor, nonfat milk, sweetened with low-calorie sweetener",Dairy and Egg Products,Drink,Drink,medium,False
 173450,"Milk, chocolate, fluid, commercial, reduced fat, with added calcium",Dairy and Egg Products,Drink,Drink,high,False
-173451,"Yogurt, fruit, lowfat, with low calorie sweetener",Dairy and Egg Products,Snack,Snack,medium,False
+173451,"Yogurt, fruit, lowfat, with low calorie sweetener",Dairy and Egg Products,Snack,Snack,low,False
 173452,"Cheese, parmesan, dry grated, reduced fat",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173453,"Cream substitute, flavored, liquid",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173454,"Milk, dry, whole, without added vitamin D",Dairy and Egg Products,Drink,Drink,medium,False
 173455,"Cheese product, pasteurized process, American, reduced fat, fortified with vitamin D",Dairy and Egg Products,Side Dish,Side Dish,high,False
-173456,"Yogurt, fruit, low fat, 9 grams protein per 8 ounce, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,medium,False
-173457,"Yogurt, fruit, low fat, 10 grams protein per 8 ounce, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,medium,False
-173458,"Yogurt, fruit variety, nonfat, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,medium,False
+173456,"Yogurt, fruit, low fat, 9 grams protein per 8 ounce, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,low,False
+173457,"Yogurt, fruit, low fat, 10 grams protein per 8 ounce, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,low,False
+173458,"Yogurt, fruit variety, nonfat, fortified with vitamin D",Dairy and Egg Products,Snack,Snack,low,False
 173459,"Protein supplement, milk based, Muscle Milk, powder",Dairy and Egg Products,Drink,Drink,medium,False
 173460,"Protein supplement, milk based, Muscle Milk Light, powder",Dairy and Egg Products,Drink,Drink,medium,False
 173461,Dulce de Leche,Dairy and Egg Products,Snack,Snack,low,False
 173463,"Yogurt, vanilla flavor, lowfat milk, sweetened with low calorie sweetener",Dairy and Egg Products,Drink,Drink,medium,False
-173464,"Yogurt, frozen, flavors not chocolate, nonfat milk, with low-calorie sweetener",Dairy and Egg Products,Drink,Drink,medium,False
+173464,"Yogurt, frozen, flavors not chocolate, nonfat milk, with low-calorie sweetener",Dairy and Egg Products,Snack,Snack,medium,False
 173465,"Ice cream, soft serve, chocolate",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173466,"Ice cream, bar or stick, chocolate covered",Dairy and Egg Products,Side Dish,Side Dish,high,False
 173470,"Thyme, fresh",Spices and Herbs,Side Dish,Side Dish,high,False
@@ -3232,13 +3232,13 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 173640,"Chicken, stewing, meat and skin, and giblets and neck, raw",Poultry Products,Main Course,Main Course,high,False
 173641,"Chicken, stewing, giblets, raw",Poultry Products,Main Course,Main Course,high,False
 173642,"Chicken, stewing, giblets, cooked, simmered",Poultry Products,Main Course,Main Course,high,False
-173648,"Beverages, coffee substitute, cereal grain beverage, powder, prepared with whole milk",Beverages,Drink,Drink,high,False
-173649,"Beverages, Dairy drink mix, chocolate, reduced calorie, with low-calorie sweeteners, powder",Beverages,Drink,Drink,high,False
-173650,"Beverages, dairy drink mix, chocolate, reduced calorie, with aspartame, powder, prepared with water and ice",Beverages,Drink,Drink,high,False
-173651,"Beverages, Orange-flavor drink, breakfast type, with pulp, frozen concentrate.",Beverages,Drink,Drink,high,False
-173652,"Beverages, Orange-flavor drink, breakfast type, with pulp, frozen concentrate, prepared with water",Beverages,Drink,Drink,high,False
-173666,"Lemonade, frozen concentrate, pink",Beverages,Drink,Drink,high,False
-173667,"Beverages, lemonade, frozen concentrate, pink, prepared with water",Beverages,Drink,Drink,high,False
+173648,"Beverages, coffee substitute, cereal grain beverage, powder, prepared with whole milk",Beverages,Snack,Snack,medium,False
+173649,"Beverages, Dairy drink mix, chocolate, reduced calorie, with low-calorie sweeteners, powder",Beverages,Snack,Snack,medium,False
+173650,"Beverages, dairy drink mix, chocolate, reduced calorie, with aspartame, powder, prepared with water and ice",Beverages,Snack,Snack,medium,False
+173651,"Beverages, Orange-flavor drink, breakfast type, with pulp, frozen concentrate.",Beverages,Snack,Snack,medium,False
+173652,"Beverages, Orange-flavor drink, breakfast type, with pulp, frozen concentrate, prepared with water",Beverages,Snack,Snack,medium,False
+173666,"Lemonade, frozen concentrate, pink",Beverages,Snack,Snack,medium,False
+173667,"Beverages, lemonade, frozen concentrate, pink, prepared with water",Beverages,Snack,Snack,medium,False
 173702,"Fish, surimi",Finfish and Shellfish Products,Main Course,Main Course,high,False
 173720,"Mollusks, conch, baked or broiled",Finfish and Shellfish Products,Main Course,Main Course,high,False
 173721,"Salmon nuggets, breaded, frozen, heated",Finfish and Shellfish Products,Main Course,Main Course,high,False
@@ -3269,7 +3269,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 173752,"Beans, yellow, mature seeds, cooked, boiled, without salt",Legumes and Legume Products,Main Course,Main Course,high,False
 173753,"Broadbeans (fava beans), mature seeds, cooked, boiled, without salt",Legumes and Legume Products,Main Course,Main Course,high,False
 173754,"Broadbeans (fava beans), mature seeds, canned",Legumes and Legume Products,Main Course,Main Course,high,False
-173755,Carob flour,Legumes and Legume Products,Main Course,Snack,medium,True
+173755,Carob flour,Legumes and Legume Products,Snack,Snack,medium,False
 173756,"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw",Legumes and Legume Products,Main Course,Main Course,high,False
 173757,"Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt",Legumes and Legume Products,Main Course,Main Course,high,False
 173758,"Cowpeas, common (blackeyes, crowder, southern), mature seeds, raw",Legumes and Legume Products,Main Course,Main Course,high,False
@@ -3341,8 +3341,8 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 173931,"Apples, dehydrated (low moisture), sulfured, uncooked",Fruits and Fruit Juices,Snack,Snack,high,False
 173932,"Apples, frozen, unsweetened, heated (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Snack,Snack,high,False
 173933,"Apple juice, canned or bottled, unsweetened, without added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
-173934,"Apple juice, frozen concentrate, unsweetened, undiluted, without added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
-173935,"Apple juice, frozen concentrate, unsweetened, diluted with 3 volume water without added ascorbic acid",Fruits and Fruit Juices,Drink,Drink,high,False
+173934,"Apple juice, frozen concentrate, unsweetened, undiluted, without added ascorbic acid",Fruits and Fruit Juices,Snack,Snack,medium,False
+173935,"Apple juice, frozen concentrate, unsweetened, diluted with 3 volume water without added ascorbic acid",Fruits and Fruit Juices,Snack,Snack,medium,False
 173936,"Apricots, canned, water pack, without skin, solids and liquids",Fruits and Fruit Juices,Snack,Snack,high,False
 173937,"Apricots, canned, juice pack, with skin, solids and liquids",Fruits and Fruit Juices,Drink,Drink,high,False
 173938,"Apricots, canned, extra light syrup pack, with skin, solids and liquids (Includes foods for USDA's Food Distribution Program)",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -3381,7 +3381,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174074,"Sauce, enchilada, red, mild, ready to serve","Soups, Sauces, and Gravies",Side Dish,Side Dish,medium,False
 174075,"Bread, chapati or roti, whole wheat, commercially prepared, frozen",Baked Products,Side Dish,Side Dish,medium,False
 174076,"Bread, paratha, whole wheat, commercially prepared, frozen",Baked Products,Side Dish,Side Dish,medium,False
-174077,"Bread, naan, whole wheat, commercially prepared, refrigerated",Baked Products,Main Course,Side Dish,medium,True
+174077,"Bread, naan, whole wheat, commercially prepared, refrigerated",Baked Products,Side Dish,Side Dish,medium,False
 174078,"Bread, roll, Mexican, bollilo",Baked Products,Side Dish,Side Dish,medium,False
 174079,"Cookie, butter or sugar, with chocolate icing or filling",Baked Products,Snack,Snack,high,False
 174080,"Cookie, chocolate, with icing or coating",Baked Products,Snack,Snack,high,False
@@ -3390,7 +3390,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174084,"Crackers, cheese, whole grain",Baked Products,Snack,Snack,high,False
 174085,"Waffles, whole wheat, lowfat, frozen, ready-to-heat",Baked Products,Snack,Snack,high,False
 174086,"Pancakes, plain, reduced fat",Baked Products,Snack,Snack,high,False
-174087,"Cookies, shortbread, reduced fat",Baked Products,Snack,Side Dish,medium,True
+174087,"Cookies, shortbread, reduced fat",Baked Products,Side Dish,Side Dish,medium,False
 174088,"Cookies, sugar wafer, chocolate-covered",Baked Products,Snack,Snack,high,False
 174091,"Bread, french or vienna, whole wheat",Baked Products,Side Dish,Side Dish,medium,False
 174093,"English muffins, whole grain white",Baked Products,Snack,Snack,medium,False
@@ -3403,33 +3403,33 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174105,"Waffles, gluten-free, frozen, ready-to-heat",Baked Products,Snack,Snack,high,False
 174106,"Pancakes, gluten-free, frozen, ready-to-heat",Baked Products,Snack,Snack,high,False
 174107,"Rolls, dinner, sweet",Baked Products,Snack,Snack,medium,False
-174114,"Beverages, Carob-flavor beverage mix, powder",Beverages,Drink,Drink,high,False
-174115,"Beverages, Carob-flavor beverage mix, powder, prepared with whole milk",Beverages,Drink,Drink,high,False
+174114,"Beverages, Carob-flavor beverage mix, powder",Beverages,Snack,Snack,medium,False
+174115,"Beverages, Carob-flavor beverage mix, powder, prepared with whole milk",Beverages,Snack,Snack,medium,False
 174116,"Beverages, coconut milk, sweetened, fortified with calcium, vitamins A, B12, D2",Beverages,Drink,Drink,high,False
 174117,"Beverages, chocolate syrup",Beverages,Drink,Drink,high,False
 174118,"Beverages, chocolate syrup, prepared with whole milk",Beverages,Drink,Drink,high,False
 174119,"Beverages, coffee, ready to drink, iced, mocha, milk based",Beverages,Drink,Drink,high,False
-174122,"Beverages, Cocoa mix, powder",Beverages,Drink,Drink,high,False
-174123,"Beverages, Cocoa mix, powder, prepared with water",Beverages,Drink,Drink,high,False
+174122,"Beverages, Cocoa mix, powder",Beverages,Snack,Snack,medium,False
+174123,"Beverages, Cocoa mix, powder, prepared with water",Beverages,Snack,Snack,medium,False
 174126,"Beverages, coffee, instant, regular, half the caffeine",Beverages,Drink,Drink,high,False
 174127,"Beverages, coffee and cocoa, instant, decaffeinated, with whitener and low calorie sweetener",Beverages,Drink,Drink,high,False
-174133,"Beverages, coffee, instant, decaffeinated, powder",Beverages,Drink,Drink,high,False
+174133,"Beverages, coffee, instant, decaffeinated, powder",Beverages,Snack,Snack,medium,False
 174135,"Beverages, coffee, instant, mocha, sweetened",Beverages,Drink,Drink,high,False
 174137,"Beverages, OCEAN SPRAY, White Cranberry Strawberry Flavored Juice Drink",Beverages,Drink,Drink,high,False
-174138,"Beverages, coffee substitute, cereal grain beverage, powder",Beverages,Drink,Drink,high,False
+174138,"Beverages, coffee substitute, cereal grain beverage, powder",Beverages,Snack,Snack,medium,False
 174139,"Beverages, coffee substitute, cereal grain beverage, prepared with water",Beverages,Drink,Drink,high,False
 174148,"Beverages, OCEAN SPRAY, Light Cranberry",Beverages,Drink,Drink,high,False
 174149,"Beverages, OCEAN SPRAY, White Cranberry Peach",Beverages,Drink,Drink,high,False
 174150,"Beverages, OCEAN SPRAY, Light Cranberry, Concord Grape",Beverages,Drink,Drink,high,False
-174159,"Beverages, chocolate-flavor beverage mix for milk, powder, with added nutrients",Beverages,Drink,Drink,high,False
-174160,"Beverages, chocolate-flavor beverage mix for milk, powder, with added nutrients, prepared with whole milk",Beverages,Drink,Drink,high,False
+174159,"Beverages, chocolate-flavor beverage mix for milk, powder, with added nutrients",Beverages,Snack,Snack,medium,False
+174160,"Beverages, chocolate-flavor beverage mix for milk, powder, with added nutrients, prepared with whole milk",Beverages,Snack,Snack,medium,False
 174171,"Beverages, Energy drink, AMP",Beverages,Drink,Drink,high,False
 174172,"Beverages, Energy drink, FULL THROTTLE",Beverages,Drink,Drink,high,False
 174174,"Beverages, milk beverage, reduced fat, flavored and sweetened, Ready-to-drink,  added calcium, vitamin A and vitamin D",Beverages,Drink,Drink,high,False
 174175,"Beverages, vegetable and fruit juice blend, 100% juice, with added vitamins A, C, E",Beverages,Drink,Drink,high,False
 174177,"Beverages, Energy drink, VAULT Zero, sugar-free, citrus flavor",Beverages,Drink,Drink,high,False
 174178,"Beverages, PEPSICO QUAKER, Gatorade G2, low calorie",Beverages,Drink,Drink,high,False
-174181,"Beverages, nutritional shake mix, high protein, powder",Beverages,Drink,Drink,high,False
+174181,"Beverages, nutritional shake mix, high protein, powder",Beverages,Snack,Snack,medium,False
 174187,"Fish, catfish, channel, cooked, breaded and fried",Finfish and Shellfish Products,Main Course,Main Course,high,False
 174188,"Fish, caviar, black and red, granular",Finfish and Shellfish Products,Main Course,Main Course,high,False
 174195,"Fish, fish sticks, frozen, prepared",Finfish and Shellfish Products,Main Course,Main Course,high,False
@@ -3471,9 +3471,9 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174270,"Soybeans, mature seeds, raw",Legumes and Legume Products,Main Course,Main Course,high,False
 174271,"Soybeans, mature cooked, boiled, without salt",Legumes and Legume Products,Main Course,Main Course,high,False
 174272,Tempeh,Legumes and Legume Products,Main Course,Main Course,medium,False
-174273,"Soy flour, full-fat, raw",Legumes and Legume Products,Main Course,Snack,medium,True
-174274,"Soy flour, full-fat, roasted",Legumes and Legume Products,Main Course,Snack,medium,True
-174275,"Soy flour, defatted",Legumes and Legume Products,Main Course,Snack,medium,True
+174273,"Soy flour, full-fat, raw",Legumes and Legume Products,Snack,Snack,medium,False
+174274,"Soy flour, full-fat, roasted",Legumes and Legume Products,Snack,Snack,medium,False
+174275,"Soy flour, defatted",Legumes and Legume Products,Snack,Snack,medium,False
 174277,Soy sauce made from soy and wheat (shoyu),Legumes and Legume Products,Main Course,Main Course,medium,False
 174278,Soy sauce made from soy (tamari),Legumes and Legume Products,Main Course,Main Course,medium,False
 174279,Soy sauce made from hydrolyzed vegetable protein,Legumes and Legume Products,Main Course,Main Course,medium,False
@@ -3485,7 +3485,7 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174285,"Beans, kidney, red, mature seeds, canned, drained solids",Legumes and Legume Products,Main Course,Main Course,high,False
 174286,"Beans, pinto, canned, drained solids",Legumes and Legume Products,Main Course,Main Course,high,False
 174287,"Veggie burgers or soyburgers, unprepared",Legumes and Legume Products,Main Course,Main Course,medium,False
-174288,Chickpea flour (besan),Legumes and Legume Products,Main Course,Snack,medium,True
+174288,Chickpea flour (besan),Legumes and Legume Products,Snack,Snack,medium,False
 174289,"Hummus, commercial",Legumes and Legume Products,Main Course,Main Course,medium,False
 174290,"Tofu, extra firm, prepared with nigari",Legumes and Legume Products,Main Course,Main Course,medium,False
 174291,"Tofu, hard, prepared with nigari",Legumes and Legume Products,Main Course,Main Course,medium,False
@@ -3613,8 +3613,8 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174677,"Grapefruit, raw, white, California",Fruits and Fruit Juices,Snack,Snack,high,False
 174678,"Grapefruit juice, white, canned or bottled, unsweetened",Fruits and Fruit Juices,Drink,Drink,high,False
 174679,"Grapefruit juice, white, canned, sweetened",Fruits and Fruit Juices,Drink,Drink,high,False
-174680,"Grapefruit juice, white, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Drink,Drink,high,False
-174681,"Grapefruit juice, white, frozen concentrate, unsweetened, diluted with 3 volume water",Fruits and Fruit Juices,Drink,Drink,high,False
+174680,"Grapefruit juice, white, frozen concentrate, unsweetened, undiluted",Fruits and Fruit Juices,Snack,Snack,medium,False
+174681,"Grapefruit juice, white, frozen concentrate, unsweetened, diluted with 3 volume water",Fruits and Fruit Juices,Snack,Snack,medium,False
 174682,"Grapes, american type (slip skin), raw",Fruits and Fruit Juices,Snack,Snack,high,False
 174683,"Grapes, red or green (European type, such as Thompson seedless), raw",Fruits and Fruit Juices,Snack,Snack,high,False
 174684,"Grapes, canned, thompson seedless, water pack, solids and liquids",Fruits and Fruit Juices,Snack,Snack,high,False
@@ -3668,15 +3668,15 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174806,"Snacks, Pretzels, gluten- free made with cornstarch and potato flour",Snacks,Snack,Snack,low,False
 174807,"Soup, egg drop, Chinese restaurant","Soups, Sauces, and Gravies",Main Course,Main Course,high,False
 174808,"Soup, hot and sour, Chinese restaurant","Soups, Sauces, and Gravies",Main Course,Main Course,high,False
-174813,"Beverages, ABBOTT, EAS soy protein powder",Beverages,Drink,Drink,high,False
+174813,"Beverages, ABBOTT, EAS soy protein powder",Beverages,Snack,Snack,medium,False
 174814,"Beverages, CYTOSPORT, Muscle Milk, ready-to-drink",Beverages,Drink,Drink,high,False
 174820,"Beverages, almond milk, chocolate, ready-to-drink",Beverages,Drink,Drink,high,False
 174823,"Beverages, ABBOTT, ENSURE, Nutritional Shake, Ready-to-Drink",Beverages,Drink,Drink,high,False
-174824,"Beverages, chocolate powder, no sugar added",Beverages,Drink,Drink,high,False
+174824,"Beverages, chocolate powder, no sugar added",Beverages,Snack,Snack,medium,False
 174832,"Beverages, almond milk, unsweetened, shelf stable",Beverages,Drink,Drink,high,False
 174856,"Beverages, OCEAN SPRAY, Ruby Red cranberry",Beverages,Drink,Drink,high,False
-174869,"Strawberry-flavor beverage mix, powder",Beverages,Drink,Drink,high,False
-174870,"Beverages, Strawberry-flavor beverage mix, powder, prepared with whole milk",Beverages,Drink,Drink,high,False
+174869,"Strawberry-flavor beverage mix, powder",Beverages,Snack,Snack,medium,False
+174870,"Beverages, Strawberry-flavor beverage mix, powder, prepared with whole milk",Beverages,Snack,Snack,medium,False
 174876,"Lamb, New Zealand, imported, square-cut shoulder, separable lean and fat, cooked, slow roasted","Lamb, Veal, and Game Products",Main Course,Main Course,high,False
 174878,"Lamb, New Zealand, imported, tenderloin, separable lean and fat, raw","Lamb, Veal, and Game Products",Main Course,Main Course,high,False
 174879,"Veal, ground, cooked, pan-fried","Lamb, Veal, and Game Products",Main Course,Main Course,high,False
@@ -3691,15 +3691,15 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174905,"Biscuits, plain or buttermilk, refrigerated dough, lower fat, baked",Baked Products,Snack,Snack,medium,False
 174906,"Bread, banana, prepared from recipe, made with margarine",Baked Products,Side Dish,Side Dish,medium,False
 174907,"Bread, boston brown, canned",Baked Products,Side Dish,Side Dish,medium,False
-174908,"Bread, cornbread, dry mix, enriched (includes corn muffin mix)",Baked Products,Snack,Side Dish,medium,True
+174908,"Bread, cornbread, dry mix, enriched (includes corn muffin mix)",Baked Products,Side Dish,Side Dish,medium,False
 174909,"Bread, cornbread, dry mix, prepared with 2% milk, 80% margarine, and eggs",Baked Products,Side Dish,Side Dish,medium,False
 174910,"Bread, cornbread, prepared from recipe, made with low fat (2%) milk",Baked Products,Side Dish,Side Dish,medium,False
 174911,"Bread, french or vienna, toasted (includes sourdough)",Baked Products,Side Dish,Side Dish,medium,False
 174912,"Bread, irish soda, prepared from recipe",Baked Products,Side Dish,Side Dish,medium,False
 174913,"Bread, Italian",Baked Products,Side Dish,Side Dish,medium,False
 174914,"Bread, multi-grain, toasted (includes whole-grain)",Baked Products,Side Dish,Side Dish,medium,False
-174915,"Bread, pita, white, enriched",Baked Products,Main Course,Side Dish,medium,True
-174916,"Bread, pita, whole-wheat",Baked Products,Main Course,Side Dish,medium,True
+174915,"Bread, pita, white, enriched",Baked Products,Side Dish,Side Dish,medium,False
+174916,"Bread, pita, whole-wheat",Baked Products,Side Dish,Side Dish,medium,False
 174917,"Bread, protein (includes gluten)",Baked Products,Side Dish,Side Dish,medium,False
 174918,"Bread, pumpernickel",Baked Products,Side Dish,Side Dish,medium,False
 174919,"Bread, reduced-calorie, oatmeal",Baked Products,Side Dish,Side Dish,medium,False
@@ -3744,8 +3744,8 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 174964,"Cookies, peanut butter, prepared from recipe",Baked Products,Snack,Snack,high,False
 174965,"Cookies, peanut butter sandwich, regular",Baked Products,Snack,Snack,high,False
 174966,"Cookies, raisin, soft-type",Baked Products,Snack,Snack,high,False
-174967,"Cookies, shortbread, commercially prepared, plain",Baked Products,Snack,Side Dish,medium,True
-174968,"Cookies, shortbread, commercially prepared, pecan",Baked Products,Snack,Side Dish,medium,True
+174967,"Cookies, shortbread, commercially prepared, plain",Baked Products,Side Dish,Side Dish,medium,False
+174968,"Cookies, shortbread, commercially prepared, pecan",Baked Products,Side Dish,Side Dish,medium,False
 174969,"Cookies, peanut butter sandwich, special dietary",Baked Products,Snack,Snack,high,False
 174970,"Cookies, sugar wafer, with creme filling, sugar free",Baked Products,Snack,Snack,high,False
 174971,"Cookies, sugar, commercially prepared, regular (includes vanilla)",Baked Products,Snack,Snack,high,False
@@ -3845,16 +3845,16 @@ fdc_id,food_name,food_group,consumption_label,new_consumption_label,new_confiden
 175068,"Crackers, saltines, fat-free, low-sodium",Baked Products,Snack,Snack,high,False
 175069,"Tart, breakfast, low fat",Baked Products,Snack,Snack,medium,False
 175088,"Beverages, tea, instant, lemon, unsweetened",Beverages,Drink,Drink,high,False
-175089,"Beverages, tea, instant, lemon, sweetened, powder",Beverages,Drink,Drink,high,False
+175089,"Beverages, tea, instant, lemon, sweetened, powder",Beverages,Snack,Snack,medium,False
 175090,"Beverages, tea, instant, lemon, sweetened, prepared with water",Beverages,Drink,Drink,high,False
-175091,"Beverages, tea, instant, sweetened with sodium saccharin, lemon-flavored, powder",Beverages,Drink,Drink,high,False
-175092,"Beverages, cocoa mix, with aspartame, powder, prepared with water",Beverages,Drink,Drink,high,False
+175091,"Beverages, tea, instant, sweetened with sodium saccharin, lemon-flavored, powder",Beverages,Snack,Snack,medium,False
+175092,"Beverages, cocoa mix, with aspartame, powder, prepared with water",Beverages,Snack,Snack,medium,False
 175093,"Beverages, carbonated, cola, fast-food cola",Beverages,Drink,Drink,high,False
-175094,"Beverages, fruit punch juice drink, frozen concentrate",Beverages,Drink,Drink,high,False
-175095,"Beverages, fruit punch juice drink, frozen concentrate, prepared with water",Beverages,Drink,Drink,high,False
+175094,"Beverages, fruit punch juice drink, frozen concentrate",Beverages,Snack,Snack,medium,False
+175095,"Beverages, fruit punch juice drink, frozen concentrate, prepared with water",Beverages,Snack,Snack,medium,False
 175099,"Beverages, carbonated, low calorie, cola or pepper-type, with aspartame, contains caffeine",Beverages,Drink,Drink,high,False
 175102,"Beverages, shake, fast food, strawberry",Beverages,Drink,Drink,high,False
-175114,"Beverages, Cocoa mix, low calorie, powder, with added calcium, phosphorus, aspartame, without added sodium or vitamin A",Beverages,Drink,Drink,high,False
+175114,"Beverages, Cocoa mix, low calorie, powder, with added calcium, phosphorus, aspartame, without added sodium or vitamin A",Beverages,Snack,Snack,medium,False
 175118,"Fish, herring, Atlantic, pickled",Finfish and Shellfish Products,Main Course,Main Course,high,False
 175132,"Fish, roe, mixed species, raw",Finfish and Shellfish Products,Main Course,Main Course,high,False
 175140,"Fish, sardine, Pacific, canned in tomato sauce, drained solids with bone",Finfish and Shellfish Products,Main Course,Main Course,high,False
