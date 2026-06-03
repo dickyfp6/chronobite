@@ -181,12 +181,12 @@ class GreedyOptimizer:
         else:
             global_excluded = current_meal_excluded
         
-        # Generate 10 raw candidates from database using SHORT form ('Main', 'Side', 'Drink', 'Snack')
+        # Generate 30 raw candidates from database using SHORT form ('Main', 'Side', 'Drink', 'Snack')
         raw_candidates = CandidateGenerator.generate_candidates_for_slot(
             food_database=self.food_db,
             slot_category=course_type,  # Pass short form directly: 'Main', 'Side', 'Drink', 'Snack'
             target_calories=target_calories_per_100g,
-            num_candidates=10,
+            num_candidates=30,  # Increased from 10 to 30 to provide enough pool for diversity filtering
             exclusion_names=global_excluded,
         )
         
@@ -227,7 +227,8 @@ class GreedyOptimizer:
             final_candidates.append(cand)
             added_names.append(cand.get('food_name', ''))
             
-            if len(final_candidates) >= 3:
+            max_candidates = 2 if course_type == 'Drink' else 3
+            if len(final_candidates) >= max_candidates:
                 break
         
         return final_candidates
@@ -421,6 +422,22 @@ class GreedyOptimizer:
                 portion = self.optimize_portion(cand_per_100g, drink_target, 'Drink')
                 scaled = self.scale_nutrients(cand_per_100g, portion)
                 drink_candidates_scaled.append(scaled)
+            
+            # Append Mineral Water as the mandatory 3rd candidate
+            water = FoodItem(
+                fdc_id='water_000',
+                food_name='Mineral Water',
+                food_group='Beverages',
+                consumption_label='Drink',
+                cuisine_label='Generic',
+                portion_gram=250.0,
+                energy_kcal=0.0,
+                protein_g=0.0,
+                carbohydrate_g=0.0,
+                fat_g=0.0,
+                micronutrients={}
+            )
+            drink_candidates_scaled.append(water)
             
             courses['Drink'] = MealCourse(
                 course_type='Drink',

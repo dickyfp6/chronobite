@@ -94,9 +94,8 @@ export function Landing({ onStart }: { onStart: () => void }) {
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`h-2 rounded-full transition-all ${
-                  index === currentSlide ? 'w-8 bg-gradient-to-r from-emerald-500 to-teal-500' : 'w-2 bg-gray-300 dark:bg-gray-600'
-                }`}
+                className={`h-2 rounded-full transition-all ${index === currentSlide ? 'w-8 bg-gradient-to-r from-emerald-500 to-teal-500' : 'w-2 bg-gray-300 dark:bg-gray-600'
+                  }`}
               />
             ))}
           </div>

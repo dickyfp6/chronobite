@@ -1,61 +1,182 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2, RotateCcw } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
-import { mealDatabase, calculateNutrition, calculateDailyNeeds } from '../utils/mockData';
 import type { UserInputData } from './InputWizard';
+import { api } from '../services/api';
 
 interface ResultsProps {
   userData: UserInputData;
+  algorithm?: 'greedy' | 'genetic';
+  analysisResult?: any;
   onViewReport: () => void;
 }
 
-export function Results({ userData, onViewReport }: ResultsProps) {
+type Candidate = {
+  fdc_id: string;
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  serving_size: number;
+  is_selected: boolean;
+};
+
+type Course = {
+  course_type: string;
+  candidates: Candidate[];
+};
+
+type Meal = {
+  meal_type: string;
+  target_calories: number;
+  actual_calories: number;
+  courses?: Record<string, Course>;
+  candidates?: Candidate[];
+};
+
+export function Results({ userData, algorithm, analysisResult, onViewReport }: ResultsProps) {
   const { t } = useI18n();
 
-  const dailyNeeds = calculateDailyNeeds(
-    userData.weight!,
-    userData.height!,
-    userData.age!,
-    userData.gender!,
-    userData.activity!
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [menuData, setMenuData] = useState<Record<string, Meal> | null>(null);
 
-  const mealOptions = {
-    breakfast: {
-      mainCourse: mealDatabase.breakfast.mainCourse.slice(0, 3),
-      sideDish: mealDatabase.breakfast.sideDish.slice(0, 3),
-      drink: mealDatabase.breakfast.drink.slice(0, 3),
-    },
-    lunch: {
-      mainCourse: mealDatabase.lunch.mainCourse.slice(0, 3),
-      sideDish: mealDatabase.lunch.sideDish.slice(0, 3),
-      drink: mealDatabase.lunch.drink.slice(0, 3),
-    },
-    dinner: {
-      mainCourse: mealDatabase.dinner.mainCourse.slice(0, 3),
-      sideDish: mealDatabase.dinner.sideDish.slice(0, 3),
-      drink: mealDatabase.dinner.drink.slice(0, 3),
-    },
-    snack: mealDatabase.snack.slice(0, 3),
+  // Track selected candidate for each meal+course. e.g. "breakfast_Main" -> Candidate
+  const [selected, setSelected] = useState<Record<string, Candidate>>({});
+
+  const fetchMenu = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const payload = {
+        gender: userData.gender === 'male' ? 'M' : 'F',
+        age: userData.age,
+        weight: userData.weight,
+        height: userData.height,
+        activity: userData.activity || '1.845',
+        diseases: userData.healthConditions.length > 0 ? userData.healthConditions : ['normal'],
+        food_preferences: userData.foodPreferences,
+        algorithm: algorithm || 'greedy',
+      };
+
+      const result = await api.generateMenu({
+        algorithm: algorithm || 'greedy',
+        user_profile: payload,
+        analysis_data: analysisResult || {},
+        user_input: analysisResult || {},
+      });
+
+      if (!result.success || !result.menu_plan?.meals) {
+        throw new Error('Failed to generate valid menu plan from backend');
+      }
+
+      const meals = result.menu_plan.meals;
+      const formattedMenu = {
+        breakfast: meals.Breakfast,
+        lunch: meals.Lunch,
+        dinner: meals.Dinner,
+        snack: meals.Snack,
+      };
+      
+      setMenuData(formattedMenu);
+      sessionStorage.setItem('dss_menu_data', JSON.stringify(formattedMenu));
+      
+      // Store actual nutrients directly from the backend payload!
+      if (result.menu_plan.total_daily_calories) {
+        const actualNutrients = {
+          calories: result.menu_plan.total_daily_calories,
+          protein: result.menu_plan.total_daily_protein_g,
+          carbs: result.menu_plan.total_daily_carb_g,
+          fat: result.menu_plan.total_daily_fat_g,
+        };
+        sessionStorage.setItem('dss_actual_nutrients', JSON.stringify(actualNutrients));
+      }
+
+      // Initialize selected items (the first candidate for each course)
+      const initialSelected: Record<string, Candidate> = {};
+
+      ['breakfast', 'lunch', 'dinner'].forEach((mealName) => {
+        const meal = formattedMenu[mealName as keyof typeof formattedMenu];
+        if (meal?.courses) {
+          ['Main', 'Side', 'Drink'].forEach((courseName) => {
+            const course = meal.courses[courseName];
+            if (course?.candidates?.length > 0) {
+              initialSelected[`${mealName}_${courseName}`] = course.candidates[0];
+            }
+          });
+        }
+      });
+
+      // Initialize snack
+      if (meals.snack?.candidates?.length > 0) {
+        initialSelected['snack_snack'] = meals.snack.candidates[0];
+      }
+
+      setSelected(initialSelected);
+      sessionStorage.setItem('dss_selected_items', JSON.stringify(initialSelected));
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'An error occurred while generating the menu plan.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const [selected, setSelected] = useState<any>({});
+  useEffect(() => {
+    fetchMenu();
+  }, []);
 
-  const handleSelect = (meal: string, category: string, id: string) => {
+  const handleSelect = (meal: string, category: string, candidate: Candidate) => {
     const key = `${meal}_${category}`;
-    const options = meal === 'snack'
-      ? mealOptions.snack
-      : (mealOptions[meal as keyof typeof mealOptions] as any)[category];
-    const item = options.find((opt: any) => opt.id === id);
-
-    setSelected((prev: any) => ({
-      ...prev,
-      [key]: item,
-    }));
+    setSelected((prev) => {
+      const newSelected = {
+        ...prev,
+        [key]: candidate,
+      };
+      sessionStorage.setItem('dss_selected_items', JSON.stringify(newSelected));
+      return newSelected;
+    });
   };
 
-  const nutrition = calculateNutrition(selected);
+  // Calculate totals from currently selected items
+  const totalCalories = Object.values(selected).reduce((sum, item) => sum + item.calories, 0);
+  const totalProtein = Object.values(selected).reduce((sum, item) => sum + item.protein, 0);
+  const totalCarbs = Object.values(selected).reduce((sum, item) => sum + item.carbs, 0);
+  const totalFat = Object.values(selected).reduce((sum, item) => sum + item.fat, 0);
+
+  // Use the calculated TDEE from analysisResult if available
+  const targetCalories = analysisResult?.energy?.tdee
+    ? Math.round(analysisResult.energy.tdee)
+    : 2000;
+
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex flex-col items-center justify-center p-4">
+        <Loader2 className="w-12 h-12 text-emerald-500 animate-spin mb-4" />
+        <p className="text-gray-600 dark:text-gray-400 font-medium">Generating optimal meal plan with {algorithm === 'genetic' ? 'Genetic' : 'Greedy'} algorithm...</p>
+      </div>
+    );
+  }
+
+  if (error || !menuData) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex flex-col items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border-2 border-red-200 dark:border-red-800 max-w-lg text-center shadow-sm">
+          <p className="text-red-600 dark:text-red-400 font-bold text-xl mb-3">Oops, something went wrong</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
+          <button
+            onClick={fetchMenu}
+            className="px-6 py-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-xl font-medium hover:bg-red-100 dark:hover:bg-red-900/40 transition-all inline-flex items-center gap-2 border border-red-200 dark:border-red-800"
+          >
+            <RotateCcw className="w-5 h-5" />
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 px-4 py-8 pb-48 sm:pb-40">
@@ -66,81 +187,111 @@ export function Results({ userData, onViewReport }: ResultsProps) {
           className="mb-8"
         >
           <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-gray-900 dark:text-white">{t.results.title}</h1>
-          <p className="text-gray-600 dark:text-gray-400">Select your meals from the options below</p>
+          <p className="text-gray-600 dark:text-gray-400">Select your meals from the AI-generated options below</p>
         </motion.div>
 
         <div className="space-y-8">
-          {['breakfast', 'lunch', 'dinner'].map((meal) => (
-            <div key={meal} className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
-              <h2 className="text-2xl font-bold mb-6 text-emerald-700 dark:text-emerald-400">
-                {t.results.meals[meal as keyof typeof t.results.meals]}
-              </h2>
+          {['breakfast', 'lunch', 'dinner'].map((mealName) => {
+            const meal = menuData[mealName];
+            if (!meal || !meal.courses) return null;
 
-              <div className="space-y-6">
-                {['mainCourse', 'sideDish', 'drink'].map((category) => {
-                  const key = `${meal}_${category}`;
-                  const options = (mealOptions[meal as keyof typeof mealOptions] as any)[category];
+            return (
+              <div key={mealName} className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 capitalize">
+                    {mealName}
+                  </h2>
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Target: {meal.target_calories} cal
+                  </div>
+                </div>
 
-                  return (
-                    <div key={category}>
-                      <div className="mb-3">
-                        <h3 className="font-medium text-gray-900 dark:text-white">
-                          {t.results.meals[category as keyof typeof t.results.meals]}
-                          {category === 'drink' && <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">(Optional)</span>}
-                        </h3>
+                <div className="space-y-6">
+                  {['Main', 'Side', 'Drink'].map((courseName) => {
+                    const course = meal.courses![courseName];
+                    const key = `${mealName}_${courseName}`;
+
+                    return (
+                      <div key={courseName}>
+                        <div className="mb-3">
+                          <h3 className="font-medium text-gray-900 dark:text-white capitalize">
+                            {courseName === 'Main' ? 'Main Course' : courseName === 'Side' ? 'Side Dish' : 'Drink'}
+                          </h3>
+                        </div>
+
+                        {!course || course.candidates.length === 0 ? (
+                          <div className="p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-center">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">No foods found matching your constraints.</p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {course.candidates.map((option) => (
+                              <button
+                                key={option.fdc_id || option.name}
+                                onClick={() => handleSelect(mealName, courseName, option)}
+                                className={`p-4 rounded-lg border-2 text-left transition-all ${selected[key]?.name === option.name
+                                    ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
+                                    : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
+                                  }`}
+                              >
+                                <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1">{option.name}</p>
+                                <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                                  {option.calories} cal • P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g
+                                </p>
+                                <p className="text-[10px] text-gray-500 mt-2">{option.serving_size}g serving</p>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {options.map((option: any) => (
-                          <button
-                            key={option.id}
-                            onClick={() => handleSelect(meal, category, option.id)}
-                            className={`p-4 rounded-lg border-2 text-left transition-all ${
-                              selected[key]?.id === option.id
-                                ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
-                                : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
-                            }`}
-                          >
-                            <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1">{option.name}</p>
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                              {option.calories} cal • P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g
-                            </p>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
-            <h2 className="text-2xl font-bold mb-6 text-emerald-700 dark:text-emerald-400">{t.results.meals.snack}</h2>
+          {menuData.snack && (
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 capitalize">
+                  Snack
+                </h2>
+                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Target: {menuData.snack.target_calories} cal
+                </div>
+              </div>
 
-            <div className="mb-3">
-              <h3 className="font-medium text-gray-900 dark:text-white">3 static options</h3>
-            </div>
+              <div className="mb-3">
+                <h3 className="font-medium text-gray-900 dark:text-white">Options</h3>
+              </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {mealOptions.snack.map((option: any) => (
-                <button
-                  key={option.id}
-                  onClick={() => handleSelect('snack', 'snack', option.id)}
-                  className={`p-4 rounded-lg border-2 text-left transition-all ${
-                    selected['snack_snack']?.id === option.id
-                      ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
-                      : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
-                  }`}
-                >
-                  <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1">{option.name}</p>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                    {option.calories} cal • P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g
-                  </p>
-                </button>
-              ))}
+              {!menuData.snack.candidates || menuData.snack.candidates.length === 0 ? (
+                <div className="p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">No snack found matching your constraints.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {menuData.snack.candidates.map((option) => (
+                    <button
+                      key={option.fdc_id || option.name}
+                      onClick={() => handleSelect('snack', 'snack', option)}
+                      className={`p-4 rounded-lg border-2 text-left transition-all ${selected['snack_snack']?.name === option.name
+                          ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
+                          : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
+                        }`}
+                    >
+                      <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1">{option.name}</p>
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                        {option.calories} cal • P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g
+                      </p>
+                      <p className="text-[10px] text-gray-500 mt-2">{option.serving_size}g serving</p>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
 
         <div className="text-center mt-12 mb-2">
@@ -161,25 +312,25 @@ export function Results({ userData, onViewReport }: ResultsProps) {
             <div className="text-center">
               <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">{t.results.dailyCalories}</p>
               <p className="text-sm sm:text-lg md:text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                {Math.round(nutrition.calories)} / {dailyNeeds.calories}
+                {Math.round(totalCalories)} / {targetCalories}
               </p>
             </div>
             <div className="text-center">
               <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">{t.results.protein}</p>
               <p className="text-sm sm:text-lg md:text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                {Math.round(nutrition.protein)}g / {dailyNeeds.protein}g
+                {Math.round(totalProtein)}g
               </p>
             </div>
             <div className="text-center">
               <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">{t.results.carbs}</p>
               <p className="text-sm sm:text-lg md:text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                {Math.round(nutrition.carbs)}g / {dailyNeeds.carbs}g
+                {Math.round(totalCarbs)}g
               </p>
             </div>
             <div className="text-center">
               <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">{t.results.fat}</p>
               <p className="text-sm sm:text-lg md:text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                {Math.round(nutrition.fat)}g / {dailyNeeds.fat}g
+                {Math.round(totalFat)}g
               </p>
             </div>
           </div>

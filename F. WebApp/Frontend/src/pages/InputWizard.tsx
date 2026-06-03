@@ -142,7 +142,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                       </div>
                       {t.input.metrics.age}
                     </label>
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3">
                       <button
                         onClick={() => onUpdate({ age: Math.max(18, data.age - 1) })}
                         className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center font-bold shadow-md hover:shadow-lg"
@@ -215,7 +215,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                       </div>
                       {t.input.metrics.weight}
                     </label>
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3">
                       <button
                         onClick={() => onUpdate({ weight: Math.max(30, data.weight - 1) })}
                         className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center font-bold shadow-md hover:shadow-lg"
@@ -285,7 +285,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                       </div>
                       {t.input.metrics.height}
                     </label>
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3">
                       <button
                         onClick={() => onUpdate({ height: Math.max(100, data.height - 1) })}
                         className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center font-bold shadow-md hover:shadow-lg"
@@ -363,33 +363,39 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                       background: 'linear-gradient(to right, rgba(16,185,129,0.05), rgba(16,185,129,0.02))'
                     }}
                   >
-                    <p className="text-sm mb-2 font-medium" style={{ color: (() => {
-                      const bmi = data.weight / ((data.height / 100) ** 2);
-                      if (bmi >= 30) return '#b91c1c';
-                      if (bmi >= 25) return '#92400e';
-                      if (bmi >= 18.5) return '#047857';
-                      return '#92400e';
-                    })() }}>
+                    <p className="text-sm mb-2 font-medium" style={{
+                      color: (() => {
+                        const bmi = data.weight / ((data.height / 100) ** 2);
+                        if (bmi >= 30) return '#b91c1c';
+                        if (bmi >= 25) return '#92400e';
+                        if (bmi >= 18.5) return '#047857';
+                        return '#92400e';
+                      })()
+                    }}>
                       Body Mass Index
                     </p>
-                    <p className="text-4xl font-bold" style={{ color: (() => {
-                      const bmi = data.weight / ((data.height / 100) ** 2);
-                      if (bmi >= 30) return '#b91c1c';
-                      if (bmi >= 25) return '#92400e';
-                      if (bmi >= 18.5) return '#047857';
-                      return '#92400e';
-                    })() }}>
+                    <p className="text-4xl font-bold" style={{
+                      color: (() => {
+                        const bmi = data.weight / ((data.height / 100) ** 2);
+                        if (bmi >= 30) return '#b91c1c';
+                        if (bmi >= 25) return '#92400e';
+                        if (bmi >= 18.5) return '#047857';
+                        return '#92400e';
+                      })()
+                    }}>
                       {(data.weight / ((data.height / 100) ** 2)).toFixed(1)}
                     </p>
-                    <p className="mt-2 text-sm font-semibold" style={{ color: (() => {
-                      const bmi = data.weight / ((data.height / 100) ** 2);
-                      if (bmi >= 40) return '#b91c1c';
-                      if (bmi >= 35) return '#b91c1c';
-                      if (bmi >= 30) return '#b91c1c';
-                      if (bmi >= 25) return '#92400e';
-                      if (bmi >= 18.5) return '#047857';
-                      return '#92400e';
-                    })() }}>
+                    <p className="mt-2 text-sm font-semibold" style={{
+                      color: (() => {
+                        const bmi = data.weight / ((data.height / 100) ** 2);
+                        if (bmi >= 40) return '#b91c1c';
+                        if (bmi >= 35) return '#b91c1c';
+                        if (bmi >= 30) return '#b91c1c';
+                        if (bmi >= 25) return '#92400e';
+                        if (bmi >= 18.5) return '#047857';
+                        return '#92400e';
+                      })()
+                    }}>
                       {(() => {
                         const bmi = data.weight / ((data.height / 100) ** 2);
                         if (bmi < 18.5) return 'Underweight (<18.5)';
@@ -450,7 +456,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                       (condition === 'normal' && data.healthConditions.some(c => c !== 'normal')) ||
                       (condition !== 'normal' && data.healthConditions.includes('normal')) ||
                       (condition !== 'normal' && !data.healthConditions.includes(condition) &&
-                       data.healthConditions.filter(c => c !== 'normal').length >= 3)
+                        data.healthConditions.filter(c => c !== 'normal').length >= 3)
                     }
                     onClick={() => toggleHealthCondition(condition)}
                   />

@@ -1,4 +1,4 @@
-﻿"""
+"""
 Nutrition Calculation Service
 Consolidated file untuk orchestrate semua input, calculations, dan output
 Designed untuk easy integration dengan Genetic Algorithm dan Greedy Algorithm
@@ -271,7 +271,8 @@ class NutritionService:
                     
                     # Filter by preferences jika ada
                     if food_preferences:
-                        filtered_df = food_df[food_df['cuisine'].isin(food_preferences)].copy()
+                        normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
+                        filtered_df = food_df[food_df['cuisine'].isin(normalized_prefs)].copy()
                     else:
                         filtered_df = food_df.copy()
                 else:

@@ -1,0 +1,994 @@
+{
+  "algorithm": "greedy",
+  "user_profile": {
+    "gender": "M",
+    "age": 60,
+    "weight": 64,
+    "height": 178,
+    "activity": "light",
+    "diseases": [
+      "dm2",
+      "cholesterol"
+    ],
+    "food_preferences": [
+      "western",
+      "asian",
+      "mediterranean"
+    ],
+    "algorithm": "greedy"
+  },
+  "analysis_data": {
+    "anthropometrics": {
+      "age_group": "young_people",
+      "age_label": "Young People",
+      "age_range": "18-65 years old",
+      "bbi": 69.7,
+      "bmi": 20.2,
+      "bmi_category": "Healthy Weight"
+    },
+    "energy": {
+      "bmr": 1457.5,
+      "tdee": 2251.84,
+      "bmi": 20.2,
+      "bbr": 69.7
+    },
+    "error": null,
+    "food_data": {
+      "by_cuisine": {
+        "Asian": 681,
+        "Generic": 795,
+        "Mediterranean": 439,
+        "Western": 2005
+      },
+      "filtered_items": 3125,
+      "preferences": [
+        "western",
+        "asian",
+        "mediterranean"
+      ],
+      "total_items": 3920
+    },
+    "guidelines": {
+      "disease": [
+        "cholesterol",
+        "dm2"
+      ],
+      "nutrients": {
+        "calcium_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 1050,
+          "min": 950,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "carbohydrate_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 309.63,
+          "min": 281.48,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "cholesterol_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 200,
+          "min": 0,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "choline_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 550,
+          "min": 550,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "copper_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 0.9,
+          "min": 0.9,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "energy_kcal": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 2364.43,
+          "min": 4053312,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "kcal"
+        },
+        "fat_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 75.06,
+          "min": 62.55,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "fiber_g": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 35,
+          "min": 20,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "fluoride_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 4,
+          "min": 4,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "folate_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 0.7,
+          "min": 0.7,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "fruits_and_vegies_g": {
+          "basis": "1",
+          "constraint_type": "partial_absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": null,
+          "min": 400,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "iron_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 18,
+          "min": 8,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "magnesium_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 420,
+          "min": 420,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "manganese_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 2.3,
+          "min": 2.3,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "phosphorus_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 700,
+          "min": 700,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "potassium_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 3400,
+          "min": 2600,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "protein_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 84.44,
+          "min": 73.18,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "saturated_fat_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 17.51,
+          "min": 0,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "selenium_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 0.055,
+          "min": 0.055,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "sodium_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 2300,
+          "min": 0,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "trans_fat_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 2.5,
+          "min": 0,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "vitamin_a_rae_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 0.9,
+          "min": 0.7,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "vitamin_b12_mg": {
+          "basis": "1",
+          "constraint_type": "partial_absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": null,
+          "min": 0.0024,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "vitamin_b1_thiamin_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 1.2,
+          "min": 1.2,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_b2_riboflavin_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 1.3,
+          "min": 1.3,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_b3_niacin_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 16,
+          "min": 16,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_b5_pantothenic_acid_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 5,
+          "min": 5,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_b6_mg": {
+          "basis": "1",
+          "constraint_type": "partial_absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": null,
+          "min": 1.3,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "vitamin_c_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 90,
+          "min": 75,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "vitamin_d_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 15,
+          "min": 15,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_e_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 15,
+          "min": 15,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_k_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 0.12,
+          "min": 0.12,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "zinc_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 11,
+          "min": 8,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        }
+      },
+      "total_nutrients": 33
+    },
+    "meal_distribution": {
+      "breakfast": 0.2375,
+      "dinner": 0.2875,
+      "lunch": 0.3375,
+      "snack": 0.1375
+    },
+    "meal_plan": {
+      "distribution": {
+        "breakfast": 534.81,
+        "dinner": 647.4,
+        "lunch": 760,
+        "snack": 309.63
+      },
+      "percentages": {
+        "breakfast": "23.75%",
+        "dinner": "28.75%",
+        "lunch": "33.75%",
+        "snack": "13.75%"
+      },
+      "total": 2251.84
+    },
+    "success": true,
+    "user_input": {
+      "activity_factor": 1.545,
+      "age": 60,
+      "disease": [
+        "dm2",
+        "cholesterol"
+      ],
+      "food_preferences": [
+        "western",
+        "asian",
+        "mediterranean"
+      ],
+      "gender": "M",
+      "height": 178,
+      "weight": 64
+    },
+    "user_params": {
+      "age": 60,
+      "bbi": 69.7,
+      "disease": [
+        "cholesterol",
+        "dm2"
+      ],
+      "energy_target": 2251.84,
+      "gender": "M",
+      "meal_distribution": {
+        "breakfast": 534.81,
+        "dinner": 647.4,
+        "lunch": 760,
+        "snack": 309.63
+      },
+      "tdee": 2251.84,
+      "weight": 64
+    }
+  },
+  "user_input": {
+    "anthropometrics": {
+      "age_group": "young_people",
+      "age_label": "Young People",
+      "age_range": "18-65 years old",
+      "bbi": 69.7,
+      "bmi": 20.2,
+      "bmi_category": "Healthy Weight"
+    },
+    "energy": {
+      "bmr": 1457.5,
+      "tdee": 2251.84,
+      "bmi": 20.2,
+      "bbr": 69.7
+    },
+    "error": null,
+    "food_data": {
+      "by_cuisine": {
+        "Asian": 681,
+        "Generic": 795,
+        "Mediterranean": 439,
+        "Western": 2005
+      },
+      "filtered_items": 3125,
+      "preferences": [
+        "western",
+        "asian",
+        "mediterranean"
+      ],
+      "total_items": 3920
+    },
+    "guidelines": {
+      "disease": [
+        "cholesterol",
+        "dm2"
+      ],
+      "nutrients": {
+        "calcium_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 1050,
+          "min": 950,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "carbohydrate_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 309.63,
+          "min": 281.48,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "cholesterol_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 200,
+          "min": 0,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "choline_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 550,
+          "min": 550,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "copper_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 0.9,
+          "min": 0.9,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "energy_kcal": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 2364.43,
+          "min": 4053312,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "kcal"
+        },
+        "fat_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 75.06,
+          "min": 62.55,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "fiber_g": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 35,
+          "min": 20,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "fluoride_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 4,
+          "min": 4,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "folate_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 0.7,
+          "min": 0.7,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "fruits_and_vegies_g": {
+          "basis": "1",
+          "constraint_type": "partial_absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": null,
+          "min": 400,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "iron_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 18,
+          "min": 8,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "magnesium_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 420,
+          "min": 420,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "manganese_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 2.3,
+          "min": 2.3,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "phosphorus_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 700,
+          "min": 700,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "potassium_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 3400,
+          "min": 2600,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "protein_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 84.44,
+          "min": 73.18,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "saturated_fat_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 17.51,
+          "min": 0,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "selenium_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 0.055,
+          "min": 0.055,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "sodium_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "cholesterol",
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 2300,
+          "min": 0,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "trans_fat_g": {
+          "basis": "TDEE",
+          "constraint_type": "tdee_based",
+          "diseases": [
+            "cholesterol"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 2.5,
+          "min": 0,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "g"
+        },
+        "vitamin_a_rae_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 0.9,
+          "min": 0.7,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "vitamin_b12_mg": {
+          "basis": "1",
+          "constraint_type": "partial_absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": null,
+          "min": 0.0024,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "vitamin_b1_thiamin_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 1.2,
+          "min": 1.2,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_b2_riboflavin_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 1.3,
+          "min": 1.3,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_b3_niacin_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 16,
+          "min": 16,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_b5_pantothenic_acid_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 5,
+          "min": 5,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_b6_mg": {
+          "basis": "1",
+          "constraint_type": "partial_absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": null,
+          "min": 1.3,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "vitamin_c_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 90,
+          "min": 75,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        },
+        "vitamin_d_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 15,
+          "min": 15,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_e_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 15,
+          "min": 15,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "vitamin_k_mg": {
+          "basis": "DRI",
+          "constraint_type": "dri_micronutrient",
+          "hard_soft_type": "SOFT",
+          "max": 0.12,
+          "min": 0.12,
+          "source": "DRI fallback",
+          "tipe": "dri",
+          "unit": "mg"
+        },
+        "zinc_mg": {
+          "basis": "1",
+          "constraint_type": "absolute",
+          "diseases": [
+            "dm2"
+          ],
+          "hard_soft_type": "HARD",
+          "max": 11,
+          "min": 8,
+          "source": "guideline",
+          "tipe": "range",
+          "unit": "mg"
+        }
+      },
+      "total_nutrients": 33
+    },
+    "meal_distribution": {
+      "breakfast": 0.2375,
+      "dinner": 0.2875,
+      "lunch": 0.3375,
+      "snack": 0.1375
+    },
+    "meal_plan": {
+      "distribution": {
+        "breakfast": 534.81,
+        "dinner": 647.4,
+        "lunch": 760,
+        "snack": 309.63
+      },
+      "percentages": {
+        "breakfast": "23.75%",
+        "dinner": "28.75%",
+        "lunch": "33.75%",
+        "snack": "13.75%"
+      },
+      "total": 2251.84
+    },
+    "success": true,
+    "user_input": {
+      "activity_factor": 1.545,
+      "age": 60,
+      "disease": [
+        "dm2",
+        "cholesterol"
+      ],
+      "food_preferences": [
+        "western",
+        "asian",
+        "mediterranean"
+      ],
+      "gender": "M",
+      "height": 178,
+      "weight": 64
+    },
+    "user_params": {
+      "age": 60,
+      "bbi": 69.7,
+      "disease": [
+        "cholesterol",
+        "dm2"
+      ],
+      "energy_target": 2251.84,
+      "gender": "M",
+      "meal_distribution": {
+        "breakfast": 534.81,
+        "dinner": 647.4,
+        "lunch": 760,
+        "snack": 309.63
+      },
+      "tdee": 2251.84,
+      "weight": 64
+    }
+  }
+}
