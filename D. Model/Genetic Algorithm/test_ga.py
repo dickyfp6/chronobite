@@ -22,10 +22,10 @@ np.random.seed(42)
 # Add paths untuk import
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 system_flow_path = os.path.join(project_root, 'C. System Flow')
-ga_rebuild_path = os.path.dirname(os.path.abspath(__file__))
+genetic_algorithm_path = os.path.dirname(os.path.abspath(__file__))
 
 sys.path.insert(0, system_flow_path)
-sys.path.insert(0, ga_rebuild_path)
+sys.path.insert(0, genetic_algorithm_path)
 
 # ============ MODE SWITCH ============
 # Set to True to use interactive input via CLI
