@@ -51,7 +51,7 @@ class RuleBasedFoodClassifier:
         # Rule 1.1: Beverages
         if food_group_lower == "beverages":
             # Concentrate undiluted = bahan masak, bukan minuman siap minum
-            if "concentrate" in food_name_lower:
+            if 'concentrate' in food_name_lower or any(x in food_name_lower for x in ['dry', 'powder', 'powdered', 'mix']):
                 return ("Snack", "medium")
             return ("Drink", "high")
         
@@ -136,8 +136,8 @@ class RuleBasedFoodClassifier:
             # Exclude: olive/pickle bukan minuman
             if any(x in food_name_lower for x in ['olive', 'pickle']):
                 return ("Side Dish", "high")
-            # Exclude: concentrate undiluted = bahan masak
-            if 'concentrate' in food_name_lower and 'undiluted' in food_name_lower:
+            # Exclude: concentrate = bahan masak
+            if 'concentrate' in food_name_lower:
                 return ("Snack", "medium")
             # Juice/nectar = Drink
             if any(x in food_name_lower for x in ['juice', 'nectar', 'concentrate']):

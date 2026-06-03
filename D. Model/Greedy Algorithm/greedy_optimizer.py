@@ -44,6 +44,18 @@ PORTION_RANGE = {
     'Snack': (30, 100)
 }
 
+MICRONUTRIENT_COLS = [
+    'fiber_g', 'sugar_g', 'saturated_fat_g', 'trans_fat_g',
+    'cholesterol_mg', 'sodium_mg', 'potassium_mg', 'calcium_mg',
+    'iron_mg', 'magnesium_mg', 'phosphorus_mg', 'zinc_mg',
+    'copper_mg', 'manganese_mg', 'selenium_mg', 'fluoride_mg',
+    'vitamin_a_rae_mg', 'vitamin_b1_thiamin_mg', 'vitamin_b2_riboflavin_mg',
+    'vitamin_b3_niacin_mg', 'vitamin_b5_pantothenic_acid_mg',
+    'vitamin_b6_mg', 'vitamin_b12_mg', 'vitamin_c_mg', 'vitamin_d_mg',
+    'vitamin_e_mg', 'vitamin_k_mg', 'choline_mg', 'folate_mg',
+    'water_g'
+]
+
 
 class GreedyOptimizer:
     """
@@ -88,33 +100,60 @@ class GreedyOptimizer:
         self,
         candidate: Dict,
         target_calories: float,
-        selected_items_names: List[str]
+        selected_items_names: List[str],
+        cumulative_nutrients: Optional[Dict] = None
     ) -> float:
         """
-        Score a candidate based on calorie accuracy and diversity
+        Score a candidate based on calorie accuracy, constraint satisfaction, and diversity
         (Per-100g basis - no portion scaling yet)
         """
+        # 1. CALORIE SCORE (40%)
         target_calories = max(target_calories, 1)
         energy_100g = candidate.get('energy_kcal', 0)
-        
-        # Calorie matching score (comparing per-100g values)
         calorie_error = abs(energy_100g - target_calories) / target_calories
-        calorie_score = 100
-        if calorie_error > 0.1:
-            calorie_score = max(0, 100 - (calorie_error * 100))
-        
-        # Diversity score - avoid similar foods
+        calorie_score = max(0, 100 - (calorie_error * 100))
+
+        # 2. CONSTRAINT SATISFACTION SCORE (40%)
+        constraint_score = 100
+        if cumulative_nutrients is not None:
+            nutrients = self.constraint_bag.get('nutrients', {})
+            
+            for nutrient, constraint in nutrients.items():
+                if constraint.get('hard_soft_type') != 'HARD':
+                    continue
+                if constraint.get('constraint_type') == 'unlimited':
+                    continue
+                
+                current_total = cumulative_nutrients.get(nutrient, 0.0)
+                food_val = float(candidate.get(nutrient, 0) or 0)
+                max_val = constraint.get('max')
+                min_val = float(constraint.get('min') or 0)
+                
+                # Penalty: if adding this food would exceed max
+                if max_val is not None and max_val > 0:
+                    if (current_total + food_val) > (max_val * 1.1):
+                        constraint_score -= 20
+                
+                # Bonus: if this food helps reach unfulfilled minimum
+                if current_total < min_val and food_val > 0:
+                    constraint_score += 10
+            
+            constraint_score = max(0, min(100, constraint_score))
+
+        # 3. DIVERSITY SCORE (20%)
         diversity_score = 100
         for selected_name in selected_items_names:
             sim = SimilarityChecker.calculate_similarity_score(
-                str(candidate.get('food_name', '')), 
+                str(candidate.get('food_name', '')),
                 selected_name
             )
             if sim > 0.7:
                 diversity_score = 0
                 break
-        
-        return (calorie_score * 0.7) + (diversity_score * 0.3)
+
+        return (calorie_score * 0.4 +
+                constraint_score * 0.4 +
+                diversity_score * 0.2)
     
     def generate_candidates_for_course(
         self,
@@ -157,7 +196,12 @@ class GreedyOptimizer:
         # Score all candidates
         scored = []
         for cand in raw_candidates:
-            score = self.score_candidate(cand, target_calories_per_100g, global_excluded)
+            score = self.score_candidate(
+                cand,
+                target_calories_per_100g,
+                global_excluded,
+                cumulative_nutrients=self.cumulative_nutrients
+            )
             scored.append((score, cand))
         
         scored.sort(key=lambda x: x[0], reverse=True)
@@ -262,6 +306,15 @@ class GreedyOptimizer:
             carbohydrate_g=round(float(candidate_per_100g.get('carbohydrate_g', 0)) * scale, 2),
             fat_g=round(float(candidate_per_100g.get('fat_g', 0)) * scale, 2),
         )
+        
+        scaled_micros = {}
+        for col in MICRONUTRIENT_COLS:
+            val = candidate_per_100g.get(col, 0.0)
+            if val is not None:
+                scaled_micros[col] = round(float(val) * scale, 4)
+        
+        food_item.micronutrients = scaled_micros
+        
         return food_item
     
     def _update_cumulative(self, item: FoodItem):
@@ -270,6 +323,12 @@ class GreedyOptimizer:
         self.cumulative_nutrients['protein_g'] += item.protein_g
         self.cumulative_nutrients['carbohydrate_g'] += item.carbohydrate_g
         self.cumulative_nutrients['fat_g'] += item.fat_g
+        
+        for nutrient, value in item.micronutrients.items():
+            if nutrient not in self.cumulative_nutrients:
+                self.cumulative_nutrients[nutrient] = 0.0
+            self.cumulative_nutrients[nutrient] += value
+            
         self.selected_items.append(item)
     
     def generate_meal(

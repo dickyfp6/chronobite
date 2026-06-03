@@ -116,7 +116,8 @@ class CandidateGenerator:
         target_calories: float,
         num_candidates: int = 3,
         exclusion_list: Optional[List[str]] = None,
-        ingredient_diversity: bool = True
+        ingredient_diversity: bool = True,
+        tolerance: float = 0.3
     ) -> List[Dict]:
         """
         Generate N kandidat terbaik dari pool dengan ingredient diversity check.
@@ -139,7 +140,7 @@ class CandidateGenerator:
         candidates_df = candidates_df.copy()
         
         # Step 1: Filter by calorie range
-        filtered = CandidateGenerator.filter_by_calorie_range(candidates_df, target_calories, tolerance=0.3)
+        filtered = CandidateGenerator.filter_by_calorie_range(candidates_df, target_calories, tolerance=tolerance)
         
         if len(filtered) == 0:
             # Fallback: jika tidak ada yang cocok range, ambil terdekat
@@ -157,11 +158,11 @@ class CandidateGenerator:
                 
                 # Check ingredient similarity dengan setiap item di exclusion list
                 for excluded_name in exclusion_list:
-                    # Exact name match
+                    # Check 1: exact name match (case-insensitive)
                     if food_name.lower() == excluded_name.lower():
                         is_excluded = True
                         break
-                    # Ingredient similarity
+                    # Check 2: ingredient similarity (existing logic)
                     if CandidateGenerator.is_similar_ingredient(food_name, excluded_name):
                         is_excluded = True
                         break
@@ -182,17 +183,16 @@ class CandidateGenerator:
         
         candidates_list = []
         for idx, row in result.iterrows():
-            candidate = {
-                'fdc_id': str(row['fdc_id']),
-                'food_name': str(row['food_name']),
-                'food_group': str(row['food_group']),
-                'consumption_label': str(row.get('consumption_label', row.get('menu_category', 'Unknown'))),
-                'cuisine_label': str(row.get('cuisine_label', 'Unknown')),
-                'energy_kcal': float(row['energy_kcal']),
-                'protein_g': float(row.get('protein_g', 0)),
-                'carbohydrate_g': float(row.get('carbohydrate_g', 0)),
-                'fat_g': float(row.get('fat_g', 0)),
-            }
+            candidate = row.to_dict()
+            candidate['fdc_id'] = str(row['fdc_id'])
+            candidate['food_name'] = str(row['food_name'])
+            candidate['food_group'] = str(row['food_group'])
+            candidate['consumption_label'] = str(row.get('consumption_label', row.get('menu_category', 'Unknown')))
+            candidate['cuisine_label'] = str(row.get('cuisine_label', 'Unknown'))
+            candidate['energy_kcal'] = float(row['energy_kcal'])
+            candidate['protein_g'] = float(row.get('protein_g', 0))
+            candidate['carbohydrate_g'] = float(row.get('carbohydrate_g', 0))
+            candidate['fat_g'] = float(row.get('fat_g', 0))
             candidates_list.append(candidate)
         
         return candidates_list
@@ -242,12 +242,15 @@ class CandidateGenerator:
             print(f"[WARN] No candidates found for {slot_category} ({label})")
             return []
         
+        tol = 0.5 if slot_category == 'Drink' else 0.3
+        
         return CandidateGenerator.generate_candidates(
             candidates_df=candidates_df,
             target_calories=target_calories,
             num_candidates=num_candidates,
             exclusion_list=exclusion_names,
-            ingredient_diversity=True
+            ingredient_diversity=True,
+            tolerance=tol
         )
 
 # Test

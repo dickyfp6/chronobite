@@ -19,5 +19,7 @@
     "F. WebApp"
   ],
   "reportMissingImports": true,
-  "reportMissingModuleSource": false
+  "reportMissingModuleSource": false,
+  "reportOptionalMemberAccess": "none",
+  "reportOptionalSubscript": "none"
 }

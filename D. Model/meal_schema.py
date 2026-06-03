@@ -22,6 +22,7 @@ class FoodItem:
     protein_g: float
     carbohydrate_g: float
     fat_g: float
+    micronutrients: Dict = field(default_factory=dict)
     # Tambahan nutrient lainnya bisa di-extend di sini
     
     def to_dict(self):

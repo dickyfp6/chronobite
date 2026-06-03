@@ -1,4 +1,4 @@
-﻿"""
+"""
 GREEDY ALGORITHM - CLI TEST INTERFACE
 ======================================
 
@@ -89,8 +89,8 @@ def print_menu_plan(menu_plan):
     meals = {
         'Breakfast': menu_plan.breakfast,
         'Lunch': menu_plan.lunch,
+        'Dinner': menu_plan.dinner,
         'Snack': menu_plan.snack,
-        'Dinner': menu_plan.dinner
     }
     
     for meal_name, meal in meals.items():
@@ -101,10 +101,10 @@ def print_menu_plan(menu_plan):
         print(f"   Target: {meal.target_calories:.1f} kcal | Actual: {meal.actual_calories:.1f} kcal")
         
         if meal.meal_type == 'Snack':
-            # Snack only uses candidates directly
             for idx, item in enumerate(meal.candidates):
-                print(f"   {idx+1}. {item.food_name}")
-                print(f"      {item.portion_gram}g | {item.energy_kcal}kcal")
+                marker = "[SELECTED]" if idx == 0 else "[OPTION]  "
+                print(f"   {marker}: {item.food_name} ({item.food_group})")
+                print(f"              {item.portion_gram}g | {item.energy_kcal:.1f}kcal | P:{item.protein_g:.1f}g | C:{item.carbohydrate_g:.1f}g | F:{item.fat_g:.1f}g")
         else:
             options = {
                 'Main': meal.courses.get('Main'),
@@ -199,7 +199,7 @@ def test_greedy_algorithm():
         
         print("\n[3/4] Calculating nutrition guidelines...")
         # Use NutritionService to calculate guidelines
-        ns_result = ns.calculate_nutrition_needs(user)
+        ns_result = dict(ns.calculate_nutrition_needs(user) or {})
         
         if not ns_result.get('success'):
             print(f"[ERROR] Failed to calculate nutrition needs: {ns_result.get('error')}")
@@ -207,6 +207,7 @@ def test_greedy_algorithm():
         
         guidelines = ns_result.get('guidelines', {})
         tdee = ns_result['energy']['tdee']
+        # pyrefly: ignore [missing-attribute]
         food_db = ns_result.get('food_data', {}).get('dataframe')
         
         if food_db is None or len(food_db) == 0:
@@ -222,7 +223,7 @@ def test_greedy_algorithm():
             
         print("\n[4/4] Initializing Greedy Algorithm and generating menu...")
         # Get interface
-        from greedy_interface import get_greedy_algorithm
+        from greedy_interface import get_greedy_algorithm  # type: ignore
         greedy = get_greedy_algorithm(food_db, guidelines)
         
         # Generate menu using TDEE (NEW ARCHITECTURE)
@@ -230,6 +231,58 @@ def test_greedy_algorithm():
         
         # Output the results
         print_menu_plan(menu_plan)
+        
+        print("\n" + "="*50)
+        print("[CONSTRAINTS] HARD CONSTRAINT VALIDATION")
+        print("="*50)
+        
+        guidelines = ns_result.get('guidelines', {}).get('nutrients', {})
+        
+        # Get daily totals from greedy optimizer
+        daily = greedy.optimizer.cumulative_nutrients
+        
+        hard_violations = []
+        hard_passed = []
+        
+        for nutrient, constraint in guidelines.items():
+            if constraint.get('hard_soft_type') != 'HARD':
+                continue
+            if constraint.get('constraint_type') == 'unlimited':
+                continue
+            
+            actual = daily.get(nutrient, None)
+            if actual is None:
+                continue  # skip constraints for missing nutrients
+            min_v = constraint.get('min') or 0
+            max_v = constraint.get('max')
+            unit  = constraint.get('unit', '')
+            
+            min_ok = actual >= min_v
+            max_ok = (max_v is None) or (actual <= max_v)
+            
+            if min_ok and max_ok:
+                hard_passed.append(
+                    f"  ✅ {nutrient}: {actual:.1f} {unit} "
+                    f"(target: {min_v:.1f}-{max_v if max_v else '∞'} {unit})"
+                )
+            else:
+                hard_violations.append(
+                    f"  ❌ {nutrient}: {actual:.1f} {unit} "
+                    f"(target: {min_v:.1f}-{max_v if max_v else '∞'} {unit})"
+                )
+        
+        if hard_violations:
+            print(f"Status: ⚠️  INFEASIBLE ({len(hard_violations)} violation(s))")
+            print("\nViolations:")
+            for v in hard_violations:
+                print(v)
+        else:
+            print("Status: ✅ FEASIBLE - All HARD constraints satisfied!")
+        
+        if hard_passed:
+            print(f"\nPassed ({len(hard_passed)}):")
+            for p in hard_passed:
+                print(p)
             
     except Exception as e:
         print(f"\n[ERROR] TEST FAILED: {str(e)}")
