@@ -38,10 +38,10 @@ COURSE_DISTRIBUTION = {
 
 # Realistic portion ranges (must be applied during optimization)
 PORTION_RANGE = {
-    'Main Course': (150, 400),
-    'Side Dish': (50, 250),
-    'Drink': (150, 300),
-    'Snack': (30, 100)
+    'Main Course': (150, 300),
+    'Side Dish':   (50,  150),
+    'Drink':       (150, 250),
+    'Snack':       (30,   80),
 }
 
 MICRONUTRIENT_COLS = [
@@ -124,19 +124,22 @@ class GreedyOptimizer:
                 if constraint.get('constraint_type') == 'unlimited':
                     continue
                 
-                current_total = cumulative_nutrients.get(nutrient, 0.0)
-                food_val = float(candidate.get(nutrient, 0) or 0)
+                cumulative = cumulative_nutrients.get(nutrient, 0.0)
+                food_val_per_100g = float(candidate.get(nutrient, 0) or 0)
                 max_val = constraint.get('max')
                 min_val = float(constraint.get('min') or 0)
                 
-                # Penalty: if adding this food would exceed max
+                # PENALTY: food would push cumulative over max
                 if max_val is not None and max_val > 0:
-                    if (current_total + food_val) > (max_val * 1.1):
-                        constraint_score -= 20
+                    if (cumulative + food_val_per_100g) > max_val:
+                        over_ratio = ((cumulative + food_val_per_100g) - max_val) / max_val
+                        constraint_score -= min(50, over_ratio * 60)
                 
-                # Bonus: if this food helps reach unfulfilled minimum
-                if current_total < min_val and food_val > 0:
-                    constraint_score += 10
+                # BONUS: food helps reach unfulfilled minimum
+                remaining = min_val - cumulative
+                if remaining > 0 and food_val_per_100g > 0:
+                    help_ratio = min(food_val_per_100g, remaining) / max(min_val, 1)
+                    constraint_score += min(20, help_ratio * 25)
             
             constraint_score = max(0, min(100, constraint_score))
 

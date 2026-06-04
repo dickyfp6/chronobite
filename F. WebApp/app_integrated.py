@@ -26,9 +26,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'gr
 try:
     from nutrition_service import NutritionService  # pyright: ignore
     from meal_schema import FoodItem  # type: ignore
-    print("✓ NutritionService and FoodItem imported successfully")
+    print("[OK] NutritionService and FoodItem imported successfully")
 except ImportError as e:
-    print(f"❌ Failed to import NutritionService or FoodItem: {e}")
+    print(f"[ERROR] Failed to import NutritionService or FoodItem: {e}")
     NutritionService = None
     FoodItem = None
 
@@ -41,11 +41,11 @@ try:
         greedy_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(greedy_module)
         GreedyAlgorithmInterface = greedy_module.GreedyAlgorithmInterface
-        print("✓ GreedyAlgorithmInterface imported successfully")
+        print("[OK] GreedyAlgorithmInterface imported successfully")
     else:
-        print("❌ Failed to create spec for GreedyAlgorithmInterface")
+        print("[ERROR] Failed to create spec for GreedyAlgorithmInterface")
 except Exception as e:
-    print(f"❌ Failed to import GreedyAlgorithmInterface: {e}")
+    print(f"[ERROR] Failed to import GreedyAlgorithmInterface: {e}")
 
 # Special handling for Genetic Algorithm
 GeneticAlgorithmInterface = None
@@ -56,18 +56,18 @@ try:
         ga_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(ga_module)
         GeneticAlgorithmInterface = ga_module.GeneticAlgorithmInterface
-        print("✓ GeneticAlgorithmInterface imported successfully")
+        print("[OK] GeneticAlgorithmInterface imported successfully")
     else:
-        print("❌ Failed to create spec for GeneticAlgorithmInterface")
+        print("[ERROR] Failed to create spec for GeneticAlgorithmInterface")
 except Exception as e:
-    print(f"❌ Failed to import GeneticAlgorithmInterface: {e}")
+    print(f"[ERROR] Failed to import GeneticAlgorithmInterface: {e}")
 
 # Initialize Flask app (pure API, no static files)
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 # Enable CORS for React frontend (Vercel deployment)
-CORS(app, resources={
+CORS(app, resources={ # type: ignore
     r"/api/*": {
         "origins": ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
         "methods": ["GET", "POST", "OPTIONS"],
@@ -87,23 +87,23 @@ def init_services():
     if nutrition_service is None and NutritionService:
         try:
             nutrition_service = NutritionService()
-            print("✓ NutritionService initialized")
+            print("[OK] NutritionService initialized")
         except Exception as e:
-            print(f"❌ Failed to initialize NutritionService: {e}")
+            print(f"[ERROR] Failed to initialize NutritionService: {e}")
     
     if greedy_algorithm is None and GreedyAlgorithmInterface:
         try:
             greedy_algorithm = GreedyAlgorithmInterface(pd.DataFrame(), {})
-            print("✓ GreedyAlgorithmInterface initialized")
+            print("[OK] GreedyAlgorithmInterface initialized")
         except Exception as e:
-            print(f"❌ Failed to initialize GreedyAlgorithmInterface: {e}")
+            print(f"[ERROR] Failed to initialize GreedyAlgorithmInterface: {e}")
             
     if genetic_algorithm is None and GeneticAlgorithmInterface:
         try:
             genetic_algorithm = GeneticAlgorithmInterface(pd.DataFrame(), {})
-            print("✓ GeneticAlgorithmInterface initialized")
+            print("[OK] GeneticAlgorithmInterface initialized")
         except Exception as e:
-            print(f"❌ Failed to initialize GeneticAlgorithmInterface: {e}")
+            print(f"[ERROR] Failed to initialize GeneticAlgorithmInterface: {e}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -500,7 +500,7 @@ def get_drinks():
                 temp_course = MealCourse(course_type='Drink', candidates=[item], 
                                          total_calories=item.energy_kcal, total_protein_g=item.protein_g,
                                          total_carb_g=item.carbohydrate_g, total_fat_g=item.fat_g)
-                formatted_drinks[meal_time].append(_course_to_item(temp_course))
+                formatted_drinks[meal_time].append(_course_to_all_candidates(temp_course)[0])
                 
         return jsonify({
             "success": True,

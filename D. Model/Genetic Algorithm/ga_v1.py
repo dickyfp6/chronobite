@@ -1558,11 +1558,11 @@ def local_search(
             avg_per_slot = target_violation['min'] / 10
             min_threshold = avg_per_slot * 0.3
             candidate_pool = food_df_clean[food_df_clean[target_nutrient] >= min_threshold].copy()
-            candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=False)
+            candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=False) # type: ignore
         else:  # HIGH
             max_threshold = target_violation['max'] * 1.2
             candidate_pool = food_df_clean[food_df_clean[target_nutrient] <= max_threshold].copy()
-            candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=True)
+            candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=True) # type: ignore
         
         # Ambil top 50 kandidat terbaik, lalu shuffle untuk eksplorasi
         top_n = min(50, len(candidate_pool))
@@ -1657,15 +1657,15 @@ def local_search(
         
         if best_swap is not None and best_swap['improvement'] > 0:
             # Accept the swap
-            best_solution = best_swap['test_solution'].copy()
+            best_solution = best_swap['test_solution'].copy() # type: ignore
             current_best_fitness = best_swap['new_fitness']  # Update fitness for next iteration
             improvements += 1
             no_improvement_count = 0
             
             # TASK 6: LOGGING
             if verbose:
-                old_name = best_swap['current_food'].get('food_name', '?')
-                new_name = best_swap['new_food'].get('food_name', '?')
+                old_name = best_swap['current_food'].get('food_name', '?') # type: ignore
+                new_name = best_swap['new_food'].get('food_name', '?') # type: ignore
                 print(f"  ✓ Swap at slot {best_swap['gene_idx']}: {old_name} → {new_name}")
                 print(f"    Old fitness: {best_swap['old_fitness']:.1f}")
                 print(f"    New fitness: {best_swap['new_fitness']:.1f}")

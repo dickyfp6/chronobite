@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 from meal_schema import MenuPlan, Meal, MealCourse, SnackMeal, FoodItem
-from ga_v1 import run_ga, calculate_portion_sizes_dynamic, validate_final_solution # type: ignore
+from ga_v1 import run_ga, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options # type: ignore
 
 class GeneticAlgorithmInterface:
     def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):
@@ -20,14 +20,44 @@ class GeneticAlgorithmInterface:
         Initialize the GA interface with data from NutritionService
         """
         self.food_db = food_database
-        self.constraint_bag = constraint_bag.get('nutrients', constraint_bag)
+        self.constraint_bag = self._convert_to_ga_format(constraint_bag)
         print("[OK] Genetic Algorithm Interface initialized")
     
     def initialize(self, food_database: pd.DataFrame, constraint_bag: Dict):
         """Reinitialize with new data"""
         self.food_db = food_database
-        self.constraint_bag = constraint_bag.get('nutrients', constraint_bag)
+        self.constraint_bag = self._convert_to_ga_format(constraint_bag)
         print("[OK] Genetic Algorithm Interface reinitialized")
+        
+    def _convert_to_ga_format(self, constraint_bag: Dict) -> Dict:
+        """Convert NutritionService flat format to GA hard/soft format"""
+        nutrients = constraint_bag.get('nutrients', constraint_bag)
+        
+        hard = {}
+        soft = {}
+        
+        for nutrient, constraint in nutrients.items():
+            if not isinstance(constraint, dict):
+                continue
+            if constraint.get('constraint_type') == 'unlimited':
+                continue
+            
+            # Skip nutrients not in food database
+            if nutrient == 'fruits_and_vegies_g':
+                continue
+            
+            nutrient_data = {
+                'min': constraint.get('min', 0),
+                'max': constraint.get('max', float('inf')),
+                'unit': constraint.get('unit', ''),
+            }
+            
+            if constraint.get('hard_soft_type') == 'HARD':
+                hard[nutrient] = nutrient_data
+            else:
+                soft[nutrient] = nutrient_data
+        
+        return {'hard': hard, 'soft': soft}
         
     def _create_food_item_from_row(self, row: pd.Series) -> FoodItem:
         """Helper to convert a GA output row into a FoodItem object"""
@@ -94,6 +124,74 @@ class GeneticAlgorithmInterface:
             include_drink=True
         )
 
+    def _create_meal_from_rows_with_options(
+        self, meal_type: str, slot_options: Dict, 
+        main_key: int, side_key: int, drink_key: int, 
+        main_row: pd.Series, side_row: pd.Series, drink_row: pd.Series
+    ) -> Meal:
+        
+        # Primary item (index 0 = selected)
+        main_item = self._create_food_item_from_row(main_row)
+        side_item = self._create_food_item_from_row(side_row)
+        drink_item = self._create_food_item_from_row(drink_row)
+        
+        # Additional candidates from slot_options
+        def get_candidates(slot_key, primary_item):
+            options = slot_options.get(slot_key, [])
+            candidates = [primary_item]
+            for opt in options:
+                if isinstance(opt, pd.Series):
+                    try:
+                        cand = self._create_food_item_from_row(opt)
+                        if cand.food_name != primary_item.food_name:
+                            candidates.append(cand)
+                    except:
+                        pass
+                if len(candidates) >= 3:
+                    break
+            return candidates[:3]
+        
+        main_candidates = get_candidates(main_key, main_item)
+        side_candidates = get_candidates(side_key, side_item)
+        drink_candidates = get_candidates(drink_key, drink_item)
+        
+        main_course = MealCourse(
+            course_type='Main',
+            candidates=main_candidates,
+            total_calories=main_item.energy_kcal,
+            total_protein_g=main_item.protein_g,
+            total_carb_g=main_item.carbohydrate_g,
+            total_fat_g=main_item.fat_g
+        )
+        
+        side_course = MealCourse(
+            course_type='Side',
+            candidates=side_candidates,
+            total_calories=side_item.energy_kcal,
+            total_protein_g=side_item.protein_g,
+            total_carb_g=side_item.carbohydrate_g,
+            total_fat_g=side_item.fat_g
+        )
+        
+        drink_course = MealCourse(
+            course_type='Drink',
+            candidates=drink_candidates,
+            total_calories=drink_item.energy_kcal,
+            total_protein_g=drink_item.protein_g,
+            total_carb_g=drink_item.carbohydrate_g,
+            total_fat_g=drink_item.fat_g
+        )
+        
+        total_cal = main_item.energy_kcal + side_item.energy_kcal + drink_item.energy_kcal
+        
+        return Meal(
+            meal_type=meal_type,
+            courses={'Main': main_course, 'Side': side_course, 'Drink': drink_course},
+            target_calories=0,
+            actual_calories=total_cal,
+            include_drink=True
+        )
+
     def generate_menu_plan(self, user_profile: Dict, tdee: float) -> Optional[MenuPlan]:
         """
         Generate complete menu plan using Genetic Algorithm.
@@ -103,7 +201,7 @@ class GeneticAlgorithmInterface:
         
         try:
             # 1. Run GA to find best 10 items
-            best_solution, _ = run_ga(
+            best_solution, top_solutions = run_ga(
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
@@ -116,6 +214,13 @@ class GeneticAlgorithmInterface:
                 print("[ERROR] Genetic Algorithm failed to find a valid 10-item solution.")
                 return None
                 
+            # Generate 3 options per slot
+            slot_options = generate_meal_options(
+                food_df=self.food_db,
+                top_solutions=top_solutions,
+                max_options_per_slot=3
+            )
+                
             # 2. Calculate dynamic portion sizes to match TDEE and limits
             portioned_df = calculate_portion_sizes_dynamic(
                 selected_df=best_solution,
@@ -124,14 +229,33 @@ class GeneticAlgorithmInterface:
             )
             
             # 3. Construct the MenuPlan
-            breakfast = self._create_meal_from_rows('Breakfast', portioned_df.iloc[0], portioned_df.iloc[1], portioned_df.iloc[2])
-            lunch = self._create_meal_from_rows('Lunch', portioned_df.iloc[3], portioned_df.iloc[4], portioned_df.iloc[5])
-            dinner = self._create_meal_from_rows('Dinner', portioned_df.iloc[6], portioned_df.iloc[7], portioned_df.iloc[8])
+            breakfast = self._create_meal_from_rows_with_options('Breakfast', slot_options, 0, 1, 2, portioned_df.iloc[0], portioned_df.iloc[1], portioned_df.iloc[2])
+            lunch = self._create_meal_from_rows_with_options('Lunch', slot_options, 3, 4, 5, portioned_df.iloc[3], portioned_df.iloc[4], portioned_df.iloc[5])
+            dinner = self._create_meal_from_rows_with_options('Dinner', slot_options, 6, 7, 8, portioned_df.iloc[6], portioned_df.iloc[7], portioned_df.iloc[8])
             
             snack_item = self._create_food_item_from_row(portioned_df.iloc[9])
+            
+            # Additional candidates from slot_options for Snack
+            def get_snack_candidates(primary_item):
+                options = slot_options.get(9, [])
+                candidates = [primary_item]
+                for opt in options:
+                    if isinstance(opt, pd.Series):
+                        try:
+                            cand = self._create_food_item_from_row(opt)
+                            if cand.food_name != primary_item.food_name:
+                                candidates.append(cand)
+                        except:
+                            pass
+                    if len(candidates) >= 3:
+                        break
+                return candidates[:3]
+            
+            snack_candidates = get_snack_candidates(snack_item)
+            
             snack = SnackMeal(
                 meal_type='Snack',
-                candidates=[snack_item],
+                candidates=snack_candidates,
                 target_calories=0,
                 actual_calories=snack_item.energy_kcal
             )

@@ -146,7 +146,12 @@ class CandidateGenerator:
             # Fallback: jika jumlah kurang dari yang diminta, ambil terdekat untuk memenuhi kuota
             filtered = candidates_df.copy()
             filtered['calorie_distance'] = abs(filtered['energy_kcal'] - target_calories)
+            # Shuffle first so nsmallest doesn't pick clustered items for identical calorie distances
+            filtered = filtered.sample(frac=1).reset_index(drop=True)
             filtered = filtered.nsmallest(num_candidates + len(exclusion_list) + 10, 'calorie_distance')
+        else:
+            # Shuffle filtered to ensure diversity, avoiding taking N clustered items with the same ingredient
+            filtered = filtered.sample(frac=1).reset_index(drop=True)
         
         # Step 2: Remove exclusions based on ingredient similarity
         result_candidates = []
@@ -227,9 +232,8 @@ class CandidateGenerator:
             'Snack': 'Snack',
         }
 
-        # TAMBAHKAN INI SEMENTARA:
-        print(f"[DEBUG] slot_category={slot_category}, label={SLOT_TO_LABEL.get(slot_category)}, candidates_df size will be filtered from consumption_label")
-        
+
+
         label = SLOT_TO_LABEL.get(slot_category)
         if label is None:
             print(f"[WARN] Unknown slot_category: {slot_category}")
