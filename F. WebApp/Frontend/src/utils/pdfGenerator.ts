@@ -16,6 +16,10 @@ interface PDFData {
   dietTips: Record<string, string[]>;
   language: 'en' | 'id';
   translations: any;
+  charts?: {
+    macro?: string | null;
+    micro?: string | null;
+  };
 }
 
 export async function generateNutritionPDF(data: PDFData): Promise<void> {
@@ -26,9 +30,9 @@ export async function generateNutritionPDF(data: PDFData): Promise<void> {
   let yPosition = margin;
 
   // Colors
-  const primaryColor = [16, 185, 129]; // emerald-500
-  const secondaryColor = [20, 184, 166]; // teal-500
-  const textColor = [31, 41, 55]; // gray-800
+  const primaryColor: [number, number, number] = [16, 185, 129]; // emerald-500
+  const secondaryColor: [number, number, number] = [20, 184, 166]; // teal-500
+  const textColor: [number, number, number] = [31, 41, 55]; // gray-800
 
   // Helper function to add new page if needed
   const checkNewPage = (requiredSpace: number = 20) => {
@@ -181,6 +185,38 @@ export async function generateNutritionPDF(data: PDFData): Promise<void> {
     });
     yPosition += 3;
   });
+
+  // Section 3.5: Nutrition Analysis (Charts)
+  if (data.charts && (data.charts.macro || data.charts.micro)) {
+    checkNewPage(60);
+    yPosition += 10;
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(data.translations.report.tabs.nutrition || "Nutrition Analysis", margin, yPosition);
+    yPosition += 10;
+
+    const chartWidth = pageWidth - 2 * margin;
+    const chartHeight = chartWidth * 0.5; // assuming 2:1 aspect ratio (800x400)
+
+    if (data.charts.macro) {
+      checkNewPage(chartHeight + 20);
+      pdf.setFontSize(12);
+      pdf.text("Macronutrient Balance", margin, yPosition);
+      yPosition += 5;
+      pdf.addImage(data.charts.macro, 'PNG', margin, yPosition, chartWidth, chartHeight);
+      yPosition += chartHeight + 10;
+    }
+
+    if (data.charts.micro) {
+      checkNewPage(chartHeight + 20);
+      pdf.setFontSize(12);
+      pdf.text("Micronutrient Analysis", margin, yPosition);
+      yPosition += 5;
+      pdf.addImage(data.charts.micro, 'PNG', margin, yPosition, chartWidth, chartHeight);
+      yPosition += chartHeight + 10;
+    }
+  }
 
   // Section 4: Diet Tips
   if (data.healthConditions.length > 0) {

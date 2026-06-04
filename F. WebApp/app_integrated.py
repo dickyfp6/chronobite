@@ -47,6 +47,21 @@ try:
 except Exception as e:
     print(f"❌ Failed to import GreedyAlgorithmInterface: {e}")
 
+# Special handling for Genetic Algorithm
+GeneticAlgorithmInterface = None
+try:
+    ga_path = os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Genetic Algorithm', 'ga_interface.py')
+    spec = importlib.util.spec_from_file_location("ga_interface", ga_path)
+    if spec is not None and spec.loader is not None:
+        ga_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(ga_module)
+        GeneticAlgorithmInterface = ga_module.GeneticAlgorithmInterface
+        print("✓ GeneticAlgorithmInterface imported successfully")
+    else:
+        print("❌ Failed to create spec for GeneticAlgorithmInterface")
+except Exception as e:
+    print(f"❌ Failed to import GeneticAlgorithmInterface: {e}")
+
 # Initialize Flask app (pure API, no static files)
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -63,10 +78,11 @@ CORS(app, resources={
 # Global service instances (initialize on first request)
 nutrition_service = None
 greedy_algorithm = None
+genetic_algorithm = None
 
 def init_services():
-    """Initialize NutritionService and GreedyAlgorithm on first use"""
-    global nutrition_service, greedy_algorithm
+    """Initialize NutritionService and Algorithms on first use"""
+    global nutrition_service, greedy_algorithm, genetic_algorithm
     
     if nutrition_service is None and NutritionService:
         try:
@@ -81,6 +97,13 @@ def init_services():
             print("✓ GreedyAlgorithmInterface initialized")
         except Exception as e:
             print(f"❌ Failed to initialize GreedyAlgorithmInterface: {e}")
+            
+    if genetic_algorithm is None and GeneticAlgorithmInterface:
+        try:
+            genetic_algorithm = GeneticAlgorithmInterface(pd.DataFrame(), {})
+            print("✓ GeneticAlgorithmInterface initialized")
+        except Exception as e:
+            print(f"❌ Failed to initialize GeneticAlgorithmInterface: {e}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -433,8 +456,12 @@ def get_drinks():
         
         init_services()
         
-        if greedy_algorithm is None:
-            return jsonify({"success": False, "error": "Greedy Algorithm not available"}), 500
+        algorithm_choice = data.get('algorithm', 'greedy')
+        
+        algorithm_engine = genetic_algorithm if algorithm_choice == 'genetic' else greedy_algorithm
+        
+        if algorithm_engine is None:
+            return jsonify({"success": False, "error": f"{algorithm_choice} algorithm not available"}), 500
         
         # Setup database
         food_database = None
@@ -446,10 +473,10 @@ def get_drinks():
             
         # Initialize
         nutrition_guidelines = analysis_data.get('guidelines', {})
-        greedy_algorithm.initialize(food_database, nutrition_guidelines)
+        algorithm_engine.initialize(food_database, nutrition_guidelines)
         
         # Generate drinks
-        drinks = greedy_algorithm.generate_drink_options(
+        drinks = algorithm_engine.generate_drink_options(
             meal_distribution={
                 'breakfast': 0.2375,
                 'lunch': 0.3375,
@@ -521,8 +548,12 @@ def generate_final_menu():
         
         init_services()
         
-        if greedy_algorithm is None:
-            return jsonify({"success": False, "error": "Greedy Algorithm not available"}), 500
+        algorithm_choice = data.get('algorithm', 'greedy')
+        
+        algorithm_engine = genetic_algorithm if algorithm_choice == 'genetic' else greedy_algorithm
+        
+        if algorithm_engine is None:
+            return jsonify({"success": False, "error": f"{algorithm_choice} algorithm not available"}), 500
         
         # Setup database
         food_database = None
@@ -534,10 +565,10 @@ def generate_final_menu():
             
         # Initialize
         nutrition_guidelines = analysis_data.get('guidelines', {})
-        greedy_algorithm.initialize(food_database, nutrition_guidelines)
+        algorithm_engine.initialize(food_database, nutrition_guidelines)
         
         # Generate final plan
-        menu_plan = greedy_algorithm.generate_menu_with_drinks(
+        menu_plan = algorithm_engine.generate_menu_with_drinks(
             user_profile=user_input,
             meal_distribution={
                 'breakfast': 0.2375,
@@ -595,26 +626,16 @@ def generate_menu():
     try:
         init_services()
         
-        if greedy_algorithm is None:
-            return jsonify({
-                "success": False,
-                "error": "Greedy Algorithm not available"
-            }), 500
-        
         data = request.get_json()
-        
-        # DEBUG: Dump the payload to see what the browser is sending
-        import json
-        with open('debug_request.json', 'w') as f:
-            json.dump(data, f, indent=2)
-            
         algorithm_choice = data.get('algorithm', 'greedy')
         
-        if algorithm_choice != 'greedy':
+        algorithm_engine = genetic_algorithm if algorithm_choice == 'genetic' else greedy_algorithm
+        
+        if algorithm_engine is None:
             return jsonify({
                 "success": False,
-                "error": "Only Greedy algorithm is available. Genetic coming soon!"
-            }), 400
+                "error": f"{algorithm_choice} Algorithm not available"
+            }), 500
         
         # Extract required data
         analysis_data = data.get('analysis_data', {})
@@ -658,7 +679,7 @@ def generate_menu():
             }), 400
         
         try:
-            greedy_algorithm.initialize(food_database, nutrition_guidelines)
+            algorithm_engine.initialize(food_database, nutrition_guidelines)
         except Exception as init_err:
             return jsonify({
                 "success": False,
@@ -666,7 +687,7 @@ def generate_menu():
             }), 500
         
         # Generate menu
-        menu_plan = greedy_algorithm.generate_menu_plan(
+        menu_plan = algorithm_engine.generate_menu_plan(
             user_profile=user_input,
             tdee=tdee
         )
