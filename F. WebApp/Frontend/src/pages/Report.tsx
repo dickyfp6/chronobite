@@ -7,6 +7,7 @@ import { calculateDailyNeeds } from '../utils/mockData';
 import { NutritionChart } from '../components/figma/NutritionChart';
 import { getNutrientUnit } from '../utils/nutrientsList';
 import { generateNutritionPDF } from '../utils/pdfGenerator';
+import html2canvas from 'html2canvas';
 import { translations } from '../utils/translations';
 
 interface ReportProps {
@@ -256,6 +257,22 @@ export function Report({ userData }: ReportProps) {
       fat: actualNutrients?.fat || Math.round(dailyNeeds.fat * 0.78),
     };
 
+    // Capture charts
+    const captureChart = async (id: string) => {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      try {
+        const canvas = await html2canvas(el, { scale: 2, logging: false, useCORS: true });
+        return canvas.toDataURL('image/png');
+      } catch (err) {
+        console.error('Error capturing chart', err);
+        return null;
+      }
+    };
+
+    const macroChart = await captureChart('pdf-macro-chart');
+    const microChart = microData.length > 0 ? await captureChart('pdf-micro-chart') : null;
+
     await generateNutritionPDF({
       userName: userData.gender === 'male' ? 'User' : 'User',
       meals: mealsData,
@@ -265,6 +282,10 @@ export function Report({ userData }: ReportProps) {
       dietTips,
       language,
       translations: translations[language],
+      charts: {
+        macro: macroChart,
+        micro: microChart
+      }
     });
   };
 
@@ -566,6 +587,20 @@ export function Report({ userData }: ReportProps) {
             </div>
           )}
         </motion.div>
+      </div>
+
+      {/* Hidden charts for PDF export */}
+      <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', pointerEvents: 'none', opacity: 0 }}>
+        <div id="pdf-export-container" style={{ width: '800px', backgroundColor: 'white', padding: '20px' }}>
+          <div id="pdf-macro-chart" style={{ width: '800px', height: '400px' }}>
+            <NutritionChart data={macroData} />
+          </div>
+          {microData.length > 0 && (
+            <div id="pdf-micro-chart" style={{ width: '800px', height: '400px' }}>
+              <NutritionChart data={microData} unit="mg" />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
