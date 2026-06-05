@@ -20,7 +20,6 @@ dm2,zinc_mg,8,11,1,14,100,all
 dm2,calcium_mg,950,1050,1,14,100,all
 dm2,sodium_mg,0,2300,1,14,100,all
 dm2,potassium_mg,2600,3400,1,14,100,all
-dm2,fruits_and_vegies_g,400,,1,14,100,all
 hypertension,energy_kcal,1995,2205,1,14,100,all
 hypertension,carbohydrate_g,0.38,0.55,TDEE,14,100,all
 hypertension,protein_g,0.15,0.18,TDEE,14,100,all

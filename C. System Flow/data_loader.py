@@ -222,6 +222,54 @@ class GuidelineLoader:
                         )
                     all_nutrients[nutrient]['diseases'].append(disease)
         
+        # ════════════════════════════════════════════════════════════════════════
+        # CONFLICT RESOLUTION: Detect & fix min > max situations after merge
+        # ════════════════════════════════════════════════════════════════════════
+        
+        for nutrient, data in all_nutrients.items():
+            merged_min = data['min']
+            merged_max = data['max']
+            
+            # Check if conflict: merged min > merged max
+            if merged_min > merged_max:
+                # Collect raw values from all diseases for this nutrient
+                union_mins = []
+                union_maxes = []
+                
+                for disease in data['diseases']:
+                    guideline_df = self.get_guideline_by_disease(disease, age, gender)
+                    if guideline_df.empty:
+                        continue
+                    
+                    nutrient_row = guideline_df[guideline_df['nutrient'] == nutrient]
+                    if nutrient_row.empty:
+                        continue
+                    
+                    min_val = float(nutrient_row.iloc[0]['min']) if pd.notna(nutrient_row.iloc[0]['min']) else None
+                    max_val = float(nutrient_row.iloc[0]['max']) if pd.notna(nutrient_row.iloc[0]['max']) else None
+                    basis = nutrient_row.iloc[0]['basis']
+                    
+                    # Convert to actual units
+                    converted = calculator.convert_guideline_value(
+                        min_val, max_val, basis, user_params, nutrient_name=nutrient
+                    )
+                    
+                    if converted['min_converted'] is not None and converted['min_converted'] > 0:
+                        union_mins.append(converted['min_converted'])
+                    if converted['max_converted'] is not None and converted['max_converted'] < float('inf'):
+                        union_maxes.append(converted['max_converted'])
+                
+                # Compute union range (most permissive)
+                union_min = min(union_mins) if union_mins else 0
+                union_max = max(union_maxes) if union_maxes else float('inf')
+                
+                print(f"[WARN] Conflict on '{nutrient}': min {merged_min:.1f} > max {merged_max:.1f}. "
+                      f"Falling back to union range {union_min:.1f} – {union_max:.1f}")
+                
+                # Apply union range
+                data['min'] = union_min
+                data['max'] = union_max
+        
         return all_nutrients
     
     def load_food_data(self, food_path=None):
