@@ -243,7 +243,7 @@ class NutritionService:
                             unit = self._infer_unit(nutrient_key)
                             nutrients_dict[nutrient_key] = {
                                 'min': float(dri_value),
-                                'max': float(dri_value),
+                                'max': float('inf'),  # DRI is minimum, not exact target; excess micronutrients are safe
                                 'basis': 'DRI',
                                 'tipe': 'dri',
                                 'constraint_type': 'dri_micronutrient',
