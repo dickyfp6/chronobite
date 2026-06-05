@@ -289,6 +289,12 @@ class GeneticAlgorithmInterface:
             # 4. Check validation
             validation = validate_final_solution(portioned_df, self.constraint_bag, tdee=tdee)
             
+            # Parse n_passed dan n_total dari summary string "Compliance: 58% (18/31)"
+            import re
+            _match = re.search(r'\((\d+)/(\d+)\)', validation.get('summary', ''))
+            _n_passed = int(_match.group(1)) if _match else 0
+            _n_total = int(_match.group(2)) if _match else 0
+            
             menu_plan = MenuPlan(
                 algorithm_used='Genetic',
                 user_profile=user_profile,
@@ -302,6 +308,9 @@ class GeneticAlgorithmInterface:
                 total_daily_fat_g=total_fat,
                 feasible=validation['is_valid'],
                 violations=[f"{v[0]}: {v[4]}" for v in validation['violations']],
+                compliance_rate=validation['compliance_rate'],
+                n_constraints_passed=_n_passed,
+                n_constraints_total=_n_total,
                 daily_micronutrients=daily_micronutrients
             )
             

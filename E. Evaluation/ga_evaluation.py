@@ -79,10 +79,12 @@ def main():
             run_fitnesses = []
             run_cs_rates = []
             run_avg_deviations = []
+            run_n_passed = []
+            run_n_total = []
             deviations_all_runs = []
             
-            for run_idx in range(3):
-                print(f"  -> Run {run_idx+1}/3...")
+            for run_idx in range(5):
+                print(f"  -> Run {run_idx+1}/5...")
                 menu_plan = ga_engine.generate_menu_plan(profile, tdee)
                 
                 if not menu_plan:
@@ -101,28 +103,22 @@ def main():
                 if hasattr(menu_plan, 'daily_micronutrients') and menu_plan.daily_micronutrients:
                     MACRO_MAP.update(menu_plan.daily_micronutrients)
     
-                deviations = []
-                hard_constraints_passed = 0
-                total_hard_constraints = 0
-                total_penalty = 0
-                
-                for nutrient, limits in guideline_nutrients.items():
-                    tipe = limits.get('hard_soft_type', 'SOFT')
+                # Ambil CSR langsung dari validate_final_solution via menu_plan
+                satisfaction_rate = menu_plan.compliance_rate
+                n_passed = menu_plan.n_constraints_passed
+                n_total = menu_plan.n_constraints_total
 
-                    # Skip micronutrients — MenuPlan doesn't track them
+                # Hitung deviation hanya untuk chart (bukan untuk CSR)
+                deviations = []
+                total_penalty = 0
+                for nutrient, limits in guideline_nutrients.items():
                     if nutrient not in MACRO_MAP:
                         continue
-
                     actual_val = MACRO_MAP[nutrient]
                     min_v = limits.get('min', 0)
                     max_v = limits.get('max', float('inf'))
-                    
-                    if tipe == 'HARD':
-                        total_hard_constraints += 1
-                        if min_v <= actual_val <= max_v:
-                            hard_constraints_passed += 1
-                            
-                    # Deviation Analysis: use midpoint of [min, max] as target
+                    tipe = limits.get('hard_soft_type', 'SOFT')
+
                     if min_v > 0 and max_v < float('inf'):
                         target = (min_v + max_v) / 2
                     elif min_v > 0:
@@ -143,13 +139,12 @@ def main():
                         })
                         total_penalty += min(deviation_pct, 100)
 
-                
-                run_fitnesses.append(total_penalty) # using total deviation as a proxy for penalty fitness
-                
-                satisfaction_rate = (hard_constraints_passed / total_hard_constraints * 100) if total_hard_constraints > 0 else 100
+                run_fitnesses.append(total_penalty)
                 avg_deviation = sum(d['deviation_pct'] for d in deviations) / len(deviations) if deviations else 0
                 
                 run_cs_rates.append(satisfaction_rate)
+                run_n_passed.append(n_passed)
+                run_n_total.append(n_total)
                 run_avg_deviations.append(avg_deviation)
                 if run_idx == 0:
                     deviations_all_runs = deviations # Save first run for charting
@@ -165,6 +160,7 @@ def main():
             results_summary.append({
                 'Profile': profile['name'],
                 'CS Rate': mean_cs,
+                'N Constraints': f"{int(np.mean(run_n_passed))}/{int(np.mean(run_n_total))}",
                 'Avg Deviation': mean_dev,
                 'Fitness (Mean)': mean_fitness,
                 'Fitness (Std)': std_fitness
@@ -209,10 +205,10 @@ def main():
         plt.close()
 
         print("\n==========================================")
-        print(f"{'Profile':<50} | {'CS Rate':<10} | {'Avg Deviation':<15} | {'Fitness (Penalty)':<20}")
-        print("-" * 105)
+        print(f"{'Profile':<50} | {'CS Rate':<10} | {'N Constraints':<15} | {'Avg Deviation':<15} | {'Fitness (Penalty)':<20}")
+        print("-" * 140)
         for row in results_summary:
-            print(f"{row['Profile']:<50} | {row['CS Rate']:<8.1f}% | {row['Avg Deviation']:<13.1f}% | {row['Fitness (Mean)']:<7.1f} ± {row['Fitness (Std)']:<5.1f}")
+            print(f"{row['Profile']:<50} | {row['CS Rate']:<8.1f}% | {row['N Constraints']:<15} | {row['Avg Deviation']:<13.1f}% | {row['Fitness (Mean)']:<7.1f} ± {row['Fitness (Std)']:<5.1f}")
         print("==========================================")
 
 if __name__ == "__main__":

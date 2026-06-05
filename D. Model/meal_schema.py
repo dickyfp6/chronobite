@@ -121,6 +121,9 @@ class MenuPlan:
         violations: Optional[List[str]] = None,
         total_calories: Optional[float] = None,
         daily_micronutrients: Optional[Dict[str, float]] = None,
+        compliance_rate: float = 0.0,
+        n_constraints_passed: int = 0,
+        n_constraints_total: int = 0,
         **_kwargs,
     ):
         self.algorithm_used = algorithm_used
@@ -136,6 +139,9 @@ class MenuPlan:
         self.feasible = feasible
         self.violations = violations or []
         self.daily_micronutrients = daily_micronutrients or {}
+        self.compliance_rate = compliance_rate
+        self.n_constraints_passed = n_constraints_passed
+        self.n_constraints_total = n_constraints_total
 
     @property
     def total_calories(self):

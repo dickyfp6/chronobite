@@ -532,6 +532,10 @@ class GreedyOptimizer:
         feasible = True
         violations = []
         
+        # TODO: Evaluate compliance using validate_final_solution
+        # Currently portioned_df is not exposed by greedy optimizer
+        # Need to reconstruct or modify optimizer to track it
+        
         menu_plan = MenuPlan(
             algorithm_used='Greedy',
             user_profile=user_profile,
@@ -545,7 +549,10 @@ class GreedyOptimizer:
             total_daily_fat_g=self.cumulative_nutrients['fat_g'],
             daily_micronutrients=self.cumulative_nutrients,
             feasible=feasible,
-            violations=violations
+            violations=violations,
+            compliance_rate=0.0,        # Placeholder: evaluate in future
+            n_constraints_passed=0,     # Placeholder: evaluate in future
+            n_constraints_total=0       # Placeholder: evaluate in future
         )
         
         return menu_plan
