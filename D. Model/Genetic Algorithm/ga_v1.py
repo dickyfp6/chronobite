@@ -1550,10 +1550,12 @@ def local_search(
             break
         
         # ════════════════════════════════════════════════════════════════
-        # Select TARGET nutrient (biggest violation)
+        # Select TARGET nutrient dengan rotasi
+        # Jika violation terbesar terus gagal, coba violation berikutnya
         # ════════════════════════════════════════════════════════════════
         
-        target_violation = hard_violations[0]
+        violation_idx = (iteration - 1) % len(hard_violations)
+        target_violation = hard_violations[violation_idx]
         target_nutrient = target_violation['nutrient']
         target_type = target_violation['type']
         
@@ -1562,32 +1564,35 @@ def local_search(
             print(f"  Current fitness: {current_best_fitness:.1f}")
         
         # ════════════════════════════════════════════════════════════════
-        # CREATE CANDIDATE POOL based on target
+        # CREATE CANDIDATE POOL based on target (RELAXED THRESHOLDS)
         # ════════════════════════════════════════════════════════════════
         
         if target_type == 'LOW':
-            # Gunakan absolute threshold, bukan relative ke target total
-            # Target total dibagi 10 slot = rata-rata per item
-            avg_per_slot = target_violation['min'] / 10
-            min_threshold = avg_per_slot * 0.3
-            candidate_pool = food_df_clean[food_df_clean[target_nutrient] >= min_threshold].copy()
+            # Threshold sangat longgar: cukup punya sedikit nutrient target
+            min_threshold = target_violation['min'] / 100
+            candidate_pool = food_df_clean[
+                food_df_clean[target_nutrient] >= min_threshold
+            ].copy()
             candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=False) # type: ignore
         else:  # HIGH
-            max_threshold = target_violation['max'] * 1.2
-            candidate_pool = food_df_clean[food_df_clean[target_nutrient] <= max_threshold].copy()
+            # Ambil makanan yang punya nilai lebih rendah dari current item
+            max_threshold = target_violation['max'] * 2.0
+            candidate_pool = food_df_clean[
+                food_df_clean[target_nutrient] <= max_threshold
+            ].copy()
             candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=True) # type: ignore
         
-        # Ambil top 50 kandidat terbaik, lalu shuffle untuk eksplorasi
-        top_n = min(50, len(candidate_pool))
+        # Ambil top 100 kandidat (naik dari 50) lalu shuffle
+        top_n = min(100, len(candidate_pool))
         candidate_pool = candidate_pool.head(top_n).sample(frac=1, random_state=None).reset_index(drop=True)
         
         if len(candidate_pool) == 0:
             if verbose:
                 print(f"  ✗ No suitable candidates found")
             no_improvement_count += 1
-            if no_improvement_count >= 5:
+            if no_improvement_count >= 10:
                 if verbose:
-                    print(f"\n[STOP] No improvement for 5 consecutive iterations")
+                    print(f"\n[STOP] No improvement for {no_improvement_count} consecutive iterations")
                 break
             continue
         
@@ -1629,21 +1634,21 @@ def local_search(
                 test_solution.iloc[gene_idx] = new_food
                 test_nutrition = calculate_total_nutrition(test_solution)
                 
-                # TASK 3: CHECK OVERCORRECTION (prevent extreme swings)
-                # Reject jika actual > 1.2 * max ATAU actual < 0.8 * min
+                # OVERCORRECTION CHECK - hanya cek nutrient yang sedang diperbaiki
+                # Jangan cek semua nutrient (terlalu ketat, memblokir semua kandidat)
                 overcorrected = False
-                for nutrient, constraint in hard_constraints.items():
-                    if nutrient not in test_nutrition:
-                        continue
-                    
-                    actual_test = test_nutrition[nutrient]
-                    min_val = constraint.get('min', 0)
-                    max_val = constraint.get('max', float('inf'))
-                    
-                    # Check extreme bounds
-                    if actual_test > 1.2 * max_val or actual_test < 0.8 * min_val:
+                actual_test_target = test_nutrition.get(target_nutrient, 0)
+                target_min = target_violation['min']
+                target_max = target_violation['max']
+                
+                if target_type == 'LOW':
+                    # Pastikan tidak overcorrect ke HIGH (jangan lebih dari 1.5x max)
+                    if actual_test_target > 1.5 * target_max:
                         overcorrected = True
-                        break
+                elif target_type == 'HIGH':
+                    # Pastikan tidak overcorrect ke LOW (jangan kurang dari 0.5x min)
+                    if target_min > 0 and actual_test_target < 0.5 * target_min:
+                        overcorrected = True
                 
                 if overcorrected:
                     continue  # Skip this candidate
@@ -1692,8 +1697,8 @@ def local_search(
             
             no_improvement_count += 1
             
-            # TASK 5: STOPPING CONDITION - Stop after 5 consecutive no-improvement
-            if no_improvement_count >= 5:
+            # TASK 5: STOPPING CONDITION - Stop after 10 consecutive no-improvement (increased from 5)
+            if no_improvement_count >= 10:
                 if verbose:
                     print(f"\n[STOP] No improvement for {no_improvement_count} consecutive iterations")
                 break
