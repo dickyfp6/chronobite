@@ -56,6 +56,5 @@ ckd,fat_g,0.25,0.35,TDEE,14,100,all
 ckd,saturated_fat_g,0,0.1,TDEE,14,100,all
 ckd,sodium_mg,0,2000,1,14,100,all
 ckd,calcium_mg,800,1000,1,14,100,all
-ckd,water_g,30,35,BB,14,100,all
 ckd,phosphorus_mg,800,1000,1,14,100,all
 ckd,vitamin_c_mg,75,90,1,14,100,all
