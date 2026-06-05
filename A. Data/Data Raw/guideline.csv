@@ -37,8 +37,8 @@ cvd,energy_kcal,25,30,BBI,14,100,female
 cvd,carbohydrate_g,0.38,0.55,TDEE,14,100,all
 cvd,protein_g,0.15,0.25,TDEE,14,100,all
 cvd,fat_g,0.25,0.35,TDEE,14,100,all
-cvd,saturated_fat_g,0,0.07,1,14,100,all
-cvd,trans_fat_g,0,0.01,1,14,100,all
+cvd,saturated_fat_g,0,0.07,TDEE,14,100,all
+cvd,trans_fat_g,0,0.01,TDEE,14,100,all
 cvd,cholesterol_mg,0,300,1,14,100,all
 cvd,sodium_mg,0,2300,1,14,100,all
 cholesterol,energy_kcal,0.95,1.05,TDEE,14,100,all
