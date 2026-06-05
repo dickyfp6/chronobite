@@ -23,14 +23,14 @@ def plot_radar_chart(df, title, filename):
         fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
         
         # If you want the first axis to be on top:
-        ax.set_theta_offset(np.pi / 2)
-        ax.set_theta_direction(-1)
+        ax.set_theta_offset(np.pi / 2)  # type: ignore
+        ax.set_theta_direction(-1)  # type: ignore
         
         # Draw one axe per variable + add labels labels yet
         plt.xticks(angles[:-1], categories)
         
         # Draw ylabels
-        ax.set_rlabel_position(0)
+        ax.set_rlabel_position(0)  # type: ignore
         plt.yticks([20, 40, 60, 80, 100], ["20","40","60","80","100"], color="grey", size=7)
         plt.ylim(0, 100)
         
