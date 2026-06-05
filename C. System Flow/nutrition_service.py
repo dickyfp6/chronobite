@@ -179,9 +179,9 @@ class NutritionService:
                 'bbi': bbi
             }
             
-            # Merge disease guidelines
+            # Merge disease guidelines (dengan user_params untuk konversi basis yang tepat)
             merged_guidelines = self.guideline_loader.merge_disease_guidelines(
-                disease, age, gender
+                disease, age, gender, user_params=user_params
             )
             
             if not merged_guidelines:
@@ -190,19 +190,16 @@ class NutritionService:
             # Get DRI untuk fallback
             dri_row = self.guideline_loader.get_dri_by_age_gender(age, gender)
             
-            # Process merged guideline nutrients (with conversion)
+            # Process merged guideline nutrients (nilai SUDAH dikonversi di merge_disease_guidelines)
             nutrients_dict = {}
             for nutrient, guideline_data in merged_guidelines.items():
-                min_val = guideline_data['min']
-                max_val = guideline_data['max']
-                basis = guideline_data['basis']
                 tipe = guideline_data.get('tipe', 'range')  # Get tipe from guideline
                 diseases_list = guideline_data['diseases']
                 
-                # Convert nilai (pass nutrient_name untuk TDEE divisor yang tepat)
-                converted = self.calculator.convert_guideline_value(
-                    min_val, max_val, basis, user_params, nutrient_name=nutrient
-                )
+                # Nilai sudah dikonversi di merge_disease_guidelines, ambil langsung
+                min_converted = guideline_data['min']
+                max_converted = guideline_data['max']
+                constraint_type = 'absolute'  # semua sudah dalam unit aktual
                 
                 # Infer unit from nutrient name
                 unit = self._infer_unit(nutrient)
@@ -213,11 +210,11 @@ class NutritionService:
                 hard_soft_type = 'HARD' if tipe in ['range', 'max'] else 'SOFT'
                 
                 nutrients_dict[nutrient] = {
-                    'min': converted['min_converted'],
-                    'max': converted['max_converted'],
-                    'basis': basis,
-                    'tipe': tipe,  # Store original tipe from CSV
-                    'constraint_type': converted['constraint_type'],  # From convert_guideline_value
+                    'min': min_converted,
+                    'max': max_converted,
+                    'basis': '1',              # sudah dikonversi, basis = absolut
+                    'tipe': tipe,              # Store original tipe from CSV
+                    'constraint_type': constraint_type,  # nilai sudah absolut
                     'hard_soft_type': hard_soft_type,  # HARD or SOFT for GA purposes
                     'unit': unit,
                     'source': 'guideline',

@@ -611,6 +611,19 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         float: Total penalty (lower = better)
     """
     total_nutrition = calculate_total_nutrition(solution)
+    
+    # ── QUICK-SCALE: normalisasi total nutrisi ke TDEE sebelum evaluasi ──
+    # Tujuan: GA mengevaluasi POTENSI kombinasi makanan, bukan hukuman kaku @ 100g
+    # Tanpa ini, makanan padat kalori selalu dibuang meski cocok setelah di-portion
+    if tdee and tdee > 0:
+        current_energy = total_nutrition.get('energy_kcal', 0)
+        if current_energy > 0:
+            scale_factor = tdee / current_energy
+            # Clamp scale_factor agar tidak terlalu ekstrem (0.3x - 3.0x)
+            scale_factor = max(0.3, min(3.0, scale_factor))
+            total_nutrition = {k: v * scale_factor for k, v in total_nutrition.items()}
+    # ─────────────────────────────────────────────────────────────────────────────
+    
     hard_constraints = guidelines.get('hard', {})
     soft_constraints = guidelines.get('soft', {})
     
@@ -710,11 +723,11 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
     
     if 'food_name' in solution.columns:
         food_counts = solution['food_name'].value_counts()
-        # Penalize foods appearing > 2 times
+        # Penalize foods appearing > 1 time (any duplication)
         for food_name, count in food_counts.items():
-            if count > 2:
+            if count > 1:
                 # Each extra appearance costs penalty
-                excess = count - 2
+                excess = count - 1
                 diversity_penalty += excess * DUPLICATE_PENALTY_WEIGHT
     
     # ════════════════════════════════════════════════════════════════════════

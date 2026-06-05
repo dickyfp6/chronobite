@@ -132,25 +132,36 @@ class GuidelineLoader:
         
         return filtered
     
-    def merge_disease_guidelines(self, diseases, age, gender='all'):
+    def merge_disease_guidelines(self, diseases, age, gender='all', user_params=None):
         """
         Merge multiple disease guidelines dengan logic:
         - min value: MAXIMUM dari semua disease (most restrictive minimum)
         - max value: MINIMUM dari semua disease (most restrictive maximum)
         
+        BUG FIX: Konversi nilai ke unit aktual SEBELUM merge untuk handle basis berbeda
+        (basis '1', 'TDEE', 'BB', 'BBI' tidak boleh di-merge secara raw)
+        
         Contoh:
-            DM2 energy: 1800-2200
-            Hypertension energy: 1995-2205
-            → Merged: 1995-2200 (max dari 1800 vs 1995, min dari 2200 vs 2205)
+            Hypertension energy (basis '1'): 1995-2205 kcal
+            CVD energy (basis 'TDEE' 0.95x): 0.95 * 2257 = 2144 kcal
+            → Merged: max(1995, 2144) = 2144 kcal (BENAR)
+            Bukan: max(1995, 0.95) = 1995 lalu * 2257 = 4,502,715 (SALAH)
         
         Args:
             diseases: list of str (e.g., ['dm2', 'hypertension'])
             age: int (usia user)
             gender: str ('M', 'F', 'all')
+            user_params: dict dengan keys {tdee, weight, bbi} untuk konversi basis
         
         Returns:
-            dict: merged nutrients
+            dict: merged nutrients (nilai sudah dalam unit aktual)
         """
+        from modules.calculations import NutritionCalculator
+        calculator = NutritionCalculator()
+        
+        if user_params is None:
+            user_params = {'tdee': 2000, 'weight': 70, 'bbi': 60}
+        
         if not diseases:
             raise ValueError("diseases list cannot be empty")
         
@@ -176,35 +187,39 @@ class GuidelineLoader:
                     min_val = None
                     max_val = None
                 
+                # Konversi ke unit aktual DULU sebelum merge
+                converted = calculator.convert_guideline_value(
+                    min_val, max_val, basis, user_params, nutrient_name=nutrient
+                )
+                
+                # Skip jika konversi invalid
+                if converted['constraint_type'] in ('invalid', 'unknown'):
+                    continue
+                
+                min_converted = converted['min_converted']
+                max_converted = converted['max_converted']
+                
+                # Merge nilai yang SUDAH dalam unit aktual
                 if nutrient not in all_nutrients:
                     all_nutrients[nutrient] = {
-                        'min': min_val,
-                        'max': max_val,
-                        'basis': basis,
-                        'tipe': tipe,  # Store tipe column
+                        'min': min_converted,
+                        'max': max_converted,
+                        'basis': '1',           # sudah dikonversi, basis efektif = absolut
+                        'tipe': tipe,
                         'diseases': [disease]
                     }
                 else:
-                    # Min: Take MAXIMUM value (most restrictive minimum)
-                    if min_val is not None:
-                        if all_nutrients[nutrient]['min'] is None:
-                            all_nutrients[nutrient]['min'] = min_val
-                        else:
-                            all_nutrients[nutrient]['min'] = max(
-                                all_nutrients[nutrient]['min'], 
-                                min_val
-                            )
-                    
-                    # Max: Take MINIMUM value (most restrictive maximum)
-                    if max_val is not None:
-                        if all_nutrients[nutrient]['max'] is None:
-                            all_nutrients[nutrient]['max'] = max_val
-                        else:
-                            all_nutrients[nutrient]['max'] = min(
-                                all_nutrients[nutrient]['max'], 
-                                max_val
-                            )
-                    
+                    # Merge nilai yang SUDAH dalam unit aktual (aman dibandingkan langsung)
+                    if min_converted is not None and min_converted > 0:
+                        all_nutrients[nutrient]['min'] = max(
+                            all_nutrients[nutrient]['min'] or 0,
+                            min_converted
+                        )
+                    if max_converted is not None and max_converted < float('inf'):
+                        all_nutrients[nutrient]['max'] = min(
+                            all_nutrients[nutrient]['max'] or float('inf'),
+                            max_converted
+                        )
                     all_nutrients[nutrient]['diseases'].append(disease)
         
         return all_nutrients

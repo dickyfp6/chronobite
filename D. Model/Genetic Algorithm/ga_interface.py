@@ -205,8 +205,10 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                generations=20, # Reduced for faster API responsiveness
-                pop_size=30,
+                generations=100,    # naik dari 20 → 100 untuk konvergensi lebih baik
+                pop_size=50,        # naik dari 30 → 50 untuk diversity lebih baik
+                elite_ratio=0.25,
+                mutation_rate=0.3,
                 verbose=False
             )
             
