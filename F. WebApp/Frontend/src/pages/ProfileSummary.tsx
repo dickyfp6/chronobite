@@ -323,7 +323,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm"
             >
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
@@ -336,7 +336,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950 p-4 border border-emerald-200 dark:border-emerald-800">
+                <div className="rounded-xl bg-emerald-500/5 dark:bg-emerald-400/5 p-4 border border-emerald-500/20 dark:border-emerald-500/10">
                   <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">Estimated daily calories</p>
                   <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{(analysis && analysis.energy && typeof analysis.energy.tdee === 'number' ? Math.round(analysis.energy.tdee) : Math.round(dailyNeeds.calories))} kcal/day</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
@@ -350,7 +350,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm flex flex-col"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm flex flex-col"
             >
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
@@ -364,7 +364,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <div
-                  className="rounded-xl p-4 border-2 flex-1"
+                  className="rounded-xl p-4 border flex-1"
                   style={{
                     borderColor: isNormalBmi ? '#10b981' : bmi < 18.5 || bmi >= 25 ? '#f59e0b' : '#ef4444',
                   }}
@@ -377,10 +377,10 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
                 </div>
 
                 {!isNormalBmi && (
-                  <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4 sm:w-[220px] flex-shrink-0">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Recommended weight range</p>
-                    <p className="text-lg font-bold text-gray-900 dark:text-white">{idealMin} kg - {idealMax} kg</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{bmiInfo.note}</p>
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-gray-100 dark:border-slate-700/60 p-4 sm:w-[220px] flex-shrink-0">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Recommended weight range</p>
+                    <p className="text-base font-bold text-gray-900 dark:text-white mt-0.5">{idealMin} kg - {idealMax} kg</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{bmiInfo.note}</p>
                   </div>
                 )}
               </div>
@@ -391,7 +391,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm lg:col-span-2"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm lg:col-span-2"
             >
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
@@ -405,40 +405,40 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
 
               <div className="space-y-5">
                 {priorityGuidelineItems.length > 0 && (
-                  <div className="rounded-xl bg-transparent dark:bg-transparent p-4 border border-red-300 dark:border-red-700 mb-4">
-                    <p className="text-sm font-semibold text-red-800 dark:text-red-200 mb-3">Priority guidelines for your condition</p>
-                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-3 lg:grid-cols-6">
+                  <div className="rounded-xl bg-transparent p-4 border border-red-300/60 dark:border-red-700/60 mb-4">
+                    <p className="text-xs font-semibold text-red-800 dark:text-red-200 uppercase tracking-wider mb-3">Priority guidelines for your condition</p>
+                    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
                       {priorityGuidelineItems.map((item) => (
                         <div
                           key={item.key}
                           className={
                             item.key === 'energy_kcal'
-                              ? 'rounded-lg bg-[#228B22] dark:bg-[#1b6f1b] p-2 border border-[#2f9a2f] dark:border-[#257d25] shadow-sm'
+                              ? 'rounded-lg bg-emerald-600 dark:bg-emerald-700 p-2.5 border border-emerald-500 dark:border-emerald-600 shadow-sm text-white'
                               : isEnergyOrMacroKey(item.key)
-                                ? 'rounded-lg bg-[#CD1C18] dark:bg-[#a31612] p-2 border border-[#d84b46] dark:border-[#bd3f39] shadow-sm'
-                                : 'rounded-lg bg-red-50 dark:bg-red-950/40 p-2 border border-red-200 dark:border-red-800'
+                                ? 'rounded-lg bg-red-600 dark:bg-red-700 p-2.5 border border-red-500 dark:border-red-600 shadow-sm text-white'
+                                : 'rounded-lg bg-red-50 dark:bg-red-950/40 p-2.5 border border-red-200/60 dark:border-red-800/60'
                           }
                         >
                           <div className="flex items-center justify-between">
-                            <p className={isEnergyOrMacroKey(item.key) ? 'text-sm font-semibold text-white' : 'text-sm font-semibold text-gray-900 dark:text-white'}>{item.label}</p>
+                            <p className="text-xs font-bold truncate">{item.label}</p>
                           </div>
-                          <p className={isEnergyOrMacroKey(item.key) ? 'text-xs text-white/85 mt-1' : 'text-xs text-gray-600 dark:text-gray-300 mt-1'}>{formatGuidelineDisplay(item)}</p>
+                          <p className="text-[11px] font-semibold opacity-90 mt-1">{formatGuidelineDisplay(item)}</p>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Other nutrient limits</p>
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-gray-100 dark:border-slate-700/60 p-4">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Other nutrient limits</p>
                   {remainingGuidelineItems.length > 0 ? (
-                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-3 lg:grid-cols-6">
+                    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
                       {remainingGuidelineItems.map((item) => (
-                        <div key={item.key} className="rounded-lg bg-white dark:bg-slate-800 p-2 border border-gray-200 dark:border-slate-600">
+                        <div key={item.key} className="rounded-lg bg-white dark:bg-slate-850 p-2.5 border border-gray-200/80 dark:border-slate-700 shadow-sm">
                           <div className="flex items-center justify-between">
-                            <p className="text-sm font-semibold text-gray-900 dark:text-white">{item.label}</p>
+                            <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">{item.label}</p>
                           </div>
-                          <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{formatGuidelineDisplay(item)}</p>
+                          <p className="text-[11px] text-gray-600 dark:text-gray-400 mt-1 font-semibold">{formatGuidelineDisplay(item)}</p>
                         </div>
                       ))}
                     </div>
@@ -470,7 +470,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm lg:col-span-2"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm lg:col-span-2"
             >
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
@@ -483,19 +483,19 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
               </div>
 
               <div className="grid sm:grid-cols-3 gap-4">
-                <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Food preferences</p>
-                  <p className="font-semibold text-gray-900 dark:text-white">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Food preferences</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">
                     {userData.foodPreferences.length > 0 ? userData.foodPreferences.join(', ') : 'All cuisines'}
                   </p>
                 </div>
-                <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Activity level</p>
-                  <p className="font-semibold text-gray-900 dark:text-white capitalize">{userData.activity || 'Not selected'}</p>
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Activity level</p>
+                  <p className="font-semibold text-gray-900 dark:text-white capitalize text-sm">{userData.activity || 'Not selected'}</p>
                 </div>
-                <div className="rounded-xl bg-gray-50 dark:bg-slate-800 p-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Demographics</p>
-                  <p className="font-semibold text-gray-900 dark:text-white">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Demographics</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">
                     {userData.gender === 'male' ? 'Male' : 'Female'} • {userData.age} yrs • {userData.weight} kg • {userData.height} cm
                   </p>
                 </div>
@@ -508,7 +508,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
         <div className="flex flex-col sm:flex-row gap-3 justify-between mt-8">
           <button
             onClick={onBack}
-            className="px-6 py-3 rounded-xl font-medium transition-all hover:bg-emerald-100 dark:hover:bg-emerald-900 border-2 border-emerald-200 dark:border-emerald-700 text-gray-900 dark:text-white flex items-center justify-center gap-2"
+            className="px-6 py-3 rounded-xl font-medium transition-all hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 text-gray-900 dark:text-white flex items-center justify-center gap-2"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Profile Input

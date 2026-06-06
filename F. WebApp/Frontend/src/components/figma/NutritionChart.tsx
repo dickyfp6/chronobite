@@ -49,7 +49,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
           <span className="font-medium">Min:</span> {data.minRange}{data.unit}
         </p>
         <p className="text-gray-700 dark:text-gray-300">
-          <span className="font-medium">Max:</span> {data.maxRange !== null ? `${data.maxRange}${data.unit}` : 'No limit'}
+          <span className="font-medium">Max:</span> {data.maxRange !== null && Number.isFinite(data.maxRange) ? `${data.maxRange}${data.unit}` : 'No limit'}
         </p>
         <p className="text-emerald-700 dark:text-emerald-300 font-semibold">
           <span className="font-medium">Actual:</span> {data.actualValue}{data.unit}
@@ -93,7 +93,7 @@ export function NutritionChart({ data, unit = 'g' }: NutritionChartProps) {
       const id = `nutrient-${index}-${item.nutrient.toLowerCase().replace(/\s+/g, '-')}`;
 
       // Visual maximum to fill the area indefinitely if there is no actual maximum
-      const visualMax = item.max !== null ? item.max : Math.max(item.actual, item.min) * 1.5;
+      const visualMax = (item.max !== null && Number.isFinite(item.max)) ? item.max : Math.max(item.actual, item.min) * 1.5;
 
       return {
         id,

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
-import { Download, FileText, BarChart3, List, Lightbulb } from 'lucide-react';
+import { Download, FileText, BarChart3, List, Lightbulb, User } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import type { UserInputData } from './InputWizard';
 import { calculateDailyNeeds } from '../utils/mockData';
@@ -43,7 +43,7 @@ const dietTips = {
 };
 
 export function Report({ userData }: ReportProps) {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState<number | string>('profile');
   const { t, language } = useI18n();
 
   const [selectedItems] = useState<Record<string, any>>(() => {
@@ -204,6 +204,7 @@ export function Report({ userData }: ReportProps) {
   ];
 
   const tabs = [
+    { id: 'profile', label: 'Profil', icon: User },
     { id: 0, label: t.report.tabs.menu, icon: FileText },
     { id: 1, label: t.report.tabs.nutrition, icon: BarChart3 },
     { id: 2, label: t.report.tabs.other, icon: List },
@@ -307,7 +308,7 @@ export function Report({ userData }: ReportProps) {
           </button>
         </motion.div>
 
-        <div className="mb-6 bg-white dark:bg-slate-800 rounded-xl border-2 border-emerald-200 dark:border-emerald-700 overflow-hidden shadow-sm">
+        <div className="mb-6 bg-white dark:bg-slate-800 rounded-xl border border-gray-200/80 dark:border-slate-700 overflow-hidden shadow-sm">
           <div className="flex overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -317,8 +318,8 @@ export function Report({ userData }: ReportProps) {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex-1 min-w-[120px] px-6 py-4 font-bold transition-all border-b-4 flex items-center justify-center gap-2 ${
                     activeTab === tab.id
-                      ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40'
-                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
+                      ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 bg-emerald-50/5 dark:bg-emerald-400/5'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -333,29 +334,178 @@ export function Report({ userData }: ReportProps) {
           key={activeTab}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-slate-800 rounded-xl p-6 sm:p-8 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm"
+          className="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-gray-200/80 dark:border-slate-700 shadow-xl shadow-emerald-500/5 dark:shadow-none min-h-[500px]"
         >
+          
+          {/* Profile Summary Section */}
+          {activeTab === 'profile' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-8"
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-gray-100 dark:border-slate-700 gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <User className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Profile Summary</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Summary of your personal data and health constraints</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-2">
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Gender & Age</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize">
+                    {userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs
+                  </p>
+                </div>
+                <div className="space-y-1 border-l border-gray-100 dark:border-slate-700 pl-6">
+                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Weight & Height</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white">
+                    {userData.weight} kg • {userData.height} cm
+                  </p>
+                </div>
+                <div className="space-y-1 border-l border-gray-100 dark:border-slate-700 pl-6">
+                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Physical Activity</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize">
+                    {userData.activity || 'Moderate'}
+                  </p>
+                </div>
+                <div className="space-y-1 border-l border-gray-100 dark:border-slate-700 pl-6">
+                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Estimated Calories</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white">
+                    {Math.round(dailyNeeds.calories)} kcal
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100 dark:border-slate-700">
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Health Conditions
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {userData.healthConditions.map(c => (
+                      <span key={c} className="px-2.5 py-1 bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 rounded text-xs font-medium capitalize">
+                        {t.input.health[c as keyof typeof t.input.health] || c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                    Food Preferences
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {userData.foodPreferences.length > 0 ? userData.foodPreferences.map(p => (
+                      <span key={p} className="px-2.5 py-1 bg-teal-500/10 dark:bg-teal-400/10 text-teal-700 dark:text-teal-300 rounded text-xs font-medium capitalize">
+                        {p}
+                      </span>
+                    )) : (
+                      <span className="text-xs text-gray-500 italic">All Cuisines / None</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-gray-100 dark:border-slate-700">
+                <h3 className="text-base font-bold mb-4 text-emerald-800 dark:text-emerald-400 flex items-center gap-2">
+                  <span>Hard Constraints</span>
+                  <span className="text-xs font-normal text-gray-500 dark:text-gray-400">(Required Nutrient Limits)</span>
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                  {analysisGuidelines?.nutrients ? (() => {
+                    const priorityKeys = ['energy_kcal', 'carbohydrate_g', 'protein_g', 'fat_g'];
+                    return Object.entries(analysisGuidelines.nutrients)
+                      .filter(([_, rule]: [string, any]) => rule.hard_soft_type === 'HARD')
+                      .sort(([keyA], [keyB]) => {
+                        const idxA = priorityKeys.indexOf(keyA);
+                        const idxB = priorityKeys.indexOf(keyB);
+                        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                        if (idxA !== -1) return -1;
+                        if (idxB !== -1) return 1;
+                        const nameA = t.nutrients[keyA as keyof typeof t.nutrients] || keyA;
+                        const nameB = t.nutrients[keyB as keyof typeof t.nutrients] || keyB;
+                        return nameA.localeCompare(nameB);
+                      })
+                      .map(([key, rule]: [string, any]) => {
+                        const friendlyName = t.nutrients[key as keyof typeof t.nutrients] || key.split('_')[0].toUpperCase();
+                        const unit = rule.unit || getNutrientUnit(key as any);
+                        
+                        let rangeText = '';
+                        const minVal = rule.min != null ? Math.round(rule.min) : null;
+                        const maxVal = rule.max != null && Number.isFinite(rule.max) ? Math.round(rule.max) : null;
+                        
+                        if (minVal !== null && maxVal !== null) {
+                          if (minVal === maxVal) {
+                            rangeText = `± ${minVal} ${unit}`;
+                          } else {
+                            rangeText = `${minVal}-${maxVal} ${unit}`;
+                          }
+                        } else if (minVal !== null) {
+                          rangeText = `min. ${minVal} ${unit}`;
+                        } else if (maxVal !== null) {
+                          rangeText = `max. ${maxVal} ${unit}`;
+                        } else {
+                          rangeText = 'No limits';
+                        }
+
+                        let cardStyle = 'bg-red-50/70 dark:bg-red-950/20 border-red-150 dark:border-red-900/40';
+                        let titleColor = 'text-red-900 dark:text-red-200';
+                        let rangeColor = 'text-red-700/80 dark:text-red-300/80';
+
+                        if (key === 'energy_kcal') {
+                          cardStyle = 'bg-emerald-600 dark:bg-emerald-700 border-emerald-500 dark:border-emerald-600 text-white';
+                          titleColor = 'text-white';
+                          rangeColor = 'text-white/90';
+                        } else if (['carbohydrate_g', 'protein_g', 'fat_g'].includes(key)) {
+                          cardStyle = 'bg-red-600 dark:bg-red-700 border-red-500 dark:border-red-600 text-white';
+                          titleColor = 'text-white';
+                          rangeColor = 'text-white/90';
+                        }
+
+                        return (
+                          <div key={key} className={`p-2.5 rounded border shadow-sm flex flex-col justify-center transition-all hover:opacity-95 ${cardStyle}`}>
+                            <p className={`font-bold text-xs mb-1 truncate ${titleColor}`} title={friendlyName}>{friendlyName}</p>
+                            <p className={`text-[10px] font-medium ${rangeColor}`}>{rangeText}</p>
+                          </div>
+                        );
+                      });
+                  })() : (
+                    <p className="text-xs text-gray-500 col-span-full italic">No specific hard constraints.</p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Meal Menu Section */}
           {activeTab === 0 && (
             <div>
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t.report.tabs.menu}</h2>
               <div className="space-y-6">
                 {/* Breakfast */}
                 <div>
-                  <h3 className="text-lg font-bold mb-3 text-emerald-700 dark:text-emerald-400">Breakfast</h3>
+                  <h3 className="text-base font-bold mb-2.5 text-emerald-700 dark:text-emerald-400">Breakfast</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {getMealItems('breakfast').map((item, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700"
+                        className="p-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors border border-gray-100 dark:border-slate-700/60 rounded-lg flex items-center justify-between shadow-sm"
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 capitalize">
-                              {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
-                            </p>
-                            <p className="font-bold text-gray-900 dark:text-white mb-1">{item.item}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{item.portion}</p>
-                          </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0.5">
+                            {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
+                          </p>
+                          <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{item.item}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.portion}</p>
                         </div>
                       </div>
                     ))}
@@ -364,21 +514,19 @@ export function Report({ userData }: ReportProps) {
 
                 {/* Lunch */}
                 <div>
-                  <h3 className="text-lg font-bold mb-3 text-emerald-700 dark:text-emerald-400">Lunch</h3>
+                  <h3 className="text-base font-bold mb-2.5 text-emerald-700 dark:text-emerald-400">Lunch</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {getMealItems('lunch').map((item, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700"
+                        className="p-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors border border-gray-100 dark:border-slate-700/60 rounded-lg flex items-center justify-between shadow-sm"
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 capitalize">
-                              {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
-                            </p>
-                            <p className="font-bold text-gray-900 dark:text-white mb-1">{item.item}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{item.portion}</p>
-                          </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0.5">
+                            {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
+                          </p>
+                          <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{item.item}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.portion}</p>
                         </div>
                       </div>
                     ))}
@@ -387,21 +535,19 @@ export function Report({ userData }: ReportProps) {
 
                 {/* Dinner */}
                 <div>
-                  <h3 className="text-lg font-bold mb-3 text-emerald-700 dark:text-emerald-400">Dinner</h3>
+                  <h3 className="text-base font-bold mb-2.5 text-emerald-700 dark:text-emerald-400">Dinner</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {getMealItems('dinner').map((item, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700"
+                        className="p-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors border border-gray-100 dark:border-slate-700/60 rounded-lg flex items-center justify-between shadow-sm"
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 capitalize">
-                              {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
-                            </p>
-                            <p className="font-bold text-gray-900 dark:text-white mb-1">{item.item}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{item.portion}</p>
-                          </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0.5">
+                            {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
+                          </p>
+                          <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{item.item}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.portion}</p>
                         </div>
                       </div>
                     ))}
@@ -410,21 +556,19 @@ export function Report({ userData }: ReportProps) {
 
                 {/* Snack */}
                 <div>
-                  <h3 className="text-lg font-bold mb-3 text-emerald-700 dark:text-emerald-400">Snack</h3>
+                  <h3 className="text-base font-bold mb-2.5 text-emerald-700 dark:text-emerald-400">Snack</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {getMealItems('snack').map((item, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700"
+                        className="p-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors border border-gray-100 dark:border-slate-700/60 rounded-lg flex items-center justify-between shadow-sm"
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 capitalize">
-                              {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
-                            </p>
-                            <p className="font-bold text-gray-900 dark:text-white mb-1">{item.item}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{item.portion}</p>
-                          </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0.5">
+                            {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
+                          </p>
+                          <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{item.item}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.portion}</p>
                         </div>
                       </div>
                     ))}
@@ -471,25 +615,30 @@ export function Report({ userData }: ReportProps) {
 
               {/* Vitamins Section */}
               <div className="mb-8">
-                <h3 className="text-lg font-bold mb-4 text-emerald-700 dark:text-emerald-400">Vitamins</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <h3 className="text-base font-bold mb-3.5 text-emerald-700 dark:text-emerald-400">Vitamins</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                   {vitaminNutrients.map((nutrientKey, i) => {
                     const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
                     const unit = getNutrientUnit(nutrientKey as any);
                     const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                    const actual = Math.round(Number(value) * (0.7 + Math.random() * 0.4)); // Mock actual value 70-110%
-                    const percentage = Math.round((actual / Number(value)) * 100);
+                    const targetVal = Number(value) || 0;
+                    const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
+                      ? Math.round(actualNutrients[nutrientKey])
+                      : Math.round(targetVal * (0.7 + Math.random() * 0.4));
+                    const percentage = targetVal === 0 
+                      ? (actual === 0 ? 100 : 0) 
+                      : Math.round((actual / targetVal) * 100);
 
                     return (
-                      <div key={i} className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700">
-                        <h4 className="font-medium mb-2 text-emerald-900 dark:text-emerald-300 text-sm">{name}</h4>
-                        <div className="flex items-baseline justify-between">
-                          <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                      <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60 flex flex-col justify-between hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors shadow-sm">
+                        <h4 className="font-semibold text-gray-700 dark:text-gray-300 text-xs mb-1.5 truncate">{name}</h4>
+                        <div className="flex items-baseline justify-between gap-1">
+                          <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                             {actual}{unit}
                           </span>
-                          <span className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">{percentage}%</span>
+                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded shrink-0">{percentage}%</span>
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        <div className="text-[10px] text-gray-400 dark:text-gray-505 mt-1">
                           Target: {value}{unit}
                         </div>
                       </div>
@@ -500,25 +649,30 @@ export function Report({ userData }: ReportProps) {
 
               {/* Minerals Section */}
               <div className="mb-8">
-                <h3 className="text-lg font-bold mb-4 text-emerald-700 dark:text-emerald-400">Minerals</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <h3 className="text-base font-bold mb-3.5 text-emerald-700 dark:text-emerald-400">Minerals</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                   {mineralNutrients.map((nutrientKey, i) => {
                     const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
                     const unit = getNutrientUnit(nutrientKey as any);
                     const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                    const actual = Math.round(Number(value) * (0.7 + Math.random() * 0.4));
-                    const percentage = Math.round((actual / Number(value)) * 100);
+                    const targetVal = Number(value) || 0;
+                    const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
+                      ? Math.round(actualNutrients[nutrientKey])
+                      : Math.round(targetVal * (0.7 + Math.random() * 0.4));
+                    const percentage = targetVal === 0 
+                      ? (actual === 0 ? 100 : 0) 
+                      : Math.round((actual / targetVal) * 100);
 
                     return (
-                      <div key={i} className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700">
-                        <h4 className="font-medium mb-2 text-emerald-900 dark:text-emerald-300 text-sm">{name}</h4>
-                        <div className="flex items-baseline justify-between">
-                          <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                      <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60 flex flex-col justify-between hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors shadow-sm">
+                        <h4 className="font-semibold text-gray-700 dark:text-gray-300 text-xs mb-1.5 truncate">{name}</h4>
+                        <div className="flex items-baseline justify-between gap-1">
+                          <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                             {actual}{unit}
                           </span>
-                          <span className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">{percentage}%</span>
+                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded shrink-0">{percentage}%</span>
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        <div className="text-[10px] text-gray-400 dark:text-gray-505 mt-1">
                           Target: {value}{unit}
                         </div>
                       </div>
@@ -529,25 +683,30 @@ export function Report({ userData }: ReportProps) {
 
               {/* Other Nutrients Section */}
               <div>
-                <h3 className="text-lg font-bold mb-4 text-emerald-700 dark:text-emerald-400">Other Nutrients</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <h3 className="text-base font-bold mb-3.5 text-emerald-700 dark:text-emerald-400">Other Nutrients</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                   {otherNutrients.map((nutrientKey, i) => {
                     const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
                     const unit = getNutrientUnit(nutrientKey as any);
                     const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                    const actual = Math.round(Number(value) * (0.7 + Math.random() * 0.4));
-                    const percentage = Math.round((actual / Number(value)) * 100);
+                    const targetVal = Number(value) || 0;
+                    const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
+                      ? Math.round(actualNutrients[nutrientKey])
+                      : Math.round(targetVal * (0.7 + Math.random() * 0.4));
+                    const percentage = targetVal === 0 
+                      ? (actual === 0 ? 100 : 0) 
+                      : Math.round((actual / targetVal) * 100);
 
                     return (
-                      <div key={i} className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700">
-                        <h4 className="font-medium mb-2 text-emerald-900 dark:text-emerald-300 text-sm">{name}</h4>
-                        <div className="flex items-baseline justify-between">
-                          <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                      <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60 flex flex-col justify-between hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors shadow-sm">
+                        <h4 className="font-semibold text-gray-700 dark:text-gray-300 text-xs mb-1.5 truncate">{name}</h4>
+                        <div className="flex items-baseline justify-between gap-1">
+                          <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                             {actual}{unit}
                           </span>
-                          <span className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">{percentage}%</span>
+                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded shrink-0">{percentage}%</span>
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        <div className="text-[10px] text-gray-400 dark:text-gray-505 mt-1">
                           Target: {value}{unit}
                         </div>
                       </div>
@@ -561,25 +720,25 @@ export function Report({ userData }: ReportProps) {
           {activeTab === 3 && (
             <div>
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t.report.tabs.tips}</h2>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {userConditions.length > 0 ? (
                   userConditions.map((condition) => (
-                    <div key={condition} className="p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg border-2 border-emerald-200 dark:border-emerald-700">
-                      <h3 className="font-bold text-lg mb-3 text-emerald-700 dark:text-emerald-300">
+                    <div key={condition} className="p-5 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60">
+                      <h3 className="font-bold text-base mb-2.5 text-emerald-700 dark:text-emerald-300">
                         {t.input.health[condition as keyof typeof t.input.health]}
                       </h3>
                       <ul className="space-y-2">
                         {dietTips[condition as keyof typeof dietTips].map((tip, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <span className="text-emerald-600 dark:text-emerald-400 mt-1 font-bold">•</span>
-                            <span className="flex-1 text-gray-700 dark:text-gray-300">{tip}</span>
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">•</span>
+                            <span className="flex-1">{tip}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   ))
                 ) : (
-                  <div className="p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-lg text-center text-emerald-700 dark:text-emerald-300 border-2 border-emerald-200 dark:border-emerald-700">
+                  <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-lg text-center text-sm text-emerald-700 dark:text-emerald-300 border border-gray-100 dark:border-slate-700/60">
                     No specific health conditions selected. Maintain a balanced diet with variety.
                   </div>
                 )}
