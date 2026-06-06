@@ -204,7 +204,7 @@ export function Report({ userData }: ReportProps) {
   ];
 
   const tabs = [
-    { id: 'profile', label: 'Profil', icon: User },
+    { id: 'profile', label: 'Profile', icon: User },
     { id: 0, label: t.report.tabs.menu, icon: FileText },
     { id: 1, label: t.report.tabs.nutrition, icon: BarChart3 },
     { id: 2, label: t.report.tabs.other, icon: List },
@@ -291,24 +291,24 @@ export function Report({ userData }: ReportProps) {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 px-4 py-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 px-4 py-8">
+      <div className="max-w-6xl mx-auto font-sans">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 flex items-center justify-between"
         >
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{t.report.title}</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white font-serif tracking-tight">{t.report.title}</h1>
           <button
             onClick={handleDownloadPDF}
-            className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+            className="px-5 py-2.5 bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all flex items-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer text-sm"
           >
             <Download className="w-4 h-4" />
             {t.report.download}
           </button>
         </motion.div>
 
-        <div className="mb-6 bg-white dark:bg-slate-800 rounded-xl border border-gray-200/80 dark:border-slate-700 overflow-hidden shadow-sm">
+        <div className="mb-6 bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl border border-border/80 dark:border-slate-850/30 overflow-hidden shadow-xl shadow-primary/5 dark:shadow-none">
           <div className="flex overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -316,10 +316,10 @@ export function Report({ userData }: ReportProps) {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 min-w-[120px] px-6 py-4 font-bold transition-all border-b-4 flex items-center justify-center gap-2 ${
+                  className={`flex-1 min-w-[120px] px-6 py-4 font-semibold text-sm transition-all border-b-4 flex items-center justify-center gap-2 cursor-pointer font-sans ${
                     activeTab === tab.id
-                      ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 bg-emerald-50/5 dark:bg-emerald-400/5'
-                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10'
+                      ? 'border-primary text-primary dark:text-emerald-450 bg-primary/5 dark:bg-primary/10'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-emerald-450 hover:bg-secondary/30 dark:hover:bg-slate-800/20'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -334,7 +334,7 @@ export function Report({ userData }: ReportProps) {
           key={activeTab}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-gray-200/80 dark:border-slate-700 shadow-xl shadow-emerald-500/5 dark:shadow-none min-h-[500px]"
+          className="bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-border/80 dark:border-slate-850/30 shadow-xl shadow-primary/5 dark:shadow-none min-h-[500px]"
         >
           
           {/* Profile Summary Section */}
@@ -344,54 +344,54 @@ export function Report({ userData }: ReportProps) {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-8"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-gray-100 dark:border-slate-700 gap-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-border dark:border-slate-800 gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 text-primary dark:bg-emerald-950/40 dark:text-emerald-450 flex items-center justify-center">
                     <User className="w-6 h-6" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Profile Summary</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Summary of your personal data and health constraints</p>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white font-serif tracking-tight">Profile Summary</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-sans">Summary of your personal data and health constraints</p>
                   </div>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-2">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-2 font-sans">
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Gender & Age</span>
-                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize">
+                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Gender & Age</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize font-serif">
                     {userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs
                   </p>
                 </div>
-                <div className="space-y-1 border-l border-gray-100 dark:border-slate-700 pl-6">
-                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Weight & Height</span>
-                  <p className="text-base font-bold text-gray-900 dark:text-white">
+                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
+                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Weight & Height</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white font-serif">
                     {userData.weight} kg • {userData.height} cm
                   </p>
                 </div>
-                <div className="space-y-1 border-l border-gray-100 dark:border-slate-700 pl-6">
-                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Physical Activity</span>
-                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize">
+                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
+                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Physical Activity</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize font-serif">
                     {userData.activity || 'Moderate'}
                   </p>
                 </div>
-                <div className="space-y-1 border-l border-gray-100 dark:border-slate-700 pl-6">
-                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Estimated Calories</span>
-                  <p className="text-base font-bold text-gray-900 dark:text-white">
+                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
+                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Estimated Calories</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white font-serif">
                     {Math.round(dailyNeeds.calories)} kcal
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100 dark:border-slate-700">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border dark:border-slate-800 font-sans">
                 <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <h4 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                     Health Conditions
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
                     {userData.healthConditions.map(c => (
-                      <span key={c} className="px-2.5 py-1 bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 rounded text-xs font-medium capitalize">
+                      <span key={c} className="px-3 py-1 bg-primary/10 text-primary dark:text-emerald-350 border border-primary/20 dark:border-primary/10 rounded-xl text-xs font-semibold capitalize font-sans">
                         {t.input.health[c as keyof typeof t.input.health] || c}
                       </span>
                     ))}
@@ -399,13 +399,13 @@ export function Report({ userData }: ReportProps) {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                  <h4 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
                     Food Preferences
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
                     {userData.foodPreferences.length > 0 ? userData.foodPreferences.map(p => (
-                      <span key={p} className="px-2.5 py-1 bg-teal-500/10 dark:bg-teal-400/10 text-teal-700 dark:text-teal-300 rounded text-xs font-medium capitalize">
+                      <span key={p} className="px-3 py-1 bg-accent/15 text-accent dark:text-emerald-300 border border-accent/20 dark:border-accent/10 rounded-xl text-xs font-semibold capitalize font-sans">
                         {p}
                       </span>
                     )) : (
@@ -415,10 +415,10 @@ export function Report({ userData }: ReportProps) {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-gray-100 dark:border-slate-700">
-                <h3 className="text-base font-bold mb-4 text-emerald-800 dark:text-emerald-400 flex items-center gap-2">
+              <div className="pt-6 border-t border-border dark:border-slate-800">
+                <h3 className="text-base font-bold mb-4 text-primary dark:text-emerald-450 flex items-center gap-2 font-serif">
                   <span>Hard Constraints</span>
-                  <span className="text-xs font-normal text-gray-500 dark:text-gray-400">(Required Nutrient Limits)</span>
+                  <span className="text-xs font-normal text-gray-500 dark:text-gray-400 font-sans">(Required Nutrient Limits)</span>
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                   {analysisGuidelines?.nutrients ? (() => {
@@ -457,24 +457,28 @@ export function Report({ userData }: ReportProps) {
                           rangeText = 'No limits';
                         }
 
-                        let cardStyle = 'bg-red-50/70 dark:bg-red-950/20 border-red-150 dark:border-red-900/40';
-                        let titleColor = 'text-red-900 dark:text-red-200';
-                        let rangeColor = 'text-red-700/80 dark:text-red-300/80';
+                        let cardStyle = 'rounded-2xl p-3 border bg-white/40 dark:bg-slate-950/20 border-border/85 dark:border-slate-800/80 shadow-sm';
+                        let titleColor = 'text-gray-900 dark:text-white';
+                        let rangeColor = 'text-gray-500 dark:text-gray-400';
 
                         if (key === 'energy_kcal') {
-                          cardStyle = 'bg-emerald-600 dark:bg-emerald-700 border-emerald-500 dark:border-emerald-600 text-white';
-                          titleColor = 'text-white';
-                          rangeColor = 'text-white/90';
+                          cardStyle = 'rounded-2xl p-3 border bg-primary text-primary-foreground border-primary/20 shadow-sm';
+                          titleColor = 'text-primary-foreground';
+                          rangeColor = 'text-primary-foreground/90';
                         } else if (['carbohydrate_g', 'protein_g', 'fat_g'].includes(key)) {
-                          cardStyle = 'bg-red-600 dark:bg-red-700 border-red-500 dark:border-red-600 text-white';
-                          titleColor = 'text-white';
-                          rangeColor = 'text-white/90';
+                          cardStyle = 'rounded-2xl p-3 border bg-secondary dark:bg-slate-900/60 text-secondary-foreground dark:text-emerald-350 border-border/80 dark:border-slate-800';
+                          titleColor = 'text-secondary-foreground dark:text-emerald-350';
+                          rangeColor = 'text-secondary-foreground/80 dark:text-emerald-400/80';
+                        } else {
+                          cardStyle = 'rounded-2xl p-3 border bg-red-500/10 dark:bg-red-950/25 border-red-500/20 dark:border-red-900/30';
+                          titleColor = 'text-red-950 dark:text-red-300';
+                          rangeColor = 'text-red-800/80 dark:text-red-450/80';
                         }
 
                         return (
-                          <div key={key} className={`p-2.5 rounded border shadow-sm flex flex-col justify-center transition-all hover:opacity-95 ${cardStyle}`}>
+                          <div key={key} className={`flex flex-col justify-center transition-all hover:opacity-95 font-sans ${cardStyle}`}>
                             <p className={`font-bold text-xs mb-1 truncate ${titleColor}`} title={friendlyName}>{friendlyName}</p>
-                            <p className={`text-[10px] font-medium ${rangeColor}`}>{rangeText}</p>
+                            <p className={`text-[10px] font-medium font-serif ${rangeColor}`}>{rangeText}</p>
                           </div>
                         );
                       });
@@ -489,23 +493,23 @@ export function Report({ userData }: ReportProps) {
           {/* Meal Menu Section */}
           {activeTab === 0 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t.report.tabs.menu}</h2>
+              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white font-serif tracking-tight">{t.report.tabs.menu}</h2>
               <div className="space-y-6">
                 {/* Breakfast */}
                 <div>
-                  <h3 className="text-base font-bold mb-2.5 text-emerald-700 dark:text-emerald-400">Breakfast</h3>
+                  <h3 className="text-base font-bold mb-2.5 text-primary dark:text-emerald-450 font-serif">Breakfast</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {getMealItems('breakfast').map((item, i) => (
                       <div
                         key={i}
-                        className="p-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors border border-gray-100 dark:border-slate-700/60 rounded-lg flex items-center justify-between shadow-sm"
+                        className="p-4 bg-white/50 dark:bg-slate-900/40 hover:bg-secondary/40 dark:hover:bg-slate-800/60 transition-colors border border-border/80 dark:border-slate-800/60 rounded-2xl flex items-center justify-between shadow-sm shadow-primary/5 dark:shadow-none font-sans"
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0.5">
+                          <p className="text-[10px] text-primary dark:text-emerald-450 font-bold uppercase tracking-wider mb-0.5">
                             {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
                           </p>
                           <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{item.item}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.portion}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{item.portion}</p>
                         </div>
                       </div>
                     ))}
@@ -514,19 +518,19 @@ export function Report({ userData }: ReportProps) {
 
                 {/* Lunch */}
                 <div>
-                  <h3 className="text-base font-bold mb-2.5 text-emerald-700 dark:text-emerald-400">Lunch</h3>
+                  <h3 className="text-base font-bold mb-2.5 text-primary dark:text-emerald-450 font-serif">Lunch</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {getMealItems('lunch').map((item, i) => (
                       <div
                         key={i}
-                        className="p-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors border border-gray-100 dark:border-slate-700/60 rounded-lg flex items-center justify-between shadow-sm"
+                        className="p-4 bg-white/50 dark:bg-slate-900/40 hover:bg-secondary/40 dark:hover:bg-slate-800/60 transition-colors border border-border/80 dark:border-slate-800/60 rounded-2xl flex items-center justify-between shadow-sm shadow-primary/5 dark:shadow-none font-sans"
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0.5">
+                          <p className="text-[10px] text-primary dark:text-emerald-450 font-bold uppercase tracking-wider mb-0.5">
                             {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
                           </p>
                           <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{item.item}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.portion}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{item.portion}</p>
                         </div>
                       </div>
                     ))}
@@ -535,19 +539,19 @@ export function Report({ userData }: ReportProps) {
 
                 {/* Dinner */}
                 <div>
-                  <h3 className="text-base font-bold mb-2.5 text-emerald-700 dark:text-emerald-400">Dinner</h3>
+                  <h3 className="text-base font-bold mb-2.5 text-primary dark:text-emerald-450 font-serif">Dinner</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {getMealItems('dinner').map((item, i) => (
                       <div
                         key={i}
-                        className="p-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors border border-gray-100 dark:border-slate-700/60 rounded-lg flex items-center justify-between shadow-sm"
+                        className="p-4 bg-white/50 dark:bg-slate-900/40 hover:bg-secondary/40 dark:hover:bg-slate-800/60 transition-colors border border-border/80 dark:border-slate-800/60 rounded-2xl flex items-center justify-between shadow-sm shadow-primary/5 dark:shadow-none font-sans"
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0.5">
+                          <p className="text-[10px] text-primary dark:text-emerald-450 font-bold uppercase tracking-wider mb-0.5">
                             {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
                           </p>
                           <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{item.item}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.portion}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{item.portion}</p>
                         </div>
                       </div>
                     ))}
@@ -556,19 +560,19 @@ export function Report({ userData }: ReportProps) {
 
                 {/* Snack */}
                 <div>
-                  <h3 className="text-base font-bold mb-2.5 text-emerald-700 dark:text-emerald-400">Snack</h3>
+                  <h3 className="text-base font-bold mb-2.5 text-primary dark:text-emerald-450 font-serif">Snack</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {getMealItems('snack').map((item, i) => (
                       <div
                         key={i}
-                        className="p-3 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors border border-gray-100 dark:border-slate-700/60 rounded-lg flex items-center justify-between shadow-sm"
+                        className="p-4 bg-white/50 dark:bg-slate-900/40 hover:bg-secondary/40 dark:hover:bg-slate-800/60 transition-colors border border-border/80 dark:border-slate-800/60 rounded-2xl flex items-center justify-between shadow-sm shadow-primary/5 dark:shadow-none font-sans"
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mb-0.5">
+                          <p className="text-[10px] text-primary dark:text-emerald-450 font-bold uppercase tracking-wider mb-0.5">
                             {item.type === 'main' ? 'Main Course' : item.type === 'side' ? 'Side Dish' : item.type}
                           </p>
                           <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{item.item}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.portion}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{item.portion}</p>
                         </div>
                       </div>
                     ))}
@@ -579,158 +583,250 @@ export function Report({ userData }: ReportProps) {
           )}
 
           {activeTab === 1 && (
-            <div key={`chart-${language}`}>
-              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t.report.tabs.nutrition}</h2>
+            <div key={`chart-${language}`} className="font-sans">
+              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white font-serif tracking-tight">{t.report.tabs.nutrition}</h2>
               <div className="mb-4 flex flex-wrap items-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-emerald-600 rounded"></div>
+                  <div className="w-4 h-4 bg-primary rounded"></div>
                   <span className="text-gray-700 dark:text-gray-300">Actual Value</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-3 bg-gradient-to-b from-emerald-300/40 to-emerald-200/20 rounded-sm"></div>
+                  <div className="w-8 h-3 bg-gradient-to-b from-primary/40 to-secondary/20 rounded-sm"></div>
                   <span className="text-gray-700 dark:text-gray-300">Safe Range</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-0.5 border-t-2 border-dashed border-emerald-500"></div>
+                  <div className="w-8 h-0.5 border-t-2 border-dashed border-primary"></div>
                   <span className="text-gray-700 dark:text-gray-300">Min/Max Boundary</span>
                 </div>
               </div>
               <div className="mb-4">
-                <h3 className="text-lg font-bold mb-2 text-emerald-700 dark:text-emerald-400">Macronutrient Balance (g)</h3>
+                <h3 className="text-lg font-bold mb-2 text-primary dark:text-emerald-450 font-serif">Macronutrient Balance (g)</h3>
                 <NutritionChart data={macroData} />
               </div>
               
               {microData.length > 0 && (
                 <div className="mt-8">
-                  <h3 className="text-lg font-bold mb-2 text-emerald-700 dark:text-emerald-400">Micronutrient Analysis (mg)</h3>
+                  <h3 className="text-lg font-bold mb-2 text-primary dark:text-emerald-450 font-serif">Micronutrient Analysis (mg)</h3>
                   <NutritionChart data={microData} unit="mg" />
                 </div>
               )}
             </div>
           )}
-
           {activeTab === 2 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t.report.tabs.other}</h2>
+              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white font-serif tracking-tight">{t.report.tabs.other}</h2>
 
-              {/* Vitamins Section */}
-              <div className="mb-8">
-                <h3 className="text-base font-bold mb-3.5 text-emerald-700 dark:text-emerald-400">Vitamins</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {vitaminNutrients.map((nutrientKey, i) => {
-                    const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
-                    const unit = getNutrientUnit(nutrientKey as any);
-                    const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                    const targetVal = Number(value) || 0;
-                    const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
-                      ? Math.round(actualNutrients[nutrientKey])
-                      : Math.round(targetVal * (0.7 + Math.random() * 0.4));
-                    const percentage = targetVal === 0 
-                      ? (actual === 0 ? 100 : 0) 
-                      : Math.round((actual / targetVal) * 100);
+              {/* Helper for nutrient coloring/status */}
+              {(() => {
+                const getNutrientStatus = (percentage: number) => {
+                  const isId = (language as string) === 'id';
+                  if (percentage < 100) {
+                    return {
+                      label: isId ? 'Kurang Asupan' : 'Deficient',
+                      showBadge: true,
+                      priority: 1, // Red
+                      cardBg: 'bg-red-50/70 dark:bg-red-950/20 border-red-200/50 dark:border-red-900/40',
+                      badgeBg: 'bg-red-500/10 text-red-600 dark:text-red-400',
+                      textColor: 'text-red-700 dark:text-red-400',
+                      titleColor: 'text-red-900 dark:text-red-200'
+                    };
+                  } else if (percentage <= 200) {
+                    return {
+                      label: isId ? 'Cukup' : 'Optimal',
+                      showBadge: false, // Green styling/badge not needed
+                      priority: 3, // Green (neutral style)
+                      cardBg: 'bg-white/40 dark:bg-slate-950/20 border-border/80 dark:border-slate-800/80',
+                      badgeBg: '',
+                      textColor: 'text-gray-800 dark:text-gray-200',
+                      titleColor: 'text-gray-900 dark:text-white'
+                    };
+                  } else {
+                    return {
+                      label: isId ? 'Berlebih' : 'Excessive',
+                      showBadge: true,
+                      priority: 2, // Yellow
+                      cardBg: 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/50 dark:border-amber-900/40',
+                      badgeBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-450',
+                      textColor: 'text-amber-700 dark:text-amber-400',
+                      titleColor: 'text-amber-900 dark:text-amber-200'
+                    };
+                  }
+                };
 
-                    return (
-                      <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60 flex flex-col justify-between hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors shadow-sm">
-                        <h4 className="font-semibold text-gray-700 dark:text-gray-300 text-xs mb-1.5 truncate">{name}</h4>
-                        <div className="flex items-baseline justify-between gap-1">
-                          <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                            {actual}{unit}
-                          </span>
-                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded shrink-0">{percentage}%</span>
-                        </div>
-                        <div className="text-[10px] text-gray-400 dark:text-gray-505 mt-1">
-                          Target: {value}{unit}
-                        </div>
+                return (
+                  <>
+                    {/* Vitamins Section */}
+                    <div className="mb-8">
+                      <h3 className="text-base font-bold mb-3.5 text-primary dark:text-emerald-450 font-serif">Vitamins</h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {(() => {
+                          const mapped = vitaminNutrients.map((nutrientKey) => {
+                            const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
+                            const unit = getNutrientUnit(nutrientKey as any);
+                            const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
+                            const targetVal = Number(value) || 0;
+                            const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
+                              ? Math.round(actualNutrients[nutrientKey])
+                              : Math.round(targetVal * (0.7 + Math.random() * 0.4));
+                            const percentage = targetVal === 0 
+                              ? (actual === 0 ? 100 : 999) 
+                              : Math.round((actual / targetVal) * 100);
+                            const status = getNutrientStatus(percentage);
+                            return { nutrientKey, value, unit, name, actual, percentage, status };
+                          });
+
+                          mapped.sort((a, b) => a.status.priority - b.status.priority);
+
+                          return mapped.map((item, index) => (
+                            <div key={index} className={`p-3.5 rounded-2xl border flex flex-col justify-between hover:opacity-95 transition-all shadow-sm font-sans ${item.status.cardBg}`}>
+                              <div>
+                                <div className="flex justify-between items-start gap-1.5 mb-2.5">
+                                  <h4 className={`font-semibold text-xs truncate ${item.status.titleColor}`} title={item.name}>{item.name}</h4>
+                                  {item.status.showBadge && (
+                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${item.status.badgeBg}`}>
+                                      {item.status.label}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-end justify-between">
+                                  <div className="flex items-baseline">
+                                    <span className={`text-sm font-bold ${item.status.textColor}`}>
+                                      {item.actual}{item.unit}
+                                    </span>
+                                    <span className="text-[10px] font-light text-gray-400 dark:text-gray-500 ml-1">
+                                      / {item.value}{item.unit}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{item.percentage}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          ));
+                        })()}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+                    </div>
 
-              {/* Minerals Section */}
-              <div className="mb-8">
-                <h3 className="text-base font-bold mb-3.5 text-emerald-700 dark:text-emerald-400">Minerals</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {mineralNutrients.map((nutrientKey, i) => {
-                    const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
-                    const unit = getNutrientUnit(nutrientKey as any);
-                    const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                    const targetVal = Number(value) || 0;
-                    const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
-                      ? Math.round(actualNutrients[nutrientKey])
-                      : Math.round(targetVal * (0.7 + Math.random() * 0.4));
-                    const percentage = targetVal === 0 
-                      ? (actual === 0 ? 100 : 0) 
-                      : Math.round((actual / targetVal) * 100);
+                    {/* Minerals Section */}
+                    <div className="mb-8">
+                      <h3 className="text-base font-bold mb-3.5 text-primary dark:text-emerald-450 font-serif">Minerals</h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {(() => {
+                          const mapped = mineralNutrients.map((nutrientKey) => {
+                            const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
+                            const unit = getNutrientUnit(nutrientKey as any);
+                            const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
+                            const targetVal = Number(value) || 0;
+                            const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
+                              ? Math.round(actualNutrients[nutrientKey])
+                              : Math.round(targetVal * (0.7 + Math.random() * 0.4));
+                            const percentage = targetVal === 0 
+                              ? (actual === 0 ? 100 : 999) 
+                              : Math.round((actual / targetVal) * 100);
+                            const status = getNutrientStatus(percentage);
+                            return { nutrientKey, value, unit, name, actual, percentage, status };
+                          });
 
-                    return (
-                      <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60 flex flex-col justify-between hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors shadow-sm">
-                        <h4 className="font-semibold text-gray-700 dark:text-gray-300 text-xs mb-1.5 truncate">{name}</h4>
-                        <div className="flex items-baseline justify-between gap-1">
-                          <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                            {actual}{unit}
-                          </span>
-                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded shrink-0">{percentage}%</span>
-                        </div>
-                        <div className="text-[10px] text-gray-400 dark:text-gray-505 mt-1">
-                          Target: {value}{unit}
-                        </div>
+                          mapped.sort((a, b) => a.status.priority - b.status.priority);
+
+                          return mapped.map((item, index) => (
+                            <div key={index} className={`p-3.5 rounded-2xl border flex flex-col justify-between hover:opacity-95 transition-all shadow-sm font-sans ${item.status.cardBg}`}>
+                              <div>
+                                <div className="flex justify-between items-start gap-1.5 mb-2.5">
+                                  <h4 className={`font-semibold text-xs truncate ${item.status.titleColor}`} title={item.name}>{item.name}</h4>
+                                  {item.status.showBadge && (
+                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${item.status.badgeBg}`}>
+                                      {item.status.label}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-end justify-between">
+                                  <div className="flex items-baseline">
+                                    <span className={`text-sm font-bold ${item.status.textColor}`}>
+                                      {item.actual}{item.unit}
+                                    </span>
+                                    <span className="text-[10px] font-light text-gray-400 dark:text-gray-500 ml-1">
+                                      / {item.value}{item.unit}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{item.percentage}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          ));
+                        })()}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+                    </div>
 
-              {/* Other Nutrients Section */}
-              <div>
-                <h3 className="text-base font-bold mb-3.5 text-emerald-700 dark:text-emerald-400">Other Nutrients</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {otherNutrients.map((nutrientKey, i) => {
-                    const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
-                    const unit = getNutrientUnit(nutrientKey as any);
-                    const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                    const targetVal = Number(value) || 0;
-                    const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
-                      ? Math.round(actualNutrients[nutrientKey])
-                      : Math.round(targetVal * (0.7 + Math.random() * 0.4));
-                    const percentage = targetVal === 0 
-                      ? (actual === 0 ? 100 : 0) 
-                      : Math.round((actual / targetVal) * 100);
+                    {/* Other Nutrients Section */}
+                    <div>
+                      <h3 className="text-base font-bold mb-3.5 text-primary dark:text-emerald-450 font-serif">Other Nutrients</h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {(() => {
+                          const mapped = otherNutrients.map((nutrientKey) => {
+                            const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
+                            const unit = getNutrientUnit(nutrientKey as any);
+                            const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
+                            const targetVal = Number(value) || 0;
+                            const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
+                              ? Math.round(actualNutrients[nutrientKey])
+                              : Math.round(targetVal * (0.7 + Math.random() * 0.4));
+                            const percentage = targetVal === 0 
+                              ? (actual === 0 ? 100 : 999) 
+                              : Math.round((actual / targetVal) * 100);
+                            const status = getNutrientStatus(percentage);
+                            return { nutrientKey, value, unit, name, actual, percentage, status };
+                          });
 
-                    return (
-                      <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60 flex flex-col justify-between hover:bg-slate-100/50 dark:hover:bg-slate-800/80 transition-colors shadow-sm">
-                        <h4 className="font-semibold text-gray-700 dark:text-gray-300 text-xs mb-1.5 truncate">{name}</h4>
-                        <div className="flex items-baseline justify-between gap-1">
-                          <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                            {actual}{unit}
-                          </span>
-                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 dark:bg-emerald-400/10 px-1.5 py-0.5 rounded shrink-0">{percentage}%</span>
-                        </div>
-                        <div className="text-[10px] text-gray-400 dark:text-gray-505 mt-1">
-                          Target: {value}{unit}
-                        </div>
+                          mapped.sort((a, b) => a.status.priority - b.status.priority);
+
+                          return mapped.map((item, index) => (
+                            <div key={index} className={`p-3.5 rounded-2xl border flex flex-col justify-between hover:opacity-95 transition-all shadow-sm font-sans ${item.status.cardBg}`}>
+                              <div>
+                                <div className="flex justify-between items-start gap-1.5 mb-2.5">
+                                  <h4 className={`font-semibold text-xs truncate ${item.status.titleColor}`} title={item.name}>{item.name}</h4>
+                                  {item.status.showBadge && (
+                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${item.status.badgeBg}`}>
+                                      {item.status.label}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-end justify-between">
+                                  <div className="flex items-baseline">
+                                    <span className={`text-sm font-bold ${item.status.textColor}`}>
+                                      {item.actual}{item.unit}
+                                    </span>
+                                    <span className="text-[10px] font-light text-gray-400 dark:text-gray-500 ml-1">
+                                      / {item.value}{item.unit}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{item.percentage}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          ));
+                        })()}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           )}
 
           {activeTab === 3 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{t.report.tabs.tips}</h2>
-              <div className="space-y-4">
+              <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white font-serif tracking-tight">{t.report.tabs.tips}</h2>
+              <div className="space-y-4 font-sans">
                 {userConditions.length > 0 ? (
                   userConditions.map((condition) => (
-                    <div key={condition} className="p-5 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60">
-                      <h3 className="font-bold text-base mb-2.5 text-emerald-700 dark:text-emerald-300">
+                    <div key={condition} className="p-5 bg-white/50 dark:bg-slate-900/40 rounded-2xl border border-border/80 dark:border-slate-800/60 shadow-sm shadow-primary/5 dark:shadow-none">
+                      <h3 className="font-bold text-base mb-2.5 text-primary dark:text-emerald-350 font-serif">
                         {t.input.health[condition as keyof typeof t.input.health]}
                       </h3>
                       <ul className="space-y-2">
                         {dietTips[condition as keyof typeof dietTips].map((tip, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">•</span>
+                            <span className="text-primary dark:text-emerald-450 font-bold">•</span>
                             <span className="flex-1">{tip}</span>
                           </li>
                         ))}
@@ -738,7 +834,7 @@ export function Report({ userData }: ReportProps) {
                     </div>
                   ))
                 ) : (
-                  <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-lg text-center text-sm text-emerald-700 dark:text-emerald-300 border border-gray-100 dark:border-slate-700/60">
+                  <div className="p-6 bg-white/50 dark:bg-slate-900/40 rounded-2xl text-center text-sm text-primary dark:text-emerald-350 border border-border/80 dark:border-slate-800/60 shadow-sm">
                     No specific health conditions selected. Maintain a balanced diet with variety.
                   </div>
                 )}

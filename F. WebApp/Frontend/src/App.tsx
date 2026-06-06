@@ -9,6 +9,7 @@ import type { UserInputData } from './pages/InputWizard';
 import { ProfileSummary } from './pages/ProfileSummary';
 import { Results } from './pages/Results';
 import { Report } from './pages/Report';
+import { api } from './services/api';
 
 type Page = 'landing' | 'algorithm' | 'input' | 'profile' | 'results' | 'report';
 
@@ -37,6 +38,31 @@ export default function App() {
     const saved = sessionStorage.getItem('dss_analysis_result_full');
     return saved ? JSON.parse(saved) : null;
   });
+
+  const [menuPromise, setMenuPromise] = useState<Promise<any> | null>(null);
+
+  const startMenuPrefetch = (analysis: any) => {
+    if (menuPromise) return; // already prefetching
+
+    const payload = {
+      gender: userData.gender === 'male' ? 'M' : 'F',
+      age: userData.age,
+      weight: userData.weight,
+      height: userData.height,
+      activity: userData.activity || '1.845',
+      diseases: userData.healthConditions.length > 0 ? userData.healthConditions : ['normal'],
+      food_preferences: userData.foodPreferences,
+      algorithm: algorithm || 'greedy',
+    };
+
+    const promise = api.generateMenu({
+      algorithm: algorithm || 'greedy',
+      user_profile: payload,
+      analysis_data: analysis || {},
+      user_input: analysis || {},
+    });
+    setMenuPromise(promise);
+  };
 
   const setAnalysisResult = (result: any) => {
     _setAnalysisResult(result);
@@ -96,7 +122,7 @@ export default function App() {
   }, [userData]);
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="light">
+    <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
       <I18nProvider>
         <div className="min-h-screen bg-background text-foreground">
           <Navbar onHomeClick={handleHomeClick} />
@@ -109,7 +135,10 @@ export default function App() {
             {currentPage === 'algorithm' && (
               <AlgorithmSelect
                 selected={algorithm}
-                onSelect={setAlgorithm}
+                onSelect={(algo) => {
+                  setMenuPromise(null);
+                  setAlgorithm(algo);
+                }}
                 onContinue={() => setCurrentPage('input')}
               />
             )}
@@ -117,7 +146,10 @@ export default function App() {
             {currentPage === 'input' && (
               <InputWizard
                 data={userData}
-                onUpdate={(data) => setUserData({ ...userData, ...data })}
+                onUpdate={(data) => {
+                  setMenuPromise(null);
+                  setUserData({ ...userData, ...data });
+                }}
                 onComplete={() => setCurrentPage('profile')}
               />
             )}
@@ -125,9 +157,15 @@ export default function App() {
             {currentPage === 'profile' && (
               <ProfileSummary
                 userData={userData}
-                onBack={() => setCurrentPage('input')}
+                onBack={() => {
+                  setMenuPromise(null);
+                  setCurrentPage('input');
+                }}
                 onContinue={() => setCurrentPage('results')}
-                onAnalysisComplete={setAnalysisResult}
+                onAnalysisComplete={(res) => {
+                  setAnalysisResult(res);
+                  startMenuPrefetch(res);
+                }}
               />
             )}
 
@@ -136,6 +174,7 @@ export default function App() {
                 userData={userData}
                 algorithm={algorithm}
                 analysisResult={analysisResult}
+                menuPromise={menuPromise}
                 onViewReport={() => setCurrentPage('report')}
               />
             )}
@@ -146,23 +185,23 @@ export default function App() {
           {/* Restart Confirmation Modal */}
           {showRestartConfirm && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-              <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl border border-emerald-200 dark:border-emerald-700">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Mulai ulang halaman?</h3>
+              <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl border border-border/80 dark:border-slate-700">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Restart application?</h3>
                 <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
-                  Progress saat ini akan dihapus dan form dimulai dari awal.
+                  Current progress will be cleared and the form will start from the beginning.
                 </p>
                 <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:justify-end">
                   <button
                     onClick={() => setShowRestartConfirm(false)}
                     className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
                   >
-                    Batal
+                    Cancel
                   </button>
                   <button
                     onClick={handleRestartConfirm}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:from-emerald-600 hover:to-teal-600 transition-all"
+                    className="px-5 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary/95 transition-all cursor-pointer text-sm"
                   >
-                    Ya, mulai ulang
+                    Yes, restart
                   </button>
                 </div>
               </div>

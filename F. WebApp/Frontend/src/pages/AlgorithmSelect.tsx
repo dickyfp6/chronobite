@@ -13,15 +13,15 @@ export function AlgorithmSelect({ selected, onSelect, onContinue }: AlgorithmSel
   const { t } = useI18n();
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center px-4 py-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 flex items-center justify-center px-4 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-3xl"
       >
         <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-gray-900 dark:text-white">{t.algorithm.title}</h1>
-          <p className="text-gray-600 dark:text-gray-400">{t.algorithm.subtitle}</p>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-gray-900 dark:text-white tracking-tight">{t.algorithm.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 font-normal">{t.algorithm.subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
@@ -49,7 +49,7 @@ export function AlgorithmSelect({ selected, onSelect, onContinue }: AlgorithmSel
           >
             <button
               onClick={onContinue}
-              className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-teal-600 transition-all shadow-md hover:shadow-lg"
+              className="px-8 py-3.5 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/95 transition-all shadow-md hover:shadow-lg hover:shadow-primary/10 transform hover:-translate-y-0.5 cursor-pointer animate-fade-in"
             >
               {t.algorithm.continue}
             </button>

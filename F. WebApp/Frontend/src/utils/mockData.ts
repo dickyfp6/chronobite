@@ -1,4 +1,3 @@
-import { nutrientsList, type NutrientKey } from './nutrientsList';
 
 export const mealDatabase = {
   breakfast: {
@@ -71,7 +70,7 @@ export const mealDatabase = {
 export function generateRandomMealOptions(meal: string, category: string, count: number = 3) {
   const pool = meal === 'snack'
     ? mealDatabase.snack
-    : mealDatabase[meal as keyof typeof mealDatabase][category as keyof typeof mealDatabase.breakfast];
+    : (mealDatabase[meal as 'breakfast' | 'lunch' | 'dinner'] as any)[category];
 
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, Math.min(count, pool.length));

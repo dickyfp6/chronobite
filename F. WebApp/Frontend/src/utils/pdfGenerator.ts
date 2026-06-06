@@ -30,8 +30,8 @@ export async function generateNutritionPDF(data: PDFData): Promise<void> {
   let yPosition = margin;
 
   // Colors
-  const primaryColor: [number, number, number] = [16, 185, 129]; // emerald-500
-  const secondaryColor: [number, number, number] = [20, 184, 166]; // teal-500
+  const primaryColor: [number, number, number] = [45, 90, 39]; // forest green (#2d5a27)
+  const secondaryColor: [number, number, number] = [85, 133, 80]; // accent green (#558550)
   const textColor: [number, number, number] = [31, 41, 55]; // gray-800
 
   // Helper function to add new page if needed

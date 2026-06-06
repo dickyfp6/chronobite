@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, ArrowLeft, HeartPulse, Scale, Apple, FileText, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, HeartPulse, Scale, FileText, Loader2 } from 'lucide-react';
 import type { UserInputData } from './InputWizard';
 import { calculateDailyNeeds } from '../utils/mockData';
 import { api } from '../services/api';
@@ -295,220 +295,219 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
   }, [userData, dailyNeeds.calories]);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 px-4 py-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 px-4 py-8">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 text-center"
         >
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
             Your Profile Summary
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-normal">
             Review your nutrition profile first. The meal plan will be generated only after you continue.
           </p>
         </motion.div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-emerald-500 animate-spin mb-4" />
+            <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
             <p className="text-gray-600 dark:text-gray-400 font-medium">Calculating optimal health constraints...</p>
           </div>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-2">
-
-            {/* ROW 1: Daily Energy & BMI */}
+          <div className="space-y-6">
+            {/* Top Bar: Profile Details (No boxes, clean layout) */}
             <motion.section
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm"
+              className="bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 border border-border/80 dark:border-slate-850/30 shadow-xl shadow-primary/5 dark:shadow-none"
             >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
-                  <Scale className="w-5 h-5" />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-2">
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Demographics</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize font-serif">
+                    {userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs
+                  </p>
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Daily Energy Needs</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Adjusted with your profile and health constraints</p>
+                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
+                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Weight & Height</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white font-serif">
+                    {userData.weight} kg • {userData.height} cm
+                  </p>
                 </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="rounded-xl bg-emerald-500/5 dark:bg-emerald-400/5 p-4 border border-emerald-500/20 dark:border-emerald-500/10">
-                  <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">Estimated daily calories</p>
-                  <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{(analysis && analysis.energy && typeof analysis.energy.tdee === 'number' ? Math.round(analysis.energy.tdee) : Math.round(dailyNeeds.calories))} kcal/day</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                    Your calorie needs are derived from BMI, BMR, TDEE, activity level, and aligned with your selected health conditions.
+                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
+                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Activity Level</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize font-serif">
+                    {userData.activity || 'Moderate'}
+                  </p>
+                </div>
+                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
+                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Food Preferences</span>
+                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize truncate font-serif" title={userData.foodPreferences.join(', ')}>
+                    {userData.foodPreferences.length > 0 ? userData.foodPreferences.join(', ') : 'All Cuisines'}
                   </p>
                 </div>
               </div>
             </motion.section>
 
-            <motion.section
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm flex flex-col"
-            >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
-                  <HeartPulse className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">BMI Status</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Your current BMI and ideal weight range</p>
-                </div>
-              </div>
+            <div className="grid gap-6 lg:grid-cols-2">
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <div
-                  className="rounded-xl p-4 border flex-1"
-                  style={{
-                    borderColor: isNormalBmi ? '#10b981' : bmi < 18.5 || bmi >= 25 ? '#f59e0b' : '#ef4444',
-                  }}
-                >
-                  <p className={`text-sm font-medium ${bmiInfo.text}`}>Body Mass Index (BMI)</p>
-                  <p className={`text-4xl font-bold mt-1 ${bmiInfo.text}`}>{bmi.toFixed(1)}</p>
-                  <span className={`inline-block mt-3 px-3 py-1 rounded-full text-sm font-semibold ${bmiInfo.badge}`}>
-                    {bmiInfo.label}
-                  </span>
-                </div>
-
-                {!isNormalBmi && (
-                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-gray-100 dark:border-slate-700/60 p-4 sm:w-[220px] flex-shrink-0">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Recommended weight range</p>
-                    <p className="text-base font-bold text-gray-900 dark:text-white mt-0.5">{idealMin} kg - {idealMax} kg</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{bmiInfo.note}</p>
+              {/* ROW 1: Daily Energy & BMI */}
+              <motion.section
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 border border-border/80 dark:border-slate-850/30 shadow-xl shadow-primary/5 dark:shadow-none"
+              >
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-full bg-secondary dark:bg-slate-800 flex items-center justify-center text-primary dark:text-emerald-400">
+                    <Scale className="w-5 h-5" />
                   </div>
-                )}
-              </div>
-            </motion.section>
-
-            {/* ROW 2: Health Guidelines & Nutrition Constraints */}
-            <motion.section
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm lg:col-span-2"
-            >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Health Guidelines</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Carbs, protein, fat, and all other nutrient boundaries</p>
-                </div>
-              </div>
-
-              <div className="space-y-5">
-                {priorityGuidelineItems.length > 0 && (
-                  <div className="rounded-xl bg-transparent p-4 border border-red-300/60 dark:border-red-700/60 mb-4">
-                    <p className="text-xs font-semibold text-red-800 dark:text-red-200 uppercase tracking-wider mb-3">Priority guidelines for your condition</p>
-                    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-                      {priorityGuidelineItems.map((item) => (
-                        <div
-                          key={item.key}
-                          className={
-                            item.key === 'energy_kcal'
-                              ? 'rounded-lg bg-emerald-600 dark:bg-emerald-700 p-2.5 border border-emerald-500 dark:border-emerald-600 shadow-sm text-white'
-                              : isEnergyOrMacroKey(item.key)
-                                ? 'rounded-lg bg-red-600 dark:bg-red-700 p-2.5 border border-red-500 dark:border-red-600 shadow-sm text-white'
-                                : 'rounded-lg bg-red-50 dark:bg-red-950/40 p-2.5 border border-red-200/60 dark:border-red-800/60'
-                          }
-                        >
-                          <div className="flex items-center justify-between">
-                            <p className="text-xs font-bold truncate">{item.label}</p>
-                          </div>
-                          <p className="text-[11px] font-semibold opacity-90 mt-1">{formatGuidelineDisplay(item)}</p>
-                        </div>
-                      ))}
-                    </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Daily Energy Needs</h2>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-normal">Adjusted with your profile and health constraints</p>
                   </div>
-                )}
+                </div>
 
-                <div className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-gray-100 dark:border-slate-700/60 p-4">
-                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Other nutrient limits</p>
-                  {remainingGuidelineItems.length > 0 ? (
-                    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-                      {remainingGuidelineItems.map((item) => (
-                        <div key={item.key} className="rounded-lg bg-white dark:bg-slate-850 p-2.5 border border-gray-200/80 dark:border-slate-700 shadow-sm">
-                          <div className="flex items-center justify-between">
-                            <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">{item.label}</p>
-                          </div>
-                          <p className="text-[11px] text-gray-600 dark:text-gray-400 mt-1 font-semibold">{formatGuidelineDisplay(item)}</p>
-                        </div>
-                      ))}
+                <div className="space-y-4">
+                  <div className="rounded-2xl bg-primary/5 dark:bg-primary/10 p-4 border border-primary/20 dark:border-primary/10">
+                    <p className="text-xs text-primary dark:text-emerald-300 font-semibold tracking-wide uppercase">Estimated daily calories</p>
+                    <p className="text-3xl font-bold text-primary dark:text-emerald-300 font-serif mt-1">{(analysis && analysis.energy && typeof analysis.energy.tdee === 'number' ? Math.round(analysis.energy.tdee) : Math.round(dailyNeeds.calories))} kcal/day</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-2.5 font-normal leading-relaxed">
+                      Your calorie needs are derived from BMI, BMR, TDEE, activity level, and aligned with your selected health conditions.
+                    </p>
+                  </div>
+                </div>
+              </motion.section>
+
+              <motion.section
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 border border-border/80 dark:border-slate-850/30 shadow-xl shadow-primary/5 dark:shadow-none flex flex-col"
+              >
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-full bg-secondary dark:bg-slate-800 flex items-center justify-center text-primary dark:text-emerald-400">
+                    <HeartPulse className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">BMI Status</h2>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-normal">Your current BMI and ideal weight range</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <div
+                    className="rounded-2xl p-4 border flex-1"
+                    style={{
+                      borderColor: isNormalBmi ? '#2d5a27' : bmi < 18.5 || bmi >= 25 ? '#c98a0c' : '#cb2d2d',
+                    }}
+                  >
+                    <p className={`text-xs font-semibold uppercase tracking-wider ${bmiInfo.text}`}>{bmiInfo.label}</p>
+                    <p className={`text-4xl font-bold mt-1 font-serif ${bmiInfo.text}`}>{bmi.toFixed(1)}</p>
+                    <span className={`inline-block mt-3 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary dark:text-emerald-350`}>
+                      Body Mass Index
+                    </span>
+                  </div>
+
+                  {!isNormalBmi && (
+                    <div className="rounded-2xl bg-secondary/35 dark:bg-slate-900/40 border border-border/70 dark:border-slate-800/60 p-4 sm:w-[220px] flex-shrink-0">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide">Ideal Range</p>
+                      <p className="text-base font-bold text-gray-900 dark:text-white mt-1 font-serif">{idealMin} kg - {idealMax} kg</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-normal leading-relaxed">{bmiInfo.note}</p>
                     </div>
-                  ) : (
-                    <p className="text-sm text-gray-600 dark:text-gray-300">No additional nutrient limits available.</p>
                   )}
                 </div>
+              </motion.section>
 
-                {hasDiseaseGuidelines && (
-                  <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950 p-4">
-                    <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
-                      Guidelines above were adjusted for your health conditions: {healthConditions
-                        .map((condition) => conditionLabels[condition] || condition)
-                        .join(', ')}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                      {healthConditions
-                        .map((condition) => conditionGuidelines[condition] || '')
-                        .filter(Boolean)
-                        .join(' ')}
-                    </p>
+              {/* ROW 2: Health Guidelines & Nutrition Constraints */}
+              <motion.section
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 border border-border/80 dark:border-slate-850/30 shadow-xl shadow-primary/5 dark:shadow-none lg:col-span-2"
+              >
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-full bg-secondary dark:bg-slate-800 flex items-center justify-center text-primary dark:text-emerald-400">
+                    <FileText className="w-5 h-5" />
                   </div>
-                )}
-              </div>
-            </motion.section>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Health Guidelines</h2>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-normal">Carbs, protein, fat, and all other nutrient boundaries</p>
+                  </div>
+                </div>
 
-            {/* ROW 3: Other Information */}
-            <motion.section
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm lg:col-span-2"
-            >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
-                  <Apple className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Other Information</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Your preferences and selected profile details</p>
-                </div>
-              </div>
+                <div className="space-y-5">
+                  {priorityGuidelineItems.length > 0 && (
+                    <div className="rounded-2xl bg-transparent p-4 border border-red-550/20 dark:border-red-500/10 mb-4">
+                      <p className="text-xs font-bold text-destructive/80 dark:text-red-300 uppercase tracking-wider mb-3">Priority guidelines for your condition</p>
+                      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+                        {priorityGuidelineItems.map((item) => (
+                          <div
+                            key={item.key}
+                            className={
+                              item.key === 'energy_kcal'
+                                ? 'rounded-xl bg-primary text-primary-foreground p-2.5 border border-primary/20 shadow-sm'
+                                : isEnergyOrMacroKey(item.key)
+                                  ? 'rounded-xl bg-destructive text-destructive-foreground p-2.5 border border-destructive/20 shadow-sm'
+                                  : 'rounded-xl bg-red-500/10 dark:bg-red-950/25 p-2.5 border border-red-500/15'
+                            }
+                          >
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-bold truncate">{item.label}</p>
+                            </div>
+                            <p className="text-[11px] font-semibold mt-1 font-serif">{formatGuidelineDisplay(item)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Food preferences</p>
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm">
-                    {userData.foodPreferences.length > 0 ? userData.foodPreferences.join(', ') : 'All cuisines'}
-                  </p>
-                </div>
-                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Activity level</p>
-                  <p className="font-semibold text-gray-900 dark:text-white capitalize text-sm">{userData.activity || 'Not selected'}</p>
-                </div>
-                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-gray-100 dark:border-slate-700/60">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Demographics</p>
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm">
-                    {userData.gender === 'male' ? 'Male' : 'Female'} • {userData.age} yrs • {userData.weight} kg • {userData.height} cm
-                  </p>
-                </div>
-              </div>
-            </motion.section>
+                  <div className="rounded-2xl bg-secondary/35 dark:bg-slate-900/40 border border-border/70 dark:border-slate-850/60 p-4">
+                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Other nutrient limits</p>
+                    {remainingGuidelineItems.length > 0 ? (
+                      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+                        {remainingGuidelineItems.map((item) => (
+                          <div key={item.key} className="rounded-xl bg-white dark:bg-slate-800 p-2.5 border border-border dark:border-slate-700/60 shadow-sm">
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">{item.label}</p>
+                            </div>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 font-semibold font-serif">{formatGuidelineDisplay(item)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-600 dark:text-gray-300 font-normal">No additional nutrient limits available.</p>
+                    )}
+                  </div>
 
+                  {hasDiseaseGuidelines && (
+                    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                      <p className="text-sm text-primary dark:text-emerald-350 font-semibold">
+                        Guidelines above were adjusted for your health conditions: {healthConditions
+                          .map((condition) => conditionLabels[condition] || condition)
+                          .join(', ')}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 font-normal leading-relaxed">
+                        {healthConditions
+                          .map((condition) => conditionGuidelines[condition] || '')
+                          .filter(Boolean)
+                          .join(' ')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </motion.section>
+
+            </div>
           </div>
         )}
 
         <div className="flex flex-col sm:flex-row gap-3 justify-between mt-8">
           <button
             onClick={onBack}
-            className="px-6 py-3 rounded-xl font-medium transition-all hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 text-gray-900 dark:text-white flex items-center justify-center gap-2"
+            className="px-6 py-3 rounded-2xl font-semibold transition-all hover:bg-secondary dark:hover:bg-slate-800 border border-border dark:border-slate-700 text-gray-900 dark:text-white flex items-center justify-center gap-2 cursor-pointer text-sm"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Profile Input
@@ -517,7 +516,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
           <button
             onClick={onContinue}
             disabled={loading}
-            className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
           >
             Next: Generate Meal Plan
             <ArrowRight className="w-5 h-5" />

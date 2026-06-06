@@ -1,54 +1,23 @@
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
 import lightLogo from '../../assets/light-horizontal.png';
-import darkLogo from '../../assets/dark-horizontal.png';
 
 interface NavbarProps {
   onHomeClick: () => void;
 }
 
 export function Navbar({ onHomeClick }: NavbarProps) {
-  const { theme, setTheme } = useTheme();
-
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-border/70 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <button
           onClick={onHomeClick}
-          className="cursor-pointer transition-all duration-300 hover:drop-shadow-[0_0_12px_rgba(16,185,129,0.6)]"
+          className="cursor-pointer transition-all duration-300 hover:drop-shadow-[0_0_12px_rgba(45,90,39,0.4)]"
         >
           <img
-            src={theme === 'light' ? lightLogo : darkLogo}
+            src={lightLogo}
             alt="NutriPlan"
             className="h-12"
           />
         </button>
-
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 bg-emerald-100 dark:bg-slate-700 rounded-full p-1 shadow-sm">
-            <button
-              onClick={() => setTheme('light')}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                theme === 'light'
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md'
-                  : 'text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300'
-              }`}
-            >
-              <Sun className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setTheme('dark')}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                theme === 'dark'
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md'
-                  : 'text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300'
-              }`}
-            >
-              <Moon className="w-4 h-4" />
-            </button>
-          </div>
-
-        </div>
       </div>
     </nav>
   );

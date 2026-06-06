@@ -12,26 +12,26 @@ interface IconCardProps {
 export function IconCard({ icon: Icon, title, description, selected, disabled, onClick }: IconCardProps) {
   return (
     <motion.button
-      whileHover={{ scale: disabled ? 1 : 1.02 }}
-      whileTap={{ scale: disabled ? 1 : 0.98 }}
+      whileHover={{ scale: disabled ? 1 : 1.01 }}
+      whileTap={{ scale: disabled ? 1 : 0.99 }}
       onClick={onClick}
       disabled={disabled}
-      className={`p-6 rounded-xl border-2 transition-all text-left w-full ${
+      className={`p-6 rounded-2xl border transition-all text-left w-full cursor-pointer ${
         selected
-          ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
+          ? 'border-primary dark:border-primary bg-emerald-500/10 dark:bg-emerald-500/15 shadow-md ring-2 ring-primary/20'
           : disabled
-          ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 opacity-50 cursor-not-allowed'
-          : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
+          ? 'border-border/40 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-800/20 opacity-35 cursor-not-allowed'
+          : 'border-border/80 dark:border-slate-700/60 bg-white/40 dark:bg-slate-800/20 hover:border-primary dark:hover:border-primary/80 hover:shadow-sm hover:bg-white/95 dark:hover:bg-slate-800/80'
       }`}
     >
       <div className="flex flex-col items-center text-center gap-3">
-        <div className={`p-4 rounded-full ${selected ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg' : 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'}`}>
+        <div className={`p-4 rounded-full transition-all ${selected ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-secondary dark:bg-slate-800 text-primary dark:text-emerald-400'}`}>
           <Icon className="w-8 h-8" />
         </div>
         <div>
-          <h3 className="font-medium text-gray-900 dark:text-white">{title}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white text-base tracking-tight">{title}</h3>
           {description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{description}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-normal leading-normal">{description}</p>
           )}
         </div>
       </div>
