@@ -124,6 +124,7 @@ class MenuPlan:
         compliance_rate: float = 0.0,
         n_constraints_passed: int = 0,
         n_constraints_total: int = 0,
+        best_fitness_score: float = 0.0,
         **_kwargs,
     ):
         self.algorithm_used = algorithm_used
@@ -142,6 +143,7 @@ class MenuPlan:
         self.compliance_rate = compliance_rate
         self.n_constraints_passed = n_constraints_passed
         self.n_constraints_total = n_constraints_total
+        self.best_fitness_score = best_fitness_score
 
     @property
     def total_calories(self):

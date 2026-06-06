@@ -1564,39 +1564,6 @@ def local_search(
             print(f"  Current fitness: {current_best_fitness:.1f}")
         
         # ════════════════════════════════════════════════════════════════
-        # CREATE CANDIDATE POOL based on target (RELAXED THRESHOLDS)
-        # ════════════════════════════════════════════════════════════════
-        
-        if target_type == 'LOW':
-            # Threshold sangat longgar: cukup punya sedikit nutrient target
-            min_threshold = target_violation['min'] / 100
-            candidate_pool = food_df_clean[
-                food_df_clean[target_nutrient] >= min_threshold
-            ].copy()
-            candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=False) # type: ignore
-        else:  # HIGH
-            # Ambil makanan yang punya nilai lebih rendah dari current item
-            max_threshold = target_violation['max'] * 2.0
-            candidate_pool = food_df_clean[
-                food_df_clean[target_nutrient] <= max_threshold
-            ].copy()
-            candidate_pool = candidate_pool.sort_values(by=target_nutrient, ascending=True) # type: ignore
-        
-        # Ambil top 100 kandidat (naik dari 50) lalu shuffle
-        top_n = min(100, len(candidate_pool))
-        candidate_pool = candidate_pool.head(top_n).sample(frac=1, random_state=None).reset_index(drop=True)
-        
-        if len(candidate_pool) == 0:
-            if verbose:
-                print(f"  ✗ No suitable candidates found")
-            no_improvement_count += 1
-            if no_improvement_count >= 10:
-                if verbose:
-                    print(f"\n[STOP] No improvement for {no_improvement_count} consecutive iterations")
-                break
-            continue
-        
-        # ════════════════════════════════════════════════════════════════
         # TRY SWAPS - Find best swap that improves fitness (same as GA)
         # ════════════════════════════════════════════════════════════════
         
@@ -1607,8 +1574,30 @@ def local_search(
         for gene_idx in range(len(best_solution)):
             expected_label = SLOT_LABEL_MAP.get(gene_idx, 'Main Course')
             
-            # Filter candidates by consumption label
-            slot_candidates = candidate_pool[candidate_pool['consumption_label'] == expected_label].copy()
+            # Step 1: Filter by consumption_label FIRST
+            label_pool = food_df_clean[
+                food_df_clean['consumption_label'] == expected_label
+            ].copy()
+            
+            if len(label_pool) == 0:
+                continue
+            
+            # Step 2: Filter by nutrient value within label pool
+            if target_type == 'LOW':
+                min_threshold = target_violation['min'] / 100
+                slot_candidates = label_pool[
+                    label_pool[target_nutrient] >= min_threshold
+                ].sort_values(by=target_nutrient, ascending=False)
+            else:  # HIGH
+                max_threshold = target_violation['max'] * 2.0
+                slot_candidates = label_pool[
+                    label_pool[target_nutrient] <= max_threshold
+                ].sort_values(by=target_nutrient, ascending=True)
+            
+            # Take top 100 and shuffle
+            slot_candidates = slot_candidates.head(100).sample(
+                frac=1, random_state=None
+            ).reset_index(drop=True)
             
             if len(slot_candidates) == 0:
                 continue
@@ -2396,10 +2385,10 @@ def calculate_portion_sizes_dynamic(
             if col.endswith(('_mg', '_g', '_mcg', '_iu', '_kcal')):
                 # Force conversion to numeric
                 # pyrefly: ignore [missing-attribute]
-                result_df[col] = pd.to_numeric(result_df[col], errors='coerce').fillna(0.0)
+                result_df[col] = pd.to_numeric(result_df[col], errors='coerce').fillna(0.0)  # type: ignore[attr-defined]
                 if col in selected_df.columns:
                     # pyrefly: ignore [missing-attribute]
-                    selected_df.loc[:, col] = pd.to_numeric(selected_df[col], errors='coerce').fillna(0.0)
+                    selected_df.loc[:, col] = pd.to_numeric(selected_df[col], errors='coerce').fillna(0.0)  # type: ignore[attr-defined]
                 if col not in nutrient_cols:
                     nutrient_cols.append(col)
             elif pd.api.types.is_numeric_dtype(result_df[col]):

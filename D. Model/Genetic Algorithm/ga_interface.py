@@ -234,6 +234,10 @@ class GeneticAlgorithmInterface:
             if best_solution is None or len(best_solution) < 10:
                 print("[ERROR] Genetic Algorithm failed to find a valid 10-item solution.")
                 return None
+            
+            # Calculate fitness score of best solution
+            from ga_v1 import fitness as _calc_fitness
+            best_fitness_score = _calc_fitness(best_solution, self.constraint_bag, tdee=tdee)
                 
             # Generate 3 options per slot
             slot_options = generate_meal_options(
@@ -342,6 +346,7 @@ class GeneticAlgorithmInterface:
                 compliance_rate=validation['compliance_rate'],
                 n_constraints_passed=_n_passed,
                 n_constraints_total=_n_total,
+                best_fitness_score=best_fitness_score,
                 daily_micronutrients=daily_micronutrients
             )
             

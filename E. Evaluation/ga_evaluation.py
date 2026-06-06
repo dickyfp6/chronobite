@@ -108,9 +108,12 @@ def main():
                 n_passed = menu_plan.n_constraints_passed
                 n_total = menu_plan.n_constraints_total
 
-                # Hitung deviation hanya untuk chart (bukan untuk CSR)
+                # Best fitness langsung dari GA (penalty score, lower = better)
+                best_fitness = menu_plan.best_fitness_score
+                run_fitnesses.append(best_fitness)
+
+                # Deviation tetap dihitung untuk chart analisis
                 deviations = []
-                total_penalty = 0
                 for nutrient, limits in guideline_nutrients.items():
                     if nutrient not in MACRO_MAP:
                         continue
@@ -137,9 +140,6 @@ def main():
                             'actual': round(actual_val, 2),
                             'target': round(target, 2),
                         })
-                        total_penalty += min(deviation_pct, 100)
-
-                run_fitnesses.append(total_penalty)
                 avg_deviation = sum(d['deviation_pct'] for d in deviations) / len(deviations) if deviations else 0
                 
                 run_cs_rates.append(satisfaction_rate)
@@ -162,8 +162,8 @@ def main():
                 'CS Rate': mean_cs,
                 'N Constraints': f"{int(np.mean(run_n_passed))}/{int(np.mean(run_n_total))}",
                 'Avg Deviation': mean_dev,
-                'Fitness (Mean)': mean_fitness,
-                'Fitness (Std)': std_fitness
+                'Best Fitness (Mean)': round(mean_fitness, 1),
+                'Best Fitness (Std)': round(std_fitness, 1)
             })
             
             if deviations_all_runs:
@@ -181,7 +181,8 @@ def main():
                 plt.savefig(os.path.join(output_dir, f"deviation_{i+1}_ga.png"), dpi=300)
                 plt.close()
                 
-            print(f"  -> Best Fitness (Penalty): {mean_fitness:.1f} ± {std_fitness:.1f}")
+            print(f"  -> Best Fitness Score (GA Penalty): {mean_fitness:.1f} ± {std_fitness:.1f}")
+            print(f"     (Lower = Better | Scale: macro×5000 + hard×10000 + soft×100)")
             print(f"  -> Mean CS Rate: {mean_cs:.1f}%")
             print(f"  -> Mean Avg Deviation: {mean_dev:.1f}%")
             
@@ -205,10 +206,10 @@ def main():
         plt.close()
 
         print("\n==========================================")
-        print(f"{'Profile':<50} | {'CS Rate':<10} | {'N Constraints':<15} | {'Avg Deviation':<15} | {'Fitness (Penalty)':<20}")
-        print("-" * 140)
+        print(f"{'Profile':<50} | {'CS Rate':<10} | {'N Constraints':<15} | {'Avg Deviation':<15} | {'Best Fitness (GA Penalty)':<25}")
+        print("-" * 150)
         for row in results_summary:
-            print(f"{row['Profile']:<50} | {row['CS Rate']:<8.1f}% | {row['N Constraints']:<15} | {row['Avg Deviation']:<13.1f}% | {row['Fitness (Mean)']:<7.1f} ± {row['Fitness (Std)']:<5.1f}")
+            print(f"{row['Profile']:<50} | {row['CS Rate']:<8.1f}% | {row['N Constraints']:<15} | {row['Avg Deviation']:<13.1f}% | {row['Best Fitness (Mean)']:<10.1f} ± {row['Best Fitness (Std)']:<5.1f}")
         print("==========================================")
 
 if __name__ == "__main__":
