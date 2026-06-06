@@ -125,8 +125,8 @@ def validate_final_solution(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
             continue
         
         value = total_nutrition[nutrient]
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         total_checks += 1
         
@@ -552,8 +552,8 @@ def is_feasible(solution: pd.DataFrame, guidelines: Dict) -> Tuple[bool, List[Di
             continue
         
         actual = total_nutrition[nutrient]
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         # Feasibility tolerance: 80% - 120% of range
         min_tolerance = 0.8 * min_val
@@ -647,8 +647,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
             continue
         
         actual = total_nutrition[nutrient]
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         # Calculate deviation
         if actual < min_val:
@@ -681,8 +681,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
             continue
         
         value = total_nutrition[nutrient_name]
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         # Tolerance: 80% - 120%
         min_tolerance = 0.8 * min_val
@@ -706,8 +706,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         if nutrient_name not in total_nutrition:
             continue
         
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         value = total_nutrition[nutrient_name]
         
         if value < min_val:
@@ -845,8 +845,8 @@ def analyze_nutrition_detailed(solution: pd.DataFrame, guidelines: Dict) -> pd.D
             continue
         
         actual = total_nutrition.get(nutrient_name, 0)
-        min_val = constraint.get('min')
-        max_val = constraint.get('max')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         fulfill = calculate_fulfillment_percentage(actual, min_val, max_val)
         status = get_nutrient_status(actual, min_val, max_val)
@@ -870,8 +870,8 @@ def analyze_nutrition_detailed(solution: pd.DataFrame, guidelines: Dict) -> pd.D
             continue
         
         actual = total_nutrition.get(nutrient_name, 0)
-        min_val = constraint.get('min')
-        max_val = constraint.get('max')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         fulfill = calculate_fulfillment_percentage(actual, min_val, max_val)
         status = get_nutrient_status(actual, min_val, max_val)
@@ -1412,8 +1412,8 @@ def calculate_total_hard_deviation(solution: pd.DataFrame, guidelines: Dict) -> 
             continue
         
         actual = total_nutrition[nutrient]
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         # Calculate individual nutrient deviation
         if actual < min_val:
@@ -1510,8 +1510,8 @@ def local_search(
                 continue
             
             actual = current_nutrition[nutrient]
-            min_val = constraint.get('min', 0)
-            max_val = constraint.get('max', float('inf'))
+            min_val = constraint.get('min') or 0
+            max_val = constraint.get('max') or float('inf')
             
             if actual < min_val:
                 deviation = min_val - actual
@@ -2186,8 +2186,8 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         if nutrient_name == 'energy_kcal':
             continue
         
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         value = total_nutrition.get(nutrient_name, 0)
         
         # Get nutrient weight (sama seperti di fitness())
@@ -2222,8 +2222,8 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         if nutrient_name == 'energy_kcal':
             continue
         
-        min_val = constraint.get('min', 0)
-        max_val = constraint.get('max', float('inf'))
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         value = total_nutrition.get(nutrient_name, 0)
         
         # Get nutrient weight (sama seperti di fitness())

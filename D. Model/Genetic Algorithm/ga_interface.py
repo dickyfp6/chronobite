@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 from meal_schema import MenuPlan, Meal, MealCourse, SnackMeal, FoodItem
-from ga_v1 import run_ga, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options # type: ignore
+from ga_v1 import run_ga, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES # type: ignore
 
 class GeneticAlgorithmInterface:
     def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):
@@ -61,11 +61,28 @@ class GeneticAlgorithmInterface:
         
     def _create_food_item_from_row(self, row: pd.Series) -> FoodItem:
         """Helper to convert a GA output row into a FoodItem object"""
+        # Check if row is portioned (has final_* columns) or raw (has energy_kcal)
+        is_portioned = 'final_energy_kcal' in row.index
+        
         micronutrients = {}
         for col in row.index:
             if col.startswith('final_') and col not in ['final_energy_kcal', 'final_protein_g', 'final_carbohydrate_g', 'final_fat_g']:
                 micro_name = col.replace('final_', '')
                 micronutrients[micro_name] = row[col]
+        
+        # Get values - use final_* for portioned data, raw columns for unportioned
+        if is_portioned:
+            energy = row.get('final_energy_kcal', 0.0)
+            protein = row.get('final_protein_g', 0.0)
+            carbs = row.get('final_carbohydrate_g', 0.0)
+            fat = row.get('final_fat_g', 0.0)
+            gram = row.get('gram', 100.0)
+        else:
+            energy = row.get('energy_kcal', 0.0)
+            protein = row.get('protein_g', 0.0)
+            carbs = row.get('carbohydrate_g', 0.0)
+            fat = row.get('fat_g', 0.0)
+            gram = 100.0
                 
         return FoodItem(
             fdc_id=str(row.get('fdc_id', '0')),
@@ -73,15 +90,15 @@ class GeneticAlgorithmInterface:
             food_group=row.get('food_group', 'Unknown'),
             consumption_label=row.get('consumption_label', 'Main Course'),
             cuisine_label=row.get('cuisine_label', 'Unknown'),
-            portion_gram=row.get('gram', 100.0),
-            energy_kcal=row.get('final_energy_kcal', 0.0),
-            protein_g=row.get('final_protein_g', 0.0),
-            carbohydrate_g=row.get('final_carbohydrate_g', 0.0),
-            fat_g=row.get('final_fat_g', 0.0),
+            portion_gram=gram,
+            energy_kcal=energy,
+            protein_g=protein,
+            carbohydrate_g=carbs,
+            fat_g=fat,
             micronutrients=micronutrients
         )
 
-    def _create_meal_from_rows(self, meal_type: str, main_row: pd.Series, side_row: pd.Series, drink_row: pd.Series) -> Meal:
+    def _create_meal_from_rows(self, meal_type: str, target_calories: float, main_row: pd.Series, side_row: pd.Series, drink_row: pd.Series) -> Meal:
         """Helper to construct a Meal object from GA output rows"""
         main_item = self._create_food_item_from_row(main_row)
         side_item = self._create_food_item_from_row(side_row)
@@ -125,7 +142,7 @@ class GeneticAlgorithmInterface:
         )
 
     def _create_meal_from_rows_with_options(
-        self, meal_type: str, slot_options: Dict, 
+        self, meal_type: str, target_calories: float, slot_options: Dict, 
         main_key: int, side_key: int, drink_key: int, 
         main_row: pd.Series, side_row: pd.Series, drink_row: pd.Series
     ) -> Meal:
@@ -137,7 +154,9 @@ class GeneticAlgorithmInterface:
         
         # Additional candidates from slot_options
         def get_candidates(slot_key, primary_item):
-            options = slot_options.get(slot_key, [])
+            # slot_key is an integer, convert to string key using SLOT_NAMES
+            slot_name = SLOT_NAMES[slot_key]
+            options = slot_options.get(slot_name, [])
             candidates = [primary_item]
             for opt in options:
                 if isinstance(opt, pd.Series):
@@ -187,7 +206,7 @@ class GeneticAlgorithmInterface:
         return Meal(
             meal_type=meal_type,
             courses={'Main': main_course, 'Side': side_course, 'Drink': drink_course},
-            target_calories=0,
+            target_calories=target_calories,
             actual_calories=total_cal,
             include_drink=True
         )
@@ -231,15 +250,27 @@ class GeneticAlgorithmInterface:
             )
             
             # 3. Construct the MenuPlan
-            breakfast = self._create_meal_from_rows_with_options('Breakfast', slot_options, 0, 1, 2, portioned_df.iloc[0], portioned_df.iloc[1], portioned_df.iloc[2])
-            lunch = self._create_meal_from_rows_with_options('Lunch', slot_options, 3, 4, 5, portioned_df.iloc[3], portioned_df.iloc[4], portioned_df.iloc[5])
-            dinner = self._create_meal_from_rows_with_options('Dinner', slot_options, 6, 7, 8, portioned_df.iloc[6], portioned_df.iloc[7], portioned_df.iloc[8])
+            # Calculate target calories per meal using ratios
+            MEAL_RATIOS = {
+                'Breakfast': 0.2375,
+                'Lunch': 0.3375,
+                'Dinner': 0.2875,
+                'Snack': 0.1375
+            }
+            breakfast_target = tdee * MEAL_RATIOS['Breakfast']
+            lunch_target = tdee * MEAL_RATIOS['Lunch']
+            dinner_target = tdee * MEAL_RATIOS['Dinner']
+            snack_target = tdee * MEAL_RATIOS['Snack']
+            
+            breakfast = self._create_meal_from_rows_with_options('Breakfast', breakfast_target, slot_options, 0, 1, 2, portioned_df.iloc[0], portioned_df.iloc[1], portioned_df.iloc[2])
+            lunch = self._create_meal_from_rows_with_options('Lunch', lunch_target, slot_options, 3, 4, 5, portioned_df.iloc[3], portioned_df.iloc[4], portioned_df.iloc[5])
+            dinner = self._create_meal_from_rows_with_options('Dinner', dinner_target, slot_options, 6, 7, 8, portioned_df.iloc[6], portioned_df.iloc[7], portioned_df.iloc[8])
             
             snack_item = self._create_food_item_from_row(portioned_df.iloc[9])
             
             # Additional candidates from slot_options for Snack
             def get_snack_candidates(primary_item):
-                options = slot_options.get(9, [])
+                options = slot_options.get('snack', [])
                 candidates = [primary_item]
                 for opt in options:
                     if isinstance(opt, pd.Series):
@@ -258,7 +289,7 @@ class GeneticAlgorithmInterface:
             snack = SnackMeal(
                 meal_type='Snack',
                 candidates=snack_candidates,
-                target_calories=0,
+                target_calories=snack_target,
                 actual_calories=snack_item.energy_kcal
             )
             
