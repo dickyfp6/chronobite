@@ -86,15 +86,15 @@ class GeneticAlgorithmInterface:
                 
         return FoodItem(
             fdc_id=str(row.get('fdc_id', '0')),
-            food_name=row.get('food_name', 'Unknown'),
-            food_group=row.get('food_group', 'Unknown'),
-            consumption_label=row.get('consumption_label', 'Main Course'),
-            cuisine_label=row.get('cuisine_label', 'Unknown'),
-            portion_gram=row.get('gram', 100.0),
-            energy_kcal=row.get('final_energy_kcal', row.get('energy_kcal', 0.0)),
-            protein_g=row.get('final_protein_g', row.get('protein_g', 0.0)),
-            carbohydrate_g=row.get('final_carbohydrate_g', row.get('carbohydrate_g', 0.0)),
-            fat_g=row.get('final_fat_g', row.get('fat_g', 0.0)),
+            food_name=str(row.get('food_name', 'Unknown')),
+            food_group=str(row.get('food_group', 'Unknown')),
+            consumption_label=str(row.get('consumption_label', 'Main Course')),
+            cuisine_label=str(row.get('cuisine_label', 'Unknown')),
+            portion_gram=float(gram),
+            energy_kcal=float(energy),
+            protein_g=float(protein),
+            carbohydrate_g=float(carbs),
+            fat_g=float(fat),
             micronutrients=micronutrients
         )
 

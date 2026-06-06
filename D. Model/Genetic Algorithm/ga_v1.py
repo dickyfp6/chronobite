@@ -2393,11 +2393,16 @@ def calculate_portion_sizes_dynamic(
     
     for col in result_df.columns:
         if col not in exclude_cols:
-            try:
-                if result_df[col].dtype in ['float64', 'float32', 'int64', 'int32']:
+            if col.endswith(('_mg', '_g', '_mcg', '_iu', '_kcal')):
+                # Force conversion to numeric
+                result_df[col] = pd.to_numeric(result_df[col], errors='coerce').fillna(0.0)
+                if col in selected_df.columns:
+                    selected_df.loc[:, col] = pd.to_numeric(selected_df[col], errors='coerce').fillna(0.0)
+                if col not in nutrient_cols:
                     nutrient_cols.append(col)
-            except:
-                pass
+            elif pd.api.types.is_numeric_dtype(result_df[col]):
+                if col not in nutrient_cols:
+                    nutrient_cols.append(col)
     
     # Create final_* columns for ALL nutrients (TASK 1)
     for nutrient in nutrient_cols:
