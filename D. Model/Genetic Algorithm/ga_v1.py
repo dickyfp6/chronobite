@@ -2385,10 +2385,10 @@ def calculate_portion_sizes_dynamic(
             if col.endswith(('_mg', '_g', '_mcg', '_iu', '_kcal')):
                 # Force conversion to numeric
                 # pyrefly: ignore [missing-attribute]
-                result_df[col] = pd.to_numeric(result_df[col], errors='coerce').fillna(0.0)
+                result_df[col] = pd.to_numeric(result_df[col], errors='coerce').fillna(0.0)  # type: ignore[attr-defined]
                 if col in selected_df.columns:
                     # pyrefly: ignore [missing-attribute]
-                    selected_df.loc[:, col] = pd.to_numeric(selected_df[col], errors='coerce').fillna(0.0)
+                    selected_df.loc[:, col] = pd.to_numeric(selected_df[col], errors='coerce').fillna(0.0)  # type: ignore[attr-defined]
                 if col not in nutrient_cols:
                     nutrient_cols.append(col)
             elif pd.api.types.is_numeric_dtype(result_df[col]):
