@@ -21,6 +21,7 @@ type Candidate = {
   fat: number;
   serving_size: number;
   is_selected: boolean;
+  cuisine_label?: string;
 };
 
 type Course = {
@@ -34,6 +35,14 @@ type Meal = {
   actual_calories: number;
   courses?: Record<string, Course>;
   candidates?: Candidate[];
+};
+
+const getRibbonColor = (cuisine?: string) => {
+  const c = cuisine?.toLowerCase() || '';
+  if (c.includes('asian')) return 'bg-red-500';
+  if (c.includes('western')) return 'bg-blue-500';
+  if (c.includes('mediteranian') || c.includes('mediterranean')) return 'bg-purple-500';
+  return 'bg-green-500'; // Generic
 };
 
 export function Results({ userData, algorithm, analysisResult, onViewReport }: ResultsProps) {
@@ -282,12 +291,15 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
                               <button
                                 key={option.fdc_id || option.name}
                                 onClick={() => handleSelect(mealName, courseName, option)}
-                                className={`p-4 rounded-lg border-2 text-left transition-all ${selected[key]?.name === option.name
+                                className={`relative overflow-hidden p-4 rounded-lg border-2 text-left transition-all ${selected[key]?.name === option.name
                                     ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
                                     : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
                                   }`}
                               >
-                                <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1">{option.name}</p>
+                                <div className={`absolute top-0 right-0 rounded-bl-lg px-2 py-0.5 text-[10px] font-bold text-white shadow-sm ${getRibbonColor(option.cuisine_label)}`}>
+                                  {option.cuisine_label || 'Generic'}
+                                </div>
+                                <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1 pr-12">{option.name}</p>
                                 <p className="text-xs text-emerald-600 dark:text-emerald-400">
                                   {option.calories} cal • P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g
                                 </p>
@@ -329,12 +341,15 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
                     <button
                       key={option.fdc_id || option.name}
                       onClick={() => handleSelect('snack', 'snack', option)}
-                      className={`p-4 rounded-lg border-2 text-left transition-all ${selected['snack_snack']?.name === option.name
+                      className={`relative overflow-hidden p-4 rounded-lg border-2 text-left transition-all ${selected['snack_snack']?.name === option.name
                           ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
                           : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
                         }`}
                     >
-                      <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1">{option.name}</p>
+                      <div className={`absolute top-0 right-0 rounded-bl-lg px-2 py-0.5 text-[10px] font-bold text-white shadow-sm ${getRibbonColor(option.cuisine_label)}`}>
+                        {option.cuisine_label || 'Generic'}
+                      </div>
+                      <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1 pr-12">{option.name}</p>
                       <p className="text-xs text-emerald-600 dark:text-emerald-400">
                         {option.calories} cal • P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g
                       </p>
