@@ -627,6 +627,16 @@ def generate_menu():
                 if base_df is not None:
                     food_database = base_df.copy()
             
+            # Apply cuisine preference filtering (same as greedy)
+            food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
+            if food_database is not None and food_preferences:
+                normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
+                allowed = normalized_prefs + ['Generic']  # always include Generic
+                if 'cuisine_label' in food_database.columns:
+                    filtered = food_database[food_database['cuisine_label'].isin(allowed)].copy()
+                    if len(filtered) >= 50:  # only apply if enough items remain
+                        food_database = filtered
+            
             if food_database is None:
                 return jsonify({
                     "success": False,
