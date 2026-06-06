@@ -600,122 +600,123 @@ def generate_final_menu():
 def generate_menu():
     """
     ENDPOINT 2: Generate meal menu menggunakan algorithm
-    
-    Input:
-    {
-        "algorithm": "greedy" atau "genetic",
-        "user_profile": {...dari analyze result...},
-        "analysis_data": {...dari analyze result...},
-        "user_input": {...dari analyze result...}
-    }
-    
-    Output:
-    {
-        "success": true,
-        "menu_plan": {
-            "algorithm_used": "Greedy",
-            "breakfast": {...},
-            "lunch": {...},
-            "dinner": {...},
-            "snack": {...},
-            "total_calories": 2100,
-            ...
-        }
-    }
     """
     try:
         init_services()
         
         data = request.get_json()
-        algorithm_choice = data.get('algorithm', 'greedy')
+        algorithm_choice = data.get('algorithm', 'greedy').lower()
         
-        algorithm_engine = genetic_algorithm if algorithm_choice == 'genetic' else greedy_algorithm
-        
-        if algorithm_engine is None:
-            return jsonify({
-                "success": False,
-                "error": f"{algorithm_choice} Algorithm not available"
-            }), 500
-        
-        # Extract required data
         analysis_data = data.get('analysis_data', {})
         user_input = data.get('user_input') or data.get('user_profile') or {}
         if isinstance(user_input, dict) and 'user_input' in user_input:
             user_input = user_input.get('user_input', {})
         tdee = analysis_data.get('energy', {}).get('tdee', 2100)
-
-        # Initialize Greedy Algorithm using server-side food database
-        food_database = None
-        if nutrition_service is not None and nutrition_service.guideline_loader is not None:
-            base_df = nutrition_service.guideline_loader.food_df
-            if base_df is not None:
-                food_database = base_df.copy()
         
-        print(f"[DEBUG] food_database size before preferences: {len(food_database) if food_database is not None else 0}")
-        print(f"[DEBUG] food_preferences: {user_input.get('food_preferences', [])}")
-
-        # Optional cuisine filtering from user preferences
-        food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
-        if food_database is not None and food_preferences:
-            # Normalize preferences to title case to match database (e.g. 'asian' -> 'Asian')
-            normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
+        if algorithm_choice == 'genetic':
+            if genetic_algorithm is None:
+                return jsonify({
+                    "success": False,
+                    "error": "Genetic Algorithm not available"
+                }), 500
             
-            if 'cuisine' in food_database.columns:
-                food_database = food_database[food_database['cuisine'].isin(normalized_prefs)].copy()
-            elif 'cuisine_label' in food_database.columns:
-                food_database = food_database[food_database['cuisine_label'].isin(normalized_prefs)].copy()
-
-        print(f"[DEBUG] food_database size after preferences: {len(food_database) if food_database is not None else 0}")
-
-        nutrition_guidelines = analysis_data.get('guidelines', {})
-        
-        if food_database is None or len(food_database) == 0:
-            print("[ERROR] food_database is EMPTY before initializing Greedy Algorithm!")
+            # Initialize GA with food database and guidelines
+            food_database = None
+            if nutrition_service and nutrition_service.guideline_loader:
+                base_df = nutrition_service.guideline_loader.food_df
+                if base_df is not None:
+                    food_database = base_df.copy()
             
-        if food_database is None or nutrition_guidelines is None:
-            return jsonify({
-                "success": False,
-                "error": "Missing food database or guidelines"
-            }), 400
+            if food_database is None:
+                return jsonify({
+                    "success": False,
+                    "error": "Food database not available"
+                }), 500
+            
+            nutrition_guidelines = analysis_data.get('guidelines', {})
+            genetic_algorithm.initialize(food_database, nutrition_guidelines)
+            
+            # GA signature: generate_menu_plan(user_profile, tdee)
+            menu_plan = genetic_algorithm.generate_menu_plan(
+                user_profile=user_input,
+                tdee=tdee
+            )
         
-        try:
-            algorithm_engine.initialize(food_database, nutrition_guidelines)
-        except Exception as init_err:
-            return jsonify({
-                "success": False,
-                "error": f"Failed to initialize algorithm: {init_err}"
-            }), 500
-        
-        # Generate menu
-        menu_plan = algorithm_engine.generate_menu_plan(
-            user_profile=user_input,
-            tdee=tdee
-        )
-        
+        else:  # greedy (default)
+            if greedy_algorithm is None:
+                return jsonify({
+                    "success": False,
+                    "error": "Greedy Algorithm not available"
+                }), 500
+            
+            food_database = None
+            if nutrition_service is not None and nutrition_service.guideline_loader is not None:
+                base_df = nutrition_service.guideline_loader.food_df
+                if base_df is not None:
+                    food_database = base_df.copy()
+            
+            print(f"[DEBUG] food_database size before preferences: {len(food_database) if food_database is not None else 0}")
+            print(f"[DEBUG] food_preferences: {user_input.get('food_preferences', [])}")
+
+            food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
+            if food_database is not None and food_preferences:
+                normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
+                
+                if 'cuisine' in food_database.columns:
+                    food_database = food_database[food_database['cuisine'].isin(normalized_prefs)].copy()
+                elif 'cuisine_label' in food_database.columns:
+                    food_database = food_database[food_database['cuisine_label'].isin(normalized_prefs)].copy()
+
+            print(f"[DEBUG] food_database size after preferences: {len(food_database) if food_database is not None else 0}")
+
+            nutrition_guidelines = analysis_data.get('guidelines', {})
+            
+            if food_database is None or len(food_database) == 0:
+                print("[ERROR] food_database is EMPTY before initializing Greedy Algorithm!")
+                
+            if food_database is None or nutrition_guidelines is None:
+                return jsonify({
+                    "success": False,
+                    "error": "Missing food database or guidelines"
+                }), 400
+            
+            try:
+                greedy_algorithm.initialize(food_database, nutrition_guidelines)
+            except Exception as init_err:
+                return jsonify({
+                    "success": False,
+                    "error": f"Failed to initialize algorithm: {init_err}"
+                }), 500
+            
+            menu_plan = greedy_algorithm.generate_menu_plan(
+                user_profile=user_input,
+                tdee=tdee
+            )
+            
         if menu_plan is None:
             return jsonify({
                 "success": False,
-                "error": "Failed to generate menu (insufficient candidates)"
+                "error": f"Failed to generate menu with {algorithm_choice} algorithm"
             }), 500
         
-        # Convert to frontend-friendly dict for JSON response
         menu_dict = _menu_plan_to_frontend(menu_plan)
-        
-        # Sanitize infinity values to null for JSON serialization
         menu_dict = sanitize_infinity(menu_dict)
         
         return jsonify({
             "success": True,
-            "menu_plan": menu_dict
+            "menu_plan": menu_dict,
+            "algorithm_used": algorithm_choice
         }), 200
-    
+        
     except Exception as e:
-        print(f"❌ /api/generate-menu error: {e}")
         import traceback
-        traceback.print_exc()
+        error_details = traceback.format_exc()
+        print(f"❌ /api/generate-menu error: {e}")
+        print(f"Full traceback:\n{error_details}")
         return jsonify({
             "success": False,
-            "error": str(e)
+            "error": str(e),
+            "algorithm": data.get('algorithm', 'unknown') if 'data' in locals() else 'unknown'
         }), 500
 
 
