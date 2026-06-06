@@ -716,6 +716,7 @@ def generate_menu():
         return jsonify({
             "success": False,
             "error": str(e),
+            # pyrefly: ignore [unbound-name]
             "algorithm": data.get('algorithm', 'unknown') if 'data' in locals() else 'unknown'
         }), 500
 

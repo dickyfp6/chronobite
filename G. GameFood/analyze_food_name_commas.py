@@ -94,6 +94,7 @@ def main() -> None:
     last2_counter: Counter = Counter()
     last3_counter: Counter = Counter()
 
+    # pyrefly: ignore [bad-assignment]
     group_stats: Dict[str, Dict[str, float]] = defaultdict(lambda: {"n": 0, "sum_comma": 0, "ge5": 0})
 
     for idx, name in enumerate(names):

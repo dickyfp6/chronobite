@@ -79,10 +79,10 @@ class GeneticAlgorithmInterface:
             consumption_label=row.get('consumption_label', 'Main Course'),
             cuisine_label=row.get('cuisine_label', 'Unknown'),
             portion_gram=row.get('gram', 100.0),
-            energy_kcal=row.get('final_energy_kcal', 0.0),
-            protein_g=row.get('final_protein_g', 0.0),
-            carbohydrate_g=row.get('final_carbohydrate_g', 0.0),
-            fat_g=row.get('final_fat_g', 0.0),
+            energy_kcal=row.get('final_energy_kcal', row.get('energy_kcal', 0.0)),
+            protein_g=row.get('final_protein_g', row.get('protein_g', 0.0)),
+            carbohydrate_g=row.get('final_carbohydrate_g', row.get('carbohydrate_g', 0.0)),
+            fat_g=row.get('final_fat_g', row.get('fat_g', 0.0)),
             micronutrients=micronutrients
         )
 
