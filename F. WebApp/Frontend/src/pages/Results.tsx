@@ -258,9 +258,9 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
             if (!meal || !meal.courses) return null;
 
             return (
-              <div key={mealName} className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
+              <div key={mealName} className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 capitalize">
+                  <h2 className="text-xl font-bold text-emerald-700 dark:text-emerald-400 capitalize">
                     {mealName}
                   </h2>
                   <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -276,14 +276,14 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
                     return (
                       <div key={courseName}>
                         <div className="mb-3">
-                          <h3 className="font-medium text-gray-900 dark:text-white capitalize">
+                          <h3 className="font-semibold text-gray-900 dark:text-white capitalize text-sm">
                             {courseName === 'Main' ? 'Main Course' : courseName === 'Side' ? 'Side Dish' : 'Drink'}
                           </h3>
                         </div>
 
                         {!course || course.candidates.length === 0 ? (
-                          <div className="p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-center">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">No foods found matching your constraints.</p>
+                          <div className="p-4 rounded-lg border border-dashed border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 text-center">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">No foods found matching your constraints.</p>
                           </div>
                         ) : (
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -291,19 +291,27 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
                               <button
                                 key={option.fdc_id || option.name}
                                 onClick={() => handleSelect(mealName, courseName, option)}
-                                className={`relative overflow-hidden p-4 rounded-lg border-2 text-left transition-all ${selected[key]?.name === option.name
-                                    ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
-                                    : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
-                                  }`}
+                                className={`relative overflow-hidden p-3.5 rounded-lg border text-left transition-all ${
+                                  selected[key]?.name === option.name
+                                    ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-500/5 dark:bg-emerald-400/5 shadow-sm ring-1 ring-emerald-500/30'
+                                    : 'border-gray-200/80 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                                }`}
                               >
-                                <div className={`absolute top-0 right-0 rounded-bl-lg px-2 py-0.5 text-[10px] font-bold text-white shadow-sm ${getRibbonColor(option.cuisine_label)}`}>
-                                  {option.cuisine_label || 'Generic'}
+                                <div className="flex justify-between items-start gap-2 mb-1.5">
+                                  <p className="font-bold text-sm text-gray-900 dark:text-white leading-snug line-clamp-2 flex-1">
+                                    {option.name}
+                                  </p>
+                                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold text-white uppercase tracking-wider shrink-0 ${getRibbonColor(option.cuisine_label)}`}>
+                                    {option.cuisine_label || 'Generic'}
+                                  </span>
                                 </div>
-                                <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1 pr-12">{option.name}</p>
-                                <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                                  {option.calories} cal • P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g
+                                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-1">
+                                  {option.calories} kcal
                                 </p>
-                                <p className="text-[10px] text-gray-500 mt-2">{option.serving_size}g serving</p>
+                                <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400">
+                                  <span>P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g</span>
+                                  <span className="font-medium shrink-0">{option.serving_size}g</span>
+                                </div>
                               </button>
                             ))}
                           </div>
@@ -317,9 +325,9 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
           })}
 
           {menuData.snack && (
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 capitalize">
+                <h2 className="text-xl font-bold text-emerald-700 dark:text-emerald-400 capitalize">
                   Snack
                 </h2>
                 <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -328,12 +336,12 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
               </div>
 
               <div className="mb-3">
-                <h3 className="font-medium text-gray-900 dark:text-white">Options</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Options</h3>
               </div>
 
               {!menuData.snack.candidates || menuData.snack.candidates.length === 0 ? (
-                <div className="p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-center">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">No snack found matching your constraints.</p>
+                <div className="p-4 rounded-lg border border-dashed border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 text-center">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">No snack found matching your constraints.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -341,19 +349,27 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
                     <button
                       key={option.fdc_id || option.name}
                       onClick={() => handleSelect('snack', 'snack', option)}
-                      className={`relative overflow-hidden p-4 rounded-lg border-2 text-left transition-all ${selected['snack_snack']?.name === option.name
-                          ? 'border-emerald-500 dark:border-emerald-400 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 shadow-lg ring-2 ring-emerald-400/50 dark:ring-emerald-400/30'
-                          : 'border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20'
-                        }`}
+                      className={`relative overflow-hidden p-3.5 rounded-lg border text-left transition-all ${
+                        selected['snack_snack']?.name === option.name
+                          ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-500/5 dark:bg-emerald-400/5 shadow-sm ring-1 ring-emerald-500/30'
+                          : 'border-gray-200/80 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                      }`}
                     >
-                      <div className={`absolute top-0 right-0 rounded-bl-lg px-2 py-0.5 text-[10px] font-bold text-white shadow-sm ${getRibbonColor(option.cuisine_label)}`}>
-                        {option.cuisine_label || 'Generic'}
+                      <div className="flex justify-between items-start gap-2 mb-1.5">
+                        <p className="font-bold text-sm text-gray-900 dark:text-white leading-snug line-clamp-2 flex-1">
+                          {option.name}
+                        </p>
+                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold text-white uppercase tracking-wider shrink-0 ${getRibbonColor(option.cuisine_label)}`}>
+                          {option.cuisine_label || 'Generic'}
+                        </span>
                       </div>
-                      <p className="font-medium text-sm text-emerald-900 dark:text-white mb-1 pr-12">{option.name}</p>
-                      <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                        {option.calories} cal • P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g
+                      <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-1">
+                        {option.calories} kcal
                       </p>
-                      <p className="text-[10px] text-gray-500 mt-2">{option.serving_size}g serving</p>
+                      <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400">
+                        <span>P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g</span>
+                        <span className="font-medium shrink-0">{option.serving_size}g</span>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -374,7 +390,7 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
       </div>
 
       {/* Sticky Nutrition Summary */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border-t-2 border-emerald-200 dark:border-emerald-700 shadow-lg z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border-t border-gray-200 dark:border-slate-700 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
             <div className="text-center">
