@@ -125,10 +125,8 @@ def validate_final_solution(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
             continue
         
         value = total_nutrition[nutrient]
-        min_val = constraint.get('min')
-        min_val = min_val if min_val is not None else 0
-        max_val = constraint.get('max')
-        max_val = max_val if max_val is not None else float('inf')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         total_checks += 1
         
@@ -554,10 +552,8 @@ def is_feasible(solution: pd.DataFrame, guidelines: Dict) -> Tuple[bool, List[Di
             continue
         
         actual = total_nutrition[nutrient]
-        min_val = constraint.get('min')
-        min_val = min_val if min_val is not None else 0
-        max_val = constraint.get('max')
-        max_val = max_val if max_val is not None else float('inf')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         # Feasibility tolerance: 80% - 120% of range
         min_tolerance = 0.8 * min_val
@@ -651,10 +647,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
             continue
         
         actual = total_nutrition[nutrient]
-        min_val = constraint.get('min')
-        min_val = min_val if min_val is not None else 0
-        max_val = constraint.get('max')
-        max_val = max_val if max_val is not None else float('inf')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         # Calculate deviation
         if actual < min_val:
@@ -687,10 +681,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
             continue
         
         value = total_nutrition[nutrient_name]
-        min_val = constraint.get('min')
-        min_val = min_val if min_val is not None else 0
-        max_val = constraint.get('max')
-        max_val = max_val if max_val is not None else float('inf')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         # Tolerance: 80% - 120%
         min_tolerance = 0.8 * min_val
@@ -714,10 +706,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         if nutrient_name not in total_nutrition:
             continue
         
-        min_val = constraint.get('min')
-        min_val = min_val if min_val is not None else 0
-        max_val = constraint.get('max')
-        max_val = max_val if max_val is not None else float('inf')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         value = total_nutrition[nutrient_name]
         
         if value < min_val:
@@ -855,8 +845,8 @@ def analyze_nutrition_detailed(solution: pd.DataFrame, guidelines: Dict) -> pd.D
             continue
         
         actual = total_nutrition.get(nutrient_name, 0)
-        min_val = constraint.get('min')
-        max_val = constraint.get('max')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         fulfill = calculate_fulfillment_percentage(actual, min_val, max_val)
         status = get_nutrient_status(actual, min_val, max_val)
@@ -880,8 +870,8 @@ def analyze_nutrition_detailed(solution: pd.DataFrame, guidelines: Dict) -> pd.D
             continue
         
         actual = total_nutrition.get(nutrient_name, 0)
-        min_val = constraint.get('min')
-        max_val = constraint.get('max')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         fulfill = calculate_fulfillment_percentage(actual, min_val, max_val)
         status = get_nutrient_status(actual, min_val, max_val)
@@ -1131,14 +1121,11 @@ def mutation(solution: pd.DataFrame, food_df: pd.DataFrame,
             guidelines_flat = guidelines if isinstance(guidelines, dict) else {}
         
         if 'carbohydrate_g' in guidelines_flat:
-            val = guidelines_flat['carbohydrate_g'].get('min')
-            if val is not None: target_carb_min = val
+            target_carb_min = guidelines_flat['carbohydrate_g'].get('min', target_carb_min)
         if 'fat_g' in guidelines_flat:
-            val = guidelines_flat['fat_g'].get('min')
-            if val is not None: target_fat_min = val
+            target_fat_min = guidelines_flat['fat_g'].get('min', target_fat_min)
         if 'protein_g' in guidelines_flat:
-            val = guidelines_flat['protein_g'].get('max')
-            if val is not None: target_protein_max = val
+            target_protein_max = guidelines_flat['protein_g'].get('max', target_protein_max)
     
     # Determine nutrient needs
     need_carb = total_carb < target_carb_min
@@ -1425,10 +1412,8 @@ def calculate_total_hard_deviation(solution: pd.DataFrame, guidelines: Dict) -> 
             continue
         
         actual = total_nutrition[nutrient]
-        min_val = constraint.get('min')
-        min_val = min_val if min_val is not None else 0
-        max_val = constraint.get('max')
-        max_val = max_val if max_val is not None else float('inf')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         
         # Calculate individual nutrient deviation
         if actual < min_val:
@@ -1525,10 +1510,8 @@ def local_search(
                 continue
             
             actual = current_nutrition[nutrient]
-            min_val = constraint.get('min')
-            min_val = min_val if min_val is not None else 0
-            max_val = constraint.get('max')
-            max_val = max_val if max_val is not None else float('inf')
+            min_val = constraint.get('min') or 0
+            max_val = constraint.get('max') or float('inf')
             
             if actual < min_val:
                 deviation = min_val - actual
@@ -2203,10 +2186,8 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         if nutrient_name == 'energy_kcal':
             continue
         
-        min_val = constraint.get('min')
-        min_val = min_val if min_val is not None else 0
-        max_val = constraint.get('max')
-        max_val = max_val if max_val is not None else float('inf')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         value = total_nutrition.get(nutrient_name, 0)
         
         # Get nutrient weight (sama seperti di fitness())
@@ -2241,10 +2222,8 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         if nutrient_name == 'energy_kcal':
             continue
         
-        min_val = constraint.get('min')
-        min_val = min_val if min_val is not None else 0
-        max_val = constraint.get('max')
-        max_val = max_val if max_val is not None else float('inf')
+        min_val = constraint.get('min') or 0
+        max_val = constraint.get('max') or float('inf')
         value = total_nutrition.get(nutrient_name, 0)
         
         # Get nutrient weight (sama seperti di fitness())
@@ -2394,18 +2373,12 @@ def calculate_portion_sizes_dynamic(
         else:
             guidelines_flat = guidelines
     
-    target_protein_min = guidelines_flat.get('protein_g', {}).get('min')
-    target_protein_min = target_protein_min if target_protein_min is not None else 60
-    target_protein_max = guidelines_flat.get('protein_g', {}).get('max')
-    target_protein_max = target_protein_max if target_protein_max is not None else 120
-    target_fat_min = guidelines_flat.get('fat_g', {}).get('min')
-    target_fat_min = target_fat_min if target_fat_min is not None else 50
-    target_fat_max = guidelines_flat.get('fat_g', {}).get('max')
-    target_fat_max = target_fat_max if target_fat_max is not None else 100
-    target_carb_min = guidelines_flat.get('carbohydrate_g', {}).get('min')
-    target_carb_min = target_carb_min if target_carb_min is not None else 250
-    target_carb_max = guidelines_flat.get('carbohydrate_g', {}).get('max')
-    target_carb_max = target_carb_max if target_carb_max is not None else 350
+    target_protein_min = guidelines_flat.get('protein_g', {}).get('min', 60)
+    target_protein_max = guidelines_flat.get('protein_g', {}).get('max', 120)
+    target_fat_min = guidelines_flat.get('fat_g', {}).get('min', 50)
+    target_fat_max = guidelines_flat.get('fat_g', {}).get('max', 100)
+    target_carb_min = guidelines_flat.get('carbohydrate_g', {}).get('min', 250)
+    target_carb_max = guidelines_flat.get('carbohydrate_g', {}).get('max', 350)
     
     # Copy dataframe
     result_df = selected_df.copy()

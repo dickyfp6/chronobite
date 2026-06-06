@@ -46,6 +46,35 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
   // Track selected candidate for each meal+course. e.g. "breakfast_Main" -> Candidate
   const [selected, setSelected] = useState<Record<string, Candidate>>({});
 
+  // Helper function to scale alternative candidates (option 2 & 3) to match option 1's calorie target
+  const scaleCandidates = (candidates: Candidate[]): Candidate[] => {
+    if (!candidates || candidates.length === 0) return candidates;
+    if (candidates.length === 1) return candidates;
+
+    const targetCalories = candidates[0].calories;
+    const scaled = [candidates[0]]; // Keep option 1 as-is
+
+    // Scale options 2 and 3
+    for (let i = 1; i < Math.min(candidates.length, 3); i++) {
+      const candidate = candidates[i];
+      if (candidate.calories > 0) {
+        const scaleFactor = targetCalories / candidate.calories;
+        scaled.push({
+          ...candidate,
+          serving_size: Math.round(100 * scaleFactor * 10) / 10,
+          calories: Math.round(targetCalories * 10) / 10,
+          protein: Math.round(candidate.protein * scaleFactor * 10) / 10,
+          carbs: Math.round(candidate.carbs * scaleFactor * 10) / 10,
+          fat: Math.round(candidate.fat * scaleFactor * 10) / 10,
+        });
+      } else {
+        scaled.push(candidate); // Keep as-is if calories is 0
+      }
+    }
+
+    return scaled;
+  };
+
   const fetchMenu = async () => {
     setLoading(true);
     setError(null);
@@ -79,6 +108,24 @@ export function Results({ userData, algorithm, analysisResult, onViewReport }: R
         dinner: meals.dinner,
         snack: meals.snack,
       };
+
+      // Apply scaling to alternative candidates (option 2 & 3)
+      ['breakfast', 'lunch', 'dinner'].forEach((mealName) => {
+        const meal = formattedMenu[mealName as keyof typeof formattedMenu];
+        if (meal?.courses) {
+          ['Main', 'Side', 'Drink'].forEach((courseName) => {
+            const course = meal.courses![courseName];
+            if (course?.candidates) {
+              course.candidates = scaleCandidates(course.candidates);
+            }
+          });
+        }
+      });
+
+      // Scale snack candidates
+      if (formattedMenu.snack?.candidates) {
+        formattedMenu.snack.candidates = scaleCandidates(formattedMenu.snack.candidates);
+      }
       
       setMenuData(formattedMenu);
       sessionStorage.setItem('dss_menu_data', JSON.stringify(formattedMenu));
