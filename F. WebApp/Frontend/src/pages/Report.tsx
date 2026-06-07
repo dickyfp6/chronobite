@@ -17,29 +17,41 @@ interface ReportProps {
 
 const dietTips = {
   dm2: [
-    'Monitor carbohydrate intake and choose complex carbs over simple sugars',
-    'Eat regular meals to maintain stable blood sugar levels',
-    'Include high-fiber foods to slow glucose absorption',
+    'Consume at least 400 g of fruits and vegetables daily.',
+    'Choose foods rich in fiber to support blood sugar control.',
+    'Avoid sugary beverages and limit added sugar intake.',
+    'Select lean protein sources such as fish, beans, and legumes.',
+    'Prefer grilled, steamed, or boiled foods instead of fried foods.',
+    'Drink sufficient water and choose unsweetened beverages.',
   ],
   hypertension: [
-    'Limit sodium intake to less than 2,300mg per day',
-    'Increase potassium-rich foods like bananas and leafy greens',
-    'Reduce caffeine and alcohol consumption',
+    'Limit sodium intake to less than 2,300mg per day.',
+    'Include potassium-rich foods such as fruits, vegetables, and legumes.',
+    'Choose fat-free or low-fat milk and dairy products.',
+    'Limit processed, smoked, cured, and canned foods that are high in sodium.',
+    'Choose whole grain foods for most grain servings.',
   ],
   cvd: [
-    'Choose lean proteins and limit red meat consumption',
-    'Include omega-3 fatty acids from fish or supplements',
-    'Avoid trans fats and limit saturated fats',
+    'Consume a diet rich in vegetables and fruits.',
+    'Choose whole-grain, high-fiber foods.',
+    'Consume fish, especially oily fish, at least twice a week.',
+    'Choose lean meats and plant-based protein alternatives.',
+    'Minimize foods with added sugars and excessive salt.',
   ],
   cholesterol: [
-    'Increase soluble fiber intake through oats, beans, and fruits',
-    'Choose healthy fats like olive oil and avocados',
-    'Limit dietary cholesterol from animal products',
+    'Reduce foods high in saturated fat such as fatty meats and full-fat dairy products.',
+    'Limit dietary cholesterol intake.',
+    'Eat more soluble fiber from oats, fruits, and legumes.',
+    'Include plant sterols and stanols in your daily diet.',
+    'Replace saturated fats with healthier unsaturated fats.',
   ],
   ckd: [
-    'Monitor protein intake and choose high-quality protein sources',
-    'Limit phosphorus and potassium based on lab results',
-    'Control fluid intake as recommended by your healthcare provider',
+    'Avoid excessive protein intake.',
+    'Limit sodium and processed foods.',
+    'Maintain fluid intake of approximately 30–35 mL/kg body weight per day.',
+    'If edema is present, fluid intake may need to be restricted.',
+    'Monitor potassium and phosphorus intake as recommended.',
+
   ],
 };
 
