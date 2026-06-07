@@ -215,7 +215,7 @@ class GeneticAlgorithmInterface:
         """
         Generate complete menu plan using Genetic Algorithm.
         """
-        print("\n[GENERAT] Genetic Algorithm: Generating menu plan")
+        print("\n[GENERATE] Genetic Algorithm: Generating menu plan")
         print(f"   TDEE Target: {tdee:.0f} kcal")
         
         try:
