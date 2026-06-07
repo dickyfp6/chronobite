@@ -1,7 +1,17 @@
 import pandas as pd
 import re
+import os
 
-data = pd.read_csv("A. Data/Data Processed/02_pivot_food_nutrients.csv")
+# Get the directory where this script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Navigate to parent directory (TugasAkhirDSS root)
+root_dir = os.path.dirname(script_dir)
+# Build paths relative to root
+data_input_path = os.path.join(root_dir, "A. Data", "Data Processed", "02_pivot_food_nutrients.csv")
+missing_output_path = os.path.join(root_dir, "A. Data", "Data Processed", "03_missing_analysis.csv")
+halal_output_path = os.path.join(root_dir, "A. Data", "Data Processed", "03_dataset_halal.csv")
+
+data = pd.read_csv(data_input_path)
 
 print("Dataset awal:", data.shape)
 
@@ -36,8 +46,8 @@ haram_keywords = [
     "COCTAIL", "COGNAC", "COKTAIL", "CORONA", "COSMOPOLITAN", "CRACKILINGS", "CRACKLING", 
     "CRACKLINGS", "CRISTAL", "CUBAN", "CUBEDHAM", "CUERITOS", "CURACAO", "CURED", 
     "CURRYWURST", "CUVEE", "DAIGUIRI", "DAIQUIRI", "DELICATESSEN", 
-    "DEUTSCHMACHER", "DIGESTIF", "DISTILLATE", "DISTILLED", "DISTILLERY", "DOG", 
-    "DOGS", "DOLCETTO", "DOPPELBOCK", "DRAFT", "DRUNKEN", "DUBBEL", "DUNKELWURST", 
+    "DEUTSCHMACHER", "DIGESTIF", "DISTILLATE", "DISTILLED", "DISTILLERY", 
+    "DOLCETTO", "DOPPELBOCK", "DRAFT", "DRUNKEN", "DUBBEL", "DUNKELWURST", 
     "DUROC", "ECHOFALLS", "EMBASA", "ESSKAY", "ETHANOL", "ETOUFFEE", "EVERROAST", 
     "FALERNUM", "FATBACK", "FELINO", "FINOCCHIONA", "FIREBALL", "FIREROASTEDPORK", 
     "FIREWALKER", "FLASK", "FOIE", "FRANGELICO", "FRANKFURT", "FRANKFURTER", 
@@ -55,8 +65,8 @@ haram_keywords = [
     "KRAKOVSKY", "KRAKOWSKA", "KRAKUS", "KUNZLER", "KUROBUTA", "KVASS", "LAGER", 
     "LAMBIC", "LAMBRUSCO", "LANDJAEGER", "LANDJAGER", "LANDRACE", "LANDSHARK", 
     "LARD", "LARDO", "LARDONS", "LAUGANEGA", "LBERICO", "LEMBERGER", "LEMONCELLO", 
-    "LIMONCINO", "LINGUIA", "LINGUICA", "LINGUISA", "LINK", "LIQUER", "LIQUERE", 
-    "LIQUEUR", "LIQUEURS", "LIQUOR", "LIVER", "LIVERWURST", "LONGANISA", 
+    "LIMONCINO", "LINGUIA", "LINGUICA", "LINGUISA", "LIQUER", "LIQUERE", 
+    "LIQUEUR", "LIQUEURS", "LIQUOR", "LONGANISA", 
     "LONGANIZA", "LUCANO", "LUGANIGA", "LUNCHEON", "MALT", "MALTS", "MANAPUA", 
     "MANHATTAN", "MANISCHEWITZ", "MARASCHINO", "MARGARITA", "MARSALA", 
     "MARSHMALLOW", "MARZEN", "MEAD", "MENAGE", "MERLOT", "METTWURST", 
@@ -83,7 +93,7 @@ haram_keywords = [
     "SMOKIE", "SNAPPS", "SNOUTS", "SOLERA", "SOPERSSATA", "SOPPRESATA", "SOPPRESSATA", 
     "SOPRESSA", "SORTASAUSAGE", "SOUSE", "SPAM", "SPARERIB", "SPARERIBS", "SPDA", 
     "SPEAKEASY", "SPECK", "SPIRIT", "SPIRITS", "SPORESSATA", "SPRITZER", "SPRITZERS", 
-    "SPUMANTE", "STEIN", "STOLI", "STOUT", "STRANAHAN", "STREAKY", "STRIP", "STROH", 
+    "SPUMANTE", "STEIN", "STOLI", "STOUT", "STRANAHAN", "STREAKY", "STROH", 
     "SUASAGE", "SUNTORY", "SWINE", "SWISSWURST", "SYRAH", "TALLOW", "TASSO", 
     "TEAWURST", "TEDESCHI", "TEPACHE", "TEQUILA", "TERRINE", "THURGAU", 
     "THURINGER", "TIPSY", "TOCINO", "TONGUE", "TREBBIANO", "TRIPEL", "TROPIQUILA", 
@@ -106,13 +116,24 @@ print("Dataset setelah filter haram:", data_no_haram.shape)
 # HAPUS KATEGORI TERTENTU
 # =====================
 
-categories_to_remove = ["Alcoholic Beverages", "Baby Foods", "Pork Products", "Spices and Herbs"]
+categories_to_remove = ["Alcoholic Beverages", "Baby Foods", "Pork Products", "Spices and Herbs", "American Indian/Alaska Native Foods"]
 
 data_cleaned = data_no_haram[
 ~data_no_haram["food_group"].isin(categories_to_remove)
 ]
 
 print("Dataset setelah hapus kategori:", data_cleaned.shape)
+
+# Filter liver sausage dan pate berbasis babi dari Sausages and Luncheon Meats
+pork_liver_keywords = ['braunschweiger', 'liver sausage', 'liverwurst', 'liver cheese', 'pate, liver']
+pork_liver_mask = (
+    (data_cleaned['food_group'] == 'Sausages and Luncheon Meats') &
+    (data_cleaned['food_name'].str.lower().str.contains('|'.join(pork_liver_keywords), na=False))
+)
+before_liver = len(data_cleaned)
+data_cleaned = data_cleaned[~pork_liver_mask]
+print(f"Filter pork liver sausage/pate: {before_liver - len(data_cleaned)} items removed")
+print("Dataset setelah filter liver products:", data_cleaned.shape)
 
 # =====================
 # FILTER NUTRISI UTAMA (ADVANCED)
@@ -128,10 +149,13 @@ data_cleaned = data_cleaned[
 
 after_filter = len(data_cleaned)
 
-print("\nFilter nutrisi (protein>0, carbo>0, fat>0)")
+print("\n" + "="*50)
+print("FILTER NUTRISI (protein>0, carbo>0, fat>0)")
+print("="*50)
 print(f"Data sebelum: {before_filter}")
 print(f"Data setelah: {after_filter}")
 print(f"Data terhapus: {before_filter - after_filter}")
+print("="*50)
 
 # =====================
 # ANALISIS MISSING
@@ -139,14 +163,9 @@ print(f"Data terhapus: {before_filter - after_filter}")
 
 missing = data_cleaned.isnull().sum()
 
-missing.to_csv(
-"A. Data/Data Processed/03_missing_analysis.csv"
-)
+missing.to_csv(missing_output_path)
 
-data_cleaned.to_csv(
-"A. Data/Data Processed/03_dataset_halal.csv",
-index=False
-)
+data_cleaned.to_csv(halal_output_path, index=False)
 
 print("Dataset tanpa makanan haram disimpan.")
 print("File missing analysis juga disimpan.")

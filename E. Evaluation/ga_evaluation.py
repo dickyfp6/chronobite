@@ -18,30 +18,45 @@ from ga_interface import GeneticAlgorithmInterface # type: ignore
 from ga_v1 import fitness as calculate_fitness # type: ignore # Needed for fitness if not exposed directly
 
 PROFILES = [
-    {
-        'name': 'Normal',
-        'gender': 'M', 'age': 30, 'weight': 70, 
-        'height': 175, 'activity_factor': 1.845,
-        'disease': ['normal']
-    },
-    {
-        'name': 'Single Disease (DM2)',
-        'gender': 'F', 'age': 45, 'weight': 65,
-        'height': 160, 'activity_factor': 1.4,
-        'disease': ['dm2']
-    },
-    {
-        'name': 'Dual Disease (DM2 + Hypertension)',
-        'gender': 'M', 'age': 55, 'weight': 80,
-        'height': 170, 'activity_factor': 1.4,
-        'disease': ['dm2', 'hypertension']
-    },
-    {
-        'name': 'Triple Disease (DM2 + Hypertension + Cholesterol)',
-        'gender': 'F', 'age': 60, 'weight': 75,
-        'height': 158, 'activity_factor': 1.4,
-        'disease': ['dm2', 'hypertension', 'cholesterol']
-    }
+    {'name': 'Normal',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['normal']},
+    {'name': 'Diabetes Melitus Type 2',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['dm2']},
+    {'name': 'Hypertension',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['hypertension']},
+    {'name': 'Cardiovascular Disease',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['cvd']},
+    {'name': 'Hypercholesterolemia',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['cholesterol']},
+    {'name': 'Chronic Kidney Disease Stage 1',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['ckd']},
+    {'name': 'Diabetes + Hipertensi',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['dm2', 'hypertension']},
+    {'name': 'Diabetes + Hiperkolesterolemia',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['dm2', 'cholesterol']},
+    {'name': 'Hipertensi + Kardiovaskular',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['hypertension', 'cvd']},
+    {'name': 'CKD + Hipertensi',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['ckd', 'hypertension']},
+    {'name': 'Diabetes + Hipertensi + Hiperkolesterolemia',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['dm2', 'hypertension', 'cholesterol']},
+    {'name': 'CKD + Diabetes + Hipertensi',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['ckd', 'dm2', 'hypertension']},
+    {'name': 'Hipertensi + Hiperkolesterolemia + CVD',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['hypertension', 'cholesterol', 'cvd']},
 ]
 
 def main():
@@ -83,7 +98,7 @@ def main():
             run_n_total = []
             deviations_all_runs = []
             
-            for run_idx in range(5):
+            for run_idx in range(3):
                 print(f"  -> Run {run_idx+1}/5...")
                 menu_plan = ga_engine.generate_menu_plan(profile, tdee)
                 
@@ -103,10 +118,25 @@ def main():
                 if hasattr(menu_plan, 'daily_micronutrients') and menu_plan.daily_micronutrients:
                     MACRO_MAP.update(menu_plan.daily_micronutrients)
     
-                # Ambil CSR langsung dari validate_final_solution via menu_plan
-                satisfaction_rate = menu_plan.compliance_rate
-                n_passed = menu_plan.n_constraints_passed
-                n_total = menu_plan.n_constraints_total
+                # Calculate CS Rate manually - HARD constraints only (consistent with greedy_evaluation.py)
+                hard_constraints_passed = 0
+                total_hard_constraints = 0
+                
+                for nutrient, limits in guideline_nutrients.items():
+                    tipe = limits.get('hard_soft_type', 'SOFT')
+                    if nutrient not in MACRO_MAP:
+                        continue
+                    actual_val = MACRO_MAP[nutrient]
+                    min_v = limits.get('min', 0)
+                    max_v = limits.get('max', float('inf'))
+                    if tipe == 'HARD':
+                        total_hard_constraints += 1
+                        if min_v <= actual_val <= max_v:
+                            hard_constraints_passed += 1
+                
+                satisfaction_rate = (hard_constraints_passed / total_hard_constraints * 100) if total_hard_constraints > 0 else 100
+                n_passed = hard_constraints_passed
+                n_total = total_hard_constraints
 
                 # Best fitness langsung dari GA (penalty score, lower = better)
                 best_fitness = menu_plan.best_fitness_score
@@ -180,6 +210,21 @@ def main():
                 plt.tight_layout()
                 plt.savefig(os.path.join(output_dir, f"deviation_{i+1}_ga.png"), dpi=300)
                 plt.close()
+            
+            # GRAFIK 1: Line chart fitness per run
+            plt.figure(figsize=(12, 6))
+            sns.set_style("whitegrid")
+            runs = [f"Run {j+1}" for j in range(len(run_fitnesses))]
+            plt.plot(runs, run_fitnesses, marker='o', linestyle='-', linewidth=2, markersize=8, color='#1f77b4', label='Fitness Score')
+            plt.axhline(y=float(mean_fitness), color='gray', linestyle='--', linewidth=2, label=f'Mean: {mean_fitness:.1f}')
+            plt.title(f"Fitness per Run - {profile['name']}")
+            plt.ylabel("Fitness Score (lower = better)")
+            plt.xlabel("Run Number")
+            plt.legend()
+            plt.grid(True, alpha=0.3)
+            plt.tight_layout()
+            plt.savefig(os.path.join(output_dir, f"fitness_per_run_{i+1}.png"), dpi=300)
+            plt.close()
                 
             print(f"  -> Best Fitness Score (GA Penalty): {mean_fitness:.1f} ± {std_fitness:.1f}")
             print(f"     (Lower = Better | Scale: macro×5000 + hard×10000 + soft×100)")
@@ -203,6 +248,36 @@ def main():
         plt.xticks(rotation=15)
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, 'overall_cs_ga.png'), dpi=300)
+        plt.close()
+        
+        # GRAFIK 2: Bar chart mean fitness ± std semua profile
+        plt.figure(figsize=(12, 6))
+        sns.set_style("whitegrid")
+        fitness_data = [
+            {
+                'Profile': r['Profile'],
+                'Best Fitness (Mean)': r['Best Fitness (Mean)'],
+                'Best Fitness (Std)': r['Best Fitness (Std)']
+            }
+            for r in results_summary
+        ]
+        fitness_df = pd.DataFrame(fitness_data)
+        
+        bars = plt.bar(fitness_df['Profile'], fitness_df['Best Fitness (Mean)'], 
+                       yerr=fitness_df['Best Fitness (Std)'], 
+                       color='steelblue', alpha=0.7, capsize=5, error_kw={'linewidth': 2})
+        
+        # Add value labels on top of bars
+        for bar, val, std in zip(bars, fitness_df['Best Fitness (Mean)'], fitness_df['Best Fitness (Std)']):
+            plt.text(bar.get_x() + bar.get_width()/2, val + std + 5, 
+                     f'{val:.1f}', ha='center', va='bottom', fontweight='bold')
+        
+        plt.title("Best Fitness Score by Profile (Genetic Algorithm) — Lower is Better")
+        plt.ylabel("Best Fitness Score (Mean)")
+        plt.xlabel("Profile")
+        plt.xticks(rotation=15, ha='right')
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_dir, 'overall_fitness_ga.png'), dpi=300)
         plt.close()
 
         print("\n==========================================")
