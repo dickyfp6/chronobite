@@ -9,6 +9,14 @@ interface MealData {
 
 interface PDFData {
   userName?: string;
+  userData?: {
+    gender: string;
+    age: number;
+    weight: number;
+    height: number;
+    activity?: string;
+    foodPreferences: string[];
+  };
   meals: MealData[];
   dailyNeeds: any;
   nutrients: any;
@@ -65,6 +73,50 @@ export async function generateNutritionPDF(data: PDFData): Promise<void> {
   pdf.text(today, pageWidth - margin, 30, { align: 'right' });
 
   yPosition = 50;
+
+  // Section 0: Profile Summary
+  if (data.userData) {
+    pdf.setTextColor(...primaryColor);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Profile Summary', margin, yPosition);
+    yPosition += 10;
+
+    pdf.setTextColor(...textColor);
+    pdf.setFontSize(10);
+    
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Gender & Age:', margin, yPosition);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`${data.userData.gender === 'male' ? 'Male' : 'Female'}, ${data.userData.age} yrs`, margin + 40, yPosition);
+    yPosition += 6;
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Weight & Height:', margin, yPosition);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`${data.userData.weight} kg • ${data.userData.height} cm`, margin + 40, yPosition);
+    yPosition += 6;
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Activity Level:', margin, yPosition);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(data.userData.activity || 'Moderate', margin + 40, yPosition);
+    yPosition += 6;
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Health Conditions:', margin, yPosition);
+    pdf.setFont('helvetica', 'normal');
+    const conditions = data.healthConditions.map(c => data.translations.input.health[c] || c).join(', ') || 'Normal';
+    pdf.text(conditions, margin + 40, yPosition);
+    yPosition += 6;
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Food Preferences:', margin, yPosition);
+    pdf.setFont('helvetica', 'normal');
+    const prefs = data.userData.foodPreferences?.join(', ') || 'All Cuisines';
+    pdf.text(prefs, margin + 40, yPosition);
+    yPosition += 12;
+  }
 
   // Section 1: Meal Menu
   pdf.setTextColor(...primaryColor);

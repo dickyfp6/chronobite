@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Download, FileText, BarChart3, List, Lightbulb, User } from 'lucide-react';
+import { FileText, BarChart3, List, Lightbulb, User } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import type { UserInputData } from './InputWizard';
 import { calculateDailyNeeds } from '../utils/mockData';
@@ -12,6 +12,7 @@ import { translations } from '../utils/translations';
 
 interface ReportProps {
   userData: UserInputData;
+  onRegisterDownloadPDF?: (fn: (() => void) | null) => void;
 }
 
 const dietTips = {
@@ -42,7 +43,7 @@ const dietTips = {
   ],
 };
 
-export function Report({ userData }: ReportProps) {
+export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
   const [activeTab, setActiveTab] = useState<number | string>('profile');
   const { t, language } = useI18n();
 
@@ -276,6 +277,14 @@ export function Report({ userData }: ReportProps) {
 
     await generateNutritionPDF({
       userName: userData.gender === 'male' ? 'User' : 'User',
+      userData: {
+        gender: userData.gender,
+        age: userData.age,
+        weight: userData.weight,
+        height: userData.height,
+        activity: userData.activity,
+        foodPreferences: userData.foodPreferences,
+      },
       meals: mealsData,
       dailyNeeds,
       nutrients: actualPDFNutrients,
@@ -290,24 +299,17 @@ export function Report({ userData }: ReportProps) {
     });
   };
 
-  return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 px-4 py-8">
-      <div className="max-w-6xl mx-auto font-sans">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex items-center justify-between"
-        >
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white font-serif tracking-tight">{t.report.title}</h1>
-          <button
-            onClick={handleDownloadPDF}
-            className="px-5 py-2.5 bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all flex items-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer text-sm"
-          >
-            <Download className="w-4 h-4" />
-            {t.report.download}
-          </button>
-        </motion.div>
+  useEffect(() => {
+    if (onRegisterDownloadPDF) {
+      onRegisterDownloadPDF(() => handleDownloadPDF);
+    }
+    return () => {
+      if (onRegisterDownloadPDF) onRegisterDownloadPDF(null);
+    };
+  }, [onRegisterDownloadPDF, handleDownloadPDF]);
 
+  return (
+    <div className="w-full font-sans">
         <div className="mb-6 bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl border border-border/80 dark:border-slate-850/30 overflow-hidden shadow-xl shadow-primary/5 dark:shadow-none">
           <div className="flex overflow-x-auto">
             {tabs.map((tab) => {
@@ -842,7 +844,6 @@ export function Report({ userData }: ReportProps) {
             </div>
           )}
         </motion.div>
-      </div>
 
       {/* Hidden charts for PDF export */}
       <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', pointerEvents: 'none', opacity: 0 }}>

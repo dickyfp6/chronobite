@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
 import { ArrowRight, Loader2, RotateCcw } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import type { UserInputData } from './InputWizard';
@@ -11,6 +10,8 @@ interface ResultsProps {
   analysisResult?: any;
   menuPromise?: Promise<any> | null;
   onViewReport: () => void;
+  selectedItems: Record<string, Candidate>;
+  onSelectedItemsChange: (items: Record<string, Candidate>) => void;
 }
 
 type Candidate = {
@@ -46,15 +47,12 @@ const getRibbonColor = (cuisine?: string) => {
   return 'bg-green-500'; // Generic
 };
 
-export function Results({ userData, algorithm, analysisResult, menuPromise, onViewReport }: ResultsProps) {
+export function Results({ userData, algorithm, analysisResult, menuPromise, onViewReport, selectedItems, onSelectedItemsChange }: ResultsProps) {
   const { t } = useI18n();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [menuData, setMenuData] = useState<Record<string, Meal> | null>(null);
-
-  // Track selected candidate for each meal+course. e.g. "breakfast_Main" -> Candidate
-  const [selected, setSelected] = useState<Record<string, Candidate>>({});
 
   // Helper function to scale alternative candidates (option 2 & 3) to match option 1's calorie target
   const scaleCandidates = (candidates: Candidate[]): Candidate[] => {
@@ -182,7 +180,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
         initialSelected['snack_snack'] = meals.snack.candidates[0];
       }
 
-      setSelected(initialSelected);
+      onSelectedItemsChange(initialSelected);
       sessionStorage.setItem('dss_selected_items', JSON.stringify(initialSelected));
     } catch (err: any) {
       console.error(err);
@@ -198,21 +196,19 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
 
   const handleSelect = (meal: string, category: string, candidate: Candidate) => {
     const key = `${meal}_${category}`;
-    setSelected((prev) => {
-      const newSelected = {
-        ...prev,
-        [key]: candidate,
-      };
-      sessionStorage.setItem('dss_selected_items', JSON.stringify(newSelected));
-      return newSelected;
-    });
+    const newSelected = {
+      ...selectedItems,
+      [key]: candidate,
+    };
+    sessionStorage.setItem('dss_selected_items', JSON.stringify(newSelected));
+    onSelectedItemsChange(newSelected);
   };
 
   // Calculate totals from currently selected items
-  const totalCalories = Object.values(selected).reduce((sum, item) => sum + item.calories, 0);
-  const totalProtein = Object.values(selected).reduce((sum, item) => sum + item.protein, 0);
-  const totalCarbs = Object.values(selected).reduce((sum, item) => sum + item.carbs, 0);
-  const totalFat = Object.values(selected).reduce((sum, item) => sum + item.fat, 0);
+  const totalCalories = Object.values(selectedItems).reduce((sum, item) => sum + (item.calories || 0), 0);
+  const totalProtein = Object.values(selectedItems).reduce((sum, item) => sum + (item.protein || 0), 0);
+  const totalCarbs = Object.values(selectedItems).reduce((sum, item) => sum + (item.carbs || 0), 0);
+  const totalFat = Object.values(selectedItems).reduce((sum, item) => sum + (item.fat || 0), 0);
 
   // Use the calculated TDEE from analysisResult if available
   const targetCalories = analysisResult?.energy?.tdee
@@ -247,17 +243,8 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 px-4 py-8 pb-48 sm:pb-40">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-gray-900 dark:text-white font-serif tracking-tight">{t.results.title}</h1>
-          <p className="text-gray-600 dark:text-gray-400 font-sans">Select your meals from the recommended options below</p>
-        </motion.div>
-
+    <>
+      <div className="w-full pb-48 sm:pb-40">
         <div className="space-y-8">
           {['breakfast', 'lunch', 'dinner'].map((mealName) => {
             const meal = menuData[mealName];
@@ -298,7 +285,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
                                 key={option.fdc_id || option.name}
                                 onClick={() => handleSelect(mealName, courseName, option)}
                                 className={`relative overflow-hidden p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-white/40 dark:bg-slate-950/20 ${
-                                  selected[key]?.name === option.name
+                                  selectedItems[key]?.name === option.name
                                     ? 'border-primary dark:border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-1 ring-primary/20'
                                     : 'border-border/80 dark:border-slate-800 hover:border-primary/50 dark:hover:border-slate-700 hover:bg-secondary/40 dark:hover:bg-slate-800/50'
                                 }`}
@@ -315,7 +302,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
                                   {option.calories} kcal
                                 </p>
                                 <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 font-sans">
-                                  <span>P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g</span>
+                                  <span>Carb: {option.carbs}g • Pro: {option.protein}g • Fat: {option.fat}g</span>
                                   <span className="font-medium shrink-0">{option.serving_size}g</span>
                                 </div>
                               </button>
@@ -356,7 +343,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
                       key={option.fdc_id || option.name}
                       onClick={() => handleSelect('snack', 'snack', option)}
                       className={`relative overflow-hidden p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-white/40 dark:bg-slate-950/20 ${
-                        selected['snack_snack']?.name === option.name
+                        selectedItems['snack_snack']?.name === option.name
                           ? 'border-primary dark:border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-1 ring-primary/20'
                           : 'border-border/80 dark:border-slate-800 hover:border-primary/50 dark:hover:border-slate-700 hover:bg-secondary/40 dark:hover:bg-slate-800/50'
                       }`}
@@ -373,7 +360,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
                         {option.calories} kcal
                       </p>
                       <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 font-sans">
-                        <span>P: {option.protein}g • C: {option.carbs}g • F: {option.fat}g</span>
+                        <span>Carb: {option.carbs}g • Pro: {option.protein}g • Fat: {option.fat}g</span>
                         <span className="font-medium shrink-0">{option.serving_size}g</span>
                       </div>
                     </button>
@@ -395,8 +382,8 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
         </div>
       </div>
 
-      {/* Sticky Nutrition Summary */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/70 backdrop-blur-md border-t border-border/80 dark:border-slate-800/60 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40">
+      {/* Sticky Nutrition Summary (Mobile only) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/70 backdrop-blur-md border-t border-border/80 dark:border-slate-800/60 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
             <div className="text-center">
@@ -406,15 +393,15 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
               </p>
             </div>
             <div className="text-center">
-              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1 font-sans">{t.results.protein}</p>
-              <p className="text-sm sm:text-lg md:text-xl font-bold text-primary dark:text-emerald-400 font-serif">
-                {Math.round(totalProtein)}g
-              </p>
-            </div>
-            <div className="text-center">
               <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1 font-sans">{t.results.carbs}</p>
               <p className="text-sm sm:text-lg md:text-xl font-bold text-primary dark:text-emerald-400 font-serif">
                 {Math.round(totalCarbs)}g
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1 font-sans">{t.results.protein}</p>
+              <p className="text-sm sm:text-lg md:text-xl font-bold text-primary dark:text-emerald-400 font-serif">
+                {Math.round(totalProtein)}g
               </p>
             </div>
             <div className="text-center">
@@ -426,6 +413,6 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

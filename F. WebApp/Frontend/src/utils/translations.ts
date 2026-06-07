@@ -50,7 +50,12 @@ export const translations = {
     },
     input: {
       title: 'Build Your Profile',
-      steps: ['Gender', 'Metrics', 'Activity', 'Health', 'Preferences'],
+      steps: ['Profile', 'Metrics', 'Health', 'Preferences'],
+      sidebar: {
+        profile: 'Profile Input',
+        summary: 'Summary',
+        meals: 'Meal Plan',
+      },
       gender: {
         title: 'Select Gender',
         male: 'Male',
@@ -218,7 +223,7 @@ export const translations = {
     },
     input: {
       title: 'Bangun Profil Anda',
-      steps: ['Jenis Kelamin', 'Ukuran', 'Aktivitas', 'Kesehatan', 'Preferensi'],
+      steps: ['Profil', 'Ukuran', 'Kesehatan', 'Preferensi'],
       gender: {
         title: 'Pilih Jenis Kelamin',
         male: 'Pria',

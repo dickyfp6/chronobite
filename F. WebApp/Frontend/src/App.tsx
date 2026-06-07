@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from 'next-themes';
-import { I18nProvider } from './contexts/I18nContext';
+import { I18nProvider, useI18n } from './contexts/I18nContext';
 import { Navbar } from './components/figma/Navbar';
 import { Landing } from './pages/Landing';
 import { AlgorithmSelect } from './pages/AlgorithmSelect';
@@ -10,8 +10,150 @@ import { ProfileSummary } from './pages/ProfileSummary';
 import { Results } from './pages/Results';
 import { Report } from './pages/Report';
 import { api } from './services/api';
+import { User, FileText, UtensilsCrossed, ClipboardList, Flame, Beef, Wheat, Droplet } from 'lucide-react';
 
 type Page = 'landing' | 'algorithm' | 'input' | 'profile' | 'results' | 'report';
+
+function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedItems: Record<string, any>, analysisResult: any }) {
+  const { t } = useI18n();
+  const totalCalories = Object.values(selectedItems).reduce((sum, item) => sum + (item.calories || 0), 0);
+  const totalProtein = Object.values(selectedItems).reduce((sum, item) => sum + (item.protein || 0), 0);
+  const totalCarbs = Object.values(selectedItems).reduce((sum, item) => sum + (item.carbs || 0), 0);
+  const totalFat = Object.values(selectedItems).reduce((sum, item) => sum + (item.fat || 0), 0);
+  const targetCalories = analysisResult?.energy?.tdee ? Math.round(analysisResult.energy.tdee) : 2000;
+
+  const getRange = (macroKey: string, keyG: string, fallbackMin: number, fallbackMax: number, factor: number) => {
+    const minPct = analysisResult?.macros?.[macroKey]?.pct?.[0];
+    const maxPct = analysisResult?.macros?.[macroKey]?.pct?.[1];
+    if (minPct !== undefined && maxPct !== undefined) {
+      return {
+        min: (targetCalories * minPct / 100) / factor,
+        max: (targetCalories * maxPct / 100) / factor
+      };
+    }
+    const guide = analysisResult?.guidelines?.nutrients?.[keyG];
+    if (guide && (guide.min !== undefined || guide.max !== undefined)) {
+      return { min: guide.min ?? 0, max: guide.max ?? Infinity };
+    }
+    return {
+      min: (targetCalories * fallbackMin / 100) / factor,
+      max: (targetCalories * fallbackMax / 100) / factor
+    };
+  };
+
+  const proteinRange = getRange('protein', 'protein_g', 10, 35, 4);
+  const carbsRange = getRange('carbs', 'carbohydrate_g', 45, 65, 4);
+  const fatRange = getRange('fat', 'fat_g', 20, 35, 9);
+
+  const targetProtein = analysisResult?.macros?.protein?.gram || analysisResult?.guidelines?.nutrients?.protein_g?.max || Math.round((targetCalories * 0.15) / 4);
+  const targetCarbs = analysisResult?.macros?.carbs?.gram || analysisResult?.guidelines?.nutrients?.carbohydrate_g?.max || Math.round((targetCalories * 0.55) / 4);
+  const targetFat = analysisResult?.macros?.fat?.gram || analysisResult?.guidelines?.nutrients?.fat_g?.max || Math.round((targetCalories * 0.3) / 9);
+
+  const getMacroColor = (actual: number, range: { min: number, max: number }) => {
+    if (actual < range.min - 2) return 'bg-orange-500 dark:bg-orange-400';
+    if (actual > range.max + 2) return 'bg-[#a63a3a] dark:bg-[#c94f4f]'; // classy brick red for over limit
+    return 'bg-primary dark:bg-emerald-450'; // forest green to match calorie target
+  };
+
+  return (
+    <div className="hidden lg:block mt-6 pt-6 border-t border-border/80 dark:border-slate-800">
+      <h3 className="font-bold text-sm text-gray-900 dark:text-white mb-4 font-serif">Ketercapaian Target</h3>
+      <div className="space-y-4">
+        {/* Calories */}
+        <div>
+          <div className="flex justify-between items-center text-xs mb-1.5">
+            <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 font-sans">
+              <Flame className="w-3.5 h-3.5 text-orange-500" />
+              {t.results.dailyCalories}
+            </span>
+            <span className="font-bold text-gray-900 dark:text-white">{Math.round(totalCalories)} / {targetCalories}</span>
+          </div>
+          <div className="w-full bg-secondary dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div className="bg-primary dark:bg-emerald-450 h-full rounded-full transition-all" style={{ width: `${Math.min((totalCalories / targetCalories) * 100, 100)}%` }} />
+          </div>
+        </div>
+
+        {/* Carbs */}
+        <div>
+          <div className="flex justify-between items-center text-[11px] mb-1">
+            <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 font-sans">
+              <Wheat className="w-3.5 h-3.5 text-blue-500 dark:text-blue-450" />
+              {t.results.carbs}
+            </span>
+            <span className="font-bold text-gray-900 dark:text-white">{Math.round(totalCarbs)} / {Math.round(targetCarbs)}g</span>
+          </div>
+          <div className="w-full bg-secondary dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div className={`h-full rounded-full transition-all ${getMacroColor(totalCarbs, carbsRange)}`} style={{ width: `${Math.min((totalCarbs / Math.max(targetCarbs, carbsRange.max)) * 100, 100)}%` }} />
+          </div>
+        </div>
+        
+        {/* Protein */}
+        <div>
+          <div className="flex justify-between items-center text-[11px] mb-1">
+            <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 font-sans">
+              <Beef className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+              {t.results.protein}
+            </span>
+            <span className="font-bold text-gray-900 dark:text-white">{Math.round(totalProtein)} / {Math.round(targetProtein)}g</span>
+          </div>
+          <div className="w-full bg-secondary dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div className={`h-full rounded-full transition-all ${getMacroColor(totalProtein, proteinRange)}`} style={{ width: `${Math.min((totalProtein / Math.max(targetProtein, proteinRange.max)) * 100, 100)}%` }} />
+          </div>
+        </div>
+
+        {/* Fat */}
+        <div>
+          <div className="flex justify-between items-center text-[11px] mb-1">
+            <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 font-sans">
+              <Droplet className="w-3.5 h-3.5 text-red-500 dark:text-red-400" />
+              {t.results.fat}
+            </span>
+            <span className="font-bold text-gray-900 dark:text-white">{Math.round(totalFat)} / {Math.round(targetFat)}g</span>
+          </div>
+          <div className="w-full bg-secondary dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div className={`h-full rounded-full transition-all ${getMacroColor(totalFat, fatRange)}`} style={{ width: `${Math.min((totalFat / Math.max(targetFat, fatRange.max)) * 100, 100)}%` }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SidebarDemographics({ userData }: { userData: UserInputData }) {
+  return (
+    <div className="hidden lg:block mt-6 pt-6 border-t border-border/80 dark:border-slate-800 space-y-4">
+      <h3 className="font-bold text-sm text-gray-900 dark:text-white mb-4 font-serif">Demographics</h3>
+      
+      <div>
+        <span className="text-[10px] font-bold text-primary dark:text-emerald-450 uppercase tracking-wider block mb-0.5">Gender & Age</span>
+        <p className="text-sm font-bold text-gray-900 dark:text-white capitalize font-sans">
+          {userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs
+        </p>
+      </div>
+
+      <div>
+        <span className="text-[10px] font-bold text-primary dark:text-emerald-450 uppercase tracking-wider block mb-0.5">Weight & Height</span>
+        <p className="text-sm font-bold text-gray-900 dark:text-white font-sans">
+          {userData.weight} kg • {userData.height} cm
+        </p>
+      </div>
+
+      <div>
+        <span className="text-[10px] font-bold text-primary dark:text-emerald-450 uppercase tracking-wider block mb-0.5">Activity Level</span>
+        <p className="text-sm font-bold text-gray-900 dark:text-white capitalize font-sans">
+          {userData.activity || 'Moderate'}
+        </p>
+      </div>
+
+      <div>
+        <span className="text-[10px] font-bold text-primary dark:text-emerald-450 uppercase tracking-wider block mb-0.5">Food Preferences</span>
+        <p className="text-sm font-bold text-gray-900 dark:text-white capitalize font-sans line-clamp-2" title={userData.foodPreferences.join(', ')}>
+          {userData.foodPreferences.length > 0 ? userData.foodPreferences.join(', ') : 'All Cuisines'}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>(() => {
@@ -39,7 +181,13 @@ export default function App() {
     return saved ? JSON.parse(saved) : null;
   });
 
+  const [selectedItems, setSelectedItems] = useState<Record<string, any>>(() => {
+    const saved = sessionStorage.getItem('dss_selected_items');
+    return saved ? JSON.parse(saved) : {};
+  });
+
   const [menuPromise, setMenuPromise] = useState<Promise<any> | null>(null);
+  const [downloadPDFTrigger, setDownloadPDFTrigger] = useState<(() => void) | null>(null);
 
   const startMenuPrefetch = (analysis: any) => {
     if (menuPromise) return; // already prefetching
@@ -105,10 +253,12 @@ export default function App() {
       healthConditions: [],
       foodPreferences: [],
     });
+    setSelectedItems({});
     sessionStorage.removeItem('dss_current_page');
     sessionStorage.removeItem('dss_algorithm');
     sessionStorage.removeItem('dss_user_data');
     sessionStorage.removeItem('dss_wizard_step');
+    sessionStorage.removeItem('dss_selected_items');
     localStorage.clear();
   };
 
@@ -125,61 +275,149 @@ export default function App() {
     <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
       <I18nProvider>
         <div className="min-h-screen bg-background text-foreground">
-          <Navbar onHomeClick={handleHomeClick} />
+          <Navbar 
+            onHomeClick={handleHomeClick} 
+            currentPage={currentPage} 
+            onDownloadPDF={downloadPDFTrigger}
+          />
 
           <main className="pt-16">
-            {currentPage === 'landing' && (
-              <Landing onStart={() => setCurrentPage('algorithm')} />
-            )}
 
-            {currentPage === 'algorithm' && (
-              <AlgorithmSelect
-                selected={algorithm}
-                onSelect={(algo) => {
-                  setMenuPromise(null);
-                  setAlgorithm(algo);
-                }}
-                onContinue={() => setCurrentPage('input')}
-              />
-            )}
 
-            {currentPage === 'input' && (
-              <InputWizard
-                data={userData}
-                onUpdate={(data) => {
-                  setMenuPromise(null);
-                  setUserData({ ...userData, ...data });
-                }}
-                onComplete={() => setCurrentPage('profile')}
-              />
-            )}
+            {['profile', 'results', 'report'].includes(currentPage) ? (
+              <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 px-4 sm:px-6 lg:px-8 pb-8 pt-0 lg:pt-8 flex items-start justify-center">
+                <div className="w-full max-w-[1600px]">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    {/* Collapsed 4-point Sidebar */}
+                    <div className="sticky top-16 lg:top-24 z-30 lg:col-span-3 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible scrollbar-none gap-3 lg:gap-0 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-5 py-3 lg:py-5 bg-white/95 dark:bg-slate-900/95 lg:bg-white/50 lg:dark:bg-slate-900/40 backdrop-blur-md border-b border-border/50 lg:border lg:border-border/80 lg:dark:border-slate-800/80 rounded-none lg:rounded-3xl shadow-sm lg:shadow-lg lg:shadow-primary/5 dark:shadow-none">
+                      {[
+                        { id: 'input', label: 'Profil Input', summary: 'Edit measurements', icon: User },
+                        { id: 'profile', label: 'Summary', summary: 'Nutrition constraints', icon: FileText },
+                        { id: 'results', label: 'Meal Plan', summary: 'Recommended menus', icon: UtensilsCrossed },
+                        { id: 'report', label: 'Complete Report', summary: 'Detailed analysis', icon: ClipboardList },
+                      ].map((item) => {
+                        const active = item.id === currentPage;
+                        const Icon = item.icon;
 
-            {currentPage === 'profile' && (
-              <ProfileSummary
-                userData={userData}
-                onBack={() => {
-                  setMenuPromise(null);
-                  setCurrentPage('input');
-                }}
-                onContinue={() => setCurrentPage('results')}
-                onAnalysisComplete={(res) => {
-                  setAnalysisResult(res);
-                  startMenuPrefetch(res);
-                }}
-              />
-            )}
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => {
+                              if (item.id === 'input') {
+                                setMenuPromise(null);
+                                setCurrentPage('input');
+                              } else if (item.id === 'profile') {
+                                setCurrentPage('profile');
+                              } else if (item.id === 'results') {
+                                setCurrentPage('results');
+                              } else if (item.id === 'report') {
+                                setCurrentPage('report');
+                              }
+                            }}
+                            className={`relative flex flex-row items-center lg:items-start text-left gap-2.5 lg:gap-3 p-2 lg:p-3 rounded-xl lg:rounded-2xl transition-all min-w-max lg:min-w-0 flex-1 lg:flex-none border border-transparent ${
+                              active
+                                ? 'bg-primary/10 dark:bg-primary/20 text-primary dark:text-emerald-300 border-primary/25 font-bold shadow-sm'
+                                : 'hover:bg-white/80 dark:hover:bg-slate-800/60 text-gray-700 dark:text-gray-300 cursor-pointer'
+                            }`}
+                          >
+                            {/* Icon Indicator */}
+                            <div
+                              className={`w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold shadow-sm z-10 shrink-0 transition-all ${
+                                active
+                                  ? 'bg-primary text-primary-foreground ring-4 ring-primary/25 scale-105'
+                                  : 'bg-secondary dark:bg-slate-800 text-muted-foreground dark:text-gray-400'
+                              }`}
+                            >
+                              <Icon className="w-4 h-4 lg:w-5 h-5" />
+                            </div>
 
-            {currentPage === 'results' && (
-              <Results
-                userData={userData}
-                algorithm={algorithm}
-                analysisResult={analysisResult}
-                menuPromise={menuPromise}
-                onViewReport={() => setCurrentPage('report')}
-              />
-            )}
+                            <div className="flex-1 min-w-0 text-left z-10">
+                              <p className={`text-xs lg:text-sm tracking-tight ${active ? 'font-bold text-primary dark:text-emerald-300' : 'font-semibold'}`}>
+                                {item.label}
+                              </p>
+                              <p className="text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5">
+                                {item.summary}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                      {currentPage === 'profile' && (
+                        <SidebarDemographics userData={userData} />
+                      )}
+                      {['results', 'report'].includes(currentPage) && (
+                        <SidebarNutritionSummary selectedItems={selectedItems} analysisResult={analysisResult} />
+                      )}
+                    </div>
 
-            {currentPage === 'report' && <Report userData={userData} />}
+                    {/* Right Content */}
+                    <div className="lg:col-span-9 flex flex-col gap-6 w-full">
+                      {currentPage === 'profile' && (
+                        <ProfileSummary
+                          userData={userData}
+                          onBack={() => {
+                            setMenuPromise(null);
+                            setCurrentPage('input');
+                          }}
+                          onContinue={() => setCurrentPage('results')}
+                          onAnalysisComplete={(res) => {
+                            setAnalysisResult(res);
+                            startMenuPrefetch(res);
+                          }}
+                        />
+                      )}
+
+                      {currentPage === 'results' && (
+                        <Results
+                          userData={userData}
+                          algorithm={algorithm}
+                          analysisResult={analysisResult}
+                          menuPromise={menuPromise}
+                          onViewReport={() => setCurrentPage('report')}
+                          selectedItems={selectedItems}
+                          onSelectedItemsChange={setSelectedItems}
+                        />
+                      )}
+
+                      {currentPage === 'report' && (
+                        <Report 
+                          userData={userData} 
+                          onRegisterDownloadPDF={setDownloadPDFTrigger}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {currentPage === 'landing' && (
+                  <Landing onStart={() => setCurrentPage('algorithm')} />
+                )}
+
+                {currentPage === 'algorithm' && (
+                  <AlgorithmSelect
+                    selected={algorithm}
+                    onSelect={(algo) => {
+                      setMenuPromise(null);
+                      setAlgorithm(algo);
+                    }}
+                    onContinue={() => setCurrentPage('input')}
+                  />
+                )}
+
+                {currentPage === 'input' && (
+                  <InputWizard
+                    data={userData}
+                    onUpdate={(data) => {
+                      setMenuPromise(null);
+                      setUserData({ ...userData, ...data });
+                    }}
+                    onComplete={() => setCurrentPage('profile')}
+                  />
+                )}
+              </>
+            )}
           </main>
 
           {/* Restart Confirmation Modal */}

@@ -7,7 +7,7 @@ const slides = [
   {
     id: 'intro',
     badge: 'CLINICALLY VALIDATED NUTRITION',
-    imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80', // Vibrant avocado & egg bowl
     icon: Heart,
     topWidget: {
       title: 'REAL-TIME BIOMETRICS',
@@ -23,7 +23,7 @@ const slides = [
   {
     id: 'dm2',
     badge: 'DIABETES MELLITUS MANAGEMENT',
-    imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1493770348161-369560ae357d?auto=format&fit=crop&w=600&q=80', // Oatmeal with fresh berries (Low GI)
     icon: Droplet,
     topWidget: {
       title: 'GLUCOSE LEVEL',
@@ -39,7 +39,7 @@ const slides = [
   {
     id: 'hypertension',
     badge: 'HYPERTENSION PROTOCOL',
-    imageUrl: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80', // Mediterranean salad (Low sodium)
     icon: Activity,
     topWidget: {
       title: 'BLOOD PRESSURE',
@@ -55,7 +55,7 @@ const slides = [
   {
     id: 'cvd',
     badge: 'CARDIOVASCULAR HEALTH',
-    imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=600&q=80', // Grilled salmon (Omega-3)
     icon: Heart,
     topWidget: {
       title: 'CHOLESTEROL STATUS',
@@ -71,7 +71,7 @@ const slides = [
   {
     id: 'cholesterol',
     badge: 'CHOLESTEROL MANAGEMENT',
-    imageUrl: 'https://images.unsplash.com/photo-1517881917430-e70dfb3610aa?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=600&q=80', // Chia pudding / oats (Soluble fiber)
     icon: TrendingDown,
     topWidget: {
       title: 'LDL STATUS',
@@ -87,7 +87,7 @@ const slides = [
   {
     id: 'ckd',
     badge: 'CHRONIC KIDNEY SUPPORT',
-    imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80', // Healthy plate, safe for CKD
     icon: Shield,
     topWidget: {
       title: 'FILTRATION RATE',

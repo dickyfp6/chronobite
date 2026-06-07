@@ -295,20 +295,8 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
   }, [userData, dailyNeeds.calories]);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 px-4 py-8">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 text-center"
-        >
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
-            Your Profile Summary
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-normal">
-            Review your nutrition profile first. The meal plan will be generated only after you continue.
-          </p>
-        </motion.div>
+    <div className="w-full">
+
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
@@ -317,39 +305,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
           </div>
         ) : (
           <div className="space-y-6">
-            {/* Top Bar: Profile Details (No boxes, clean layout) */}
-            <motion.section
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 border border-border/80 dark:border-slate-850/30 shadow-xl shadow-primary/5 dark:shadow-none"
-            >
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-2">
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Demographics</span>
-                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize font-serif">
-                    {userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs
-                  </p>
-                </div>
-                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
-                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Weight & Height</span>
-                  <p className="text-base font-bold text-gray-900 dark:text-white font-serif">
-                    {userData.weight} kg • {userData.height} cm
-                  </p>
-                </div>
-                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
-                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Activity Level</span>
-                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize font-serif">
-                    {userData.activity || 'Moderate'}
-                  </p>
-                </div>
-                <div className="space-y-1 border-l border-border dark:border-slate-800 pl-6">
-                  <span className="text-xs font-bold text-primary dark:text-emerald-450 uppercase tracking-wider">Food Preferences</span>
-                  <p className="text-base font-bold text-gray-900 dark:text-white capitalize truncate font-serif" title={userData.foodPreferences.join(', ')}>
-                    {userData.foodPreferences.length > 0 ? userData.foodPreferences.join(', ') : 'All Cuisines'}
-                  </p>
-                </div>
-              </div>
-            </motion.section>
+
 
             <div className="grid gap-6 lg:grid-cols-2">
 
@@ -523,6 +479,5 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
           </button>
         </div>
       </div>
-    </div>
   );
 }
