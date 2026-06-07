@@ -89,23 +89,28 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
   });
 
   const { macroData, microData } = useMemo(() => {
+    const items = Object.values(selectedItems);
+    const totalProtein = items.reduce((sum, item) => sum + (item.protein || 0), 0);
+    const totalCarbs = items.reduce((sum, item) => sum + (item.carbs || 0), 0);
+    const totalFat = items.reduce((sum, item) => sum + (item.fat || 0), 0);
+
     // 1. Setup base macros
     const macros = [
       {
-        nutrient: t.results.protein,
-        actual: Math.round(actualNutrients?.protein || dailyNeeds.protein * 0.85),
-        min: Math.round(dailyNeeds.protein * 0.8),
-        max: Math.round(dailyNeeds.protein * 1.2),
-      },
-      {
         nutrient: t.results.carbs,
-        actual: Math.round(actualNutrients?.carbs || dailyNeeds.carbs * 0.92),
+        actual: Math.round(totalCarbs),
         min: Math.round(dailyNeeds.carbs * 0.85),
         max: Math.round(dailyNeeds.carbs * 1.15),
       },
       {
+        nutrient: t.results.protein,
+        actual: Math.round(totalProtein),
+        min: Math.round(dailyNeeds.protein * 0.8),
+        max: Math.round(dailyNeeds.protein * 1.2),
+      },
+      {
         nutrient: t.results.fat,
-        actual: Math.round(actualNutrients?.fat || dailyNeeds.fat * 0.78),
+        actual: Math.round(totalFat),
         min: Math.round(dailyNeeds.fat * 0.7),
         max: Math.round(dailyNeeds.fat * 1.0),
       },
@@ -162,7 +167,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
     }
 
     return { macroData: macros, microData: micros };
-  }, [dailyNeeds, t, actualNutrients, analysisGuidelines]);
+  }, [dailyNeeds, t, actualNutrients, analysisGuidelines, selectedItems]);
 
   // Group nutrients by category
   const vitaminNutrients = [

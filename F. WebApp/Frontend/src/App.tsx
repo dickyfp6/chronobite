@@ -23,6 +23,13 @@ function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedIt
   const targetCalories = analysisResult?.energy?.tdee ? Math.round(analysisResult.energy.tdee) : 2000;
 
   const getRange = (macroKey: string, keyG: string, fallbackMin: number, fallbackMax: number, factor: number) => {
+    const guide = analysisResult?.guidelines?.nutrients?.[keyG];
+    if (guide && (guide.min !== undefined || guide.max !== undefined)) {
+      return { 
+        min: guide.min ?? 0, 
+        max: (guide.max !== null && Number.isFinite(guide.max)) ? guide.max : Infinity 
+      };
+    }
     const minPct = analysisResult?.macros?.[macroKey]?.pct?.[0];
     const maxPct = analysisResult?.macros?.[macroKey]?.pct?.[1];
     if (minPct !== undefined && maxPct !== undefined) {
@@ -30,10 +37,6 @@ function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedIt
         min: (targetCalories * minPct / 100) / factor,
         max: (targetCalories * maxPct / 100) / factor
       };
-    }
-    const guide = analysisResult?.guidelines?.nutrients?.[keyG];
-    if (guide && (guide.min !== undefined || guide.max !== undefined)) {
-      return { min: guide.min ?? 0, max: guide.max ?? Infinity };
     }
     return {
       min: (targetCalories * fallbackMin / 100) / factor,
@@ -45,9 +48,9 @@ function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedIt
   const carbsRange = getRange('carbs', 'carbohydrate_g', 45, 65, 4);
   const fatRange = getRange('fat', 'fat_g', 20, 35, 9);
 
-  const targetProtein = analysisResult?.macros?.protein?.gram || analysisResult?.guidelines?.nutrients?.protein_g?.max || Math.round((targetCalories * 0.15) / 4);
-  const targetCarbs = analysisResult?.macros?.carbs?.gram || analysisResult?.guidelines?.nutrients?.carbohydrate_g?.max || Math.round((targetCalories * 0.55) / 4);
-  const targetFat = analysisResult?.macros?.fat?.gram || analysisResult?.guidelines?.nutrients?.fat_g?.max || Math.round((targetCalories * 0.3) / 9);
+  const targetProtein = analysisResult?.guidelines?.nutrients?.protein_g?.max || analysisResult?.macros?.protein?.gram || Math.round((targetCalories * 0.15) / 4);
+  const targetCarbs = analysisResult?.guidelines?.nutrients?.carbohydrate_g?.max || analysisResult?.macros?.carbs?.gram || Math.round((targetCalories * 0.55) / 4);
+  const targetFat = analysisResult?.guidelines?.nutrients?.fat_g?.max || analysisResult?.macros?.fat?.gram || Math.round((targetCalories * 0.3) / 9);
 
   const getMacroColor = (actual: number, range: { min: number, max: number }) => {
     if (actual < range.min - 2) return 'bg-orange-500 dark:bg-orange-400';

@@ -46,10 +46,10 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
       <p className="font-bold text-gray-900 dark:text-white mb-2">{label}</p>
       <div className="space-y-1 text-sm">
         <p className="text-gray-700 dark:text-gray-300">
-          <span className="font-medium">Min:</span> {data.minRange}{data.unit}
+          <span className="font-medium">Max:</span> {data.maxRange !== null && Number.isFinite(data.maxRange) ? `${data.maxRange}${data.unit}` : 'No limit'}
         </p>
         <p className="text-gray-700 dark:text-gray-300">
-          <span className="font-medium">Max:</span> {data.maxRange !== null && Number.isFinite(data.maxRange) ? `${data.maxRange}${data.unit}` : 'No limit'}
+          <span className="font-medium">Min:</span> {data.minRange}{data.unit}
         </p>
         <p className="text-emerald-700 dark:text-emerald-300 font-semibold">
           <span className="font-medium">Actual:</span> {data.actualValue}{data.unit}
@@ -79,6 +79,28 @@ const CustomDot = (props: any) => {
       fill={fill}
       stroke="#fff"
       strokeWidth={3}
+    />
+  );
+};
+
+const CustomActiveDot = (props: any) => {
+  const { cx, cy, payload } = props;
+
+  if (!payload || typeof cx !== 'number' || typeof cy !== 'number') return null;
+
+  let fill = '#059669';
+  if (payload.status === 'below') fill = '#ea580c';
+  if (payload.status === 'above') fill = '#dc2626';
+
+  return (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={9}
+      fill={fill}
+      stroke="#fff"
+      strokeWidth={3}
+      style={{ filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.15))' }}
     />
   );
 };
@@ -176,14 +198,13 @@ export function NutritionChart({ data, unit = 'g' }: NutritionChartProps) {
             isAnimationActive={false}
           />
 
-          {/* Garis actual value (solid, tebal) - SELALU DI ATAS */}
           <Line
             type="monotone"
             dataKey="actualValue"
             stroke="#059669"
             strokeWidth={4}
             dot={<CustomDot />}
-            activeDot={{ r: 9, strokeWidth: 3 }}
+            activeDot={<CustomActiveDot />}
             isAnimationActive={false}
           />
         </ComposedChart>

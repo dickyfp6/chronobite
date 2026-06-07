@@ -1,4 +1,4 @@
-import lightLogo from '../../assets/light-horizontal.png';
+import lightLogo from '../../assets/ChronoBite.png';
 import { useI18n } from '../../contexts/I18nContext';
 import { Download } from 'lucide-react';
 
@@ -31,7 +31,7 @@ export function Navbar({ onHomeClick, currentPage, onDownloadPDF }: NavbarProps)
         >
           <img
             src={lightLogo}
-            alt="NutriPlan"
+            alt="ChronoBite"
             className="h-12"
           />
         </button>
