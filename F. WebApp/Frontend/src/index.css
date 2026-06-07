@@ -128,3 +128,60 @@ code {
   scrollbar-width: none;
   /* Firefox */
 }
+
+/* Custom Modern Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.3s ease;
+}
+
+/* Make scrollbars visible only when active/scrolling/hovering */
+html.is-scrolling::-webkit-scrollbar-thumb,
+body.is-scrolling::-webkit-scrollbar-thumb,
+.is-scrolling::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 116, 139, 0.4);
+}
+
+.dark html.is-scrolling::-webkit-scrollbar-thumb,
+.dark body.is-scrolling::-webkit-scrollbar-thumb,
+.dark .is-scrolling::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.4);
+}
+
+/* Darker on direct scrollbar hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 116, 139, 0.7) !important;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(148, 163, 184, 0.7) !important;
+}
+
+/* Firefox compatibility */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+html.is-scrolling,
+body.is-scrolling,
+.is-scrolling {
+  scrollbar-color: rgba(100, 116, 139, 0.4) transparent;
+}
+
+.dark html.is-scrolling,
+.dark body.is-scrolling,
+.dark .is-scrolling {
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+}

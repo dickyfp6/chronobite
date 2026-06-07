@@ -283,11 +283,11 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
     await generateNutritionPDF({
       userName: userData.gender === 'male' ? 'User' : 'User',
       userData: {
-        gender: userData.gender,
+        gender: userData.gender || 'male',
         age: userData.age,
         weight: userData.weight,
         height: userData.height,
-        activity: userData.activity,
+        activity: userData.activity || 'moderate',
         foodPreferences: userData.foodPreferences,
       },
       meals: mealsData,
@@ -623,41 +623,139 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
             <div>
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white font-serif tracking-tight">{t.report.tabs.other}</h2>
 
-              {/* Helper for nutrient coloring/status */}
               {(() => {
-                const getNutrientStatus = (percentage: number) => {
-                  const isId = (language as string) === 'id';
-                  if (percentage < 100) {
-                    return {
-                      label: isId ? 'Kurang Asupan' : 'Deficient',
-                      showBadge: true,
-                      priority: 1, // Red
-                      cardBg: 'bg-red-50/70 dark:bg-red-950/20 border-red-200/50 dark:border-red-900/40',
-                      badgeBg: 'bg-red-500/10 text-red-600 dark:text-red-400',
-                      textColor: 'text-red-700 dark:text-red-400',
-                      titleColor: 'text-red-900 dark:text-red-200'
-                    };
-                  } else if (percentage <= 200) {
-                    return {
-                      label: isId ? 'Cukup' : 'Optimal',
-                      showBadge: false, // Green styling/badge not needed
-                      priority: 3, // Green (neutral style)
-                      cardBg: 'bg-white/40 dark:bg-slate-950/20 border-border/80 dark:border-slate-800/80',
-                      badgeBg: '',
-                      textColor: 'text-gray-800 dark:text-gray-200',
-                      titleColor: 'text-gray-900 dark:text-white'
-                    };
+                const getNutrientCardData = (nutrientKey: string) => {
+                  const rule = analysisGuidelines?.nutrients?.[nutrientKey];
+                  const unit = getNutrientUnit(nutrientKey as any);
+                  const name = t.nutrients[nutrientKey as keyof typeof t.nutrients] || nutrientKey.split('_')[0].toUpperCase();
+                  
+                  // Get actual value
+                  const staticVal = Number(dailyNeeds[nutrientKey as keyof typeof dailyNeeds]) || 0;
+                  const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
+                    ? Math.round(actualNutrients[nutrientKey])
+                    : Math.round(staticVal * (0.7 + Math.random() * 0.4));
+
+                  let targetValText = '';
+                  let percentage = 0;
+                  let isDeficient = false;
+                  let isExcessive = false;
+
+                  if (rule) {
+                    const minVal = rule.min != null ? Number(rule.min) : null;
+                    const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
+
+                    // 1. Format Target Text
+                    if (minVal !== null && maxVal !== null) {
+                      if (minVal === maxVal) {
+                        targetValText = `${Math.round(minVal)}`;
+                      } else {
+                        targetValText = `${Math.round(minVal)}-${Math.round(maxVal)}`;
+                      }
+                    } else if (minVal !== null) {
+                      targetValText = `min. ${Math.round(minVal)}`;
+                    } else if (maxVal !== null) {
+                      targetValText = `max. ${Math.round(maxVal)}`;
+                    } else {
+                      targetValText = 'No limit';
+                    }
+
+                    // 2. Status & Percentage
+                    if (minVal !== null && maxVal !== null) {
+                      if (actual < minVal) {
+                        isDeficient = true;
+                        percentage = minVal > 0 ? Math.round((actual / minVal) * 100) : 100;
+                      } else if (actual > maxVal) {
+                        isExcessive = true;
+                        percentage = maxVal > 0 ? Math.round((actual / maxVal) * 100) : 100;
+                      } else {
+                        percentage = minVal > 0 ? Math.round((actual / minVal) * 100) : 100;
+                      }
+                    } else if (minVal !== null) {
+                      if (actual < minVal) {
+                        isDeficient = true;
+                      }
+                      percentage = minVal > 0 ? Math.round((actual / minVal) * 100) : 100;
+                    } else if (maxVal !== null) {
+                      if (actual > maxVal) {
+                        isExcessive = true;
+                      }
+                      percentage = maxVal > 0 ? Math.round((actual / maxVal) * 100) : 100;
+                    } else {
+                      percentage = 100;
+                    }
                   } else {
-                    return {
-                      label: isId ? 'Berlebih' : 'Excessive',
-                      showBadge: true,
-                      priority: 2, // Yellow
-                      cardBg: 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/50 dark:border-amber-900/40',
-                      badgeBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-450',
-                      textColor: 'text-amber-700 dark:text-amber-400',
-                      titleColor: 'text-amber-900 dark:text-amber-200'
-                    };
+                    targetValText = `${staticVal}`;
+                    percentage = staticVal > 0 ? Math.round((actual / staticVal) * 100) : 100;
+
+                    const isLimitNutrient = [
+                      'sodium_mg',
+                      'cholesterol_mg',
+                      'sugar_g',
+                      'saturated_fat_g',
+                      'trans_fat_g'
+                    ].includes(nutrientKey);
+
+                    if (isLimitNutrient) {
+                      if (actual > staticVal) {
+                        isExcessive = true;
+                      }
+                    } else {
+                      if (percentage < 100) {
+                        isDeficient = true;
+                      } else if (percentage > 200) {
+                        isExcessive = true;
+                      }
+                    }
                   }
+
+                  const isId = (language as string) === 'id';
+                  let statusLabel = '';
+                  let showBadge = false;
+                  let cardBg = 'bg-white/40 dark:bg-slate-950/20 border-border/80 dark:border-slate-800/80';
+                  let badgeBg = '';
+                  let textColor = 'text-gray-800 dark:text-gray-200';
+                  let titleColor = 'text-gray-900 dark:text-white';
+                  let priority = 3;
+
+                  if (isDeficient) {
+                    statusLabel = isId ? 'Kurang Asupan' : 'Deficient';
+                    showBadge = true;
+                    priority = 1;
+                    cardBg = 'bg-red-50/70 dark:bg-red-950/20 border-red-200/50 dark:border-red-900/40';
+                    badgeBg = 'bg-red-500/10 text-red-600 dark:text-red-400';
+                    textColor = 'text-red-700 dark:text-red-400';
+                    titleColor = 'text-red-900 dark:text-red-200';
+                  } else if (isExcessive) {
+                    statusLabel = isId ? 'Berlebih' : 'Excessive';
+                    showBadge = true;
+                    priority = 2;
+                    cardBg = 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/50 dark:border-amber-900/40';
+                    badgeBg = 'bg-amber-500/10 text-amber-600 dark:text-amber-450';
+                    textColor = 'text-amber-700 dark:text-amber-400';
+                    titleColor = 'text-amber-900 dark:text-amber-200';
+                  } else {
+                    statusLabel = isId ? 'Cukup' : 'Optimal';
+                    showBadge = false;
+                    priority = 3;
+                  }
+
+                  return {
+                    nutrientKey,
+                    name,
+                    actual,
+                    unit,
+                    targetValText,
+                    percentage,
+                    status: {
+                      label: statusLabel,
+                      showBadge,
+                      priority,
+                      cardBg,
+                      badgeBg,
+                      textColor,
+                      titleColor
+                    }
+                  };
                 };
 
                 return (
@@ -667,21 +765,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                       <h3 className="text-base font-bold mb-3.5 text-primary dark:text-emerald-450 font-serif">Vitamins</h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                         {(() => {
-                          const mapped = vitaminNutrients.map((nutrientKey) => {
-                            const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
-                            const unit = getNutrientUnit(nutrientKey as any);
-                            const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                            const targetVal = Number(value) || 0;
-                            const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
-                              ? Math.round(actualNutrients[nutrientKey])
-                              : Math.round(targetVal * (0.7 + Math.random() * 0.4));
-                            const percentage = targetVal === 0 
-                              ? (actual === 0 ? 100 : 999) 
-                              : Math.round((actual / targetVal) * 100);
-                            const status = getNutrientStatus(percentage);
-                            return { nutrientKey, value, unit, name, actual, percentage, status };
-                          });
-
+                          const mapped = vitaminNutrients.map(getNutrientCardData);
                           mapped.sort((a, b) => a.status.priority - b.status.priority);
 
                           return mapped.map((item, index) => (
@@ -701,7 +785,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                                       {item.actual}{item.unit}
                                     </span>
                                     <span className="text-[10px] font-light text-gray-400 dark:text-gray-500 ml-1">
-                                      / {item.value}{item.unit}
+                                      / {item.targetValText}{item.unit}
                                     </span>
                                   </div>
                                   <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{item.percentage}%</span>
@@ -718,21 +802,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                       <h3 className="text-base font-bold mb-3.5 text-primary dark:text-emerald-450 font-serif">Minerals</h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                         {(() => {
-                          const mapped = mineralNutrients.map((nutrientKey) => {
-                            const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
-                            const unit = getNutrientUnit(nutrientKey as any);
-                            const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                            const targetVal = Number(value) || 0;
-                            const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
-                              ? Math.round(actualNutrients[nutrientKey])
-                              : Math.round(targetVal * (0.7 + Math.random() * 0.4));
-                            const percentage = targetVal === 0 
-                              ? (actual === 0 ? 100 : 999) 
-                              : Math.round((actual / targetVal) * 100);
-                            const status = getNutrientStatus(percentage);
-                            return { nutrientKey, value, unit, name, actual, percentage, status };
-                          });
-
+                          const mapped = mineralNutrients.map(getNutrientCardData);
                           mapped.sort((a, b) => a.status.priority - b.status.priority);
 
                           return mapped.map((item, index) => (
@@ -752,7 +822,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                                       {item.actual}{item.unit}
                                     </span>
                                     <span className="text-[10px] font-light text-gray-400 dark:text-gray-500 ml-1">
-                                      / {item.value}{item.unit}
+                                      / {item.targetValText}{item.unit}
                                     </span>
                                   </div>
                                   <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{item.percentage}%</span>
@@ -769,21 +839,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                       <h3 className="text-base font-bold mb-3.5 text-primary dark:text-emerald-450 font-serif">Other Nutrients</h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                         {(() => {
-                          const mapped = otherNutrients.map((nutrientKey) => {
-                            const value = dailyNeeds[nutrientKey as keyof typeof dailyNeeds];
-                            const unit = getNutrientUnit(nutrientKey as any);
-                            const name = t.nutrients[nutrientKey as keyof typeof t.nutrients];
-                            const targetVal = Number(value) || 0;
-                            const actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
-                              ? Math.round(actualNutrients[nutrientKey])
-                              : Math.round(targetVal * (0.7 + Math.random() * 0.4));
-                            const percentage = targetVal === 0 
-                              ? (actual === 0 ? 100 : 999) 
-                              : Math.round((actual / targetVal) * 100);
-                            const status = getNutrientStatus(percentage);
-                            return { nutrientKey, value, unit, name, actual, percentage, status };
-                          });
-
+                          const mapped = otherNutrients.map(getNutrientCardData);
                           mapped.sort((a, b) => a.status.priority - b.status.priority);
 
                           return mapped.map((item, index) => (
@@ -803,7 +859,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                                       {item.actual}{item.unit}
                                     </span>
                                     <span className="text-[10px] font-light text-gray-400 dark:text-gray-500 ml-1">
-                                      / {item.value}{item.unit}
+                                      / {item.targetValText}{item.unit}
                                     </span>
                                   </div>
                                   <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{item.percentage}%</span>

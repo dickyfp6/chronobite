@@ -274,6 +274,71 @@ export default function App() {
     sessionStorage.setItem('dss_user_data', JSON.stringify(userData));
   }, [userData]);
 
+  // Modern autohiding scrollbar logic
+  useEffect(() => {
+    let lastMouseMoveTime = 0;
+
+    const handleScroll = (e: Event) => {
+      let target = e.target as any;
+      if (!target) return;
+      if (target === document) {
+        target = document.documentElement;
+      }
+      if (target.classList) {
+        target.classList.add('is-scrolling');
+        clearTimeout(target.__scrollTimeout);
+        target.__scrollTimeout = setTimeout(() => {
+          target.classList.remove('is-scrolling');
+        }, 1000);
+      }
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastMouseMoveTime < 100) return; // Throttle to 100ms
+      lastMouseMoveTime = now;
+
+      let parent = e.target as any;
+      while (parent && parent !== document.body && parent !== document.documentElement) {
+        if (parent.classList) {
+          const style = window.getComputedStyle(parent);
+          const isScrollableY = (style.overflowY === 'auto' || style.overflowY === 'scroll') && parent.scrollHeight > parent.clientHeight;
+          const isScrollableX = (style.overflowX === 'auto' || style.overflowX === 'scroll') && parent.scrollWidth > parent.clientWidth;
+          
+          if (isScrollableY || isScrollableX) {
+            parent.classList.add('is-scrolling');
+            clearTimeout(parent.__scrollTimeout);
+            parent.__scrollTimeout = setTimeout(() => {
+              parent.classList.remove('is-scrolling');
+            }, 1000);
+            break;
+          }
+        }
+        parent = parent.parentElement;
+      }
+      
+      // Also apply to html document element
+      const docEl = document.documentElement;
+      const docScrollableY = docEl.scrollHeight > docEl.clientHeight;
+      const docScrollableX = docEl.scrollWidth > docEl.clientWidth;
+      if (docScrollableY || docScrollableX) {
+        docEl.classList.add('is-scrolling');
+        clearTimeout((docEl as any).__scrollTimeout);
+        (docEl as any).__scrollTimeout = setTimeout(() => {
+          docEl.classList.remove('is-scrolling');
+        }, 1000);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('mousemove', handleMouseMove, true);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('mousemove', handleMouseMove, true);
+    };
+  }, []);
+
   return (
     <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
       <I18nProvider>

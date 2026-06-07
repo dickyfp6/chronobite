@@ -439,18 +439,42 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
                   </div>
 
                   {hasDiseaseGuidelines && (
-                    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
-                      <p className="text-sm text-primary dark:text-emerald-350 font-semibold">
-                        Guidelines above were adjusted for your health conditions: {healthConditions
-                          .map((condition) => conditionLabels[condition] || condition)
-                          .join(', ')}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 font-normal leading-relaxed">
-                        {healthConditions
-                          .map((condition) => conditionGuidelines[condition] || '')
-                          .filter(Boolean)
-                          .join(' ')}
-                      </p>
+                    <div className="rounded-2xl border border-primary/20 bg-primary/5 dark:bg-slate-900/40 p-5 space-y-4">
+                      <div className="flex items-start gap-2.5">
+                        <div className="w-1.5 h-5 rounded bg-primary dark:bg-emerald-400 shrink-0 mt-0.5" />
+                        <div>
+                          <h3 className="text-sm font-bold text-primary dark:text-emerald-400 tracking-wide uppercase">
+                            Adjusted Health Guidelines
+                          </h3>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                            Your nutritional targets have been customized based on your medical conditions:
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {healthConditions.map((condition) => {
+                          const label = conditionLabels[condition] || condition;
+                          const guideline = conditionGuidelines[condition] || '';
+                          if (!guideline) return null;
+
+                          return (
+                            <div
+                              key={condition}
+                              className="bg-white/60 dark:bg-slate-800/45 rounded-xl p-4 border border-primary/10 dark:border-slate-800 flex flex-col justify-between"
+                            >
+                              <div>
+                                <span className="inline-block px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase rounded-full bg-primary/10 text-primary dark:bg-emerald-500/10 dark:text-emerald-400 mb-2">
+                                  {label}
+                                </span>
+                                <p className="text-xs text-gray-750 dark:text-gray-300 font-normal leading-relaxed">
+                                  {guideline}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>

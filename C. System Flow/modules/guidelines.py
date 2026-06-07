@@ -1,4 +1,4 @@
-﻿"""
+"""
 Module untuk process dan convert guideline
 """
 
@@ -98,16 +98,16 @@ class GuidelineProcessor:
             merged_min = max(mins)
             merged_max = min(maxes)
 
-            # Conflict check: jika min > max, fallback ke union range
-            if merged_min > merged_max:
-                union_min = min(mins)
-                union_max = max(maxes)
+            # Conflict check: jika min > max, gunakan Opsi 2: Titik Temu Terdekat (Closest Gap Bridge)
+            if merged_min is not None and merged_max is not None and merged_min > merged_max:
+                resolved_min = merged_max
+                resolved_max = merged_min
                 print(f"[WARN] Conflict on '{nutrient}': "
                       f"merged min {merged_min:.2f} > max {merged_max:.2f}. "
-                      f"Falling back to union range "
-                      f"{union_min:.2f} – {union_max:.2f}")
-                merged_min = union_min
-                merged_max = union_max
+                      f"Applying Closest Gap Bridge: "
+                      f"{resolved_min:.2f} – {resolved_max:.2f}")
+                merged_min = resolved_min
+                merged_max = resolved_max
 
             guidelines_dict[nutrient] = {
                 'min':             merged_min,
