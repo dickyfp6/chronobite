@@ -18,30 +18,45 @@ from greedy_interface import GreedyAlgorithmInterface # type: ignore
 
 # Test Profiles
 PROFILES = [
-    {
-        'name': 'Normal',
-        'gender': 'M', 'age': 30, 'weight': 70, 
-        'height': 175, 'activity_factor': 1.845,
-        'disease': ['normal']
-    },
-    {
-        'name': 'Single Disease (DM2)',
-        'gender': 'F', 'age': 45, 'weight': 65,
-        'height': 160, 'activity_factor': 1.4,
-        'disease': ['dm2']
-    },
-    {
-        'name': 'Dual Disease (DM2 + Hypertension)',
-        'gender': 'M', 'age': 55, 'weight': 80,
-        'height': 170, 'activity_factor': 1.4,
-        'disease': ['dm2', 'hypertension']
-    },
-    {
-        'name': 'Triple Disease (DM2 + Hypertension + Cholesterol)',
-        'gender': 'F', 'age': 60, 'weight': 75,
-        'height': 158, 'activity_factor': 1.4,
-        'disease': ['dm2', 'hypertension', 'cholesterol']
-    }
+    {'name': 'Normal',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['normal']},
+    {'name': 'Diabetes Melitus Type 2',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['dm2']},
+    {'name': 'Hypertension',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['hypertension']},
+    {'name': 'Cardiovascular Disease',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['cvd']},
+    {'name': 'Hypercholesterolemia',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['cholesterol']},
+    {'name': 'Chronic Kidney Disease Stage 1',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['ckd']},
+    {'name': 'Diabetes + Hipertensi',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['dm2', 'hypertension']},
+    {'name': 'Diabetes + Hiperkolesterolemia',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['dm2', 'cholesterol']},
+    {'name': 'Hipertensi + Kardiovaskular',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['hypertension', 'cvd']},
+    {'name': 'CKD + Hipertensi',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['ckd', 'hypertension']},
+    {'name': 'Diabetes + Hipertensi + Hiperkolesterolemia',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['dm2', 'hypertension', 'cholesterol']},
+    {'name': 'CKD + Diabetes + Hipertensi',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['ckd', 'dm2', 'hypertension']},
+    {'name': 'Hipertensi + Hiperkolesterolemia + CVD',
+     'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4,
+     'disease': ['hypertension', 'cholesterol', 'cvd']},
 ]
 
 def main():
