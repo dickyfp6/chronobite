@@ -29,20 +29,12 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
 
   const [editing, setEditing] = useState<null | 'age' | 'weight' | 'height'>(null);
   const [tempValue, setTempValue] = useState<string>('');
-  const [activeTimeout, setActiveTimeout] = useState<any>(null);
   const { t } = useI18n();
 
   // Persist step to sessionStorage so refresh keeps the current wizard step in this tab only
   useEffect(() => {
     sessionStorage.setItem('dss_wizard_step', step.toString());
   }, [step]);
-
-  // Clean up timeouts on unmount
-  useEffect(() => {
-    return () => {
-      if (activeTimeout) clearTimeout(activeTimeout);
-    };
-  }, [activeTimeout]);
 
   const steps = t.input.steps;
 
@@ -57,13 +49,11 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
   };
 
   const next = () => {
-    if (activeTimeout) clearTimeout(activeTimeout);
     if (step < 3) setStep(step + 1);
     else onComplete();
   };
 
   const back = () => {
-    if (activeTimeout) clearTimeout(activeTimeout);
     if (step > 0) setStep(step - 1);
   };
 
@@ -87,7 +77,6 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
 
   const handleStepClick = (targetStep: number) => {
     if (isStepAccessible(targetStep)) {
-      if (activeTimeout) clearTimeout(activeTimeout);
       setStep(targetStep);
     }
   };

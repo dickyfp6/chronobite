@@ -283,11 +283,11 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
     await generateNutritionPDF({
       userName: userData.gender === 'male' ? 'User' : 'User',
       userData: {
-        gender: userData.gender,
+        gender: userData.gender || 'male',
         age: userData.age,
         weight: userData.weight,
         height: userData.height,
-        activity: userData.activity,
+        activity: userData.activity || 'moderate',
         foodPreferences: userData.foodPreferences,
       },
       meals: mealsData,
