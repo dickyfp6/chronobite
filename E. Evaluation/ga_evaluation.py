@@ -180,6 +180,21 @@ def main():
                 plt.tight_layout()
                 plt.savefig(os.path.join(output_dir, f"deviation_{i+1}_ga.png"), dpi=300)
                 plt.close()
+            
+            # GRAFIK 1: Line chart fitness per run
+            plt.figure(figsize=(12, 6))
+            sns.set_style("whitegrid")
+            runs = [f"Run {j+1}" for j in range(len(run_fitnesses))]
+            plt.plot(runs, run_fitnesses, marker='o', linestyle='-', linewidth=2, markersize=8, color='#1f77b4', label='Fitness Score')
+            plt.axhline(y=float(mean_fitness), color='gray', linestyle='--', linewidth=2, label=f'Mean: {mean_fitness:.1f}')
+            plt.title(f"Fitness per Run - {profile['name']}")
+            plt.ylabel("Fitness Score (lower = better)")
+            plt.xlabel("Run Number")
+            plt.legend()
+            plt.grid(True, alpha=0.3)
+            plt.tight_layout()
+            plt.savefig(os.path.join(output_dir, f"fitness_per_run_{i+1}.png"), dpi=300)
+            plt.close()
                 
             print(f"  -> Best Fitness Score (GA Penalty): {mean_fitness:.1f} ± {std_fitness:.1f}")
             print(f"     (Lower = Better | Scale: macro×5000 + hard×10000 + soft×100)")
@@ -203,6 +218,36 @@ def main():
         plt.xticks(rotation=15)
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, 'overall_cs_ga.png'), dpi=300)
+        plt.close()
+        
+        # GRAFIK 2: Bar chart mean fitness ± std semua profile
+        plt.figure(figsize=(12, 6))
+        sns.set_style("whitegrid")
+        fitness_data = [
+            {
+                'Profile': r['Profile'],
+                'Best Fitness (Mean)': r['Best Fitness (Mean)'],
+                'Best Fitness (Std)': r['Best Fitness (Std)']
+            }
+            for r in results_summary
+        ]
+        fitness_df = pd.DataFrame(fitness_data)
+        
+        bars = plt.bar(fitness_df['Profile'], fitness_df['Best Fitness (Mean)'], 
+                       yerr=fitness_df['Best Fitness (Std)'], 
+                       color='steelblue', alpha=0.7, capsize=5, error_kw={'linewidth': 2})
+        
+        # Add value labels on top of bars
+        for bar, val, std in zip(bars, fitness_df['Best Fitness (Mean)'], fitness_df['Best Fitness (Std)']):
+            plt.text(bar.get_x() + bar.get_width()/2, val + std + 5, 
+                     f'{val:.1f}', ha='center', va='bottom', fontweight='bold')
+        
+        plt.title("Best Fitness Score by Profile (Genetic Algorithm) — Lower is Better")
+        plt.ylabel("Best Fitness Score (Mean)")
+        plt.xlabel("Profile")
+        plt.xticks(rotation=15, ha='right')
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_dir, 'overall_fitness_ga.png'), dpi=300)
         plt.close()
 
         print("\n==========================================")
