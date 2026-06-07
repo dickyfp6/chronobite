@@ -30,7 +30,7 @@ interface PDFData {
   };
 }
 
-export async function generateNutritionPDF(data: PDFData): Promise<void> {
+export async function generateNutritionPDF(data: PDFData, preview: boolean = false): Promise<string | void> {
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
@@ -317,9 +317,13 @@ export async function generateNutritionPDF(data: PDFData): Promise<void> {
     { align: 'center' }
   );
 
-  // Save PDF
+  // Save or preview PDF
   const fileName = `NutriPlan_Report_${new Date().toISOString().split('T')[0]}.pdf`;
-  pdf.save(fileName);
+  if (preview) {
+    return pdf.output('bloburl');
+  } else {
+    pdf.save(fileName);
+  }
 }
 
 export async function generatePDFFromElement(elementId: string, fileName: string = 'report.pdf'): Promise<void> {

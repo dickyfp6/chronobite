@@ -1942,7 +1942,7 @@ def generate_meal_options(
         # ════════════════════════════════════════════════════════════════════
         # QUALITY FILTER - Ensure dataset items meet quality standards
         # ════════════════════════════════════════════════════════════════════
-        dataset_items = cast(pd.DataFrame, _apply_quality_filter(dataset_items, expected_label))
+        dataset_items = _apply_quality_filter(dataset_items, expected_label)
         
         # Filter by cuisine jika ada preference
         cuisine_col = 'cuisine_label' if 'cuisine_label' in dataset_items.columns else 'cuisine'
@@ -2537,7 +2537,8 @@ def calculate_portion_sizes_dynamic(
         
         for idx, gram_clamped, energy_per_100g in grams_first_pass:
             gram_final = gram_clamped * scale
-            result_df.at[idx, 'gram'] = round(gram_final, 1)
+            # Round to the nearest whole integer gram for practical usability
+            result_df.at[idx, 'gram'] = float(round(gram_final))
     
     # ════════════════════════════════════════════════════════════════════════
     # TASK 1 (CRITICAL): SCALE ALL NUTRIENTS based on portion
@@ -2565,7 +2566,15 @@ def calculate_portion_sizes_dynamic(
         
         # Allow 0.6x to 1.4x scaling (reasonable range)
         if 0.6 <= energy_scale <= 1.4:
-            result_df['gram'] *= energy_scale
+            # Scale, round to the nearest integer, and clamp to respect limits
+            scaled_grams = result_df['gram'] * energy_scale
+            rounded_grams = scaled_grams.round().astype(float)
+            
+            for idx in range(len(result_df)):
+                min_g, max_g = protein_portion_limits.get(idx, (50, 150))
+                rounded_grams.at[idx] = max(min_g, min(max_g, rounded_grams.at[idx]))
+                
+            result_df['gram'] = rounded_grams
             
             # RE-SCALE ALL NUTRIENTS with new grams (TASK 1 - critical!)
             for idx in range(len(result_df)):

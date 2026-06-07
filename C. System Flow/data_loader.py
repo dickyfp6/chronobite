@@ -230,15 +230,20 @@ class GuidelineLoader:
             merged_min = data['min']
             merged_max = data['max']
             
-            # Check if conflict: merged min > merged max
-            if merged_min is not None and merged_max is not None and merged_min > merged_max:
-                # Opsi 2: Titik Temu Terdekat (Closest Gap Bridge)
-                # Ambil rentang di antara batas terdekat dari kedua penyakit tersebut untuk mencari kompromi.
-                resolved_min = merged_max
-                resolved_max = merged_min
+            # Check if conflict: merged min >= merged max (or gap is zero/negative)
+            if merged_min is not None and merged_max is not None and merged_min >= merged_max:
+                midpoint = (merged_min + merged_max) / 2.0
                 
-                print(f"[WARN] Conflict on '{nutrient}': min {merged_min:.1f} > max {merged_max:.1f}. "
-                      f"Applying Closest Gap Bridge: {resolved_min:.1f} – {resolved_max:.1f}")
+                # Apply 5% tolerance window for breathing room (min 5.0 units or 50 kcal for energy)
+                base_tolerance = 50.0 if 'energy' in nutrient.lower() else 5.0
+                tolerance = max(midpoint * 0.05, base_tolerance)
+                
+                resolved_min = round(midpoint - tolerance, 1)
+                resolved_max = round(midpoint + tolerance, 1)
+                resolved_min = max(0.0, resolved_min)
+                
+                print(f"[WARN] Conflict/Tight Constraint on '{nutrient}': min {merged_min:.1f} >= max {merged_max:.1f}. "
+                      f"Applying 5% tolerance compromise: {resolved_min:.1f} – {resolved_max:.1f}")
                 
                 data['min'] = resolved_min
                 data['max'] = resolved_max

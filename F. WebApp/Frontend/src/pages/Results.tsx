@@ -3,6 +3,26 @@ import { ArrowRight, Loader2, RotateCcw } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import type { UserInputData } from './InputWizard';
 import { api } from '../services/api';
+import { motion, AnimatePresence } from 'motion/react';
+
+const loadingSteps = {
+  id: [
+    "Menganalisis profil fisik & kebutuhan energi...",
+    "Mengevaluasi batasan medis & riwayat kesehatan...",
+    "Menyaring database bahan makanan bernutrisi...",
+    "Menyusun kombinasi menu makanan harian optimal...",
+    "Menyeimbangkan porsi makro & mikro nutrisi...",
+    "Menyempurnakan hasil rekomendasi untuk Anda..."
+  ],
+  en: [
+    "Analyzing physical profile & energy needs...",
+    "Evaluating medical constraints & health history...",
+    "Filtering nutritional food database...",
+    "Formulating optimal daily meal combinations...",
+    "Balancing macro & micro nutrient distributions...",
+    "Finalizing customized recommendations for you..."
+  ]
+};
 
 interface ResultsProps {
   userData: UserInputData;
@@ -53,6 +73,16 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [menuData, setMenuData] = useState<Record<string, Meal> | null>(null);
+  const [statusIndex, setStatusIndex] = useState(0);
+
+  // Rotate status message every 2 seconds
+  useEffect(() => {
+    if (!loading) return;
+    const interval = setInterval(() => {
+      setStatusIndex((prev) => (prev + 1) % loadingSteps.en.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [loading]);
 
   // Helper function to scale alternative candidates (option 2 & 3) to match option 1's calorie target
   const scaleCandidates = (candidates: Candidate[]): Candidate[] => {
@@ -66,14 +96,23 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
     for (let i = 1; i < Math.min(candidates.length, 3); i++) {
       const candidate = candidates[i];
       if (candidate.calories > 0) {
-        const scaleFactor = targetCalories / candidate.calories;
+        // Scale based on actual candidate serving size and calories
+        const rawScaleFactor = targetCalories / candidate.calories;
+        const rawServingSize = (candidate.serving_size || 100) * rawScaleFactor;
+        
+        // Round portion size to the nearest whole integer gram
+        const roundedServingSize = Math.round(rawServingSize);
+        
+        // Compute actual scale factor from the rounded portion
+        const actualScaleFactor = roundedServingSize / (candidate.serving_size || 100);
+        
         scaled.push({
           ...candidate,
-          serving_size: Math.round(100 * scaleFactor * 10) / 10,
-          calories: Math.round(targetCalories * 10) / 10,
-          protein: Math.round(candidate.protein * scaleFactor * 10) / 10,
-          carbs: Math.round(candidate.carbs * scaleFactor * 10) / 10,
-          fat: Math.round(candidate.fat * scaleFactor * 10) / 10,
+          serving_size: roundedServingSize,
+          calories: Math.round(candidate.calories * actualScaleFactor * 10) / 10,
+          protein: Math.round(candidate.protein * actualScaleFactor * 100) / 100,
+          carbs: Math.round(candidate.carbs * actualScaleFactor * 100) / 100,
+          fat: Math.round(candidate.fat * actualScaleFactor * 100) / 100,
         });
       } else {
         scaled.push(candidate); // Keep as-is if calories is 0
@@ -216,10 +255,164 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
     : 2000;
 
   if (loading) {
+    const language = (useI18n().language as string) || 'en';
+    const steps = language === 'id' ? loadingSteps.id : loadingSteps.en;
+    const currentStepText = steps[statusIndex];
+
+    const foods = [
+      { emoji: '🍎', start: 0.0, targetX: -24, targetY: 132, rotate: 15 },
+      { emoji: '🥦', start: 0.7, targetX: 22, targetY: 132, rotate: -25 },
+      { emoji: '🥕', start: 1.4, targetX: -10, targetY: 120, rotate: 35 },
+      { emoji: '🐟', start: 2.1, targetX: 10, targetY: 110, rotate: -45 },
+      { emoji: '🥩', start: 2.8, targetX: -18, targetY: 96, rotate: 55 },
+      { emoji: '🥚', start: 3.5, targetX: 16, targetY: 86, rotate: -30 },
+      { emoji: '🥑', start: 4.2, targetX: 0, targetY: 74, rotate: 12 },
+    ];
+
+    const getFoodAnimation = (food: typeof foods[0]) => {
+      const duration = 8.0;
+      const start = food.start;
+      const fallDuration = 0.45;
+      const bounceDuration = 0.15;
+      const rollDuration = 0.25;
+
+      const landTime = start + fallDuration;
+      const bounceTime = landTime + bounceDuration;
+      const settleTime = bounceTime + rollDuration;
+
+      const pStart = start / duration;
+      const pLand = landTime / duration;
+      const pBounce = bounceTime / duration;
+      const pSettle = settleTime / duration;
+      const pFadeStart = 7.0 / duration;
+      const pFadeEnd = 7.6 / duration;
+
+      const times = [0, pStart, pLand, pBounce, pSettle, pFadeStart, pFadeEnd, 1];
+
+      return {
+        times,
+        y: [-60, -60, food.targetY, food.targetY - 12, food.targetY, food.targetY, food.targetY + 40, food.targetY + 40],
+        x: [0, 0, 0, food.targetX * 0.5, food.targetX, food.targetX, food.targetX, food.targetX],
+        opacity: [0, 0, 1, 1, 1, 1, 0, 0],
+        rotate: [0, 0, food.rotate * 0.7, food.rotate * 0.9, food.rotate, food.rotate, food.rotate, food.rotate]
+      };
+    };
+
     return (
-      <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 flex flex-col items-center justify-center p-4">
-        <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-        <p className="text-gray-600 dark:text-gray-400 font-medium font-sans">Generating optimal meal plan with {algorithm === 'genetic' ? 'Genetic' : 'Greedy'} algorithm...</p>
+      <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 flex flex-col items-center justify-center p-4 text-center">
+        <div className="flex flex-col items-center">
+          {/* Animated Bowl & Falling Foods container */}
+          <motion.div
+            animate={{
+              y: [0, -4, 0],
+              rotate: [0, -1.2, 1.2, 0],
+            }}
+            transition={{
+              duration: 2.4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="relative w-48 h-56 flex flex-col items-center justify-end overflow-visible select-none"
+          >
+            {/* Gentle Steam Lines */}
+            <div className="absolute bottom-20 flex gap-3 z-0">
+              {[0, 1, 2].map((j) => (
+                <motion.div
+                  key={j}
+                  initial={{ y: 5, opacity: 0, scaleY: 0.5 }}
+                  animate={{
+                    y: [-5, -25],
+                    opacity: [0, 0.4, 0],
+                    scaleY: [0.5, 1.2, 0.5],
+                  }}
+                  transition={{
+                    duration: 1.8,
+                    repeat: Infinity,
+                    delay: j * 0.6,
+                    ease: "easeInOut",
+                  }}
+                  className="w-1.5 h-6 bg-emerald-500/20 dark:bg-emerald-400/15 rounded-full filter blur-[1px]"
+                />
+              ))}
+            </div>
+
+            {/* Mask Container for clipping bottom & sides */}
+            <div className="absolute bottom-0 w-32 h-44 overflow-hidden rounded-b-[48px] z-10">
+              {/* Inner Bowl Base behind items (simulates inner ceramic bottom) */}
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-slate-100 dark:bg-slate-950 z-0" />
+
+              {/* Falling & Accumulating Foods */}
+              {foods.map((food, i) => {
+                const anim = getFoodAnimation(food);
+                return (
+                  <motion.div
+                    key={i}
+                    animate={{
+                      y: anim.y,
+                      x: anim.x,
+                      opacity: anim.opacity,
+                      rotate: anim.rotate,
+                    }}
+                    transition={{
+                      duration: 8.0,
+                      repeat: Infinity,
+                      times: anim.times,
+                      ease: "linear",
+                    }}
+                    className="absolute text-3xl z-10"
+                    style={{
+                      top: 0,
+                      left: 'calc(50% - 18px)',
+                    }}
+                  >
+                    {food.emoji}
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Physical Bowl Front Overlay */}
+            <div className="absolute bottom-0 w-32 h-16 pointer-events-none z-20">
+              {/* Semi-transparent Ceramic Wall of the Bowl (emerald accents) */}
+              <div className="w-full h-full rounded-b-[48px] border-4 border-t-0 border-emerald-600 dark:border-emerald-500 bg-gradient-to-b from-white/50 to-slate-100/60 dark:from-slate-900/50 dark:to-slate-850/60 backdrop-blur-[3px] shadow-lg z-20" />
+            </div>
+          </motion.div>
+
+          {/* Dynamic Ground Shadow */}
+          <motion.div
+            animate={{
+              scaleX: [1, 0.92, 1],
+              opacity: [0.35, 0.2, 0.35]
+            }}
+            transition={{
+              duration: 2.4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="w-28 h-2 bg-black/10 dark:bg-black/35 rounded-full filter blur-[2.5px] mb-8"
+          />
+        </div>
+
+        {/* Text Container with smooth fade-in-out transition */}
+        <div className="max-w-lg w-full h-16 flex items-center justify-center px-4 text-center">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={statusIndex}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+              className="text-gray-700 dark:text-gray-300 font-semibold text-lg font-sans tracking-wide"
+            >
+              {currentStepText}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+
+        {/* Subtitle/Algorithm badge */}
+        <p className="text-xs text-gray-500 dark:text-gray-500 font-medium font-sans mt-2">
+          Engine: {algorithm === 'genetic' ? 'Genetic Algorithm v1' : 'Greedy Optimizer v1'}
+        </p>
       </div>
     );
   }

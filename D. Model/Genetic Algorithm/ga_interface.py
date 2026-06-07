@@ -236,7 +236,7 @@ class GeneticAlgorithmInterface:
                 return None
             
             # Calculate fitness score of best solution
-            from ga_v1 import fitness as _calc_fitness
+            from ga_v1 import fitness as _calc_fitness # type: ignore
             best_fitness_score = _calc_fitness(best_solution, self.constraint_bag, tdee=tdee)
                 
             # Generate 3 options per slot
@@ -319,7 +319,7 @@ class GeneticAlgorithmInterface:
             for col in portioned_df.columns:
                 if col.startswith('final_') and col not in ['final_energy_kcal', 'final_protein_g', 'final_carbohydrate_g', 'final_fat_g']:
                     micro_name = col.replace('final_', '')
-                    daily_micronutrients[micro_name] = round(float(portioned_df[col].sum()), 2)
+                    daily_micronutrients[micro_name] = round(float(portioned_df[col].sum()), 6) if 'b12' in micro_name.lower() else round(float(portioned_df[col].sum()), 2)
             
             # 4. Check validation
             validation = validate_final_solution(portioned_df, self.constraint_bag, tdee=tdee)

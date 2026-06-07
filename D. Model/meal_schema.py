@@ -165,7 +165,7 @@ class MenuPlan:
                 'protein_g': round(self.total_daily_protein_g, 2),
                 'carb_g': round(self.total_daily_carb_g, 2),
                 'fat_g': round(self.total_daily_fat_g, 2),
-                **{k: round(v, 2) for k, v in self.daily_micronutrients.items()}
+                **{k: (round(v, 6) if 'b12' in k.lower() else round(v, 2)) for k, v in self.daily_micronutrients.items()}
             },
             'feasible': self.feasible,
             'violations': self.violations

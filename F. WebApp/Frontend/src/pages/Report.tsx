@@ -43,9 +43,53 @@ const dietTips = {
   ],
 };
 
+// Group nutrients by category statically to optimize renders
+const vitaminNutrients = [
+  'vitamin_a_rae_mg',
+  'vitamin_b1_thiamin_mg',
+  'vitamin_b2_riboflavin_mg',
+  'vitamin_b3_niacin_mg',
+  'vitamin_b5_pantothenic_acid_mg',
+  'vitamin_b6_mg',
+  'vitamin_b12_mg',
+  'vitamin_c_mg',
+  'vitamin_d_mg',
+  'vitamin_e_mg',
+  'vitamin_k_mg',
+];
+
+const mineralNutrients = [
+  'calcium_mg',
+  'iron_mg',
+  'magnesium_mg',
+  'phosphorus_mg',
+  'potassium_mg',
+  'sodium_mg',
+  'zinc_mg',
+  'copper_mg',
+  'manganese_mg',
+  'selenium_mg',
+  'fluoride_mg',
+];
+
+const otherNutrients = [
+  'fiber_g',
+  'sugar_g',
+  'saturated_fat_g',
+  'trans_fat_g',
+  'cholesterol_mg',
+  'choline_mg',
+  'folate_mg',
+  'water_g',
+];
+
 export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
   const [activeTab, setActiveTab] = useState<number | string>('profile');
   const { t, language } = useI18n();
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const [selectedItems] = useState<Record<string, any>>(() => {
     const saved = sessionStorage.getItem('dss_selected_items');
@@ -101,18 +145,27 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
         actual: Math.round(totalCarbs),
         min: Math.round(dailyNeeds.carbs * 0.85),
         max: Math.round(dailyNeeds.carbs * 1.15),
+        diseases: [] as string[],
+        basis: 'DRI',
+        source: 'DRI fallback'
       },
       {
         nutrient: t.results.protein,
         actual: Math.round(totalProtein),
         min: Math.round(dailyNeeds.protein * 0.8),
         max: Math.round(dailyNeeds.protein * 1.2),
+        diseases: [] as string[],
+        basis: 'DRI',
+        source: 'DRI fallback'
       },
       {
         nutrient: t.results.fat,
         actual: Math.round(totalFat),
         min: Math.round(dailyNeeds.fat * 0.7),
         max: Math.round(dailyNeeds.fat * 1.0),
+        diseases: [] as string[],
+        basis: 'DRI',
+        source: 'DRI fallback'
       },
     ];
 
@@ -136,15 +189,36 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
             if (existing) {
               existing.min = rule.min != null ? Math.round(rule.min) : existing.min;
               existing.max = rule.max != null ? Math.round(rule.max) : Infinity;
+              existing.diseases = rule.diseases || [];
+              existing.basis = rule.basis || '1';
+              existing.source = rule.source || 'guideline';
             }
           } else {
             // It's a Micronutrient Constraint! (e.g. fiber_g, zinc_mg, sodium_mg)
             const friendlyName = t.nutrients[key as keyof typeof t.nutrients] || key.split('_')[0].toUpperCase();
+            
+            let unit = rule.unit || 'mg';
+            const keyLower = key.toLowerCase();
+            const isMicro = keyLower.includes('b12') || keyLower.includes('mcg') || keyLower.includes('ug') || keyLower.includes('μg');
+            if (isMicro) {
+              unit = 'mcg';
+            }
+
+            const scaleAndRound = (val: any) => {
+              if (val === null || val === undefined || typeof val !== 'number' || !Number.isFinite(val)) return val;
+              const factor = isMicro ? 1000 : 1;
+              return Math.round(val * factor * 10) / 10;
+            };
+
             const dataPoint = {
               nutrient: friendlyName,
-              actual: Math.round(actualNutrients?.[key] || 0),
-              min: rule.min != null ? Math.round(rule.min) : 0,
-              max: rule.max != null ? Math.round(rule.max) : Infinity,
+              actual: scaleAndRound(actualNutrients?.[key] || 0),
+              min: rule.min != null ? scaleAndRound(rule.min) : 0,
+              max: rule.max != null ? scaleAndRound(rule.max) : Infinity,
+              diseases: rule.diseases || [],
+              basis: rule.basis || '1',
+              source: rule.source || 'guideline',
+              unit: unit
             };
 
             // Separate into Macro (g) or Micro (mg/mcg)
@@ -163,51 +237,95 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
         actual: Math.round(actualNutrients?.fiber_g || 22),
         min: Math.round(dailyNeeds.fiber * 0.8),
         max: Math.round(dailyNeeds.fiber * 1.2),
+        diseases: [] as string[],
+        basis: 'DRI',
+        source: 'DRI fallback'
       });
     }
 
     return { macroData: macros, microData: micros };
   }, [dailyNeeds, t, actualNutrients, analysisGuidelines, selectedItems]);
 
-  // Group nutrients by category
-  const vitaminNutrients = [
-    'vitamin_a_rae_mg',
-    'vitamin_b1_thiamin_mg',
-    'vitamin_b2_riboflavin_mg',
-    'vitamin_b3_niacin_mg',
-    'vitamin_b5_pantothenic_acid_mg',
-    'vitamin_b6_mg',
-    'vitamin_b12_mg',
-    'vitamin_c_mg',
-    'vitamin_d_mg',
-    'vitamin_e_mg',
-    'vitamin_k_mg',
-  ];
+  // Collect nutrient deficiency/excess warnings dynamically
+  const nutritionalWarnings = useMemo(() => {
+    const warnings: { message: string; type: 'deficient' | 'excessive'; nutrient: string }[] = [];
+    const isId = (language as string) === 'id';
 
-  const mineralNutrients = [
-    'calcium_mg',
-    'iron_mg',
-    'magnesium_mg',
-    'phosphorus_mg',
-    'potassium_mg',
-    'sodium_mg',
-    'zinc_mg',
-    'copper_mg',
-    'manganese_mg',
-    'selenium_mg',
-    'fluoride_mg',
-  ];
+    const checkNutrient = (key: string, name: string, actualValue: number, minVal: number | null, maxVal: number | null, unit: string) => {
+      if (minVal !== null && actualValue < minVal) {
+        const diff = Math.round(minVal - actualValue);
+        const msg = isId
+          ? `Asupan ${name} kurang dari rentang rekomendasi. Anda membutuhkan tambahan ${diff}${unit} untuk mencapai target minimum ${Math.round(minVal)}${unit}.`
+          : `${name} intake is below the recommended range. You need an additional ${diff}${unit} to reach the minimum target of ${Math.round(minVal)}${unit}.`;
+        warnings.push({ message: msg, type: 'deficient', nutrient: key });
+      } else if (maxVal !== null && maxVal !== Infinity && actualValue > maxVal) {
+        const diff = Math.round(actualValue - maxVal);
+        const msg = isId
+          ? `Asupan ${name} melebihi rentang rekomendasi. Batasi/kurangi ${name} sebesar ${diff}${unit} agar berada di bawah batas maksimum ${Math.round(maxVal)}${unit}.`
+          : `${name} intake is above the recommended range. Try to reduce ${name} by ${diff}${unit} to stay below the maximum target of ${Math.round(maxVal)}${unit}.`;
+        warnings.push({ message: msg, type: 'excessive', nutrient: key });
+      }
+    };
 
-  const otherNutrients = [
-    'fiber_g',
-    'sugar_g',
-    'saturated_fat_g',
-    'trans_fat_g',
-    'cholesterol_mg',
-    'choline_mg',
-    'folate_mg',
-    'water_g',
-  ];
+    const items = Object.values(selectedItems);
+    const totalProtein = items.reduce((sum: number, item: any) => sum + (item.protein || 0), 0);
+    const totalCarbs = items.reduce((sum: number, item: any) => sum + (item.carbs || 0), 0);
+    const totalFat = items.reduce((sum: number, item: any) => sum + (item.fat || 0), 0);
+
+    let carbMin = dailyNeeds.carbs * 0.85;
+    let carbMax = dailyNeeds.carbs * 1.15;
+    let proteinMin = dailyNeeds.protein * 0.8;
+    let proteinMax = dailyNeeds.protein * 1.2;
+    let fatMin = dailyNeeds.fat * 0.7;
+    let fatMax = dailyNeeds.fat * 1.0;
+
+    if (analysisGuidelines?.nutrients) {
+      const g = analysisGuidelines.nutrients;
+      if (g.carbohydrate_g) {
+        carbMin = g.carbohydrate_g.min != null ? g.carbohydrate_g.min : carbMin;
+        carbMax = g.carbohydrate_g.max != null ? g.carbohydrate_g.max : carbMax;
+      }
+      if (g.protein_g) {
+        proteinMin = g.protein_g.min != null ? g.protein_g.min : proteinMin;
+        proteinMax = g.protein_g.max != null ? g.protein_g.max : proteinMax;
+      }
+      if (g.fat_g) {
+        fatMin = g.fat_g.min != null ? g.fat_g.min : fatMin;
+        fatMax = g.fat_g.max != null ? g.fat_g.max : fatMax;
+      }
+    }
+
+    checkNutrient('carbohydrate_g', t.results.carbs, totalCarbs, carbMin, carbMax, 'g');
+    checkNutrient('protein_g', t.results.protein, totalProtein, proteinMin, proteinMax, 'g');
+    checkNutrient('fat_g', t.results.fat, totalFat, fatMin, fatMax, 'g');
+
+    const allCheckKeys = [...vitaminNutrients, ...mineralNutrients, ...otherNutrients];
+    allCheckKeys.forEach(key => {
+      const rule = analysisGuidelines?.nutrients?.[key];
+      const unit = getNutrientUnit(key as any);
+      const name = t.nutrients[key as keyof typeof t.nutrients] || key.split('_')[0].toUpperCase();
+
+      const staticVal = Number(dailyNeeds[key as keyof typeof dailyNeeds]) || 0;
+      const actual = actualNutrients && actualNutrients[key] !== undefined
+        ? actualNutrients[key]
+        : staticVal * 0.9;
+
+      if (rule) {
+        const minVal = rule.min != null ? Number(rule.min) : null;
+        const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
+        checkNutrient(key, name, actual, minVal, maxVal, unit);
+      } else {
+        const isLimitNutrient = ['sodium_mg', 'cholesterol_mg', 'sugar_g', 'saturated_fat_g', 'trans_fat_g'].includes(key);
+        if (isLimitNutrient) {
+          checkNutrient(key, name, actual, null, staticVal, unit);
+        } else {
+          checkNutrient(key, name, actual, staticVal * 0.8, null, unit);
+        }
+      }
+    });
+
+    return warnings;
+  }, [selectedItems, dailyNeeds, actualNutrients, analysisGuidelines, language, t]);
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
@@ -264,6 +382,9 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
       fat: actualNutrients?.fat || Math.round(dailyNeeds.fat * 0.78),
     };
 
+  const handleDownloadPDF = async () => {
+    setIsGenerating(true);
+
     // Capture charts
     const captureChart = async (id: string) => {
       const el = document.getElementById(id);
@@ -280,28 +401,39 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
     const macroChart = await captureChart('pdf-macro-chart');
     const microChart = microData.length > 0 ? await captureChart('pdf-micro-chart') : null;
 
-    await generateNutritionPDF({
-      userName: userData.gender === 'male' ? 'User' : 'User',
-      userData: {
-        gender: userData.gender || 'male',
-        age: userData.age,
-        weight: userData.weight,
-        height: userData.height,
-        activity: userData.activity || 'moderate',
-        foodPreferences: userData.foodPreferences,
-      },
-      meals: mealsData,
-      dailyNeeds,
-      nutrients: actualPDFNutrients,
-      healthConditions: userConditions,
-      dietTips,
-      language,
-      translations: translations[language],
-      charts: {
-        macro: macroChart,
-        micro: microChart
+    try {
+      const url = await generateNutritionPDF({
+        userName: userData.gender === 'male' ? 'User' : 'User',
+        userData: {
+          gender: userData.gender || 'male',
+          age: userData.age,
+          weight: userData.weight,
+          height: userData.height,
+          activity: userData.activity || 'moderate',
+          foodPreferences: userData.foodPreferences,
+        },
+        meals: mealsData,
+        dailyNeeds,
+        nutrients: actualPDFNutrients,
+        healthConditions: userConditions,
+        dietTips,
+        language,
+        translations: translations[language],
+        charts: {
+          macro: macroChart,
+          micro: microChart
+        }
+      }, true); // Pass true to get Blob URL
+
+      if (url) {
+        setPreviewUrl(url);
+        setIsPreviewModalOpen(true);
       }
-    });
+    } catch (error) {
+      console.error('Failed to generate PDF preview', error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   useEffect(() => {
@@ -613,8 +745,29 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
               
               {microData.length > 0 && (
                 <div className="mt-8">
-                  <h3 className="text-lg font-bold mb-2 text-primary dark:text-emerald-450 font-serif">Micronutrient Analysis (mg)</h3>
+                  <h3 className="text-lg font-bold mb-2 text-primary dark:text-emerald-450 font-serif">
+                    {language === 'id' ? 'Analisis Mikronutrisi' : 'Micronutrient Analysis'}
+                  </h3>
                   <NutritionChart data={microData} unit="mg" />
+                </div>
+              )}
+
+              {nutritionalWarnings.length > 0 && (
+                <div className="mt-8 p-5 rounded-2xl border bg-amber-500/5 dark:bg-amber-500/10 border-amber-500/20 dark:border-amber-500/10 shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-amber-500 text-lg font-bold">⚠️</span>
+                    <h3 className="font-bold text-sm text-amber-950 dark:text-amber-300 font-serif">
+                      {(language as string) === 'id' ? 'Catatan & Penyesuaian Nutrisi' : 'Nutritional Adjustments & Notes'}
+                    </h3>
+                  </div>
+                  <ul className="space-y-2">
+                    {nutritionalWarnings.map((warning, index) => (
+                      <li key={index} className="flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-400 font-medium">
+                        <span className="text-amber-500">•</span>
+                        <span className="flex-1 leading-relaxed">{warning.message}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>
@@ -622,6 +775,25 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
           {activeTab === 2 && (
             <div>
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white font-serif tracking-tight">{t.report.tabs.other}</h2>
+
+              {nutritionalWarnings.length > 0 && (
+                <div className="mb-8 p-5 rounded-2xl border bg-amber-500/5 dark:bg-amber-500/10 border-amber-500/20 dark:border-amber-500/10 shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-amber-500 text-lg font-bold">⚠️</span>
+                    <h3 className="font-bold text-sm text-amber-950 dark:text-amber-300 font-serif">
+                      {(language as string) === 'id' ? 'Catatan & Penyesuaian Nutrisi' : 'Nutritional Adjustments & Notes'}
+                    </h3>
+                  </div>
+                  <ul className="space-y-2">
+                    {nutritionalWarnings.map((warning, index) => (
+                      <li key={index} className="flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-400 font-medium">
+                        <span className="text-amber-500">•</span>
+                        <span className="flex-1 leading-relaxed">{warning.message}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {(() => {
                 const getNutrientCardData = (nutrientKey: string) => {
@@ -919,6 +1091,91 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
           )}
         </div>
       </div>
+
+      {/* PDF Preview Modal */}
+      <AnimatePresence>
+        {isPreviewModalOpen && previewUrl && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-slate-900 w-full max-w-5xl h-[85vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-slate-200 dark:border-slate-800"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-850">
+                <div>
+                  <h3 className="font-serif font-bold text-xl text-slate-900 dark:text-white">
+                    {language === 'id' ? 'Pratinjau Laporan PDF' : 'PDF Report Preview'}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-sans">
+                    {language === 'id' ? 'Periksa laporan Anda sebelum mengunduh' : 'Review your report before downloading'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setIsPreviewModalOpen(false);
+                    setPreviewUrl(null);
+                  }}
+                  className="p-2 text-slate-500 hover:text-slate-850 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Iframe Preview */}
+              <div className="flex-1 bg-slate-100 dark:bg-slate-950 p-4 flex items-center justify-center">
+                <iframe
+                  src={previewUrl}
+                  className="w-full h-full rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm bg-white"
+                  title="PDF Preview"
+                />
+              </div>
+
+              {/* Footer Actions */}
+              <div className="flex items-center justify-end gap-3 p-4 border-t border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-900/50">
+                <button
+                  onClick={() => {
+                    setIsPreviewModalOpen(false);
+                    setPreviewUrl(null);
+                  }}
+                  className="px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl cursor-pointer transition-colors"
+                >
+                  {language === 'id' ? 'Batal' : 'Cancel'}
+                </button>
+                <button
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = previewUrl;
+                    link.download = `NutriPlan_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+                    link.click();
+                  }}
+                  className="px-6 py-2.5 text-sm font-semibold bg-primary text-white hover:bg-primary-hover dark:bg-emerald-600 dark:hover:bg-emerald-500 rounded-xl shadow-lg cursor-pointer transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  {language === 'id' ? 'Unduh PDF' : 'Download PDF'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Generating Overlay */}
+      {isGenerating && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex flex-col items-center justify-center gap-4">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800">
+            <div className="w-10 h-10 border-4 border-primary dark:border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+              {language === 'id' ? 'Menyiapkan pratinjau PDF...' : 'Preparing PDF preview...'}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

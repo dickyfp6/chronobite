@@ -104,20 +104,18 @@ const slides = [
 
 export function Landing({ onStart }: { onStart: () => void }) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const { t } = useI18n();
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
-  // Auto slide per 5 detik jika tidak di-hover oleh mouse
+  // Auto slide per 5 detik
   useEffect(() => {
-    if (isHovered) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 5000);
     return () => clearInterval(timer);
-  }, [currentSlide, isHovered]);
+  }, [currentSlide]);
 
   const slide = slides[currentSlide];
   const slideContent = t.landing.slides[slide.id as keyof typeof t.landing.slides];
@@ -126,15 +124,13 @@ export function Landing({ onStart }: { onStart: () => void }) {
   return (
     <div 
       className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 flex flex-col justify-center"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex-1 flex items-center justify-center py-6 md:py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-6xl relative">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-stretch">
             
-            {/* Left Column: Text (Sliding) and CTA/Pagination (Static) */}
-            <div className="col-span-1 md:col-span-7 flex flex-col text-left justify-between min-h-[380px] sm:min-h-[420px]">
+            {/* Left Column: Text (Sliding) and CTA (Static) */}
+            <div className="col-span-1 md:col-span-7 flex flex-col text-left justify-between md:min-h-[420px]">
               
               {/* Dynamic Text Section */}
               <div className="flex-1 flex flex-col justify-center">
@@ -151,37 +147,22 @@ export function Landing({ onStart }: { onStart: () => void }) {
                       {slide.badge}
                     </span>
                     
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight font-serif tracking-tight min-h-[120px] md:min-h-[160px] flex items-center">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight font-serif tracking-tight md:min-h-[160px] flex items-center">
                       {slideContent.title}
                     </h1>
                     
-                    <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 font-sans leading-relaxed max-w-xl min-h-[80px]">
+                    <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 font-sans leading-relaxed max-w-xl md:min-h-[80px]">
                       {slideContent.content}
                     </p>
                   </motion.div>
                 </AnimatePresence>
               </div>
 
-              {/* Static Controls Section (Dots on top, Button below - NEVER shifts or slides) */}
-              <div className="pt-6 flex flex-col items-start gap-4">
-                {/* Dots Pagination */}
-                <div className="flex gap-2">
-                  {slides.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        index === currentSlide ? 'w-8 bg-primary animate-pulse' : 'w-2 bg-border dark:bg-slate-700 hover:bg-primary/40'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
-                </div>
-
-                {/* Start Button */}
+              {/* Desktop CTA Section (Button only - no dots, hidden on mobile) */}
+              <div className="hidden md:block pt-6">
                 <button
                   onClick={onStart}
-                  className="w-full sm:w-auto px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-bold text-base sm:text-lg hover:bg-primary/95 transition-all shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer transform hover:-translate-y-0.5"
+                  className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-bold text-lg hover:bg-primary/95 transition-all shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer transform hover:-translate-y-0.5"
                 >
                   {t.landing.cta}
                 </button>
@@ -190,7 +171,7 @@ export function Landing({ onStart }: { onStart: () => void }) {
 
             {/* Right Column: Image and overlapping Widgets (Dynamic Sliding) */}
             <div className="col-span-1 md:col-span-5 relative mt-6 md:mt-0 flex items-center justify-center">
-              <div className="relative w-full max-w-[420px] aspect-[4/3] sm:aspect-square md:aspect-[4/5]">
+              <div className="relative w-full max-w-[420px] aspect-square md:aspect-[4/5]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentSlide}
@@ -246,6 +227,33 @@ export function Landing({ onStart }: { onStart: () => void }) {
               </div>
             </div>
             
+          </div>
+
+          {/* Dots Pagination & Mobile CTA Container */}
+          <div className="mt-8 md:mt-10 flex flex-col items-center gap-6">
+            {/* Dots Pagination (Centered for both Desktop & Mobile) */}
+            <div className="flex gap-2">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${
+                    index === currentSlide ? 'w-8 bg-primary animate-pulse' : 'w-2 bg-border dark:bg-slate-700 hover:bg-primary/40'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Mobile CTA Button (Hidden on Desktop, full-width at the bottom of mobile) */}
+            <div className="w-full md:hidden px-4">
+              <button
+                onClick={onStart}
+                className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-bold text-base hover:bg-primary/95 transition-all shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer text-center block"
+              >
+                {t.landing.cta}
+              </button>
+            </div>
           </div>
 
           {/* Elegant navigation arrows outside/sides */}

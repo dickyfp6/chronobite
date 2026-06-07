@@ -276,6 +276,9 @@ class GreedyOptimizer:
         min_portion, max_portion = PORTION_RANGE.get(consumption_label, (50, 400))
         portion_g = max(min_portion, min(max_portion, portion_g))
         
+        # Round to the nearest whole integer gram for practical usability
+        portion_g = float(round(portion_g))
+        
         return portion_g
     
     def scale_nutrients(

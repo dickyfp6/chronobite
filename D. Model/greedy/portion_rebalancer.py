@@ -21,7 +21,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from meal_schema import FoodItem, Meal, SnackMeal
+from meal_schema import FoodItem, Meal, SnackMeal, MealCourse
 
 # Portion limits (same as in optimizer)
 PORTION_RANGE = {
@@ -133,10 +133,13 @@ class PortionRebalancer:
         Returns:
             New FoodItem with scaled nutrients
         """
+        # Round to the nearest whole integer gram for practical usability
+        rounded_portion_gram = float(round(new_portion_gram))
+        
         if food_item.portion_gram <= 0:
             scale = 1.0
         else:
-            scale = new_portion_gram / food_item.portion_gram
+            scale = rounded_portion_gram / food_item.portion_gram
         
         # Create new item with scaled values
         return FoodItem(
@@ -145,7 +148,7 @@ class PortionRebalancer:
             food_group=food_item.food_group,
             consumption_label=food_item.consumption_label,
             cuisine_label=food_item.cuisine_label,
-            portion_gram=round(new_portion_gram, 1),
+            portion_gram=rounded_portion_gram,
             energy_kcal=round(food_item.energy_kcal * scale, 1),
             protein_g=round(food_item.protein_g * scale, 2),
             carbohydrate_g=round(food_item.carbohydrate_g * scale, 2),
@@ -242,17 +245,19 @@ class PortionRebalancer:
             # Increase portion by increments
             old_portion = best_food['current_portion']
             max_increase = best_food['max_portion'] - old_portion
-            increment = max(10, max_increase * 0.2)  # 20% of remaining room, min 10g
+            increment = max(1.0, max_increase * 0.2)
             new_portion = min(old_portion + increment, best_food['max_portion'])
+            # Ensure final portion is rounded to nearest whole integer gram
+            new_portion = float(round(new_portion))
             
             best_food['current_portion'] = new_portion
             
             # Recalculate gap with new portions
             new_totals = {
-                'energy_kcal': 0,
-                'protein_g': 0,
-                'fat_g': 0,
-                'carbohydrate_g': 0,
+                'energy_kcal': 0.0,
+                'protein_g': 0.0,
+                'fat_g': 0.0,
+                'carbohydrate_g': 0.0,
             }
             
             for food_dict in foods_to_rebalance:
@@ -301,14 +306,14 @@ class PortionRebalancer:
             # Create course with rebalanced item as first candidate
             candidates = [scaled_item]  # Only show the selected (rebalanced) item
             
-            new_meal.courses[course_type] = type(original_item.__class__.__bases__[0])(
+            new_meal.courses[course_type] = MealCourse(
                 course_type=course_type,
                 candidates=candidates,
                 total_calories=scaled_item.energy_kcal,
                 total_protein_g=scaled_item.protein_g,
                 total_carb_g=scaled_item.carbohydrate_g,
                 total_fat_g=scaled_item.fat_g
-            ) if hasattr(original_item, 'course_type') else None
+            )
             
             actual_calories += scaled_item.energy_kcal
         
@@ -352,10 +357,10 @@ class PortionRebalancer:
         
         # Recalculate nutrition after rebalancing
         new_nutrition = {
-            'energy_kcal': 0,
-            'protein_g': 0,
-            'fat_g': 0,
-            'carbohydrate_g': 0,
+            'energy_kcal': 0.0,
+            'protein_g': 0.0,
+            'fat_g': 0.0,
+            'carbohydrate_g': 0.0,
         }
         
         # Aggregate from meals (simplified - would need to iterate through courses)

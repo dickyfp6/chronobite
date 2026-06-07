@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ThemeProvider } from 'next-themes';
 import { I18nProvider, useI18n } from './contexts/I18nContext';
 import { Navbar } from './components/figma/Navbar';
+import { motion, AnimatePresence } from 'motion/react';
 import { Landing } from './pages/Landing';
 import { AlgorithmSelect } from './pages/AlgorithmSelect';
 import { InputWizard } from './pages/InputWizard';
@@ -420,71 +421,127 @@ export default function App() {
 
                     {/* Right Content */}
                     <div className="lg:col-span-9 flex flex-col gap-6 w-full">
-                      {currentPage === 'profile' && (
-                        <ProfileSummary
-                          userData={userData}
-                          onBack={() => {
-                            setMenuPromise(null);
-                            setCurrentPage('input');
-                          }}
-                          onContinue={() => setCurrentPage('results')}
-                          onAnalysisComplete={(res) => {
-                            setAnalysisResult(res);
-                            startMenuPrefetch(res);
-                          }}
-                        />
-                      )}
+                      <AnimatePresence mode="wait">
+                        {currentPage === 'profile' && (
+                          <motion.div
+                            key="profile"
+                            initial={{ opacity: 0, x: 15 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -15 }}
+                            transition={{ duration: 0.25, ease: 'easeInOut' }}
+                            className="w-full"
+                          >
+                            <ProfileSummary
+                              userData={userData}
+                              onBack={() => {
+                                setMenuPromise(null);
+                                setCurrentPage('input');
+                              }}
+                              onContinue={() => setCurrentPage('results')}
+                              onAnalysisComplete={(res) => {
+                                setAnalysisResult(res);
+                                startMenuPrefetch(res);
+                              }}
+                            />
+                          </motion.div>
+                        )}
 
-                      {currentPage === 'results' && (
-                        <Results
-                          userData={userData}
-                          algorithm={algorithm}
-                          analysisResult={analysisResult}
-                          menuPromise={menuPromise}
-                          onViewReport={() => setCurrentPage('report')}
-                          selectedItems={selectedItems}
-                          onSelectedItemsChange={setSelectedItems}
-                        />
-                      )}
+                        {currentPage === 'results' && (
+                          <motion.div
+                            key="results"
+                            initial={{ opacity: 0, x: 15 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -15 }}
+                            transition={{ duration: 0.25, ease: 'easeInOut' }}
+                            className="w-full"
+                          >
+                            <Results
+                              userData={userData}
+                              algorithm={algorithm}
+                              analysisResult={analysisResult}
+                              menuPromise={menuPromise}
+                              onViewReport={() => setCurrentPage('report')}
+                              selectedItems={selectedItems}
+                              onSelectedItemsChange={setSelectedItems}
+                            />
+                          </motion.div>
+                        )}
 
-                      {currentPage === 'report' && (
-                        <Report 
-                          userData={userData} 
-                          onRegisterDownloadPDF={setDownloadPDFTrigger}
-                        />
-                      )}
+                        {currentPage === 'report' && (
+                          <motion.div
+                            key="report"
+                            initial={{ opacity: 0, x: 15 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -15 }}
+                            transition={{ duration: 0.25, ease: 'easeInOut' }}
+                            className="w-full"
+                          >
+                            <Report 
+                              userData={userData} 
+                              onRegisterDownloadPDF={setDownloadPDFTrigger}
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <>
+              <AnimatePresence mode="wait">
                 {currentPage === 'landing' && (
-                  <Landing onStart={() => setCurrentPage('algorithm')} />
+                  <motion.div
+                    key="landing"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="w-full"
+                  >
+                    <Landing onStart={() => setCurrentPage('algorithm')} />
+                  </motion.div>
                 )}
 
                 {currentPage === 'algorithm' && (
-                  <AlgorithmSelect
-                    selected={algorithm}
-                    onSelect={(algo) => {
-                      setMenuPromise(null);
-                      setAlgorithm(algo);
-                    }}
-                    onContinue={() => setCurrentPage('input')}
-                  />
+                  <motion.div
+                    key="algorithm"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="w-full"
+                  >
+                    <AlgorithmSelect
+                      selected={algorithm}
+                      onSelect={(algo) => {
+                        setMenuPromise(null);
+                        setAlgorithm(algo);
+                      }}
+                      onContinue={() => setCurrentPage('input')}
+                    />
+                  </motion.div>
                 )}
 
                 {currentPage === 'input' && (
-                  <InputWizard
-                    data={userData}
-                    onUpdate={(data) => {
-                      setMenuPromise(null);
-                      setUserData({ ...userData, ...data });
-                    }}
-                    onComplete={() => setCurrentPage('profile')}
-                  />
+                  <motion.div
+                    key="input"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="w-full"
+                  >
+                    <InputWizard
+                      data={userData}
+                      onUpdate={(data) => {
+                        setMenuPromise(null);
+                        setUserData({ ...userData, ...data });
+                      }}
+                      onComplete={() => setCurrentPage('profile')}
+                    />
+                  </motion.div>
                 )}
-              </>
+              </AnimatePresence>
             )}
           </main>
 
