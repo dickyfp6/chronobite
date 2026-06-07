@@ -1203,8 +1203,8 @@ def run_ga(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    generations: int = 100,
-    pop_size: int = 50,
+    generations: int = 150,
+    pop_size: int = 100,
     elite_ratio: float = 0.25,
     mutation_rate: float = 0.3,
     verbose: bool = True
@@ -1336,13 +1336,10 @@ def run_ga(
         # Update population
         population = new_population[:pop_size]
         
-        # [ENHANCED] Random injection untuk maintain diversity & prevent stagnation
-        # Inject 2 random solutions setiap generasi untuk fresh genetic material
-        if len(population) >= 2:
+        # Random injection hanya setiap 10 generasi untuk maintain diversity
+        # tanpa mengganggu konvergensi di setiap generasi
+        if gen % 10 == 0 and len(population) >= 2:
             population[-2:] = [random_solution(food_df) for _ in range(2)]
-        
-        # [ENHANCED] Shuffle population untuk avoid local convergence
-        random.shuffle(population)
     
     # STEP 3: Final evaluation dan get top solutions
     if verbose:

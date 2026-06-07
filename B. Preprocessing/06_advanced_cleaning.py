@@ -223,6 +223,46 @@ def bersihkan_dataset(input_file, output_file):
     print(f"[FILTER 6e] Junk snacks fast food: {crit_junk_snack.sum()} items")
     print(f"[FILTER 6] Total fast food filter: {before - after} items removed")
 
+    # FILTER 7: Hapus sisa fast food chain brand besar
+    before = len(df_cleaned)
+    fast_food_mask = df_cleaned['food_group'].isin(['Fast Foods', 'Restaurant Foods'])
+
+    # Brand chain besar yang semua itemnya tidak cocok untuk diet penyakit kronis
+    chain_brand_keywords = [
+        "kfc,",
+        "popeyes,",
+        "burger king,",
+        "wendy's,",
+        "taco bell,",
+        "chick-fil-a,",
+        "arby's,",
+        "mcdonald's,",
+    ]
+
+    # Generic fast food items bermasalah (sodium/saturated fat tinggi)
+    generic_problematic = [
+        "fast food, biscuit",
+        "fast foods, biscuit, with crispy chicken",
+        "fast foods, roast beef sandwich, plain",
+        "fast foods, fried chicken, skin and breading",
+        "fast foods, fried chicken, thigh, meat and skin",
+        "fast foods, fried chicken, wing, meat and skin",
+        "fast foods, fried chicken, breast, meat and skin",
+    ]
+
+    all_remove = chain_brand_keywords + generic_problematic
+
+    filter7_mask = (
+        fast_food_mask &
+        df_cleaned['food_name'].str.lower().str.contains(
+            '|'.join([re.escape(k.lower()) for k in all_remove]), na=False
+        )
+    )
+
+    df_cleaned = df_cleaned[~filter7_mask]
+    after = len(df_cleaned)
+    print(f"[FILTER 7] Sisa fast food chain brand besar: {before - after} items removed")
+
     print(f"\n[SUMMARY] Dataset awal: {len(df)} items")
     print(f"[SUMMARY] Dataset final: {len(df_cleaned)} items")
     print(f"[SUMMARY] Total removed: {len(df) - len(df_cleaned)} items")
