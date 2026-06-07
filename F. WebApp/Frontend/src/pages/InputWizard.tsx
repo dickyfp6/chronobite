@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { User, Activity, Heart, UtensilsCrossed, ChevronRight, ChevronLeft, Calendar, Scale, Ruler, Footprints, Flame, Leaf, Droplet, TrendingDown, Shield } from 'lucide-react';
+import { User, Activity, Heart, UtensilsCrossed, ClipboardList, FileText, ChevronRight, ChevronLeft, Calendar, Scale, Ruler, Footprints, Flame, Leaf, Droplet, TrendingDown, Shield } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import { IconCard } from '../components/figma/IconCard';
 
@@ -147,64 +147,105 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Side: Interactive Vertical Stepper (sticky sub-navbar on mobile) */}
           <div className="sticky top-16 lg:top-24 z-30 lg:col-span-3 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible scrollbar-none gap-3 lg:gap-0 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-5 py-3 lg:py-5 bg-white/95 dark:bg-slate-900/95 lg:bg-white/50 lg:dark:bg-slate-900/40 backdrop-blur-md border-b border-border/50 lg:border lg:border-border/80 lg:dark:border-slate-800/80 rounded-none lg:rounded-3xl shadow-sm lg:shadow-lg lg:shadow-primary/5 dark:shadow-none">
-            {steps.map((stepLabel, index) => {
-              const active = index === step;
-              const accessible = isStepAccessible(index);
-              const summary = getStepSummary(index);
-              const isCompleted = (() => {
-                if (index === step) return false;
-                if (index === 0) return !!data.gender;
-                if (index === 1) return !!(data.age >= 18 && data.weight >= 30 && data.height >= 100);
-                if (index === 2) return !!data.activity;
-                if (index === 3) return data.healthConditions.length > 0;
-                if (index === 4) return !!summary;
-                return false;
-              })();
+            {(() => {
+              const allSteps = [
+                { id: 'profile-input-0', label: steps[0], summary: getStepSummary(0), isFuture: false, index: 0 },
+                { id: 'profile-input-1', label: steps[1], summary: getStepSummary(1), isFuture: false, index: 1 },
+                { id: 'profile-input-2', label: steps[2], summary: getStepSummary(2), isFuture: false, index: 2 },
+                { id: 'profile-input-3', label: steps[3], summary: getStepSummary(3), isFuture: false, index: 3 },
+                { id: 'summary-peek', label: t.input.sidebar?.summary || 'Summary', summary: 'Nutrition constraints', isFuture: true, icon: FileText },
+                { id: 'meals-peek', label: t.results?.title || 'Meal Plan', summary: 'Recommended menus', isFuture: true, icon: UtensilsCrossed },
+                { id: 'report-peek', label: t.report?.title || 'Complete Report', summary: 'Detailed analysis', isFuture: true, icon: ClipboardList },
+              ];
 
-              return (
-                <button
-                  key={index}
-                  disabled={!accessible}
-                  onClick={() => handleStepClick(index)}
-                  className={`relative flex flex-row items-center lg:items-start text-left gap-2.5 lg:gap-3 p-2 lg:p-3 rounded-xl lg:rounded-2xl transition-all min-w-max lg:min-w-0 flex-1 lg:flex-none border border-transparent ${
-                    active
-                      ? 'bg-primary/10 dark:bg-primary/20 text-primary dark:text-emerald-300 border-primary/25 font-bold shadow-sm'
-                      : accessible
-                      ? 'hover:bg-white/80 dark:hover:bg-slate-800/60 text-gray-700 dark:text-gray-300 cursor-pointer'
-                      : 'opacity-40 text-gray-400 dark:text-gray-650 cursor-not-allowed'
-                  }`}
-                >
-                  {/* Vertical Connection Line on Desktop */}
-                  {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute left-8 top-12 bottom-0 w-0.5 bg-border dark:bg-slate-800 -mb-6 z-0" />
-                  )}
+              return allSteps.map((item, index) => {
+                if (!item.isFuture) {
+                  const idx = item.index!;
+                  const active = idx === step;
+                  const accessible = isStepAccessible(idx);
+                  const summary = item.summary;
+                  const isCompleted = (() => {
+                    if (idx === step) return false;
+                    if (idx === 0) return !!data.gender;
+                    if (idx === 1) return !!(data.age >= 18 && data.weight >= 30 && data.height >= 100);
+                    if (idx === 2) return !!data.activity;
+                    if (idx === 3) return data.healthConditions.length > 0;
+                    return false;
+                  })();
 
-                  {/* Icon Indicator */}
-                  <div
-                    className={`w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold shadow-sm z-10 shrink-0 transition-all ${
-                      isCompleted
-                        ? 'bg-primary text-primary-foreground'
-                        : active
-                        ? 'bg-primary text-primary-foreground ring-4 ring-primary/25 scale-105'
-                        : 'bg-secondary dark:bg-slate-800 text-muted-foreground dark:text-gray-400'
-                    }`}
-                  >
-                    {isCompleted ? <span className="text-xs font-extrabold">✓</span> : index + 1}
-                  </div>
+                  return (
+                    <button
+                      key={item.id}
+                      disabled={!accessible}
+                      onClick={() => handleStepClick(idx)}
+                      className={`relative flex flex-row items-center lg:items-start text-left gap-2.5 lg:gap-3 p-2 lg:p-3 rounded-xl lg:rounded-2xl transition-all min-w-max lg:min-w-0 flex-1 lg:flex-none border border-transparent ${
+                        active
+                          ? 'bg-primary/10 dark:bg-primary/20 text-primary dark:text-emerald-300 border-primary/25 font-bold shadow-sm'
+                          : accessible
+                          ? 'hover:bg-white/80 dark:hover:bg-slate-800/60 text-gray-700 dark:text-gray-300 cursor-pointer'
+                          : 'opacity-40 text-gray-400 dark:text-gray-650 cursor-not-allowed'
+                      }`}
+                    >
+                      {/* Vertical Connection Line on Desktop */}
+                      {index < allSteps.length - 1 && (
+                        <div className="hidden lg:block absolute left-8 top-12 bottom-0 w-0.5 bg-border dark:bg-slate-800 -mb-6 z-0" />
+                      )}
 
-                  <div className="flex-1 min-w-0 text-left z-10">
-                    <p className={`text-xs lg:text-sm tracking-tight ${active ? 'font-bold text-primary dark:text-emerald-300' : 'font-semibold'}`}>
-                      {stepLabel}
-                    </p>
-                    {summary && (
-                      <p className="text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5">
-                        {summary}
-                      </p>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
+                      {/* Icon Indicator */}
+                      <div
+                        className={`w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold shadow-sm z-10 shrink-0 transition-all ${
+                          isCompleted
+                            ? 'bg-primary text-primary-foreground'
+                            : active
+                            ? 'bg-primary text-primary-foreground ring-4 ring-primary/25 scale-105'
+                            : 'bg-secondary dark:bg-slate-800 text-muted-foreground dark:text-gray-400'
+                        }`}
+                      >
+                        {isCompleted ? <span className="text-xs font-extrabold">✓</span> : idx + 1}
+                      </div>
+
+                      <div className="flex-1 min-w-0 text-left z-10">
+                        <p className={`text-xs lg:text-sm tracking-tight ${active ? 'font-bold text-primary dark:text-emerald-300' : 'font-semibold'}`}>
+                          {item.label}
+                        </p>
+                        {summary && (
+                          <p className="text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5">
+                            {summary}
+                          </p>
+                        )}
+                      </div>
+                    </button>
+                  );
+                } else {
+                  const Icon = item.icon!;
+                  return (
+                    <div
+                      key={item.id}
+                      className="relative flex flex-row items-center lg:items-start text-left gap-2.5 lg:gap-3 p-2 lg:p-3 rounded-xl lg:rounded-2xl transition-all min-w-max lg:min-w-0 flex-1 lg:flex-none border border-transparent opacity-25 text-gray-400 dark:text-gray-550 cursor-not-allowed"
+                    >
+                      {/* Vertical Connection Line on Desktop */}
+                      {index < allSteps.length - 1 && (
+                        <div className="hidden lg:block absolute left-8 top-12 bottom-0 w-0.5 bg-border dark:bg-slate-800 -mb-6 z-0" />
+                      )}
+
+                      {/* Icon Indicator */}
+                      <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center bg-secondary dark:bg-slate-800 text-muted-foreground dark:text-gray-400 shadow-sm z-10 shrink-0">
+                        <Icon className="w-4 h-4 lg:w-5 h-5" />
+                      </div>
+
+                      <div className="flex-1 min-w-0 text-left z-10">
+                        <p className="text-xs lg:text-sm tracking-tight font-semibold">
+                          {item.label}
+                        </p>
+                        <p className="text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5">
+                          {item.summary}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+              });
+            })()}
           </div>
 
           {/* Right Side: Active Step Card Container */}

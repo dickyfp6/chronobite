@@ -490,7 +490,9 @@ def example_usage():
     
     # Access data for algorithms
     if result['success']:
+        # pyrefly: ignore [unsupported-operation]
         guidelines = result['guidelines']['nutrients']
+        # pyrefly: ignore [unsupported-operation]
         food_data = result['food_data']['dataframe']
         
         print("\n[OK] Ready for Genetic Algorithm / Greedy Algorithm!")

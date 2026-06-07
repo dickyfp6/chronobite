@@ -244,7 +244,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
 
   return (
     <>
-      <div className="w-full pb-48 sm:pb-40">
+      <div className="w-full pb-12 sm:pb-8">
         <div className="space-y-8">
           {['breakfast', 'lunch', 'dinner'].map((mealName) => {
             const meal = menuData[mealName];
