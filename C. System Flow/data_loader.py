@@ -196,8 +196,8 @@ class GuidelineLoader:
                 if converted['constraint_type'] in ('invalid', 'unknown'):
                     continue
                 
-                min_converted = converted['min_converted']
-                max_converted = converted['max_converted']
+                min_converted = float(converted['min_converted']) if converted['min_converted'] is not None else None
+                max_converted = float(converted['max_converted']) if converted['max_converted'] is not None else None
                 
                 # Merge nilai yang SUDAH dalam unit aktual
                 if nutrient not in all_nutrients:

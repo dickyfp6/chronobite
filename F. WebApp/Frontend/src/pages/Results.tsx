@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Loader2, RotateCcw } from 'lucide-react';
+import { ArrowRight, RotateCcw } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import type { UserInputData } from './InputWizard';
 import { api } from '../services/api';

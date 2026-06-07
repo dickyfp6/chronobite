@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import { ComposedChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { TooltipProps } from 'recharts';
-import { useI18n } from '../../contexts/I18nContext';
 
 interface NutritionDataPoint {
   id: string;
@@ -24,6 +23,7 @@ interface NutritionChartProps {
     min: number;
     max: number | null;
     actual: number;
+    unit?: string;
     diseases?: string[];
     source?: string;
     basis?: string;
@@ -35,8 +35,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
   if (!active || !payload || payload.length === 0) return null;
 
   const data = payload[0].payload as NutritionDataPoint;
-  const { language } = useI18n();
-  const activeLang = (language as string) === 'id' ? 'id' : 'en';
+  const activeLang = 'en';
 
   const translations = {
     en: {

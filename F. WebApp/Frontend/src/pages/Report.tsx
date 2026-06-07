@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { FileText, BarChart3, List, Lightbulb, User } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import type { UserInputData } from './InputWizard';
@@ -350,6 +350,8 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
   const userConditions = userData.healthConditions.filter(c => c !== 'normal');
 
   const handleDownloadPDF = async () => {
+    setIsGenerating(true);
+
     // Transform meals data for PDF
     const mealsData = [
       {
@@ -393,9 +395,6 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
       carbs: actualNutrients?.carbs || Math.round(dailyNeeds.carbs * 0.92),
       fat: actualNutrients?.fat || Math.round(dailyNeeds.fat * 0.78),
     };
-
-  const handleDownloadPDF = async () => {
-    setIsGenerating(true);
 
     // Capture charts
     const captureChart = async (id: string) => {
@@ -467,7 +466,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 min-w-[120px] px-6 py-4 font-semibold text-sm transition-all border-b-4 flex items-center justify-center gap-2 cursor-pointer font-sans ${
+                  className={`flex-1 min-w-[100px] px-3 py-3 font-semibold text-sm transition-all border-b-4 flex items-center justify-center gap-2 cursor-pointer font-sans ${
                     activeTab === tab.id
                       ? 'border-primary text-primary dark:text-emerald-450 bg-primary/5 dark:bg-primary/10'
                       : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-emerald-450 hover:bg-secondary/30 dark:hover:bg-slate-800/20'
@@ -758,7 +757,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
               {microData.length > 0 && (
                 <div className="mt-8">
                   <h3 className="text-lg font-bold mb-2 text-primary dark:text-emerald-450 font-serif">
-                    {language === 'id' ? 'Analisis Mikronutrisi' : 'Micronutrient Analysis'}
+                    Micronutrient Analysis
                   </h3>
                   <NutritionChart data={microData} unit="mg" />
                 </div>
@@ -769,7 +768,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-amber-500 text-lg font-bold">⚠️</span>
                     <h3 className="font-bold text-sm text-amber-950 dark:text-amber-300 font-serif">
-                      {(language as string) === 'id' ? 'Catatan & Penyesuaian Nutrisi' : 'Nutritional Adjustments & Notes'}
+                      Nutritional Adjustments & Notes
                     </h3>
                   </div>
                   <ul className="space-y-2">
@@ -793,7 +792,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-amber-500 text-lg font-bold">⚠️</span>
                     <h3 className="font-bold text-sm text-amber-950 dark:text-amber-300 font-serif">
-                      {(language as string) === 'id' ? 'Catatan & Penyesuaian Nutrisi' : 'Nutritional Adjustments & Notes'}
+                      Nutritional Adjustments & Notes
                     </h3>
                   </div>
                   <ul className="space-y-2">
@@ -892,8 +891,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                     }
                   }
 
-                  const isId = (language as string) === 'id';
-                  let statusLabel = '';
+                  let statusLabel = 'Optimal';
                   let showBadge = false;
                   let cardBg = 'bg-white/40 dark:bg-slate-950/20 border-border/80 dark:border-slate-800/80';
                   let badgeBg = '';
@@ -902,7 +900,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                   let priority = 3;
 
                   if (isDeficient) {
-                    statusLabel = isId ? 'Kurang Asupan' : 'Deficient';
+                    statusLabel = 'Deficient';
                     showBadge = true;
                     priority = 1;
                     cardBg = 'bg-red-50/70 dark:bg-red-950/20 border-red-200/50 dark:border-red-900/40';
@@ -910,17 +908,13 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                     textColor = 'text-red-700 dark:text-red-400';
                     titleColor = 'text-red-900 dark:text-red-200';
                   } else if (isExcessive) {
-                    statusLabel = isId ? 'Berlebih' : 'Excessive';
+                    statusLabel = 'Excessive';
                     showBadge = true;
                     priority = 2;
                     cardBg = 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/50 dark:border-amber-900/40';
                     badgeBg = 'bg-amber-500/10 text-amber-600 dark:text-amber-450';
                     textColor = 'text-amber-700 dark:text-amber-400';
                     titleColor = 'text-amber-900 dark:text-amber-200';
-                  } else {
-                    statusLabel = isId ? 'Cukup' : 'Optimal';
-                    showBadge = false;
-                    priority = 3;
                   }
 
                   return {
@@ -1118,10 +1112,10 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
               <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-850">
                 <div>
                   <h3 className="font-serif font-bold text-xl text-slate-900 dark:text-white">
-                    {language === 'id' ? 'Pratinjau Laporan PDF' : 'PDF Report Preview'}
+                    PDF Report Preview
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-sans">
-                    {language === 'id' ? 'Periksa laporan Anda sebelum mengunduh' : 'Review your report before downloading'}
+                    Review your report before downloading
                   </p>
                 </div>
                 <button
@@ -1155,7 +1149,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                   }}
                   className="px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl cursor-pointer transition-colors"
                 >
-                  {language === 'id' ? 'Batal' : 'Cancel'}
+                  Cancel
                 </button>
                 <button
                   onClick={() => {
@@ -1169,7 +1163,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  {language === 'id' ? 'Unduh PDF' : 'Download PDF'}
+                  Download PDF
                 </button>
               </div>
             </motion.div>
@@ -1183,7 +1177,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
           <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800">
             <div className="w-10 h-10 border-4 border-primary dark:border-emerald-500 border-t-transparent rounded-full animate-spin" />
             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-              {language === 'id' ? 'Menyiapkan pratinjau PDF...' : 'Preparing PDF preview...'}
+              Preparing PDF preview...
             </p>
           </div>
         </div>

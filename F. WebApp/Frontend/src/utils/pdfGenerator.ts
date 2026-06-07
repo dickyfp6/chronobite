@@ -320,7 +320,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
   // Save or preview PDF
   const fileName = `NutriPlan_Report_${new Date().toISOString().split('T')[0]}.pdf`;
   if (preview) {
-    return pdf.output('bloburl');
+    return pdf.output('bloburl').toString();
   } else {
     pdf.save(fileName);
   }

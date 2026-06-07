@@ -54,8 +54,8 @@ function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedIt
   const targetFat = analysisResult?.guidelines?.nutrients?.fat_g?.max || analysisResult?.macros?.fat?.gram || Math.round((targetCalories * 0.3) / 9);
 
   const getMacroColor = (actual: number, range: { min: number, max: number }) => {
-    if (actual < range.min - 2) return 'bg-orange-500 dark:bg-orange-400';
-    if (actual > range.max + 2) return 'bg-[#a63a3a] dark:bg-[#c94f4f]'; // classy brick red for over limit
+    if (actual < range.min) return 'bg-orange-500 dark:bg-orange-400';
+    if (actual > range.max) return 'bg-[#a63a3a] dark:bg-[#c94f4f]'; // classy brick red for over limit
     return 'bg-primary dark:bg-emerald-450'; // forest green to match calorie target
   };
 

@@ -230,8 +230,7 @@ class GreedyOptimizer:
             final_candidates.append(cand)
             added_names.append(cand.get('food_name', ''))
             
-            max_candidates = 2 if course_type == 'Drink' else 3
-            if len(final_candidates) >= max_candidates:
+            if len(final_candidates) >= 3:
                 break
         
         return final_candidates
@@ -428,22 +427,7 @@ class GreedyOptimizer:
                 portion = self.optimize_portion(cand_per_100g, drink_target, 'Drink')
                 scaled = self.scale_nutrients(cand_per_100g, portion)
                 drink_candidates_scaled.append(scaled)
-            
-            # Append Mineral Water as the mandatory 3rd candidate
-            water = FoodItem(
-                fdc_id='water_000',
-                food_name='Mineral Water',
-                food_group='Beverages',
-                consumption_label='Drink',
-                cuisine_label='Generic',
-                portion_gram=250.0,
-                energy_kcal=0.0,
-                protein_g=0.0,
-                carbohydrate_g=0.0,
-                fat_g=0.0,
-                micronutrients={}
-            )
-            drink_candidates_scaled.append(water)
+
             
             courses['Drink'] = MealCourse(
                 course_type='Drink',
