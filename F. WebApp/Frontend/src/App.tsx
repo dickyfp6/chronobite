@@ -21,7 +21,9 @@ function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedIt
   const totalProtein = Object.values(selectedItems).reduce((sum, item) => sum + (item.protein || 0), 0);
   const totalCarbs = Object.values(selectedItems).reduce((sum, item) => sum + (item.carbs || 0), 0);
   const totalFat = Object.values(selectedItems).reduce((sum, item) => sum + (item.fat || 0), 0);
-  const targetCalories = analysisResult?.energy?.tdee ? Math.round(analysisResult.energy.tdee) : 2000;
+  const targetCalories = (analysisResult?.guidelines?.nutrients?.energy_kcal?.max && analysisResult.guidelines.nutrients.energy_kcal.max !== Infinity)
+    ? Math.round(analysisResult.guidelines.nutrients.energy_kcal.max)
+    : (analysisResult?.energy?.tdee ? Math.round(analysisResult.energy.tdee) : 2000);
 
   const getRange = (macroKey: string, keyG: string, fallbackMin: number, fallbackMax: number, factor: number) => {
     const guide = analysisResult?.guidelines?.nutrients?.[keyG];
@@ -48,6 +50,7 @@ function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedIt
   const proteinRange = getRange('protein', 'protein_g', 10, 35, 4);
   const carbsRange = getRange('carbs', 'carbohydrate_g', 45, 65, 4);
   const fatRange = getRange('fat', 'fat_g', 20, 35, 9);
+  const calorieRange = getRange('energy', 'energy_kcal', 90, 110, 1);
 
   const targetProtein = analysisResult?.guidelines?.nutrients?.protein_g?.max || analysisResult?.macros?.protein?.gram || Math.round((targetCalories * 0.15) / 4);
   const targetCarbs = analysisResult?.guidelines?.nutrients?.carbohydrate_g?.max || analysisResult?.macros?.carbs?.gram || Math.round((targetCalories * 0.55) / 4);
@@ -73,7 +76,7 @@ function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedIt
             <span className="font-bold text-gray-900 dark:text-white">{Math.round(totalCalories)} / {targetCalories}</span>
           </div>
           <div className="w-full bg-secondary dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-            <div className="bg-primary dark:bg-emerald-450 h-full rounded-full transition-all" style={{ width: `${Math.min((totalCalories / targetCalories) * 100, 100)}%` }} />
+            <div className={`h-full rounded-full transition-all ${getMacroColor(totalCalories, calorieRange)}`} style={{ width: `${Math.min((totalCalories / targetCalories) * 100, 100)}%` }} />
           </div>
         </div>
 
