@@ -427,7 +427,22 @@ class GreedyOptimizer:
                 portion = self.optimize_portion(cand_per_100g, drink_target, 'Drink')
                 scaled = self.scale_nutrients(cand_per_100g, portion)
                 drink_candidates_scaled.append(scaled)
-
+            
+            # Append Mineral Water as the permanent 4th candidate
+            water = FoodItem(
+                fdc_id='water_000',
+                food_name='Mineral Water',
+                food_group='Beverages',
+                consumption_label='Drink',
+                cuisine_label='Generic',
+                portion_gram=250.0,
+                energy_kcal=0.0,
+                protein_g=0.0,
+                carbohydrate_g=0.0,
+                fat_g=0.0,
+                micronutrients={}
+            )
+            drink_candidates_scaled.append(water)
             
             courses['Drink'] = MealCourse(
                 course_type='Drink',

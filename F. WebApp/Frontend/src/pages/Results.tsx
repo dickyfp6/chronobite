@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ArrowRight, RotateCcw } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import type { UserInputData } from './InputWizard';
@@ -239,15 +239,105 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
       ...selectedItems,
       [key]: candidate,
     };
-    sessionStorage.setItem('dss_selected_items', JSON.stringify(newSelected));
+    // Let the useEffect handle propagating the changes
     onSelectedItemsChange(newSelected);
   };
 
-  // Calculate totals from currently selected items
-  const totalCalories = Object.values(selectedItems).reduce((sum, item) => sum + (item.calories || 0), 0);
-  const totalProtein = Object.values(selectedItems).reduce((sum, item) => sum + (item.protein || 0), 0);
-  const totalCarbs = Object.values(selectedItems).reduce((sum, item) => sum + (item.carbs || 0), 0);
-  const totalFat = Object.values(selectedItems).reduce((sum, item) => sum + (item.fat || 0), 0);
+  // Dynamically rebalance portions of Main Course and Side Dish if Drink is Mineral Water
+  const rebalancedSelectedItems = useMemo(() => {
+    const rebalanced = { ...selectedItems };
+    if (!menuData) return rebalanced;
+
+    ['breakfast', 'lunch', 'dinner'].forEach((mealName) => {
+      const mainKey = `${mealName}_Main`;
+      const sideKey = `${mealName}_Side`;
+      const drinkKey = `${mealName}_Drink`;
+
+      const main = selectedItems[mainKey];
+      const side = selectedItems[sideKey];
+      const drink = selectedItems[drinkKey];
+
+      if (!main || !side || !drink) return;
+
+      // Check if the selected drink is Mineral Water (0 kcal)
+      if (drink.name === 'Mineral Water') {
+        const mealTarget = menuData[mealName as keyof typeof menuData]?.target_calories || 0;
+        
+        // Find default candidate values from the original menuData
+        const defaultMain = menuData[mealName as keyof typeof menuData]?.courses?.Main?.candidates?.find((c: any) => c.name === main.name) || main;
+        const defaultSide = menuData[mealName as keyof typeof menuData]?.courses?.Side?.candidates?.find((c: any) => c.name === side.name) || side;
+
+        const currentCalories = defaultMain.calories + defaultSide.calories;
+        const deficit = mealTarget - currentCalories;
+
+        if (deficit > 0) {
+          // Distribute deficit: 65% to Main, 35% to Side
+          const mainDeficitShare = deficit * 0.65;
+          const sideDeficitShare = deficit * 0.35;
+
+          // Scale Main Course
+          if (defaultMain.calories > 0) {
+            const mainKcalPerGram = defaultMain.calories / defaultMain.serving_size;
+            let newMainPortion = defaultMain.serving_size + (mainDeficitShare / mainKcalPerGram);
+            newMainPortion = Math.min(newMainPortion, 400); // Clamp to max portion limit (400g)
+            
+            const scale = newMainPortion / defaultMain.serving_size;
+            rebalanced[mainKey] = {
+              ...defaultMain,
+              serving_size: Math.round(newMainPortion),
+              calories: Math.round(defaultMain.calories * scale * 10) / 10,
+              protein: Math.round(defaultMain.protein * scale * 100) / 100,
+              carbs: Math.round(defaultMain.carbs * scale * 100) / 100,
+              fat: Math.round(defaultMain.fat * scale * 100) / 100,
+            };
+          }
+
+          // Scale Side Dish
+          if (defaultSide.calories > 0) {
+            const sideKcalPerGram = defaultSide.calories / defaultSide.serving_size;
+            let newSidePortion = defaultSide.serving_size + (sideDeficitShare / sideKcalPerGram);
+            newSidePortion = Math.min(newSidePortion, 250); // Clamp to max portion limit (250g)
+            
+            const scale = newSidePortion / defaultSide.serving_size;
+            rebalanced[sideKey] = {
+              ...defaultSide,
+              serving_size: Math.round(newSidePortion),
+              calories: Math.round(defaultSide.calories * scale * 10) / 10,
+              protein: Math.round(defaultSide.protein * scale * 100) / 100,
+              carbs: Math.round(defaultSide.carbs * scale * 100) / 100,
+              fat: Math.round(defaultSide.fat * scale * 100) / 100,
+            };
+          }
+        }
+      } else {
+        // Restore standard portion values if they switched back to a caloric drink
+        const defaultMain = menuData[mealName as keyof typeof menuData]?.courses?.Main?.candidates?.find((c: any) => c.name === main.name) || main;
+        const defaultSide = menuData[mealName as keyof typeof menuData]?.courses?.Side?.candidates?.find((c: any) => c.name === side.name) || side;
+        rebalanced[mainKey] = defaultMain;
+        rebalanced[sideKey] = defaultSide;
+      }
+    });
+
+    return rebalanced;
+  }, [selectedItems, menuData]);
+
+  // Sync rebalanced items back to parent and session storage safely
+  useEffect(() => {
+    if (Object.keys(rebalancedSelectedItems).length > 0) {
+      const prevString = sessionStorage.getItem('dss_selected_items');
+      const newString = JSON.stringify(rebalancedSelectedItems);
+      if (prevString !== newString) {
+        sessionStorage.setItem('dss_selected_items', newString);
+        onSelectedItemsChange(rebalancedSelectedItems);
+      }
+    }
+  }, [rebalancedSelectedItems, onSelectedItemsChange]);
+
+  // Calculate totals from currently selected (rebalanced) items
+  const totalCalories = Object.values(rebalancedSelectedItems).reduce((sum: number, item: any) => sum + (item.calories || 0), 0);
+  const totalProtein = Object.values(rebalancedSelectedItems).reduce((sum: number, item: any) => sum + (item.protein || 0), 0);
+  const totalCarbs = Object.values(rebalancedSelectedItems).reduce((sum: number, item: any) => sum + (item.carbs || 0), 0);
+  const totalFat = Object.values(rebalancedSelectedItems).reduce((sum: number, item: any) => sum + (item.fat || 0), 0);
 
   // Use the calculated TDEE from analysisResult if available
   const targetCalories = analysisResult?.energy?.tdee
@@ -473,33 +563,37 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
                           </div>
                         ) : (
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            {course.candidates.map((option) => (
-                              <button
-                                key={option.fdc_id || option.name}
-                                onClick={() => handleSelect(mealName, courseName, option)}
-                                className={`relative overflow-hidden p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-white/40 dark:bg-slate-950/20 ${
-                                  selectedItems[key]?.name === option.name
-                                    ? 'border-primary dark:border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-1 ring-primary/20'
-                                    : 'border-border/80 dark:border-slate-800 hover:border-primary/50 dark:hover:border-slate-700 hover:bg-secondary/40 dark:hover:bg-slate-800/50'
-                                }`}
-                              >
-                                <div className="flex justify-between items-start gap-2 mb-1.5">
-                                  <p className="font-bold text-sm text-gray-900 dark:text-white leading-snug line-clamp-2 flex-1 font-sans">
-                                    {option.name}
+                            {course.candidates.map((option) => {
+                              const isSelected = selectedItems[key]?.name === option.name;
+                              const displayOption = isSelected ? rebalancedSelectedItems[key] : option;
+                              return (
+                                <button
+                                  key={option.fdc_id || option.name}
+                                  onClick={() => handleSelect(mealName, courseName, option)}
+                                  className={`relative overflow-hidden p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-white/40 dark:bg-slate-950/20 ${
+                                    isSelected
+                                      ? 'border-primary dark:border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-1 ring-primary/20'
+                                      : 'border-border/80 dark:border-slate-800 hover:border-primary/50 dark:hover:border-slate-700 hover:bg-secondary/40 dark:hover:bg-slate-800/50'
+                                  }`}
+                                >
+                                  <div className="flex justify-between items-start gap-2 mb-1.5">
+                                    <p className="font-bold text-sm text-gray-900 dark:text-white leading-snug line-clamp-2 flex-1 font-sans">
+                                      {displayOption.name}
+                                    </p>
+                                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold text-white uppercase tracking-wider shrink-0 ${getRibbonColor(displayOption.cuisine_label)} shadow-sm bg-opacity-90`}>
+                                      {displayOption.cuisine_label || 'Generic'}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs font-semibold text-primary dark:text-emerald-450 mb-1 font-serif">
+                                    {displayOption.calories} kcal
                                   </p>
-                                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold text-white uppercase tracking-wider shrink-0 ${getRibbonColor(option.cuisine_label)} shadow-sm bg-opacity-90`}>
-                                    {option.cuisine_label || 'Generic'}
-                                  </span>
-                                </div>
-                                <p className="text-xs font-semibold text-primary dark:text-emerald-450 mb-1 font-serif">
-                                  {option.calories} kcal
-                                </p>
-                                <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 font-sans">
-                                  <span>Carb: {option.carbs}g • Pro: {option.protein}g • Fat: {option.fat}g</span>
-                                  <span className="font-medium shrink-0">{option.serving_size}g</span>
-                                </div>
-                              </button>
-                            ))}
+                                  <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 font-sans">
+                                    <span>Carb: {displayOption.carbs}g • Pro: {displayOption.protein}g • Fat: {displayOption.fat}g</span>
+                                    <span className="font-medium shrink-0">{displayOption.serving_size}g</span>
+                                  </div>
+                                </button>
+                              );
+                            })}
                           </div>
                         )}
                       </div>
