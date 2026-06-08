@@ -246,6 +246,27 @@ class GuidelineLoader:
                 
                 data['min'] = resolved_min
                 data['max'] = resolved_max
+
+            # Ensure a minimum range width (at least 10% of the midpoint value) if both min and max are defined
+            # to avoid overly restrictive single-point ranges (min == max) or extremely narrow ranges.
+            if data['min'] is not None and data['max'] is not None:
+                current_min = data['min']
+                current_max = data['max']
+                midpoint = (current_min + current_max) / 2
+                
+                min_width = midpoint * 0.10
+                if (current_max - current_min) < min_width and midpoint > 0:
+                    adjusted_min = round(midpoint - (min_width / 2), 2)
+                    adjusted_max = round(midpoint + (min_width / 2), 2)
+                    if adjusted_min < 0:
+                        diff = -adjusted_min
+                        adjusted_min = 0.0
+                        adjusted_max = round(adjusted_max + diff, 2)
+                        
+                    print(f"[INFO] Expanding narrow range for '{nutrient}': "
+                          f"{current_min:.2f} - {current_max:.2f} -> {adjusted_min:.2f} - {adjusted_max:.2f}")
+                    data['min'] = adjusted_min
+                    data['max'] = adjusted_max
         
         return all_nutrients
     

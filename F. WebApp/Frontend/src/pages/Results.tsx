@@ -5,24 +5,14 @@ import type { UserInputData } from './InputWizard';
 import { api } from '../services/api';
 import { motion, AnimatePresence } from 'motion/react';
 
-const loadingSteps = {
-  id: [
-    "Menganalisis profil fisik & kebutuhan energi...",
-    "Mengevaluasi batasan medis & riwayat kesehatan...",
-    "Menyaring database bahan makanan bernutrisi...",
-    "Menyusun kombinasi menu makanan harian optimal...",
-    "Menyeimbangkan porsi makro & mikro nutrisi...",
-    "Menyempurnakan hasil rekomendasi untuk Anda..."
-  ],
-  en: [
-    "Analyzing physical profile & energy needs...",
-    "Evaluating medical constraints & health history...",
-    "Filtering nutritional food database...",
-    "Formulating optimal daily meal combinations...",
-    "Balancing macro & micro nutrient distributions...",
-    "Finalizing customized recommendations for you..."
-  ]
-};
+const loadingSteps = [
+  "Analyzing physical profile & energy needs...",
+  "Evaluating medical constraints & health history...",
+  "Filtering nutritional food database...",
+  "Formulating optimal daily meal combinations...",
+  "Balancing macro & micro nutrient distributions...",
+  "Finalizing customized recommendations for you..."
+];
 
 interface ResultsProps {
   userData: UserInputData;
@@ -150,24 +140,15 @@ const mealThemes: Record<string, {
   }
 };
 
-const timeLabels: Record<string, Record<string, string>> = {
-  id: {
-    breakfast: 'Saran Jam: 07.00 - 09.00',
-    lunch: 'Saran Jam: 12.00 - 14.00',
-    dinner: 'Saran Jam: 18.00 - 19.00',
-    snack: 'Saran Jam: 15.00 - 16.00',
-  },
-  en: {
-    breakfast: 'Suggested Time: 07:00 - 09:00',
-    lunch: 'Suggested Time: 12:00 - 14:00',
-    dinner: 'Suggested Time: 18:00 - 19:00',
-    snack: 'Suggested Time: 15:00 - 16:00',
-  }
+const timeLabels: Record<string, string> = {
+  breakfast: 'Suggested Time: 07:00 - 09:00',
+  lunch: 'Suggested Time: 12:00 - 14:00',
+  dinner: 'Suggested Time: 18:00 - 19:00',
+  snack: 'Suggested Time: 15:00 - 16:00',
 };
 
 export function Results({ userData, algorithm, analysisResult, menuPromise, onViewReport, selectedItems, onSelectedItemsChange }: ResultsProps) {
   const { t } = useI18n();
-  const language = (useI18n().language as string) || 'en';
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -178,7 +159,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
   useEffect(() => {
     if (!loading) return;
     const interval = setInterval(() => {
-      setStatusIndex((prev) => (prev + 1) % loadingSteps.en.length);
+      setStatusIndex((prev) => (prev + 1) % loadingSteps.length);
     }, 2000);
     return () => clearInterval(interval);
   }, [loading]);
@@ -540,9 +521,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
     : 2000;
 
   if (loading) {
-    const language = (useI18n().language as string) || 'en';
-    const steps = language === 'id' ? loadingSteps.id : loadingSteps.en;
-    const currentStepText = steps[statusIndex];
+    const currentStepText = loadingSteps[statusIndex];
 
     const foods = [
       { emoji: '🍎', start: 0.0, targetX: -24, targetY: 132, rotate: 15 },
@@ -729,7 +708,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
             if (!meal || !meal.courses) return null;
 
             const theme = mealThemes[mealName] || mealThemes.breakfast;
-            const timeText = timeLabels[language as 'id' | 'en']?.[mealName] || timeLabels.en[mealName];
+            const timeText = timeLabels[mealName];
 
             return (
               <div key={mealName} className={`relative overflow-hidden backdrop-blur-md rounded-3xl p-6 border shadow-xl dark:shadow-none transition-all duration-300 ${theme.containerBg} ${theme.containerBorder}`}>
@@ -827,7 +806,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
           {menuData.snack && (() => {
             const mealName = 'snack';
             const theme = mealThemes[mealName];
-            const timeText = timeLabels[language as 'id' | 'en']?.[mealName] || timeLabels.en[mealName];
+            const timeText = timeLabels[mealName];
 
             return (
               <div key={mealName} className={`relative overflow-hidden backdrop-blur-md rounded-3xl p-6 border shadow-xl dark:shadow-none transition-all duration-300 ${theme.containerBg} ${theme.containerBorder}`}>
@@ -912,7 +891,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
             className="px-8 py-3.5 text-base bg-white dark:bg-slate-800 text-foreground rounded-2xl font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-all inline-flex items-center justify-center gap-2 border border-border shadow-sm cursor-pointer transform hover:-translate-y-0.5"
           >
             <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-            {language === 'id' ? 'Regenerasi Menu' : 'Regenerate Menu'}
+            Regenerate Menu
           </button>
           <button
             onClick={onViewReport}
