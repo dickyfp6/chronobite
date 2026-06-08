@@ -267,11 +267,13 @@ class GeneticAlgorithmInterface:
             from ga_v1 import fitness as _calc_fitness # type: ignore
             best_fitness_score = _calc_fitness(best_solution, self.constraint_bag, tdee=tdee)
                 
-            # Generate 3 options per slot
+            # Generate 3 options per slot (with cuisine preference filtering)
+            food_preferences = user_profile.get('food_preferences', None)
             slot_options = generate_meal_options(
                 food_df=self.food_db,
                 top_solutions=top_solutions,
-                max_options_per_slot=3
+                max_options_per_slot=3,
+                food_preferences=food_preferences
             )
                 
             # 2. Calculate dynamic portion sizes to match TDEE and limits
