@@ -1103,6 +1103,10 @@ def mutation(solution: pd.DataFrame, food_df: pd.DataFrame,
     
     result = solution.copy()
     
+    # 20% chance: pure random mutation (skip semua guided filter)
+    # Ini memastikan sebagian mutasi benar-benar mengeksplorasi search space
+    use_pure_random = random.random() < 0.2
+    
     # Calculate current nutrient totals
     total_carb = solution['carbohydrate_g'].sum() if 'carbohydrate_g' in solution.columns else 0
     total_fat = solution['fat_g'].sum() if 'fat_g' in solution.columns else 0
@@ -1143,8 +1147,9 @@ def mutation(solution: pd.DataFrame, food_df: pd.DataFrame,
         
         # [ENHANCED] INTELLIGENT NUTRIENT-BASED FILTERING
         # Goal: Guide GA toward balanced nutrition, not just filling deficits
+        # NOTE: use_pure_random=True → skip semua guided filter untuk eksplorasi murni
         
-        if need_carb and 'carbohydrate_g' in candidate.columns and 'protein_g' in candidate.columns:
+        if not use_pure_random and need_carb and 'carbohydrate_g' in candidate.columns and 'protein_g' in candidate.columns:
             # NEED CARBS: Seek high-carb, moderate-protein foods
             # Avoid protein-heavy foods that would unbalance the meal
             high_carb_balanced = candidate[
@@ -1159,7 +1164,7 @@ def mutation(solution: pd.DataFrame, food_df: pd.DataFrame,
                 if len(high_carb_only) > 0:
                     candidate = high_carb_only
         
-        elif need_fat and 'fat_g' in candidate.columns and 'protein_g' in candidate.columns:
+        elif not use_pure_random and need_fat and 'fat_g' in candidate.columns and 'protein_g' in candidate.columns:
             # NEED FAT: Seek high-fat, moderate-protein foods
             # Avoid protein-heavy options
             high_fat_balanced = candidate[
@@ -1174,7 +1179,7 @@ def mutation(solution: pd.DataFrame, food_df: pd.DataFrame,
                 if len(high_fat_only) > 0:
                     candidate = high_fat_only
         
-        elif too_much_protein and 'protein_g' in candidate.columns:
+        elif not use_pure_random and too_much_protein and 'protein_g' in candidate.columns:
             # TOO MUCH PROTEIN: Seek low-protein options ONLY
             # This is CRITICAL to reduce protein excess
             low_protein = candidate[candidate['protein_g'] <= 10]
@@ -1317,10 +1322,15 @@ def run_ga(
         # 2f. Breeding: buat populasi baru sampai pop_size
         new_population = elite.copy()  # Keep elite
         
+        # Tournament pool: top 60% populasi (elite + near-elite)
+        tournament_pool_size = max(elite_size, int(pop_size * 0.6))
+        tournament_pool = population[:tournament_pool_size]
+        
         while len(new_population) < pop_size:
-            # Select 2 parent dari elite (random with replacement)
-            parent1 = random.choice(elite)
-            parent2 = random.choice(elite)
+            # Select 2 parent dari tournament pool (random with replacement)
+            # Menggunakan top 60% instead of hanya elite untuk lebih banyak diversity
+            parent1 = random.choice(tournament_pool)
+            parent2 = random.choice(tournament_pool)
             
             # Crossover
             child = crossover(parent1, parent2)
@@ -1336,10 +1346,13 @@ def run_ga(
         # Update population
         population = new_population[:pop_size]
         
-        # Random injection hanya setiap 10 generasi untuk maintain diversity
-        # tanpa mengganggu konvergensi di setiap generasi
-        if gen % 10 == 0 and len(population) >= 2:
-            population[-2:] = [random_solution(food_df) for _ in range(2)]
+        # Random injection setiap 10 generasi untuk maintain diversity
+        # 3 random + 2 guided untuk balance eksplorasi dan eksploitasi
+        if gen % 10 == 0 and len(population) >= 5:
+            population[-5:] = (
+                [random_solution(food_df) for _ in range(3)] +
+                [guided_solution(food_df, guidelines) for _ in range(2)]
+            )
     
     # STEP 3: Final evaluation dan get top solutions
     if verbose:
@@ -1602,8 +1615,8 @@ def local_search(
             current_food = best_solution.iloc[gene_idx]
             current_value = current_food.get(target_nutrient, 0) or 0
             
-            # Try up to 5 best candidates
-            for idx_cand in range(min(5, len(slot_candidates))):
+            # Try up to 15 best candidates untuk search space lebih luas
+            for idx_cand in range(min(15, len(slot_candidates))):
                 new_food = slot_candidates.iloc[idx_cand]
                 new_value = new_food.get(target_nutrient, 0) or 0
                 
@@ -1683,8 +1696,8 @@ def local_search(
             
             no_improvement_count += 1
             
-            # TASK 5: STOPPING CONDITION - Stop after 10 consecutive no-improvement (increased from 5)
-            if no_improvement_count >= 10:
+            # TASK 5: STOPPING CONDITION - Stop after 5 consecutive no-improvement
+            if no_improvement_count >= 5:
                 if verbose:
                     print(f"\n[STOP] No improvement for {no_improvement_count} consecutive iterations")
                 break

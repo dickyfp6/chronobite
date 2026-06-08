@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 from meal_schema import MenuPlan, Meal, MealCourse, SnackMeal, FoodItem
-from ga_v1 import run_ga, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES # type: ignore
+from ga_v1 import run_ga, local_search, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES # type: ignore
 
 class GeneticAlgorithmInterface:
     def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):
@@ -240,10 +240,10 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                generations=100,    # naik dari 20 → 100 untuk konvergensi lebih baik
-                pop_size=50,        # naik dari 30 → 50 untuk diversity lebih baik
-                elite_ratio=0.25,
-                mutation_rate=0.3,
+                generations=150,    # Naik dari 100 untuk konvergensi lebih baik
+                pop_size=100,       # Naik dari 50 untuk diversity lebih baik
+                elite_ratio=0.15,   # Turun dari 0.25 → kurangi elite dominance
+                mutation_rate=0.35, # Sedikit naik untuk eksplorasi lebih baik
                 verbose=False
             )
             
@@ -251,15 +251,29 @@ class GeneticAlgorithmInterface:
                 print("[ERROR] Genetic Algorithm failed to find a valid 10-item solution.")
                 return None
             
-            # Calculate fitness score of best solution
+            # Local Search - Fine-tuning GA result
+            print("[INFO] Running Local Search for fine-tuning...")
+            best_solution = local_search(
+                solution=best_solution,
+                food_df=self.food_db,
+                guidelines=self.constraint_bag,
+                tdee=tdee,
+                iterations=20,
+                verbose=False
+            )
+            print("[OK] Local Search complete")
+
+            # Calculate fitness score of best solution (after LS)
             from ga_v1 import fitness as _calc_fitness # type: ignore
             best_fitness_score = _calc_fitness(best_solution, self.constraint_bag, tdee=tdee)
                 
-            # Generate 3 options per slot
+            # Generate 3 options per slot (with cuisine preference filtering)
+            food_preferences = user_profile.get('food_preferences', None)
             slot_options = generate_meal_options(
                 food_df=self.food_db,
                 top_solutions=top_solutions,
-                max_options_per_slot=3
+                max_options_per_slot=3,
+                food_preferences=food_preferences
             )
                 
             # 2. Calculate dynamic portion sizes to match TDEE and limits

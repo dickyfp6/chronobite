@@ -15,10 +15,6 @@ import random
 import numpy as np
 import pandas as pd
 
-# Set random seeds untuk reproducibility
-random.seed(42)
-np.random.seed(42)
-
 # Add paths untuk import
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 system_flow_path = os.path.join(project_root, 'C. System Flow')
@@ -317,10 +313,10 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            generations=50,
-            pop_size=20,
-            elite_ratio=0.25,
-            mutation_rate=0.3,
+            generations=150,
+            pop_size=100,
+            elite_ratio=0.15,
+            mutation_rate=0.35,
             verbose=False  # Changed to False for cleaner output
         )
         print("✓ GA optimization complete")
@@ -335,7 +331,7 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            iterations=15,
+            iterations=20,
             verbose=True  # Show improvements
         )
         print("✓ Local search optimization complete")
