@@ -12,10 +12,10 @@ choice | raw,20
 cooked | roasted,19
 canned | solids and liquids,17
 all grades | raw,16
-separable lean and fat | raw,15
+separable lean and fat | raw,16
 heavy syrup pack | solids and liquids,12
 canned | drained solids,12
+cooked | braised,12
 cooked | fried,12
 with added solution | raw,12
 canned | ready-to-serve,12
-regular pack | solids and liquids,11

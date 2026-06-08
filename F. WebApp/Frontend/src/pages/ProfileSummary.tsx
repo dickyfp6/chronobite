@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, ArrowLeft, HeartPulse, Scale, FileText, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, HeartPulse, Scale, FileText, Loader2, ChevronDown } from 'lucide-react';
 import type { UserInputData } from './InputWizard';
 import { calculateDailyNeeds } from '../utils/mockData';
 import { api } from '../services/api';
@@ -229,6 +229,7 @@ function calculateFallbackMacros(tdee: number, diseases: string[]) {
 export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplete }: ProfileSummaryProps) {
   const [analysis, setAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showOtherNutrients, setShowOtherNutrients] = useState(false);
 
   const dailyNeeds = calculateDailyNeeds(
     userData.weight!,
@@ -404,10 +405,10 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
                             key={item.key}
                             className={
                               item.key === 'energy_kcal'
-                                ? 'rounded-xl bg-primary text-primary-foreground p-2.5 border border-primary/20 shadow-sm'
+                                ? 'rounded-xl bg-primary text-primary-foreground p-2.5 border border-primary/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'
                                 : isEnergyOrMacroKey(item.key)
-                                  ? 'rounded-xl bg-destructive text-destructive-foreground p-2.5 border border-destructive/20 shadow-sm'
-                                  : 'rounded-xl bg-red-500/10 dark:bg-red-950/25 p-2.5 border border-red-500/15'
+                                  ? 'rounded-xl bg-destructive text-destructive-foreground p-2.5 border border-destructive/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'
+                                  : 'rounded-xl bg-red-500/10 dark:bg-red-950/25 p-2.5 border border-red-500/15 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300'
                             }
                           >
                             <div className="flex items-center justify-between">
@@ -420,21 +421,36 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
                     </div>
                   )}
 
-                  <div className="rounded-2xl bg-secondary/35 dark:bg-slate-900/40 border border-border/70 dark:border-slate-850/60 p-4">
-                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Other nutrient limits</p>
-                    {remainingGuidelineItems.length > 0 ? (
-                      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-                        {remainingGuidelineItems.map((item) => (
-                          <div key={item.key} className="rounded-xl bg-white dark:bg-slate-800 p-2.5 border border-border dark:border-slate-700/60 shadow-sm">
-                            <div className="flex items-center justify-between">
-                              <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">{item.label}</p>
-                            </div>
-                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 font-semibold font-serif">{formatGuidelineDisplay(item)}</p>
-                          </div>
-                        ))}
+                  <div className="rounded-2xl bg-secondary/35 dark:bg-slate-900/40 border border-border/70 dark:border-slate-850/60 overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setShowOtherNutrients(!showOtherNutrients)}
+                      className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 dark:hover:bg-slate-900/60 transition-colors text-left focus:outline-none cursor-pointer"
+                    >
+                      <div>
+                        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Other nutrient limits</p>
+                        <p className="text-[10px] text-gray-450 dark:text-gray-500 mt-0.5">Click to view additional nutrient limits and guidelines</p>
                       </div>
-                    ) : (
-                      <p className="text-sm text-gray-600 dark:text-gray-300 font-normal">No additional nutrient limits available.</p>
+                      <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-350 ${showOtherNutrients ? 'transform rotate-180' : ''}`} />
+                    </button>
+
+                    {showOtherNutrients && (
+                      <div className="px-4 pb-4 pt-1 border-t border-border/40 dark:border-slate-800/40">
+                        {remainingGuidelineItems.length > 0 ? (
+                          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 mt-3">
+                            {remainingGuidelineItems.map((item) => (
+                              <div key={item.key} className="rounded-xl bg-white dark:bg-slate-800 p-2.5 border border-border dark:border-slate-700/60 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex items-center justify-between">
+                                  <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">{item.label}</p>
+                                </div>
+                                <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 font-semibold font-serif">{formatGuidelineDisplay(item)}</p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-600 dark:text-gray-300 font-normal mt-2">No additional nutrient limits available.</p>
+                        )}
+                      </div>
                     )}
                   </div>
 

@@ -67,8 +67,107 @@ const getRibbonColor = (cuisine?: string) => {
   return 'bg-green-500'; // Generic
 };
 
+const mealThemes: Record<string, {
+  color: string;
+  glowClass: string;
+  glowClass2: string;
+  containerBg: string;
+  containerBorder: string;
+  icon: React.ReactNode;
+  badgeBg: string;
+  badgeText: string;
+  borderColor: string;
+  selectedClass: string;
+  unselectedClass: string;
+}> = {
+  breakfast: {
+    color: "amber",
+    glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-amber-450/40 via-orange-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
+    glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-orange-450/20 via-amber-400/10 to-transparent rounded-full blur-3xl pointer-events-none",
+    containerBg: "bg-gradient-to-br from-amber-100/35 via-amber-50/15 to-orange-100/25 dark:from-amber-950/20 dark:via-slate-900/70 dark:to-orange-950/15",
+    containerBorder: "border border-amber-200/60 dark:border-amber-900/40 shadow-sm",
+    icon: (
+      <svg className="w-8 h-8 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+      </svg>
+    ),
+    badgeBg: "bg-amber-100/90 dark:bg-amber-950/50 border border-amber-200/30",
+    badgeText: "text-amber-800 dark:text-amber-300",
+    borderColor: "hover:border-amber-450/50 dark:hover:border-amber-500/50",
+    selectedClass: "border-2 border-amber-450 dark:border-amber-400 bg-gradient-to-br from-amber-200 via-amber-100 to-orange-100 dark:from-amber-950/70 dark:via-slate-900/80 dark:to-orange-950/60 shadow-[0_10px_25px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-md scale-[1.02] transition-all duration-300",
+    unselectedClass: "border border-white/50 dark:border-white/10 bg-white/45 dark:bg-slate-950/20 shadow-[0_4px_15px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_25px_rgba(0,0,0,0.12)] hover:bg-white/70 dark:hover:bg-slate-900/40 hover:border-amber-300/50 dark:hover:border-amber-500/30 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_8px_20px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 backdrop-blur-md transition-all duration-300"
+  },
+  lunch: {
+    color: "sky",
+    glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-sky-400/40 via-yellow-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
+    glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-yellow-300/45 via-sky-300/10 to-transparent rounded-full blur-3xl pointer-events-none",
+    containerBg: "bg-gradient-to-br from-sky-100/30 via-sky-50/15 to-yellow-100/35 dark:from-sky-950/20 dark:via-slate-900/70 dark:to-yellow-950/25",
+    containerBorder: "border border-sky-200/60 dark:border-sky-900/40 shadow-sm",
+    icon: (
+      <svg className="w-8 h-8 text-sky-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v2m0 14v2m9-9h-2M5 12H3m14.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m0-11.314l1.414 1.414m8.485 8.485l1.414-1.414M12 7a5 5 0 100 10 5 5 0 000-10z" />
+      </svg>
+    ),
+    badgeBg: "bg-sky-100/90 dark:bg-sky-950/50 border border-sky-200/30",
+    badgeText: "text-sky-800 dark:text-sky-300",
+    borderColor: "hover:border-sky-450/50 dark:hover:border-sky-500/50",
+    selectedClass: "border-2 border-sky-450 dark:border-sky-400 bg-gradient-to-br from-sky-200 to-yellow-200 dark:from-sky-900/60 dark:to-yellow-950/60 shadow-[0_10px_25px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-md scale-[1.02] transition-all duration-300",
+    unselectedClass: "border border-white/50 dark:border-white/10 bg-white/45 dark:bg-slate-950/20 shadow-[0_4px_15px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_25px_rgba(0,0,0,0.12)] hover:bg-white/70 dark:hover:bg-slate-900/40 hover:border-sky-300/50 dark:hover:border-sky-500/30 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_8px_20px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 backdrop-blur-md transition-all duration-300"
+  },
+  dinner: {
+    color: "indigo",
+    glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-indigo-500/40 via-purple-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
+    glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-purple-500/20 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none",
+    containerBg: "bg-gradient-to-br from-indigo-100/35 via-indigo-50/15 to-purple-100/30 dark:from-indigo-950/20 dark:via-slate-900/70 dark:to-purple-950/15",
+    containerBorder: "border border-indigo-200/60 dark:border-indigo-900/40 shadow-sm",
+    icon: (
+      <svg className="w-8 h-8 text-indigo-500 dark:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
+    ),
+    badgeBg: "bg-indigo-100/90 dark:bg-indigo-950/50 border border-indigo-200/30",
+    badgeText: "text-indigo-800 dark:text-indigo-300",
+    borderColor: "hover:border-indigo-450/50 dark:hover:border-indigo-500/50",
+    selectedClass: "border-2 border-indigo-450 dark:border-indigo-400 bg-gradient-to-br from-indigo-200 to-blue-900/30 dark:from-indigo-950/70 dark:to-blue-950/90 shadow-[0_10px_25px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-md scale-[1.02] transition-all duration-300",
+    unselectedClass: "border border-white/50 dark:border-white/10 bg-white/45 dark:bg-slate-950/20 shadow-[0_4px_15px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_25px_rgba(0,0,0,0.12)] hover:bg-white/70 dark:hover:bg-slate-900/40 hover:border-indigo-300/50 dark:hover:border-indigo-500/30 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_8px_20px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 backdrop-blur-md transition-all duration-300"
+  },
+  snack: {
+    color: "rose",
+    glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-rose-500/40 via-pink-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
+    glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-pink-500/20 via-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none",
+    containerBg: "bg-gradient-to-br from-rose-100/35 via-rose-50/15 to-pink-100/30 dark:from-rose-950/20 dark:via-slate-900/70 dark:to-pink-950/15",
+    containerBorder: "border border-rose-200/60 dark:border-rose-900/40 shadow-sm",
+    icon: (
+      <svg className="w-8 h-8 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>
+    ),
+    badgeBg: "bg-rose-100/90 dark:bg-rose-950/50 border border-rose-200/30",
+    badgeText: "text-rose-800 dark:text-rose-300",
+    borderColor: "hover:border-rose-450/50 dark:hover:border-rose-500/50",
+    selectedClass: "border-2 border-rose-450 dark:border-rose-400 bg-gradient-to-br from-rose-200 via-rose-100 to-pink-100 dark:from-rose-950/70 dark:via-slate-900/80 dark:to-pink-950/50 shadow-[0_10px_25px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-md scale-[1.02] transition-all duration-300",
+    unselectedClass: "border border-white/50 dark:border-white/10 bg-white/45 dark:bg-slate-950/20 shadow-[0_4px_15px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_25px_rgba(0,0,0,0.12)] hover:bg-white/70 dark:hover:bg-slate-900/40 hover:border-rose-300/50 dark:hover:border-rose-500/30 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_8px_20px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 backdrop-blur-md transition-all duration-300"
+  }
+};
+
+const timeLabels: Record<string, Record<string, string>> = {
+  id: {
+    breakfast: 'Saran Jam: 07.00 - 09.00',
+    lunch: 'Saran Jam: 12.00 - 14.00',
+    dinner: 'Saran Jam: 18.00 - 19.00',
+    snack: 'Saran Jam: 15.00 - 16.00',
+  },
+  en: {
+    breakfast: 'Suggested Time: 07:00 - 09:00',
+    lunch: 'Suggested Time: 12:00 - 14:00',
+    dinner: 'Suggested Time: 18:00 - 19:00',
+    snack: 'Suggested Time: 15:00 - 16:00',
+  }
+};
+
 export function Results({ userData, algorithm, analysisResult, menuPromise, onViewReport, selectedItems, onSelectedItemsChange }: ResultsProps) {
   const { t } = useI18n();
+  const language = (useI18n().language as string) || 'en';
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -215,6 +314,102 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
       });
 
       // Initialize snack
+      if (meals.snack?.candidates?.length > 0) {
+        initialSelected['snack_snack'] = meals.snack.candidates[0];
+      }
+
+      onSelectedItemsChange(initialSelected);
+      sessionStorage.setItem('dss_selected_items', JSON.stringify(initialSelected));
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'An error occurred while generating the menu plan.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegenerate = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const payload = {
+        gender: userData.gender === 'male' ? 'M' : 'F',
+        age: userData.age,
+        weight: userData.weight,
+        height: userData.height,
+        activity: userData.activity || '1.845',
+        diseases: userData.healthConditions.length > 0 ? userData.healthConditions : ['normal'],
+        food_preferences: userData.foodPreferences,
+        algorithm: algorithm || 'greedy',
+      };
+
+      const result = await api.generateMenu({
+        algorithm: algorithm || 'greedy',
+        user_profile: payload,
+        analysis_data: analysisResult || {},
+        user_input: analysisResult || {},
+      });
+
+      if (!result.success || !result.menu_plan?.meals) {
+        throw new Error('Failed to generate valid menu plan from backend');
+      }
+
+      const meals = result.menu_plan.meals;
+      const formattedMenu = {
+        breakfast: meals.breakfast,
+        lunch: meals.lunch,
+        dinner: meals.dinner,
+        snack: meals.snack,
+      };
+
+      // Apply scaling to alternative candidates (option 2 & 3)
+      ['breakfast', 'lunch', 'dinner'].forEach((mealName) => {
+        const meal = formattedMenu[mealName as keyof typeof formattedMenu];
+        if (meal?.courses) {
+          ['Main', 'Side', 'Drink'].forEach((courseName) => {
+            const course = meal.courses![courseName];
+            if (course?.candidates) {
+              course.candidates = scaleCandidates(course.candidates);
+            }
+          });
+        }
+      });
+
+      // Scale snack candidates
+      if (formattedMenu.snack?.candidates) {
+        formattedMenu.snack.candidates = scaleCandidates(formattedMenu.snack.candidates);
+      }
+      
+      setMenuData(formattedMenu);
+      sessionStorage.setItem('dss_menu_data', JSON.stringify(formattedMenu));
+      
+      // Store actual nutrients directly from the backend payload!
+      if (result.menu_plan.total_daily_calories) {
+        const actualNutrients = {
+          calories: result.menu_plan.total_daily_calories,
+          protein: result.menu_plan.total_daily_protein_g,
+          carbs: result.menu_plan.total_daily_carb_g,
+          fat: result.menu_plan.total_daily_fat_g,
+          ...result.menu_plan.daily_micronutrients // include micronutrients!
+        };
+        sessionStorage.setItem('dss_actual_nutrients', JSON.stringify(actualNutrients));
+      }
+
+      // Initialize selected items (the first candidate for each course)
+      const initialSelected: Record<string, Candidate> = {};
+
+      ['breakfast', 'lunch', 'dinner'].forEach((mealName) => {
+        const meal = formattedMenu[mealName as keyof typeof formattedMenu];
+        if (meal?.courses) {
+          ['Main', 'Side', 'Drink'].forEach((courseName) => {
+            const course = meal.courses[courseName];
+            if (course?.candidates?.length > 0) {
+              initialSelected[`${mealName}_${courseName}`] = course.candidates[0];
+            }
+          });
+        }
+      });
+
       if (meals.snack?.candidates?.length > 0) {
         initialSelected['snack_snack'] = meals.snack.candidates[0];
       }
@@ -533,18 +728,43 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
             const meal = menuData[mealName];
             if (!meal || !meal.courses) return null;
 
+            const theme = mealThemes[mealName] || mealThemes.breakfast;
+            const timeText = timeLabels[language as 'id' | 'en']?.[mealName] || timeLabels.en[mealName];
+
             return (
-              <div key={mealName} className="bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 border border-border/80 dark:border-slate-850/30 shadow-xl shadow-primary/5 dark:shadow-none">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-primary dark:text-emerald-450 font-serif capitalize">
-                    {mealName}
-                  </h2>
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400 font-sans">
-                    Target: {meal.target_calories} cal
+              <div key={mealName} className={`relative overflow-hidden backdrop-blur-md rounded-3xl p-6 border shadow-xl dark:shadow-none transition-all duration-300 ${theme.containerBg} ${theme.containerBorder}`}>
+                {/* Sun/Sunset art glow effects */}
+                <div className={theme.glowClass} />
+                <div className={theme.glowClass2} />
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-border/50 dark:border-slate-800/60 pb-4 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-white/80 dark:bg-slate-900/80 rounded-2xl shadow-sm border border-border/40">
+                      {theme.icon}
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white capitalize font-serif leading-none mb-1.5 flex items-center gap-2">
+                        {mealName}
+                      </h2>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${theme.badgeBg} ${theme.badgeText}`}>
+                        <svg className="w-3.5 h-3.5 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        {timeText}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right sm:text-right shrink-0">
+                    <div className="text-sm font-bold text-primary dark:text-emerald-450 font-serif">
+                      Target: {meal.target_calories} cal
+                    </div>
+                    <div className="text-[11px] text-gray-500 dark:text-gray-400 font-sans mt-0.5">
+                      Actual: {meal.actual_calories} cal
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 relative z-10">
                   {['Main', 'Side', 'Drink'].map((courseName) => {
                     const course = meal.courses![courseName];
                     const key = `${mealName}_${courseName}`;
@@ -552,7 +772,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
                     return (
                       <div key={courseName}>
                         <div className="mb-3">
-                          <h3 className="font-serif font-semibold text-gray-900 dark:text-white capitalize text-sm tracking-wide">
+                          <h3 className="font-serif font-semibold text-gray-950 dark:text-white capitalize text-sm tracking-wide">
                             {courseName === 'Main' ? 'Main Course' : courseName === 'Side' ? 'Side Dish' : 'Drink'}
                           </h3>
                         </div>
@@ -570,10 +790,10 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
                                 <button
                                   key={option.fdc_id || option.name}
                                   onClick={() => handleSelect(mealName, courseName, option)}
-                                  className={`relative overflow-hidden p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-white/40 dark:bg-slate-950/20 ${
+                                  className={`relative overflow-hidden p-3.5 rounded-2xl text-left transition-all cursor-pointer ${
                                     isSelected
-                                      ? 'border-primary dark:border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-1 ring-primary/20'
-                                      : 'border-border/80 dark:border-slate-800 hover:border-primary/50 dark:hover:border-slate-700 hover:bg-secondary/40 dark:hover:bg-slate-800/50'
+                                      ? theme.selectedClass
+                                      : theme.unselectedClass
                                   }`}
                                 >
                                   <div className="flex justify-between items-start gap-2 mb-1.5">
@@ -604,61 +824,96 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
             );
           })}
 
-          {menuData.snack && (
-            <div className="bg-white/70 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl p-6 border border-border/80 dark:border-slate-850/30 shadow-xl shadow-primary/5 dark:shadow-none">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-primary dark:text-emerald-450 font-serif capitalize">
-                  Snack
-                </h2>
-                <div className="text-sm font-medium text-gray-500 dark:text-gray-400 font-sans">
-                  Target: {menuData.snack.target_calories} cal
-                </div>
-              </div>
+          {menuData.snack && (() => {
+            const mealName = 'snack';
+            const theme = mealThemes[mealName];
+            const timeText = timeLabels[language as 'id' | 'en']?.[mealName] || timeLabels.en[mealName];
 
-              <div className="mb-3">
-                <h3 className="font-serif font-semibold text-gray-900 dark:text-white text-sm tracking-wide">Options</h3>
-              </div>
+            return (
+              <div key={mealName} className={`relative overflow-hidden backdrop-blur-md rounded-3xl p-6 border shadow-xl dark:shadow-none transition-all duration-300 ${theme.containerBg} ${theme.containerBorder}`}>
+                {/* Snack art glow effects */}
+                <div className={theme.glowClass} />
+                <div className={theme.glowClass2} />
 
-              {!menuData.snack.candidates || menuData.snack.candidates.length === 0 ? (
-                <div className="p-4 rounded-2xl border border-dashed border-border dark:border-slate-800 bg-secondary/20 dark:bg-slate-900/20 text-center">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 font-sans">No snack found matching your constraints.</p>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-border/50 dark:border-slate-800/60 pb-4 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-white/80 dark:bg-slate-900/80 rounded-2xl shadow-sm border border-border/40">
+                      {theme.icon}
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white capitalize font-serif leading-none mb-1.5 flex items-center gap-2">
+                        Snack
+                      </h2>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${theme.badgeBg} ${theme.badgeText}`}>
+                        <svg className="w-3.5 h-3.5 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        {timeText}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right sm:text-right shrink-0">
+                    <div className="text-sm font-bold text-primary dark:text-emerald-450 font-serif">
+                      Target: {menuData.snack.target_calories} cal
+                    </div>
+                    <div className="text-[11px] text-gray-500 dark:text-gray-400 font-sans mt-0.5">
+                      Actual: {menuData.snack.actual_calories} cal
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {menuData.snack.candidates.map((option) => (
-                    <button
-                      key={option.fdc_id || option.name}
-                      onClick={() => handleSelect('snack', 'snack', option)}
-                      className={`relative overflow-hidden p-3.5 rounded-2xl border text-left transition-all cursor-pointer bg-white/40 dark:bg-slate-950/20 ${
-                        selectedItems['snack_snack']?.name === option.name
-                          ? 'border-primary dark:border-primary bg-primary/5 dark:bg-primary/10 shadow-sm ring-1 ring-primary/20'
-                          : 'border-border/80 dark:border-slate-800 hover:border-primary/50 dark:hover:border-slate-700 hover:bg-secondary/40 dark:hover:bg-slate-800/50'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start gap-2 mb-1.5">
-                        <p className="font-bold text-sm text-gray-900 dark:text-white leading-snug line-clamp-2 flex-1 font-sans">
-                          {option.name}
+
+                <div className="mb-3 relative z-10">
+                  <h3 className="font-serif font-semibold text-gray-950 dark:text-white text-sm tracking-wide">Options</h3>
+                </div>
+
+                {!menuData.snack.candidates || menuData.snack.candidates.length === 0 ? (
+                  <div className="p-4 rounded-2xl border border-dashed border-border dark:border-slate-800 bg-secondary/20 dark:bg-slate-900/20 text-center relative z-10">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-sans">No snack found matching your constraints.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 relative z-10">
+                    {menuData.snack.candidates.map((option) => (
+                      <button
+                        key={option.fdc_id || option.name}
+                        onClick={() => handleSelect('snack', 'snack', option)}
+                        className={`relative overflow-hidden p-3.5 rounded-2xl text-left transition-all cursor-pointer ${
+                          selectedItems['snack_snack']?.name === option.name
+                            ? theme.selectedClass
+                            : theme.unselectedClass
+                        }`}
+                      >
+                        <div className="flex justify-between items-start gap-2 mb-1.5">
+                          <p className="font-bold text-sm text-gray-900 dark:text-white leading-snug line-clamp-2 flex-1 font-sans">
+                            {option.name}
+                          </p>
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold text-white uppercase tracking-wider shrink-0 ${getRibbonColor(option.cuisine_label)} shadow-sm bg-opacity-90`}>
+                            {option.cuisine_label || 'Generic'}
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-primary dark:text-emerald-450 mb-1 font-serif">
+                          {option.calories} kcal
                         </p>
-                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold text-white uppercase tracking-wider shrink-0 ${getRibbonColor(option.cuisine_label)} shadow-sm bg-opacity-90`}>
-                          {option.cuisine_label || 'Generic'}
-                        </span>
-                      </div>
-                      <p className="text-xs font-semibold text-primary dark:text-emerald-450 mb-1 font-serif">
-                        {option.calories} kcal
-                      </p>
-                      <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 font-sans">
-                        <span>Carb: {option.carbs}g • Pro: {option.protein}g • Fat: {option.fat}g</span>
-                        <span className="font-medium shrink-0">{option.serving_size}g</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                        <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 font-sans">
+                          <span>Carb: {option.carbs}g • Pro: {option.protein}g • Fat: {option.fat}g</span>
+                          <span className="font-medium shrink-0">{option.serving_size}g</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
 
-        <div className="text-center mt-12 mb-2">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12 mb-2">
+          <button
+            onClick={handleRegenerate}
+            className="px-8 py-3.5 text-base bg-white dark:bg-slate-800 text-foreground rounded-2xl font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-all inline-flex items-center justify-center gap-2 border border-border shadow-sm cursor-pointer transform hover:-translate-y-0.5"
+          >
+            <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            {language === 'id' ? 'Regenerasi Menu' : 'Regenerate Menu'}
+          </button>
           <button
             onClick={onViewReport}
             className="px-8 py-3.5 text-base bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all inline-flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer transform hover:-translate-y-0.5"

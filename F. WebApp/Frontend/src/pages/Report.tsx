@@ -536,12 +536,12 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border dark:border-slate-800 font-sans">
                 <div className="space-y-3">
                   <h4 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
                     Health Conditions
                   </h4>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {userData.healthConditions.map(c => (
-                      <span key={c} className="px-3 py-1 bg-primary/10 text-primary dark:text-emerald-350 border border-primary/20 dark:border-primary/10 rounded-xl text-xs font-semibold capitalize font-sans">
+                      <span key={c} className="px-3.5 py-1.5 bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 dark:border-emerald-500/10 rounded-full text-xs font-semibold capitalize font-sans shadow-sm hover:bg-emerald-500/15 transition-all duration-200">
                         {t.input.health[c as keyof typeof t.input.health] || c}
                       </span>
                     ))}
@@ -550,16 +550,16 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
 
                 <div className="space-y-3">
                   <h4 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                    <span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
                     Food Preferences
                   </h4>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {userData.foodPreferences.length > 0 ? userData.foodPreferences.map(p => (
-                      <span key={p} className="px-3 py-1 bg-accent/15 text-accent dark:text-emerald-300 border border-accent/20 dark:border-accent/10 rounded-xl text-xs font-semibold capitalize font-sans">
+                      <span key={p} className="px-3.5 py-1.5 bg-amber-500/10 dark:bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/20 dark:border-amber-500/10 rounded-full text-xs font-semibold capitalize font-sans shadow-sm hover:bg-amber-500/15 transition-all duration-200">
                         {p}
                       </span>
                     )) : (
-                      <span className="text-xs text-gray-500 italic">All Cuisines / None</span>
+                      <span className="text-xs text-gray-500 italic pl-1">All Cuisines / None</span>
                     )}
                   </div>
                 </div>
@@ -607,28 +607,28 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                           rangeText = 'No limits';
                         }
 
-                        let cardStyle = 'rounded-2xl p-3 border bg-white/40 dark:bg-slate-950/20 border-border/85 dark:border-slate-800/80 shadow-sm';
-                        let titleColor = 'text-gray-900 dark:text-white';
-                        let rangeColor = 'text-gray-500 dark:text-gray-400';
+                        let cardStyle = '';
+                        let titleColor = '';
+                        let rangeColor = '';
 
                         if (key === 'energy_kcal') {
-                          cardStyle = 'rounded-2xl p-3 border bg-primary text-primary-foreground border-primary/20 shadow-sm';
-                          titleColor = 'text-primary-foreground';
-                          rangeColor = 'text-primary-foreground/90';
+                          cardStyle = 'bg-primary text-primary-foreground border-primary/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300';
+                          titleColor = 'text-primary-foreground font-bold';
+                          rangeColor = 'text-primary-foreground/90 font-medium';
                         } else if (['carbohydrate_g', 'protein_g', 'fat_g'].includes(key)) {
-                          cardStyle = 'rounded-2xl p-3 border bg-secondary dark:bg-slate-900/60 text-secondary-foreground dark:text-emerald-350 border-border/80 dark:border-slate-800';
-                          titleColor = 'text-secondary-foreground dark:text-emerald-350';
-                          rangeColor = 'text-secondary-foreground/80 dark:text-emerald-400/80';
+                          cardStyle = 'bg-destructive text-destructive-foreground border-destructive/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300';
+                          titleColor = 'text-destructive-foreground font-bold';
+                          rangeColor = 'text-destructive-foreground/90 font-medium';
                         } else {
-                          cardStyle = 'rounded-2xl p-3 border bg-red-500/10 dark:bg-red-950/25 border-red-500/20 dark:border-red-900/30';
-                          titleColor = 'text-red-950 dark:text-red-300';
-                          rangeColor = 'text-red-800/80 dark:text-red-450/80';
+                          cardStyle = 'bg-red-500/10 dark:bg-red-950/25 border-red-500/15 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300';
+                          titleColor = 'text-gray-900 dark:text-red-300 font-semibold';
+                          rangeColor = 'text-gray-600 dark:text-red-400';
                         }
 
                         return (
-                          <div key={key} className={`flex flex-col justify-center transition-all hover:opacity-95 font-sans ${cardStyle}`}>
+                          <div key={key} className={`rounded-2xl p-3 border text-left flex flex-col justify-center font-sans ${cardStyle}`}>
                             <p className={`font-bold text-xs mb-1 truncate ${titleColor}`} title={friendlyName}>{friendlyName}</p>
-                            <p className={`text-[10px] font-medium font-serif ${rangeColor}`}>{rangeText}</p>
+                            <p className={`text-[10px] font-semibold font-serif ${rangeColor}`}>{rangeText}</p>
                           </div>
                         );
                       });

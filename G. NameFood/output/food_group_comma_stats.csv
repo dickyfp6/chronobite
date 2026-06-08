@@ -1,8 +1,8 @@
 food_group,n,mean_comma,pct_comma_ge_5
-Beef Products,98,6.4184,85.7143
-"Lamb, Veal, and Game Products",51,4.9608,64.7059
-Poultry Products,108,4.3241,48.1481
-Vegetables and Vegetable Products,761,3.548,31.9317
+Beef Products,106,6.283,83.9623
+"Lamb, Veal, and Game Products",58,4.8103,56.8966
+Poultry Products,113,4.2743,46.0177
+Vegetables and Vegetable Products,763,3.5413,31.848
 Finfish and Shellfish Products,56,3.4821,5.3571
 Beverages,101,3.3762,19.802
 Legumes and Legume Products,214,3.0794,25.2336
@@ -15,9 +15,8 @@ Cereal Grains and Pasta,169,2.6509,9.4675
 Fruits and Fruit Juices,309,2.5372,3.5599
 Dairy and Egg Products,251,2.5299,5.5777
 Baked Products,419,2.4654,4.2959
-"Meals, Entrees, and Side Dishes",73,2.4247,5.4795
-Sausages and Luncheon Meats,23,2.3478,0.0
+Sausages and Luncheon Meats,25,2.44,0.0
+"Meals, Entrees, and Side Dishes",74,2.4189,5.4054
 Sweets,213,2.2911,2.3474
-Fast Foods,198,2.1465,5.0505
-Restaurant Foods,96,1.8333,0.0
-American Indian/Alaska Native Foods,29,1.4483,0.0
+Fast Foods,203,2.1281,4.9261
+Restaurant Foods,97,1.8247,0.0

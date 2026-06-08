@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ThemeProvider } from 'next-themes';
 import { I18nProvider, useI18n } from './contexts/I18nContext';
 import { Navbar } from './components/figma/Navbar';
@@ -160,10 +160,7 @@ function SidebarDemographics({ userData }: { userData: UserInputData }) {
 }
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>(() => {
-    const saved = sessionStorage.getItem('dss_current_page');
-    return (saved as Page) || 'landing';
-  });
+  const [currentPage, setCurrentPage] = useState<Page>('landing');
 
   const [algorithm, setAlgorithm] = useState<'greedy' | 'genetic' | undefined>(() => {
     const saved = sessionStorage.getItem('dss_algorithm');
@@ -263,8 +260,49 @@ export default function App() {
     sessionStorage.removeItem('dss_user_data');
     sessionStorage.removeItem('dss_wizard_step');
     sessionStorage.removeItem('dss_selected_items');
+    sessionStorage.removeItem('dss_analysis_result_full');
+    sessionStorage.removeItem('dss_analysis_guidelines');
+    sessionStorage.removeItem('dss_menu_data');
     localStorage.clear();
   };
+
+  // Reset all progress state and cache if landing page is loaded/reloaded
+  useEffect(() => {
+    if (currentPage === 'landing') {
+      sessionStorage.removeItem('dss_wizard_step');
+      sessionStorage.removeItem('dss_user_data');
+      sessionStorage.removeItem('dss_algorithm');
+      sessionStorage.removeItem('dss_selected_items');
+      sessionStorage.removeItem('dss_current_page');
+      sessionStorage.removeItem('dss_analysis_result_full');
+      sessionStorage.removeItem('dss_analysis_guidelines');
+      sessionStorage.removeItem('dss_menu_data');
+      setAlgorithm(undefined);
+      setUserData({
+        age: 18,
+        weight: 30,
+        height: 100,
+        healthConditions: [],
+        foodPreferences: [],
+      });
+      setSelectedItems({});
+    }
+  }, [currentPage]);
+
+  // Enable beforeunload confirmation for browser reload
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (currentPage !== 'landing') {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [currentPage]);
 
   useEffect(() => {
     if (algorithm) sessionStorage.setItem('dss_algorithm', algorithm);
@@ -498,7 +536,18 @@ export default function App() {
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
                     className="w-full"
                   >
-                    <Landing onStart={() => setCurrentPage('algorithm')} />
+                    <Landing onStart={() => {
+                      sessionStorage.removeItem('dss_wizard_step');
+                      sessionStorage.removeItem('dss_user_data');
+                      setUserData({
+                        age: 18,
+                        weight: 30,
+                        height: 100,
+                        healthConditions: [],
+                        foodPreferences: [],
+                      });
+                      setCurrentPage('algorithm');
+                    }} />
                   </motion.div>
                 )}
 
@@ -548,21 +597,21 @@ export default function App() {
           {/* Restart Confirmation Modal */}
           {showRestartConfirm && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-              <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-2xl border border-border/80 dark:border-slate-700">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Restart application?</h3>
-                <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
+              <div className="w-full max-w-md rounded-3xl bg-white dark:bg-slate-800 p-8 shadow-2xl border border-border/80 dark:border-slate-700">
+                <h3 className="text-2xl font-bold text-foreground font-serif leading-tight">Restart application?</h3>
+                <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 font-sans leading-relaxed">
                   Current progress will be cleared and the form will start from the beginning.
                 </p>
-                <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:justify-end">
+                <div className="mt-6 flex flex-row gap-3 justify-end">
                   <button
                     onClick={() => setShowRestartConfirm(false)}
-                    className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
+                    className="px-6 py-2.5 rounded-2xl border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all font-sans font-medium text-sm cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleRestartConfirm}
-                    className="px-5 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary/95 transition-all cursor-pointer text-sm"
+                    className="px-6 py-2.5 rounded-2xl bg-primary text-white font-semibold hover:bg-primary/95 transition-all cursor-pointer text-sm shadow-sm"
                   >
                     Yes, restart
                   </button>
