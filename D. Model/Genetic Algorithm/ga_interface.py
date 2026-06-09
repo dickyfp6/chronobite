@@ -258,7 +258,7 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                iterations=20,
+                iterations=50,
                 verbose=False
             )
             print("[OK] Local Search complete")
