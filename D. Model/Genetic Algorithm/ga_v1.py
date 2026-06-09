@@ -1337,7 +1337,8 @@ def run_ga(
             
             # Mutation (probabilitas mutation_rate)
             # [ENHANCED] Pass guidelines & tdee untuk guided nutrient-based mutation
-            child = mutation(child, food_df, mutation_rate=mutation_rate, 
+            adaptive_mutation = mutation_rate * (1 - 0.5 * gen / generations)
+            child = mutation(child, food_df, mutation_rate=adaptive_mutation,
                            guidelines=guidelines, tdee=tdee)
             
             # Add to new population
@@ -1353,6 +1354,13 @@ def run_ga(
                 [random_solution(food_df) for _ in range(3)] +
                 [guided_solution(food_df, guidelines) for _ in range(2)]
             )
+        
+        if gen == int(generations * 0.8) and fitness_scores[0] > 1000:
+            n_restart = int(pop_size * 0.3)
+            population[-n_restart:] = [guided_solution(food_df, guidelines)
+                                        for _ in range(n_restart)]
+            if verbose:
+                print(f"[RESTART] Gen {gen}: fitness masih {fitness_scores[0]:.0f}, injecting {n_restart} guided solutions")
     
     # STEP 3: Final evaluation dan get top solutions
     if verbose:

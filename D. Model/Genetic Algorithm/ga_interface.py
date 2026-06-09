@@ -239,8 +239,8 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                generations=12,     # Reverted to original for better quality
-                pop_size=25,        # Reverted to original for better quality
+                generations=100,    # Naik dari 100 untuk konvergensi lebih baik
+                pop_size=50,       # Naik dari 50 untuk diversity lebih baik
                 elite_ratio=0.15,   # Turun dari 0.25 → kurangi elite dominance
                 mutation_rate=0.35, # Sedikit naik untuk eksplorasi lebih baik
                 verbose=True
@@ -257,7 +257,7 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                iterations=3,        # Reverted to original for better quality
+                iterations=50,
                 verbose=False
             )
             print("[OK] Local Search complete")
