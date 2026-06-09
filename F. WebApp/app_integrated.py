@@ -66,10 +66,10 @@ except Exception as e:
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
-# Enable CORS for React frontend (Vercel deployment)
+# Enable CORS for React frontend (allow all origins for Vercel/production deployment)
 CORS(app, resources={ # type: ignore
     r"/api/*": {
-        "origins": ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+        "origins": "*",
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type"]
     }
