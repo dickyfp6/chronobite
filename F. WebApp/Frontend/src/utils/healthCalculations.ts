@@ -57,7 +57,7 @@ export function calculateDailyNeeds(weight: number, height: number, age: number,
     vitamin_d_mg: age > 70 ? 20 : 15,
     vitamin_e_mg: 15,
     vitamin_k_mg: gender === 'male' ? 120 : 90,
-    water_g: Math.round(weight * 35), // 35ml per kg
+    water_g: gender === 'male' ? (age > 18 ? 3700 : 3300) : (age > 18 ? 2700 : 2300),
     zinc_mg: gender === 'male' ? 11 : 8,
   };
 }

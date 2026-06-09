@@ -701,7 +701,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
 
  return (
  <>
- <div className="w-full pb-12 sm:pb-8">
+ <div className="w-full pb-28 sm:pb-20 lg:pb-8">
  <div className="space-y-8">
  {['breakfast', 'lunch', 'dinner'].map((mealName) => {
  const meal = menuData[mealName];
@@ -885,17 +885,17 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  })()}
  </div>
 
- <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12 mb-2">
+ <div className="flex flex-col-reverse sm:flex-row items-center justify-center gap-3 mt-12 mb-2 w-full max-w-xl mx-auto px-4">
  <button
  onClick={handleRegenerate}
- className="px-8 py-3.5 text-base bg-white text-foreground rounded-2xl font-semibold hover:bg-gray-50 :bg-slate-700 transition-all inline-flex items-center justify-center gap-2 border border-border shadow-sm cursor-pointer transform hover:-translate-y-0.5"
+ className="w-full sm:w-auto px-8 py-3.5 text-base bg-white text-foreground rounded-2xl font-semibold hover:bg-gray-50 :bg-slate-700 transition-all inline-flex items-center justify-center gap-2 border border-border shadow-sm cursor-pointer transform hover:-translate-y-0.5"
  >
  <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
  Regenerate Menu
  </button>
  <button
  onClick={onViewReport}
- className="px-8 py-3.5 text-base bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all inline-flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer transform hover:-translate-y-0.5"
+ className="w-full sm:w-auto px-8 py-3.5 text-base bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all inline-flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer transform hover:-translate-y-0.5"
  >
  {t.results.viewReport}
  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />

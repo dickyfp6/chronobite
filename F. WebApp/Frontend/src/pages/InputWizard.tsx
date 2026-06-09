@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { User, Activity, Heart, UtensilsCrossed, ClipboardList, FileText, ChevronRight, ChevronLeft, Calendar, Scale, Ruler, Footprints, Flame, Leaf, Droplet, TrendingDown, Shield } from 'lucide-react';
+import { User, Activity, Heart, UtensilsCrossed, ClipboardList, FileText, ChevronRight, ChevronLeft, Calendar, Scale, Ruler, Footprints, Flame, Leaf, Droplet, TrendingDown, Shield, Plus, Minus } from 'lucide-react';
 import { t } from '../utils/translations';
 import { IconCard } from '../components/figma/IconCard';
 
@@ -198,7 +198,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  {item.label}
  </p>
  {summary && (
- <p className="text-[10px] lg:text-xs text-gray-500 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5">
+ <p className="text-[10px] lg:text-xs text-gray-500 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5 hidden lg:block">
  {summary}
  </p>
  )}
@@ -226,7 +226,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  <p className="text-xs lg:text-sm tracking-tight font-semibold">
  {item.label}
  </p>
- <p className="text-[10px] lg:text-xs text-gray-500 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5">
+ <p className="text-[10px] lg:text-xs text-gray-500 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5 hidden lg:block">
  {item.summary}
  </p>
  </div>
@@ -256,7 +256,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  <User className="w-5 h-5 text-primary" />
  {t.input.gender.title}
  </h3>
- <div className="grid grid-cols-2 gap-6 w-full">
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full">
  <IconCard
  icon={(props: any) => (
  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -327,218 +327,218 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
  {/* Left Column: Sliders */}
  <div className="lg:col-span-8 space-y-10 w-full">
- {/* Age Slider */}
- <div className="space-y-3">
- <div className="flex items-center justify-between">
- <label className="text-sm font-medium flex items-center gap-2 text-gray-900 ">
- <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
- <Calendar className="w-5 h-5 text-primary " />
- </div>
- {t.input.metrics.age}
- </label>
- <div className="flex items-center gap-3">
- <button
- onClick={() => onUpdate({ age: Math.max(18, data.age - 1) })}
- className="w-9 h-9 rounded-xl bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center font-extrabold shadow-sm hover:shadow cursor-pointer"
- >
- -
- </button>
- <span className="text-3xl font-bold text-primary min-w-[80px] text-center font-serif">
- {editing === 'age' ? (
- <input
- autoFocus
- className="w-[80px] text-center bg-transparent outline-none border-b border-primary"
- type="number"
- min={18}
- max={100}
- value={tempValue}
- onChange={(e) => setTempValue(e.target.value)}
- onBlur={() => {
- const v = Math.max(18, Math.min(100, parseInt(tempValue || '18')));
- onUpdate({ age: Number.isFinite(v) ? v : 18 });
- setEditing(null);
- }}
- onKeyDown={(e) => {
- if (e.key === 'Enter') {
- (e.target as HTMLInputElement).blur();
- } else if (e.key === 'Escape') {
- setEditing(null);
- }
- }}
- />
- ) : (
- <button
- onClick={() => {
- setEditing('age');
- setTempValue(String(data.age));
- }}
- className="w-full cursor-pointer hover:opacity-80"
- >
- {data.age}
- </button>
- )}
- </span>
- <button
- onClick={() => onUpdate({ age: Math.min(100, data.age + 1) })}
- className="w-9 h-9 rounded-xl bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center font-extrabold shadow-sm hover:shadow cursor-pointer"
- >
- +
- </button>
- </div>
- </div>
- <input
- type="range"
- min="18"
- max="100"
- value={data.age}
- onChange={(e) => onUpdate({ age: parseInt(e.target.value) })}
- className="w-full cursor-pointer"
- style={{
- background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 100%)`,
- borderRadius: '9999px'
- }}
- />
- </div>
+        {/* Age Slider */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium flex items-center gap-2 text-gray-900">
+              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0">
+                <Calendar className="w-5 h-5 text-primary" />
+              </div>
+              <span className="whitespace-nowrap">{t.input.metrics.age}</span>
+            </label>
+            <span className="text-2xl font-bold text-primary min-w-[60px] text-center font-serif select-none">
+              {editing === 'age' ? (
+                <input
+                  autoFocus
+                  className="w-[60px] text-center bg-transparent outline-none border-b border-primary"
+                  type="number"
+                  min={18}
+                  max={100}
+                  value={tempValue}
+                  onChange={(e) => setTempValue(e.target.value)}
+                  onBlur={() => {
+                    const v = Math.max(18, Math.min(100, parseInt(tempValue || '18')));
+                    onUpdate({ age: Number.isFinite(v) ? v : 18 });
+                    setEditing(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      (e.target as HTMLInputElement).blur();
+                    } else if (e.key === 'Escape') {
+                      setEditing(null);
+                    }
+                  }}
+                />
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditing('age');
+                    setTempValue(String(data.age));
+                  }}
+                  className="w-full cursor-pointer hover:opacity-80 font-serif"
+                >
+                  {data.age}
+                </button>
+              )}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => onUpdate({ age: Math.max(18, data.age - 1) })}
+              className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <input
+              type="range"
+              min="18"
+              max="100"
+              value={data.age}
+              onChange={(e) => onUpdate({ age: parseInt(e.target.value) })}
+              className="flex-1 cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 100%)`,
+                borderRadius: '9999px'
+              }}
+            />
+            <button
+              onClick={() => onUpdate({ age: Math.min(100, data.age + 1) })}
+              className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
 
- {/* Weight Slider */}
- <div className="space-y-3">
- <div className="flex items-center justify-between">
- <label className="text-sm font-medium flex items-center gap-2 text-gray-900 ">
- <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
- <Scale className="w-5 h-5 text-primary " />
- </div>
- {t.input.metrics.weight}
- </label>
- <div className="flex items-center gap-3">
- <button
- onClick={() => onUpdate({ weight: Math.max(30, data.weight - 1) })}
- className="w-9 h-9 rounded-xl bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center font-extrabold shadow-sm hover:shadow cursor-pointer"
- >
- -
- </button>
- <span className="text-3xl font-bold text-primary min-w-[80px] text-center font-serif">
- {editing === 'weight' ? (
- <input
- autoFocus
- className="w-[80px] text-center bg-transparent outline-none border-b border-primary"
- type="number"
- min={30}
- max={200}
- value={tempValue}
- onChange={(e) => setTempValue(e.target.value)}
- onBlur={() => {
- const v = Math.max(30, Math.min(200, parseFloat(tempValue || '30')));
- onUpdate({ weight: Number.isFinite(v) ? v : 30 });
- setEditing(null);
- }}
- onKeyDown={(e) => {
- if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
- if (e.key === 'Escape') setEditing(null);
- }}
- />
- ) : (
- <button
- onClick={() => {
- setEditing('weight');
- setTempValue(String(data.weight));
- }}
- className="w-full cursor-pointer hover:opacity-80"
- >
- {data.weight}
- </button>
- )}
- </span>
- <button
- onClick={() => onUpdate({ weight: Math.min(200, data.weight + 1) })}
- className="w-9 h-9 rounded-xl bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center font-extrabold shadow-sm hover:shadow cursor-pointer"
- >
- +
- </button>
- </div>
- </div>
- <input
- type="range"
- min="30"
- max="200"
- value={data.weight}
- onChange={(e) => onUpdate({ weight: parseFloat(e.target.value) })}
- className="w-full cursor-pointer"
- style={{
- background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 100%)`,
- borderRadius: '9999px'
- }}
- />
- </div>
+        {/* Weight Slider */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium flex items-center gap-2 text-gray-900">
+              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0">
+                <Scale className="w-5 h-5 text-primary" />
+              </div>
+              <span className="whitespace-nowrap">{t.input.metrics.weight}</span>
+            </label>
+            <span className="text-2xl font-bold text-primary min-w-[60px] text-center font-serif select-none">
+              {editing === 'weight' ? (
+                <input
+                  autoFocus
+                  className="w-[60px] text-center bg-transparent outline-none border-b border-primary"
+                  type="number"
+                  min={30}
+                  max={200}
+                  value={tempValue}
+                  onChange={(e) => setTempValue(e.target.value)}
+                  onBlur={() => {
+                    const v = Math.max(30, Math.min(200, parseFloat(tempValue || '30')));
+                    onUpdate({ weight: Number.isFinite(v) ? v : 30 });
+                    setEditing(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                    if (e.key === 'Escape') setEditing(null);
+                  }}
+                />
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditing('weight');
+                    setTempValue(String(data.weight));
+                  }}
+                  className="w-full cursor-pointer hover:opacity-80 font-serif"
+                >
+                  {data.weight}
+                </button>
+              )}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => onUpdate({ weight: Math.max(30, data.weight - 1) })}
+              className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <input
+              type="range"
+              min="30"
+              max="200"
+              value={data.weight}
+              onChange={(e) => onUpdate({ weight: parseFloat(e.target.value) })}
+              className="flex-1 cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 100%)`,
+                borderRadius: '9999px'
+              }}
+            />
+            <button
+              onClick={() => onUpdate({ weight: Math.min(200, data.weight + 1) })}
+              className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
 
- {/* Height Slider */}
- <div className="space-y-3">
- <div className="flex items-center justify-between">
- <label className="text-sm font-medium flex items-center gap-2 text-gray-900 ">
- <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
- <Ruler className="w-5 h-5 text-primary " />
- </div>
- {t.input.metrics.height}
- </label>
- <div className="flex items-center gap-3">
- <button
- onClick={() => onUpdate({ height: Math.max(100, data.height - 1) })}
- className="w-9 h-9 rounded-xl bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center font-extrabold shadow-sm hover:shadow cursor-pointer"
- >
- -
- </button>
- <span className="text-3xl font-bold text-primary min-w-[80px] text-center font-serif">
- {editing === 'height' ? (
- <input
- autoFocus
- className="w-[80px] text-center bg-transparent outline-none border-b border-primary"
- type="number"
- min={100}
- max={300}
- value={tempValue}
- onChange={(e) => setTempValue(e.target.value)}
- onBlur={() => {
- const v = Math.max(100, Math.min(300, parseFloat(tempValue || '100')));
- onUpdate({ height: Number.isFinite(v) ? v : 100 });
- setEditing(null);
- }}
- onKeyDown={(e) => {
- if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
- if (e.key === 'Escape') setEditing(null);
- }}
- />
- ) : (
- <button
- onClick={() => {
- setEditing('height');
- setTempValue(String(data.height));
- }}
- className="w-full cursor-pointer hover:opacity-80"
- >
- {data.height}
- </button>
- )}
- </span>
- <button
- onClick={() => onUpdate({ height: Math.min(300, data.height + 1) })}
- className="w-9 h-9 rounded-xl bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center font-extrabold shadow-sm hover:shadow cursor-pointer"
- >
- +
- </button>
- </div>
- </div>
- <input
- type="range"
- min="100"
- max="300"
- value={data.height}
- onChange={(e) => onUpdate({ height: parseFloat(e.target.value) })}
- className="w-full"
- style={{
- background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 100%)`,
- borderRadius: '9999px'
- }}
- />
- </div>
+        {/* Height Slider */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium flex items-center gap-2 text-gray-900">
+              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0">
+                <Ruler className="w-5 h-5 text-primary" />
+              </div>
+              <span className="whitespace-nowrap">{t.input.metrics.height}</span>
+            </label>
+            <span className="text-2xl font-bold text-primary min-w-[60px] text-center font-serif select-none">
+              {editing === 'height' ? (
+                <input
+                  autoFocus
+                  className="w-[60px] text-center bg-transparent outline-none border-b border-primary"
+                  type="number"
+                  min={100}
+                  max={300}
+                  value={tempValue}
+                  onChange={(e) => setTempValue(e.target.value)}
+                  onBlur={() => {
+                    const v = Math.max(100, Math.min(300, parseFloat(tempValue || '100')));
+                    onUpdate({ height: Number.isFinite(v) ? v : 100 });
+                    setEditing(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                    if (e.key === 'Escape') setEditing(null);
+                  }}
+                />
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditing('height');
+                    setTempValue(String(data.height));
+                  }}
+                  className="w-full cursor-pointer hover:opacity-80 font-serif"
+                >
+                  {data.height}
+                </button>
+              )}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => onUpdate({ height: Math.max(100, data.height - 1) })}
+              className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <input
+              type="range"
+              min="100"
+              max="300"
+              value={data.height}
+              onChange={(e) => onUpdate({ height: parseFloat(e.target.value) })}
+              className="flex-1 cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 100%)`,
+                borderRadius: '9999px'
+              }}
+            />
+            <button
+              onClick={() => onUpdate({ height: Math.min(300, data.height + 1) })}
+              className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
  </div>
 
  {/* Right Column: BMI Visual Indicator */}
@@ -609,7 +609,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  {step === 2 && (
  <div>
  <p className="text-base text-gray-500 text-center mb-8 font-normal">{t.input.health.subtitle}</p>
- <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+ <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
  {['normal', 'dm2', 'hypertension', 'cvd', 'cholesterol', 'ckd'].map((condition) => {
  const getHealthIcon = (c: string) => {
  switch (c) {
@@ -744,11 +744,11 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  </div>
 
  {/* Bottom Navigation Buttons */}
- <div className="flex justify-between mt-8 pt-6 border-t border-border/70 ">
+ <div className="flex flex-col-reverse sm:flex-row gap-3 justify-between mt-8 pt-6 border-t border-border/70">
  <button
  onClick={back}
  disabled={step === 0}
- className="px-5 py-2.5 rounded-2xl font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary :bg-slate-800 border border-border text-gray-700 flex items-center gap-2 cursor-pointer text-sm"
+ className="w-full sm:w-auto px-5 py-2.5 justify-center rounded-2xl font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary :bg-slate-800 border border-border text-gray-700 flex items-center gap-2 cursor-pointer text-sm"
  >
  <ChevronLeft className="w-5 h-5" />
  {t.input.back}
@@ -757,7 +757,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  <button
  onClick={next}
  disabled={!canProceed()}
- className="px-6 py-2.5 bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-200 :bg-slate-800 disabled:text-gray-400 flex items-center gap-2 shadow-sm hover:shadow-md hover:shadow-primary/10 cursor-pointer text-sm"
+ className="w-full sm:w-auto px-6 py-2.5 justify-center bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-200 :bg-slate-800 disabled:text-gray-400 flex items-center gap-2 shadow-sm hover:shadow-md hover:shadow-primary/10 cursor-pointer text-sm"
  >
  {step === 3 ? t.input.generate : t.input.next}
  {step < 3 && <ChevronRight className="w-5 h-5" />}

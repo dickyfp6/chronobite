@@ -29,6 +29,10 @@ export function AlgorithmSelect({ selected, onSelect, onContinue }: AlgorithmSel
  description={t.algorithm.greedy.description}
  selected={selected === 'greedy'}
  onClick={() => onSelect('greedy')}
+ onDoubleClick={() => {
+  onSelect('greedy');
+  onContinue();
+ }}
  />
  <IconCard
  icon={Network}
@@ -36,6 +40,10 @@ export function AlgorithmSelect({ selected, onSelect, onContinue }: AlgorithmSel
  description={t.algorithm.genetic.description}
  selected={selected === 'genetic'}
  onClick={() => onSelect('genetic')}
+ onDoubleClick={() => {
+  onSelect('genetic');
+  onContinue();
+ }}
  />
  </div>
 

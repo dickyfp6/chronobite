@@ -446,7 +446,7 @@ export default function App() {
  <p className={`text-xs lg:text-sm tracking-tight ${active ? 'font-bold text-primary ' : 'font-semibold'}`}>
  {item.label}
  </p>
- <p className="text-[10px] lg:text-xs text-gray-500 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5">
+ <p className="text-[10px] lg:text-xs text-gray-500 font-normal truncate max-w-[100px] lg:max-w-[200px] mt-0.5 hidden lg:block">
  {item.summary}
  </p>
  </div>

@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import lightLogo from '../../assets/ChronoBite.png';
 import { t } from '../../utils/translations';
-import { Download } from 'lucide-react';
+import { Download, Calculator } from 'lucide-react';
+import { BmiCalculatorModal } from './BmiCalculatorModal';
 
 interface NavbarProps {
  onHomeClick: () => void;
@@ -9,6 +11,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ onHomeClick, currentPage, onDownloadPDF }: NavbarProps) {
+ const [isBmiOpen, setIsBmiOpen] = useState(false);
  let title = '';
  if (currentPage === 'input') {
  title = t.input.title;
@@ -21,6 +24,7 @@ export function Navbar({ onHomeClick, currentPage, onDownloadPDF }: NavbarProps)
  }
  
  return (
+ <>
  <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-border/70 shadow-sm">
  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative">
  <button
@@ -40,18 +44,30 @@ export function Navbar({ onHomeClick, currentPage, onDownloadPDF }: NavbarProps)
  </div>
  )}
 
- <div className="flex items-center gap-4 z-10">
- {currentPage === 'report' && onDownloadPDF && (
- <button
- onClick={onDownloadPDF}
- className="px-4 py-2 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/95 transition-all flex items-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer text-xs sm:text-sm"
- >
- <Download className="w-3.5 h-3.5" />
- <span>{t.report.download}</span>
- </button>
- )}
+ <div className="flex items-center gap-3 sm:gap-4 z-10">
+  {currentPage === 'report' && onDownloadPDF && (
+  <button
+    onClick={onDownloadPDF}
+    className="w-10 h-10 sm:w-auto sm:px-4 sm:py-2.5 bg-primary text-primary-foreground rounded-full sm:rounded-xl font-semibold hover:bg-primary/95 transition-all flex items-center justify-center sm:justify-start gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer shrink-0 text-xs sm:text-sm"
+    title={t.report.download}
+  >
+    <Download className="w-5 h-5 sm:w-4 sm:h-4" />
+    <span className="hidden sm:inline">{t.report.download}</span>
+  </button>
+  )}
+      <button
+        onClick={() => setIsBmiOpen(true)}
+        className="w-10 h-10 flex items-center justify-center bg-white border border-gray-100/80 rounded-full text-primary hover:text-primary/90 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0"
+        title="BMI Calculator"
+      >
+        <Calculator className="w-5 h-5" />
+      </button>
  </div>
  </div>
  </nav>
+
+ <BmiCalculatorModal isOpen={isBmiOpen} onClose={() => setIsBmiOpen(false)} />
+ </>
  );
 }
+

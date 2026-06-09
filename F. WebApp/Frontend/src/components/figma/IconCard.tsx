@@ -7,14 +7,16 @@ interface IconCardProps {
  selected?: boolean;
  disabled?: boolean;
  onClick?: () => void;
+ onDoubleClick?: () => void;
 }
 
-export function IconCard({ icon: Icon, title, description, selected, disabled, onClick }: IconCardProps) {
+export function IconCard({ icon: Icon, title, description, selected, disabled, onClick, onDoubleClick }: IconCardProps) {
  return (
  <motion.button
  whileHover={{ scale: disabled ? 1 : 1.015, y: disabled ? 0 : -2 }}
  whileTap={{ scale: disabled ? 1 : 0.985 }}
  onClick={onClick}
+ onDoubleClick={onDoubleClick}
  disabled={disabled}
  className={`p-4 sm:p-5 rounded-2xl border transition-all text-left w-full cursor-pointer relative overflow-hidden ${
  selected

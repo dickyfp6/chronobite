@@ -149,6 +149,17 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  preFetchFonts();
  }, []);
 
+ useEffect(() => {
+    if (isPreviewModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isPreviewModalOpen]);
+
  const [selectedItems] = useState<Record<string, any>>(() => {
  const saved = sessionStorage.getItem('dss_selected_items');
  return saved ? JSON.parse(saved) : {};
@@ -169,35 +180,47 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  return saved ? JSON.parse(saved) : null;
  });
 
- const waterTargetLiters = useMemo(() => {
- const weight = userData.weight || 70;
- const hasCKD = userData.healthConditions.includes('ckd');
+  const waterTargetLiters = useMemo(() => {
+    const weight = userData.weight || 70;
+    const gender = userData.gender || 'male';
+    const age = userData.age || 25;
+    const hasCKD = userData.healthConditions.includes('ckd');
 
- if (hasCKD) {
- const rule = analysisGuidelines?.nutrients?.['water_g'];
- if (rule && rule.max && rule.max !== Infinity) {
- return {
- min: rule.min ? rule.min / 1000 : (weight * 30) / 1000,
- max: rule.max / 1000,
- basis: 'CKD Guideline'
- };
- }
- // CKD fluid target range: 30 - 35 mL/kg body weight per day
- return {
- min: (weight * 30) / 1000,
- max: (weight * 35) / 1000,
- basis: 'CKD Fallback'
- };
- }
+    if (hasCKD) {
+      const rule = analysisGuidelines?.nutrients?.['water_g'];
+      if (rule && rule.max && rule.max !== Infinity) {
+        return {
+          min: rule.min ? rule.min / 1000 : (weight * 30) / 1000,
+          max: rule.max / 1000,
+          basis: 'CKD Guideline'
+        };
+      }
+      // CKD fluid target range: 30 - 35 mL/kg body weight per day
+      return {
+        min: (weight * 30) / 1000,
+        max: (weight * 35) / 1000,
+        basis: 'CKD Fallback'
+      };
+    }
 
- // Normal or other diseases (DM2, Hypertension, CVD, Cholesterol) -> DRI (35 mL/kg weight)
- const driMl = weight * 35;
- return {
- min: (driMl * 0.9) / 1000,
- max: (driMl * 1.1) / 1000,
- basis: 'DRI'
- };
- }, [analysisGuidelines, userData]);
+    // Normal or other diseases (DM2, Hypertension, CVD, Cholesterol) -> DRI
+    const rule = analysisGuidelines?.nutrients?.['water_g'];
+    if (rule && rule.min && rule.min !== 0) {
+      return {
+        min: rule.min / 1000,
+        max: (rule.min * 1.1) / 1000,
+        basis: 'DRI'
+      };
+    }
+
+    // Fallback if guideline is not loaded yet
+    const driMl = gender === 'male' ? (age > 18 ? 3700 : 3300) : (age > 18 ? 2700 : 2300);
+    return {
+      min: driMl / 1000,
+      max: (driMl * 1.1) / 1000,
+      basis: 'DRI Fallback'
+    };
+  }, [analysisGuidelines, userData]);
 
  const foodWaterLiters = useMemo(() => {
  return (actualNutrients?.['water_g'] || 0) / 1000;
@@ -363,16 +386,16 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  const warnings: { message: string; type: 'deficient' | 'excessive'; nutrient: string }[] = [];
 
  const checkNutrient = (key: string, name: string, actualValue: number, minVal: number | null, maxVal: number | null, unit: string) => {
- if (minVal !== null && actualValue < minVal) {
- const diff = Math.round(minVal - actualValue);
- const msg = `${name} Deficiency: You need an additional ${diff}${unit}.`;
- warnings.push({ message: msg, type: 'deficient', nutrient: key });
- } else if (maxVal !== null && maxVal !== Infinity && actualValue > maxVal) {
- const diff = Math.round(actualValue - maxVal);
- const msg = `${name} Excess: Intake exceeds by ${diff}${unit}.`;
- warnings.push({ message: msg, type: 'excessive', nutrient: key });
- }
- };
+    if (minVal !== null && actualValue < minVal) {
+      const diff = Math.round(minVal - actualValue);
+      const msg = `${name}: ↓ ${diff}${unit}`;
+      warnings.push({ message: msg, type: 'deficient', nutrient: key });
+    } else if (maxVal !== null && maxVal !== Infinity && actualValue > maxVal) {
+      const diff = Math.round(actualValue - maxVal);
+      const msg = `${name}: ↑ ${diff}${unit}`;
+      warnings.push({ message: msg, type: 'excessive', nutrient: key });
+    }
+  };
 
  const items = Object.values(selectedItems);
  const totalProtein = items.reduce((sum: number, item: any) => sum + (item.protein || 0), 0);
@@ -616,32 +639,32 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  </div>
  </div>
  
- <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-2 font-sans">
- <div className="space-y-1">
- <span className="text-xs font-bold text-primary uppercase tracking-wider">Gender & Age</span>
- <p className="text-base font-bold text-gray-900 capitalize font-serif">
- {userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs
- </p>
- </div>
- <div className="space-y-1 border-l border-border pl-6">
- <span className="text-xs font-bold text-primary uppercase tracking-wider">Weight & Height</span>
- <p className="text-base font-bold text-gray-900 font-serif">
- {userData.weight} kg • {userData.height} cm
- </p>
- </div>
- <div className="space-y-1 border-l border-border pl-6">
- <span className="text-xs font-bold text-primary uppercase tracking-wider">Physical Activity</span>
- <p className="text-base font-bold text-gray-900 capitalize font-serif">
- {userData.activity || 'Moderate'}
- </p>
- </div>
- <div className="space-y-1 border-l border-border pl-6">
- <span className="text-xs font-bold text-primary uppercase tracking-wider">Estimated Calories</span>
- <p className="text-base font-bold text-gray-900 font-serif">
- {displayCalories} kcal
- </p>
- </div>
- </div>
+ <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 py-2 font-sans">
+  <div className="space-y-1">
+  <span className="text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider">Gender & Age</span>
+  <p className="text-sm sm:text-base font-bold text-gray-900 capitalize font-serif">
+  {userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs
+  </p>
+  </div>
+  <div className="space-y-1 border-l border-border pl-4 sm:pl-6">
+  <span className="text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider">Weight & Height</span>
+  <p className="text-sm sm:text-base font-bold text-gray-900 font-serif whitespace-nowrap">
+  {userData.weight} kg • {userData.height} cm
+  </p>
+  </div>
+  <div className="space-y-1 sm:border-l sm:border-border sm:pl-6">
+  <span className="text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider">Physical Activity</span>
+  <p className="text-sm sm:text-base font-bold text-gray-900 capitalize font-serif">
+  {userData.activity || 'Moderate'}
+  </p>
+  </div>
+  <div className="space-y-1 border-l border-border pl-4 sm:pl-6">
+  <span className="text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider">Estimated Calories</span>
+  <p className="text-sm sm:text-base font-bold text-gray-900 font-serif">
+  {displayCalories} kcal
+  </p>
+  </div>
+  </div>
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border font-sans">
  <div className="space-y-3">
@@ -840,25 +863,25 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  {/* Water glow circles */}
  <div className="absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-sky-400/30 via-blue-400/10 to-transparent rounded-full blur-3xl pointer-events-none" />
  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-blue-300/20 via-sky-300/10 to-transparent rounded-full blur-3xl pointer-events-none" />
- <div className="relative z-10 flex gap-6 sm:gap-8 items-start justify-between h-full w-full">
+ <div className="relative z-10 flex flex-col sm:flex-row gap-6 sm:gap-8 items-center sm:items-start justify-between h-full w-full">
  {/* Left Column: Title + Badge + Poster text */}
- <div className="flex-1 flex flex-col justify-start min-w-0">
+ <div className="flex-1 flex flex-col justify-start min-w-0 w-full text-center sm:text-left items-center sm:items-start">
  <div>
- <h3 className="text-lg font-bold text-gray-955 font-serif leading-none mb-1.5 capitalize truncate">
+ <h3 className="text-lg font-bold text-gray-955 font-serif leading-none mb-1.5 capitalize">
  Hydration Tracker
  </h3>
  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100/90 text-sky-800 border border-sky-200/30 shadow-sm bg-opacity-90">
- Daily Target: {waterTargetLiters.min.toFixed(2)} - {waterTargetLiters.max.toFixed(2)} L
+ Daily Target: {userData.healthConditions.includes('ckd') ? `${waterTargetLiters.min.toFixed(2)} - ${waterTargetLiters.max.toFixed(2)} L` : `min. ${waterTargetLiters.min.toFixed(2)} L`}
  </span>
  </div>
 
- <div className="mt-5 space-y-5">
+ <div className="mt-5 space-y-5 w-full">
  {/* Secured Block */}
  <div className="space-y-1">
  <span className="text-[10px] font-bold text-sky-600/90 uppercase tracking-widest block">
  Secured From Meals
  </span>
- <div className="flex items-baseline gap-1">
+ <div className="flex items-baseline gap-1 justify-center sm:justify-start">
  <span className="text-xl font-extrabold text-sky-600 font-serif leading-none">
  {foodWaterLiters.toFixed(2)}
  </span>
@@ -874,7 +897,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  <span className="text-[10px] font-bold text-amber-600/90 uppercase tracking-widest block">
  Additional Needed
  </span>
- <div className="flex items-baseline gap-1">
+ <div className="flex items-baseline gap-1 justify-center sm:justify-start">
  <span className="text-3xl font-extrabold text-amber-500 font-serif leading-none">
  {Math.max(0, waterTargetLiters.min - foodWaterLiters).toFixed(2)}
  </span>
