@@ -282,13 +282,6 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
   pdf.setFontSize(10);
   setSans('normal');
 
-  // Macronutrients table
-  const formatVal = (val: any) => {
-    if (val === null || val === undefined) return '';
-    const num = Number(val);
-    return isNaN(num) ? String(val) : String(Math.round(num));
-  };
-
   const getNutrientTargetRange = (key: string, fallbackTarget: number, unit: string) => {
     const rule = data.analysisGuidelines?.nutrients?.[key];
     if (rule) {

@@ -376,19 +376,19 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  const nutritionalWarnings = useMemo(() => {
  const warnings: { message: string; type: 'deficient' | 'excessive'; nutrient: string }[] = [];
 
- const checkNutrient = (key: string, name: string, actualValue: number, minVal: number | null, maxVal: number | null, unit: string) => {
+ const checkNutrient = (key: string, name: string, actualValue: number, minVal: number | null, maxVal: number | null) => {
     const formattedActual = formatNutrient(key, actualValue);
     const formattedMin = minVal !== null ? formatNutrient(key, minVal) : null;
     const formattedMax = maxVal !== null && maxVal !== Infinity ? formatNutrient(key, maxVal) : null;
 
-    if (formattedMin !== null && formattedActual.val < formattedMin.val) {
+    if (minVal !== null && formattedMin !== null && formattedActual.val < formattedMin.val) {
       const rawDiff = minVal - actualValue;
       const formattedDiff = formatNutrient(key, rawDiff);
       if (formattedDiff.val > 0 && parseFloat(formattedDiff.formatted) > 0) {
         const msg = `${name}: ↓ ${formattedDiff.formatted}${formattedDiff.unit}`;
         warnings.push({ message: msg, type: 'deficient', nutrient: key });
       }
-    } else if (formattedMax !== null && formattedActual.val > formattedMax.val) {
+    } else if (maxVal !== null && formattedMax !== null && formattedActual.val > formattedMax.val) {
       const rawDiff = actualValue - maxVal;
       const formattedDiff = formatNutrient(key, rawDiff);
       if (formattedDiff.val > 0 && parseFloat(formattedDiff.formatted) > 0) {
@@ -417,7 +417,6 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  const rule = analysisGuidelines?.nutrients?.[key];
  // ONLY check if it is configured as a HARD constraint
  if (rule && rule.hard_soft_type === 'HARD') {
- const unit = rule.unit || getNutrientUnit(key as any);
  const name = t.nutrients[key as keyof typeof t.nutrients] || key.split('_')[0].toUpperCase();
 
  let actual = 0;
@@ -437,7 +436,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
 
  const minVal = rule.min != null ? Number(rule.min) : null;
  const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
- checkNutrient(key, name, actual, minVal, maxVal, unit);
+ checkNutrient(key, name, actual, minVal, maxVal);
  }
  });
 
