@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import os
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
@@ -45,20 +46,11 @@ def detect_name_column(fieldnames: Iterable[str]) -> str:
     raise ValueError("Kolom nama makanan tidak ditemukan.")
 
 
-def write_csv(path: Path, headers: List[str], rows: Iterable[Iterable]):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(headers)
-        for row in rows:
-            writer.writerow(row)
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Analisis pola koma nama makanan.")
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT, help="Path CSV input")
     parser.add_argument("--outdir", type=Path, default=Path(__file__).parent / "output", help="Folder output")
-    parser.add_argument("--topn", type=int, default=20, help="Jumlah top item per tabel")
+    parser.add_argument("--topn", type=int, default=10, help="Jumlah top item per tabel")
     args = parser.parse_args()
 
     input_csv: Path = args.input
@@ -90,7 +82,6 @@ def main() -> None:
     samples_by_comma: Dict[int, List[str]] = defaultdict(list)
 
     segments_by_position: Dict[int, List[str]] = defaultdict(list)
-    full_suffix_counter: Counter = Counter()
     last2_counter: Counter = Counter()
     last3_counter: Counter = Counter()
 
@@ -101,7 +92,8 @@ def main() -> None:
         comma_count = name.count(",")
         comma_distribution[comma_count] += 1
 
-        if len(samples_by_comma[comma_count]) < 8:
+        # Save up to 5 samples per comma count
+        if len(samples_by_comma[comma_count]) < 5:
             samples_by_comma[comma_count].append(name)
 
         segments = [normalize_segment(s) for s in name.split(",")]
@@ -110,8 +102,6 @@ def main() -> None:
             if seg:
                 segments_by_position[pos].append(seg)
 
-        if len(segments) >= 2:
-            full_suffix_counter[" | ".join(segments[1:])] += 1
         if len(segments) >= 3:
             last2_counter[" | ".join(segments[-2:])] += 1
         if len(segments) >= 4:
@@ -137,104 +127,98 @@ def main() -> None:
 
     outdir.mkdir(parents=True, exist_ok=True)
 
-    write_csv(
-        outdir / "comma_distribution.csv",
-        ["comma_count", "count", "percentage"],
-        (
-            (k, v, round(v / total * 100, 4))
-            for k, v in sorted(comma_distribution.items(), key=lambda x: x[0])
-        ),
-    )
+    # Clean up old CSV analysis files if they exist to prevent clutter
+    old_files = [
+        "comma_distribution.csv",
+        "top_segments_by_position.csv",
+        "top_full_suffix_patterns.csv",
+        "top_last2_patterns.csv",
+        "top_last3_patterns.csv",
+        "comma_count_samples.csv",
+        "food_group_comma_stats.csv",
+        "summary_report.txt"
+    ]
+    for filename in old_files:
+        filepath = outdir / filename
+        if filepath.exists():
+            try:
+                filepath.unlink()
+            except Exception:
+                pass
 
-    segment_rows: List[Tuple[int, str, int, float]] = []
-    for pos in sorted(segments_by_position):
+    # Build a single consolidated report
+    report = []
+    report.append("======================================================================")
+    report.append("                  FOOD NAME COMMA ANALYSIS REPORT")
+    report.append("======================================================================")
+    report.append(f"Input file: {input_csv}")
+    report.append(f"Total valid food names: {total}")
+    report.append("")
+
+    report.append("----------------------------------------------------------------------")
+    report.append("1. COMMA DISTRIBUTION")
+    report.append("----------------------------------------------------------------------")
+    for k, v in sorted(comma_distribution.items(), key=lambda x: x[0]):
+        report.append(f"- {k} koma: {v} ({v / total * 100:.2f}%)")
+    report.append("")
+
+    report.append("----------------------------------------------------------------------")
+    report.append("2. TOP SEGMENTS BY POSITION AFTER BASE NAME")
+    report.append("----------------------------------------------------------------------")
+    for pos in sorted(segments_by_position)[:4]:  # Show top 4 positions
         counter = Counter(segments_by_position[pos])
         total_pos = sum(counter.values())
-        for seg, cnt in counter.most_common(topn):
-            segment_rows.append((pos, seg, cnt, round(cnt / total_pos * 100, 4)))
+        report.append(f"[Posisi {pos} setelah Base Name] (Total segmen: {total_pos})")
+        for seg, cnt in counter.most_common(5):  # top 5 per position
+            report.append(f"  - {seg:25s}: {cnt:4d} ({cnt / total_pos * 100:.2f}%)")
+    report.append("")
 
-    write_csv(
-        outdir / "top_segments_by_position.csv",
-        ["position_after_base", "segment", "count", "percentage_at_position"],
-        segment_rows,
-    )
-
-    write_csv(
-        outdir / "top_full_suffix_patterns.csv",
-        ["pattern", "count"],
-        full_suffix_counter.most_common(topn),
-    )
-
-    write_csv(
-        outdir / "top_last2_patterns.csv",
-        ["last2_pattern", "count"],
-        last2_counter.most_common(topn),
-    )
-
-    write_csv(
-        outdir / "top_last3_patterns.csv",
-        ["last3_pattern", "count"],
-        last3_counter.most_common(topn),
-    )
-
-    sample_rows = []
-    for comma_count in sorted(samples_by_comma):
-        for sample in samples_by_comma[comma_count]:
-            sample_rows.append((comma_count, sample))
-
-    write_csv(
-        outdir / "comma_count_samples.csv",
-        ["comma_count", "food_name_sample"],
-        sample_rows,
-    )
+    report.append("----------------------------------------------------------------------")
+    report.append("3. TOP LAST-2 & LAST-3 PATTERNS")
+    report.append("----------------------------------------------------------------------")
+    report.append(f"Pola 2 segmen terakhir yang dipakai ulang >= 5x: {reused2}/{eligible2} ({(reused2 / eligible2 * 100) if eligible2 else 0:.1f}%)")
+    report.append("")
+    report.append("[Top 10 Pola 2 Segmen Terakhir]")
+    for pat, cnt in last2_counter.most_common(10):
+        report.append(f"  - {pat:40s}: {cnt}x")
+    report.append("")
+    report.append("[Top 5 Pola 3 Segmen Terakhir]")
+    for pat, cnt in last3_counter.most_common(5):
+        report.append(f"  - {pat:40s}: {cnt}x")
+    report.append("")
 
     if group_col:
+        report.append("----------------------------------------------------------------------")
+        report.append("4. FOOD GROUP STATS")
+        report.append("----------------------------------------------------------------------")
         group_rows = []
         for g, stats in group_stats.items():
             n = int(stats["n"])
             mean_comma = (stats["sum_comma"] / n) if n else 0.0
             ge5_pct = (stats["ge5"] / n * 100) if n else 0.0
-            group_rows.append((g, n, round(mean_comma, 4), round(ge5_pct, 4)))
+            group_rows.append((g, n, mean_comma, ge5_pct))
 
         group_rows.sort(key=lambda x: x[2], reverse=True)
-        write_csv(
-            outdir / "food_group_comma_stats.csv",
-            ["food_group", "n", "mean_comma", "pct_comma_ge_5"],
-            group_rows,
-        )
+        report.append(f"{'Food Group':40s} | {'N':5s} | {'Mean Comma':10s} | {'% Comma >= 5':12s}")
+        report.append("-" * 75)
+        for g, n, mean_c, ge5_p in group_rows[:15]:  # Top 15 food groups
+            report.append(f"{g[:40]:40s} | {n:5d} | {mean_c:10.2f} | {ge5_p:11.1f}%")
+        report.append("")
 
-    report_lines = [
-        "FOOD NAME COMMA ANALYSIS REPORT",
-        "=" * 40,
-        f"Input file: {input_csv}",
-        f"Total valid food names: {total}",
-        "",
-        "Distribusi jumlah koma:",
-    ]
+    report.append("----------------------------------------------------------------------")
+    report.append("5. SAMPLES BY COMMA COUNT")
+    report.append("----------------------------------------------------------------------")
+    for comma_count in sorted(samples_by_comma):
+        report.append(f"[{comma_count} Koma]")
+        for sample in samples_by_comma[comma_count]:
+            report.append(f"  - {sample}")
+    report.append("")
 
-    for k, v in sorted(comma_distribution.items(), key=lambda x: x[0]):
-        report_lines.append(f"- {k} koma: {v} ({v / total * 100:.2f}%)")
+    report_path = outdir / "comma_analysis_report.txt"
+    report_path.write_text("\n".join(report), encoding="utf-8")
 
-    report_lines.extend(
-        [
-            "",
-            "Temuan pola:",
-            "- Segmen setelah koma menunjukkan descriptor berulang (state/proses/salt/grade).",
-            f"- Last-2 pattern reused >=5x: {reused2}/{eligible2} ({(reused2 / eligible2 * 100) if eligible2 else 0:.1f}%).",
-            "- Ini menunjukkan penggunaan koma bersifat terstruktur, bukan random.",
-            "",
-            "Top 10 pola 2 segmen terakhir:",
-        ]
-    )
-
-    for pat, cnt in last2_counter.most_common(10):
-        report_lines.append(f"- {pat}: {cnt}x")
-
-    summary_path = outdir / "summary_report.txt"
-    summary_path.write_text("\n".join(report_lines), encoding="utf-8")
-
-    print(f"[OK] Analisis selesai. Output folder: {outdir}")
-    print(f"[OK] Ringkasan: {summary_path}")
+    print(f"[OK] Analisis selesai. File laporan tunggal berhasil disimpan ke:")
+    print(f"     {report_path}")
 
 
 if __name__ == "__main__":

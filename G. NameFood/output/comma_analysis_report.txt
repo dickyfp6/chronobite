@@ -1,0 +1,159 @@
+======================================================================
+                  FOOD NAME COMMA ANALYSIS REPORT
+======================================================================
+Input file: c:\Users\USERR\Documents\0. Mata Kuliah\8 -TA\Code\TugasAkhirDSS\A. Data\Data Processed\05_final_dataset.csv
+Total valid food names: 3874
+
+----------------------------------------------------------------------
+1. COMMA DISTRIBUTION
+----------------------------------------------------------------------
+- 0 koma: 54 (1.39%)
+- 1 koma: 567 (14.64%)
+- 2 koma: 1029 (26.56%)
+- 3 koma: 951 (24.55%)
+- 4 koma: 647 (16.70%)
+- 5 koma: 379 (9.78%)
+- 6 koma: 141 (3.64%)
+- 7 koma: 76 (1.96%)
+- 8 koma: 24 (0.62%)
+- 9 koma: 5 (0.13%)
+- 10 koma: 1 (0.03%)
+
+----------------------------------------------------------------------
+2. TOP SEGMENTS BY POSITION AFTER BASE NAME
+----------------------------------------------------------------------
+[Posisi 1 setelah Base Name] (Total segmen: 3820)
+  - raw                      :  145 (3.80%)
+  - canned                   :  140 (3.66%)
+  - cooked                   :  112 (2.93%)
+  - frozen                   :   97 (2.54%)
+  - white                    :   67 (1.75%)
+[Posisi 2 setelah Base Name] (Total segmen: 3253)
+  - canned                   :  150 (4.61%)
+  - raw                      :  138 (4.24%)
+  - cooked                   :  137 (4.21%)
+  - boiled                   :   87 (2.67%)
+  - mature seeds             :   75 (2.31%)
+[Posisi 3 setelah Base Name] (Total segmen: 2224)
+  - cooked                   :  171 (7.69%)
+  - boiled                   :  103 (4.63%)
+  - raw                      :   97 (4.36%)
+  - drained                  :   89 (4.00%)
+  - canned                   :   70 (3.15%)
+[Posisi 4 setelah Base Name] (Total segmen: 1273)
+  - drained                  :   89 (6.99%)
+  - boiled                   :   87 (6.83%)
+  - cooked                   :   86 (6.76%)
+  - with salt                :   69 (5.42%)
+  - without salt             :   68 (5.34%)
+
+----------------------------------------------------------------------
+3. TOP LAST-2 & LAST-3 PATTERNS
+----------------------------------------------------------------------
+Pola 2 segmen terakhir yang dipakai ulang >= 5x: 1040/3253 (32.0%)
+
+[Top 10 Pola 2 Segmen Terakhir]
+  - drained | with salt                     : 120x
+  - drained | without salt                  : 118x
+  - boiled | without salt                   : 33x
+  - boiled | with salt                      : 33x
+  - canned | condensed                      : 32x
+  - canned | prepared with equal volume water: 32x
+  - frozen | unprepared                     : 30x
+  - mature seeds | raw                      : 29x
+  - cooked | grilled                        : 26x
+  - choice | raw                            : 20x
+
+[Top 5 Pola 3 Segmen Terakhir]
+  - boiled | drained | with salt            : 120x
+  - boiled | drained | without salt         : 118x
+  - cooked | boiled | with salt             : 33x
+  - cooked | boiled | without salt          : 32x
+  - trimmed to 0" fat | choice | raw        : 13x
+
+----------------------------------------------------------------------
+4. FOOD GROUP STATS
+----------------------------------------------------------------------
+Food Group                               | N     | Mean Comma | % Comma >= 5
+---------------------------------------------------------------------------
+Beef Products                            |   106 |       6.28 |        84.0%
+Lamb, Veal, and Game Products            |    58 |       4.81 |        56.9%
+Poultry Products                         |   113 |       4.27 |        46.0%
+Vegetables and Vegetable Products        |   763 |       3.54 |        31.8%
+Finfish and Shellfish Products           |    56 |       3.48 |         5.4%
+Beverages                                |   101 |       3.38 |        19.8%
+Legumes and Legume Products              |   214 |       3.08 |        25.2%
+Breakfast Cereals                        |   125 |       2.95 |        20.0%
+Soups, Sauces, and Gravies               |   209 |       2.93 |         3.3%
+Fats and Oils                            |    83 |       2.90 |        13.3%
+Snacks                                   |   155 |       2.86 |         5.2%
+Nut and Seed Products                    |   131 |       2.73 |         2.3%
+Cereal Grains and Pasta                  |   169 |       2.65 |         9.5%
+Fruits and Fruit Juices                  |   309 |       2.54 |         3.6%
+Dairy and Egg Products                   |   251 |       2.53 |         5.6%
+
+----------------------------------------------------------------------
+5. SAMPLES BY COMMA COUNT
+----------------------------------------------------------------------
+[0 Koma]
+  - Yeast extract spread
+  - Tofu yogurt
+  - Candied fruit
+  - Horned melon (Kiwano)
+  - Orange Pineapple Juice Blend
+[1 Koma]
+  - Tostada shells, corn
+  - Bread, salvadoran sweet cheese (quesadilla salvadorena)
+  - Pastry, Pastelitos de Guava (guava pastries)
+  - Bread, white wheat
+  - Bagels, wheat
+[2 Koma]
+  - Pie, Dutch Apple, Commercially Prepared
+  - Bread, pound cake type, pan de torta salvadoran
+  - Crackers, cream, Gamesa Sabrosas
+  - Snacks, fruit leather, pieces
+  - Snacks, fruit leather, rolls
+[3 Koma]
+  - Waffles, buttermilk, frozen, ready-to-heat
+  - Pie Crust, Cookie-type, Chocolate, Ready Crust
+  - Waffles, chocolate chip, frozen, ready-to-heat
+  - Cream puff, eclair, custard or cream filled, iced
+  - Tortillas, ready-to-bake or -fry, flour, shelf stable
+[4 Koma]
+  - Waffle, buttermilk, frozen, ready-to-heat, toasted
+  - Waffle, buttermilk, frozen, ready-to-heat, microwaved
+  - Waffle, plain, frozen, ready-to-heat, microwave
+  - Pie crust, deep dish, frozen, unbaked, made with enriched flour
+  - Snacks, corn-based, extruded, chips, plain
+[5 Koma]
+  - Snacks, granola bars, soft, coated, milk chocolate coating, chocolate chip
+  - Snacks, granola bars, soft, coated, milk chocolate coating, peanut butter
+  - Snacks, popcorn, oil-popped, microwave, regular flavor, no trans fat
+  - Frozen novelties, ice cream type, vanilla ice cream, light, no sugar added, chocolate coated
+  - Fruit salad, (pineapple and papaya and banana and guava), tropical, canned, heavy syrup, solids and liquids
+[6 Koma]
+  - Artichokes, (globe or french), frozen, cooked, boiled, drained, without salt
+  - Cowpeas (blackeyes), immature seeds, frozen, cooked, boiled, drained, without salt
+  - Squash, summer, crookneck and straightneck, cooked, boiled, drained, without salt
+  - Squash, summer, crookneck and straightneck, canned, drained, solid, without salt
+  - Squash, winter, butternut, frozen, cooked, boiled, without salt
+[7 Koma]
+  - Beans, kidney, mature seeds, sprouted, cooked, boiled, drained, without salt
+  - Corn, sweet, yellow, frozen, kernels cut off cob, boiled, drained, without salt
+  - Squash, summer, crookneck and straightneck, frozen, cooked, boiled, drained, without salt
+  - Lima beans, immature seeds, frozen, fordhook, cooked, boiled, drained, with salt
+  - Beans, navy, mature seeds, sprouted, cooked, boiled, drained, with salt
+[8 Koma]
+  - Corn, sweet, yellow, frozen, kernels on cob, cooked, boiled, drained, without salt
+  - Squash, summer, zucchini, includes skin, frozen, cooked, boiled, drained, without salt
+  - Beef, chuck, under blade center steak, boneless, Denver Cut, separable lean only, trimmed to 0" fat, select, raw
+  - Corn, sweet, yellow, frozen, kernels, cut off cob, boiled, drained, with salt
+  - Corn, sweet, yellow, frozen, kernels on cob, cooked, boiled, drained, with salt
+[9 Koma]
+  - Beef, chuck, under blade center steak, boneless, Denver Cut, separable lean only, trimmed to 0" fat, choice, cooked, grilled
+  - Beef, chuck, under blade center steak, boneless, Denver Cut, separable lean only, trimmed to 0" fat, all grades, cooked, grilled
+  - Beef, chuck, under blade center steak, boneless, Denver Cut, separable lean and fat, trimmed to 0" fat, all grades, cooked, grilled
+  - Beef, chuck, under blade center steak, boneless, Denver Cut, separable lean and fat, trimmed to 0" fat, choice, cooked, grilled
+  - Beef, chuck, shoulder clod, shoulder tender, medallion, separable lean and fat, trimmed to 0" fat, select, cooked, grilled
+[10 Koma]
+  - Lamb, Australian, imported, fresh, leg, trotter off, bone-in, separable lean and fat, trimmed to 1/8" fat, cooked, roasted
