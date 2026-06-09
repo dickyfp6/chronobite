@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ThemeProvider } from 'next-themes';
 import { I18nProvider, useI18n } from './contexts/I18nContext';
 import { Navbar } from './components/figma/Navbar';
@@ -191,7 +191,11 @@ export default function App() {
   });
 
   const [menuPromise, setMenuPromise] = useState<Promise<any> | null>(null);
-  const [downloadPDFTrigger, setDownloadPDFTrigger] = useState<(() => void) | null>(null);
+  const [downloadPDFTrigger, setDownloadPDFTrigger] = useState<{ fn: (() => void) | null }>({ fn: null });
+
+  const handleRegisterDownloadPDF = useCallback((fn: (() => void) | null) => {
+    setDownloadPDFTrigger({ fn });
+  }, []);
 
   const startMenuPrefetch = (analysis: any) => {
     if (menuPromise) return; // already prefetching
@@ -387,8 +391,8 @@ export default function App() {
         <div className="min-h-screen bg-background text-foreground">
           <Navbar 
             onHomeClick={handleHomeClick} 
-            currentPage={currentPage} 
-            onDownloadPDF={downloadPDFTrigger}
+            currentPage={currentPage}             
+            onDownloadPDF={downloadPDFTrigger.fn}
           />
 
           <main className="pt-16">
@@ -519,7 +523,7 @@ export default function App() {
                           >
                             <Report 
                               userData={userData} 
-                              onRegisterDownloadPDF={setDownloadPDFTrigger}
+                              onRegisterDownloadPDF={handleRegisterDownloadPDF}
                             />
                           </motion.div>
                         )}

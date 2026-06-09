@@ -166,7 +166,7 @@ export const translations = {
         other: 'Other Nutrients',
         tips: 'Diet Tips',
       },
-      download: 'Download PDF',
+      download: 'Download Report',
       portion: 'Portion',
       fulfilled: 'Fulfilled',
       guideline: 'Guideline',

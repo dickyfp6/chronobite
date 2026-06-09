@@ -1372,7 +1372,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  Download PDF
+                  Download Report
                 </button>
               </div>
             </motion.div>
@@ -1386,7 +1386,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
           <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800">
             <div className="w-10 h-10 border-4 border-primary dark:border-emerald-500 border-t-transparent rounded-full animate-spin" />
             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-              Preparing PDF preview...
+              Preparing Document...
             </p>
           </div>
         </div>

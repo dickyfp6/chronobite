@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, ArrowLeft, HeartPulse, Scale, FileText, Loader2, ChevronDown } from 'lucide-react';
 import type { UserInputData } from './InputWizard';
@@ -295,6 +295,24 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
     fetchAnalysis();
   }, [userData, dailyNeeds.calories]);
 
+  const displayCalories = useMemo(() => {
+    const tdee = (analysis && analysis.energy && typeof analysis.energy.tdee === 'number') 
+      ? Math.round(analysis.energy.tdee) 
+      : Math.round(dailyNeeds.calories);
+
+    if (!hasDiseaseGuidelines) return tdee;
+
+    const rule = analysis?.guidelines?.nutrients?.['energy_kcal'];
+    if (rule && rule.hard_soft_type === 'HARD') {
+      const minVal = rule.min != null ? Math.round(rule.min) : 0;
+      const maxVal = rule.max != null && Number.isFinite(rule.max) ? Math.round(rule.max) : Infinity;
+
+      if (tdee > maxVal) return maxVal;
+      if (tdee < minVal) return minVal;
+    }
+    return tdee;
+  }, [analysis, dailyNeeds.calories, hasDiseaseGuidelines]);
+
   return (
     <div className="w-full">
 
@@ -330,7 +348,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
                 <div className="space-y-4">
                   <div className="rounded-2xl bg-primary/5 dark:bg-primary/10 p-4 border border-primary/20 dark:border-primary/10">
                     <p className="text-xs text-primary dark:text-emerald-300 font-semibold tracking-wide uppercase">Estimated daily calories</p>
-                    <p className="text-3xl font-bold text-primary dark:text-emerald-300 font-serif mt-1">{(analysis && analysis.energy && typeof analysis.energy.tdee === 'number' ? Math.round(analysis.energy.tdee) : Math.round(dailyNeeds.calories))} kcal/day</p>
+                    <p className="text-3xl font-bold text-primary dark:text-emerald-300 font-serif mt-1">{displayCalories} kcal/day</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-2.5 font-normal leading-relaxed">
                       Your calorie needs are derived from BMI, BMR, TDEE, activity level, and aligned with your selected health conditions.
                     </p>
