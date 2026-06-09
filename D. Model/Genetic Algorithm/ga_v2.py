@@ -30,6 +30,9 @@ import random
 import time
 from typing import List, Dict, Tuple, Optional, cast
 
+# Global variable to track the optimization start time across functions
+_opt_start_time = None
+
 # ═════════════════════════════════════════════════════════════════════════════
 # GUIDELINE UTILITIES - Consistency helpers
 # ═════════════════════════════════════════════════════════════════════════════
@@ -1307,7 +1310,8 @@ def run_ga(
     best_fitness = fitness(best_solution, guidelines, tdee=tdee)
     
     # Start stopwatch for time-based early stopping
-    start_time = time.time()
+    global _opt_start_time
+    _opt_start_time = time.time()
     
     # ════════════════════════════════════════════════════════════════════════
     # STEP 2 - MAIN GA LOOP
@@ -1320,7 +1324,7 @@ def run_ga(
     
     for gen in range(generations):
         # Time-based early stopping (Batas aman: 45 detik dari 60 detik batas Vercel)
-        if time.time() - start_time > 45.0:
+        if _opt_start_time is not None and time.time() - _opt_start_time > 45.0:
             if verbose:
                 print(f"\n[TIMEOUT] GA stopping early at generation {gen} to prevent Vercel 504 timeout.")
             break
@@ -1519,6 +1523,14 @@ def local_search(
         Best solution found
     """
     
+    global _opt_start_time
+    # If not set (e.g. called directly without run_ga), initialize it
+    if _opt_start_time is None:
+        _opt_start_time = time.time()
+    elif time.time() - _opt_start_time > 45.0:
+        print("\n[TIMEOUT] Skipping Local Search entirely to prevent Vercel 504 timeout.")
+        return solution
+        
     if verbose:
         print(f"\n{'='*70}")
         print(f"LOCAL SEARCH - STABLE (GLOBAL HARD DEVIATION)")
@@ -1544,6 +1556,11 @@ def local_search(
     no_improvement_count = 0  # TASK 5: Stop after 2 consecutive iterations without improvement
     
     while iteration < iterations:
+        # Time-based early stopping (Batas aman: 45 detik dari 60 detik batas Vercel)
+        if _opt_start_time is not None and time.time() - _opt_start_time > 45.0:
+            print(f"\n[TIMEOUT] Local Search stopping early at iteration {iteration} to prevent Vercel 504 timeout.")
+            break
+            
         iteration += 1
         
         # ════════════════════════════════════════════════════════════════
