@@ -103,29 +103,70 @@ const slides = [
 ];
 
 export function Landing({ onStart }: { onStart: () => void }) {
- const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
- const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
- const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
- // Auto slide per 5 detik
- useEffect(() => {
- const timer = setInterval(() => {
- nextSlide();
- }, 5000);
- return () => clearInterval(timer);
- }, [currentSlide]);
+  // Touch gesture states for mobile swipe support
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [touchEndY, setTouchEndY] = useState<number | null>(null);
+  const minSwipeDistance = 50;
 
- const slide = slides[currentSlide];
- const slideContent = t.landing.slides[slide.id as keyof typeof t.landing.slides];
- const WidgetIcon = slide.topWidget.icon;
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEndX(null);
+    setTouchEndY(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchStartY(e.targetTouches[0].clientY);
+  };
 
- return (
- <div 
- className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 flex flex-col justify-center"
- >
- <div className="flex-1 flex items-center justify-center py-6 md:py-12 px-4 sm:px-6 lg:px-8">
- <div className="w-full max-w-6xl relative">
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+    setTouchEndY(e.targetTouches[0].clientY);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStartX || !touchEndX || !touchStartY || !touchEndY) return;
+    const distanceX = touchStartX - touchEndX;
+    const distanceY = touchStartY - touchEndY;
+    const isHorizontalSwipe = Math.abs(distanceX) > Math.abs(distanceY);
+    const isLeftSwipe = distanceX > minSwipeDistance;
+    const isRightSwipe = distanceX < -minSwipeDistance;
+
+    if (isHorizontalSwipe) {
+      if (isLeftSwipe) {
+        nextSlide();
+      } else if (isRightSwipe) {
+        prevSlide();
+      }
+    }
+  };
+
+  // Auto slide per 5 detik
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [currentSlide]);
+
+  const slide = slides[currentSlide];
+  const slideContent = t.landing.slides[slide.id as keyof typeof t.landing.slides];
+  const WidgetIcon = slide.topWidget.icon;
+
+  return (
+    <div 
+      className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 flex flex-col justify-center"
+    >
+      <div className="flex-1 flex items-center justify-center py-6 md:py-12 px-4 sm:px-6 lg:px-8">
+        <div 
+          className="w-full max-w-6xl relative"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
  <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-stretch">
  
  {/* Left Column: Text (Sliding) and CTA (Static) */}

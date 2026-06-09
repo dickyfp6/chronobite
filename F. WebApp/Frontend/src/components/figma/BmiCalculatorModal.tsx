@@ -73,8 +73,8 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
   const tdee = selectedBmr * multiplier;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-md transition-all">
-      <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden border border-border flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] relative">
+    <div className="fixed inset-0 z-50 flex items-start md:items-center justify-center p-4 bg-black/50 backdrop-blur-md transition-all overflow-y-auto">
+      <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden border border-border flex flex-col md:flex-row my-4 md:my-0 md:max-h-[85vh] relative">
         
         {/* Absolute positioned close button for all screen sizes */}
         <button 
@@ -85,7 +85,7 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
         </button>
 
         {/* Left Side: Inputs */}
-        <div className="flex-1 p-6 overflow-y-auto border-r border-border scrollbar-none">
+        <div className="flex-none md:flex-1 p-6 md:overflow-y-auto border-b md:border-b-0 md:border-r border-border scrollbar-none">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-900 font-serif">BMI & Calorie Calculator</h2>
           </div>
@@ -134,7 +134,7 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
             {/* Age, Weight, Height Grid */}
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Age</label>
+                <label className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5 whitespace-nowrap text-center">Age</label>
                 <input
                   type="number"
                   min="1"
@@ -145,7 +145,7 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
                 />
               </div>
               <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Weight (kg)</label>
+                <label className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5 whitespace-nowrap text-center">Weight (kg)</label>
                 <input
                   type="number"
                   min="1"
@@ -156,7 +156,7 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
                 />
               </div>
               <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Height (cm)</label>
+                <label className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5 whitespace-nowrap text-center">Height (cm)</label>
                 <input
                   type="number"
                   min="1"
@@ -216,7 +216,7 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
         </div>
 
         {/* Right Side: Results */}
-        <div className="flex-1 bg-gradient-to-b from-secondary/40 to-secondary/15 p-6 overflow-y-auto flex flex-col justify-center max-h-[50vh] md:max-h-none scrollbar-none">
+        <div className="flex-none md:flex-1 bg-gradient-to-b from-secondary/40 to-secondary/15 p-6 pb-10 md:pb-6 md:overflow-y-auto flex flex-col justify-start md:justify-center scrollbar-none">
           <div className="space-y-6">
             {/* BMI Display */}
             <div>

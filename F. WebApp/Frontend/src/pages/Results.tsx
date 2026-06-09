@@ -72,8 +72,8 @@ const mealThemes: Record<string, {
 }> = {
  breakfast: {
  color: "amber",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-amber-450/40 via-orange-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
- glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-orange-450/20 via-amber-400/10 to-transparent rounded-full blur-3xl pointer-events-none",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-amber-450/40 via-orange-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-orange-450/20 via-amber-400/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  containerBg: "bg-gradient-to-br from-amber-100/35 via-amber-50/15 to-orange-100/25 ",
  containerBorder: "border border-amber-200/60 shadow-sm",
  icon: (
@@ -89,8 +89,8 @@ const mealThemes: Record<string, {
  },
  lunch: {
  color: "sky",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-sky-400/40 via-yellow-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
- glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-yellow-300/45 via-sky-300/10 to-transparent rounded-full blur-3xl pointer-events-none",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-sky-400/40 via-yellow-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-yellow-300/45 via-sky-300/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  containerBg: "bg-gradient-to-br from-sky-100/30 via-sky-50/15 to-yellow-100/35 ",
  containerBorder: "border border-sky-200/60 shadow-sm",
  icon: (
@@ -106,8 +106,8 @@ const mealThemes: Record<string, {
  },
  dinner: {
  color: "indigo",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-indigo-500/40 via-purple-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
- glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-purple-500/20 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-indigo-500/40 via-purple-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-purple-500/20 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  containerBg: "bg-gradient-to-br from-indigo-100/35 via-indigo-50/15 to-purple-100/30 ",
  containerBorder: "border border-indigo-200/60 shadow-sm",
  icon: (
@@ -123,8 +123,8 @@ const mealThemes: Record<string, {
  },
  snack: {
  color: "rose",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-rose-500/40 via-pink-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
- glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-pink-500/20 via-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-rose-500/40 via-pink-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-pink-500/20 via-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  containerBg: "bg-gradient-to-br from-rose-100/35 via-rose-50/15 to-pink-100/30 ",
  containerBorder: "border border-rose-200/60 shadow-sm",
  icon: (

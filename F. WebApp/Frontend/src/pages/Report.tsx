@@ -101,8 +101,8 @@ const mealThemes = {
  themeClass: "bg-gradient-to-br from-amber-100/35 via-amber-50/15 to-orange-100/25 ",
  borderClass: "border border-amber-200/60 ",
  tagBg: "bg-amber-100/90 text-amber-800 border border-amber-200/30",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-amber-450/40 via-orange-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
- glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-orange-450/20 via-amber-400/10 to-transparent rounded-full blur-3xl pointer-events-none",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-amber-450/40 via-orange-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-orange-450/20 via-amber-400/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  cardClass: "border border-amber-300/40 bg-gradient-to-br from-amber-200/40 via-amber-100/20 to-orange-100/30 shadow-[0_4px_12px_rgba(0,0,0,0.02)]"
  },
  lunch: {
@@ -111,8 +111,8 @@ const mealThemes = {
  themeClass: "bg-gradient-to-br from-sky-100/30 via-sky-50/15 to-yellow-100/35 ",
  borderClass: "border border-sky-200/60 ",
  tagBg: "bg-sky-100/90 text-sky-800 border border-sky-200/30",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-sky-400/40 via-yellow-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
- glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-yellow-300/45 via-sky-300/10 to-transparent rounded-full blur-3xl pointer-events-none",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-sky-400/40 via-yellow-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-yellow-300/45 via-sky-300/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  cardClass: "border border-sky-300/40 bg-gradient-to-br from-sky-200/40 to-yellow-250/30 shadow-[0_4px_12px_rgba(0,0,0,0.02)]"
  },
  dinner: {
@@ -121,8 +121,8 @@ const mealThemes = {
  themeClass: "bg-gradient-to-br from-indigo-100/35 via-indigo-50/15 to-purple-100/30 ",
  borderClass: "border border-indigo-200/60 ",
  tagBg: "bg-indigo-100/90 text-indigo-800 border border-indigo-200/30",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-indigo-500/40 via-purple-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
- glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-purple-500/20 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-indigo-500/40 via-purple-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-purple-500/20 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  cardClass: "border border-indigo-300/40 bg-gradient-to-br from-indigo-200/40 to-blue-900/20 shadow-[0_4px_12px_rgba(0,0,0,0.02)]"
  },
  snack: {
@@ -131,8 +131,8 @@ const mealThemes = {
  themeClass: "bg-gradient-to-br from-rose-100/35 via-rose-50/15 to-pink-100/30 ",
  borderClass: "border border-rose-200/60 ",
  tagBg: "bg-rose-100/90 text-rose-800 border border-rose-200/30",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-rose-500/40 via-pink-450/20 to-transparent rounded-full blur-3xl pointer-events-none",
- glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-pink-500/20 via-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-rose-500/40 via-pink-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-pink-500/20 via-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  cardClass: "border border-rose-300/40 bg-gradient-to-br from-rose-200/40 via-rose-100 to-pink-100/30 shadow-[0_4px_12px_rgba(0,0,0,0.02)]"
  }
 };
