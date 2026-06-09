@@ -861,7 +861,7 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            iterations=50,
+            iterations=35,
             verbose=True  # Show improvements
         )
         print("✓ Local search optimization complete")
