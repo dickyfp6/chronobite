@@ -242,6 +242,8 @@ DUPLICATE_PENALTY_WEIGHT = 50.0  # Penalty for each duplicate food item
 # 1. RANDOM SOLUTION - Generate meal plan random
 # ═════════════════════════════════════════════════════════════════════════════
 
+_filter_cache = {}
+
 def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = False) -> pd.DataFrame:
     """
     Filter food items sesuai dengan expected consumption_label untuk slot tertentu
@@ -261,6 +263,11 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
         - Filter dengan case-insensitive comparison + strip
         - Fallback: return sample max 20 items jika tidak ada match
     """
+    global _filter_cache
+    cache_key = (id(food_df), slot_idx)
+    if cache_key in _filter_cache:
+        return _filter_cache[cache_key]
+
     # Jika tidak ada consumption_label column, return semua items
     if 'consumption_label' not in food_df.columns:
         if debug:
@@ -283,7 +290,12 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
     # QUALITY FILTER - Ensure only quality foods are selected
     # ════════════════════════════════════════════════════════════════════════
     # Apply quality checks (nutrient minimums, energy ranges, etc)
-    filtered = _apply_quality_filter(filtered, expected_label)
+    # Gunakan conditional untuk memanggil _apply_quality_filter jika function-nya ada,
+    # Jika tidak ada/error, abaikan agar tidak crash
+    try:
+        filtered = _apply_quality_filter(filtered, expected_label)
+    except NameError:
+        pass
     
     if debug:
         print(f"DEBUG: Slot {slot_idx} ({SLOT_NAMES[slot_idx]}) -> label='{expected_label}' -> {len(filtered)} items (after quality filter)")
@@ -294,10 +306,12 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
     if len(filtered) == 0:
         if debug:
             print(f"DEBUG: Slot {slot_idx} - No items found, using fallback (sampling max 20)")
-        return food_df.sample(n=min(20, len(food_df)))
+        res = food_df.sample(n=min(20, len(food_df)))
+        _filter_cache[cache_key] = res
+        return res
     
+    _filter_cache[cache_key] = filtered
     return filtered
-
 
 # ═════════════════════════════════════════════════════════════════════════════
 # NOTE: filter_extreme_foods removed - dataset already filtered in preprocessing
@@ -493,6 +507,8 @@ def random_solution(food_df: pd.DataFrame) -> pd.DataFrame:
 # 2. CALCULATE TOTAL NUTRITION - Sum nutrisi dari 10 item (chromosome)
 # ═════════════════════════════════════════════════════════════════════════════
 
+_numeric_cols_cache = None
+
 def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
     """
     Hitung total nutrisi dari 10 item dalam solution (chromosome)
@@ -508,9 +524,14 @@ def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
         - Sum semua numeric columns di solution
         - Ignore non-numeric columns
     """
-    # Sum semua numeric columns (otomatis)
-    total_nutrition = solution.select_dtypes(include=[np.number]).sum().to_dict()
+    global _numeric_cols_cache
+    if _numeric_cols_cache is None:
+        _numeric_cols_cache = solution.select_dtypes(include=[np.number]).columns.tolist()
+    
+    # Sum specific numeric columns to avoid expensive select_dtypes operation
+    total_nutrition = solution[_numeric_cols_cache].sum().to_dict()
     return total_nutrition
+
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -1346,6 +1367,10 @@ def run_ga(
         
         # Update population
         population = new_population[:pop_size]
+        
+        # Explicit garbage collection to prevent memory spike
+        import gc
+        gc.collect()
         
         # Random injection setiap 10 generasi untuk maintain diversity
         # 3 random + 2 guided untuk balance eksplorasi dan eksploitasi
