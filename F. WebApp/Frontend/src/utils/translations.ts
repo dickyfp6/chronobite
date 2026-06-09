@@ -1,5 +1,4 @@
-export const translations = {
-  en: {
+export const t = {
     nav: {
       darkMode: 'Dark',
       lightMode: 'Light',
@@ -171,5 +170,4 @@ export const translations = {
       fulfilled: 'Fulfilled',
       guideline: 'Guideline',
     },
-  },
 };

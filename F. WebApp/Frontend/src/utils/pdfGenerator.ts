@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { nutrientsList, getNutrientUnit } from './nutrientsList';
+import { t } from './translations';
 import logoWhite from '../assets/ChronoBite White.png';
 
 const loadImage = (src: string): Promise<HTMLImageElement> => {
@@ -33,7 +34,6 @@ interface PDFData {
   healthConditions: string[];
   dietTips: Record<string, string[]>;
   language: 'en' | 'id';
-  translations: any;
   analysisGuidelines?: any;
   charts?: {
     macro?: string | null;
@@ -220,7 +220,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
     setSans('bold');
     pdf.text('Health Conditions', margin, yPosition);
     setSerif('normal');
-    const conditions = data.healthConditions.map(c => data.translations.input.health[c] || c).join(', ') || 'Normal';
+    const conditions = data.healthConditions.map(c => (t.input.health as Record<string, string>)[c] || c).join(', ') || 'Normal';
     pdf.text(conditions, margin + 40, yPosition);
     yPosition += 6;
 
@@ -236,7 +236,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
   pdf.setTextColor(...primaryColor);
   pdf.setFontSize(16);
   setSerif('bold');
-  pdf.text(data.translations.report.tabs.menu, margin, yPosition);
+  pdf.text(t.report.tabs.menu, margin, yPosition);
   yPosition += 10;
 
   pdf.setTextColor(...textColor);
@@ -275,7 +275,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
   pdf.setTextColor(...primaryColor);
   pdf.setFontSize(16);
   setSerif('bold');
-  pdf.text(data.translations.results.nutritionSummary, margin, yPosition);
+  pdf.text(t.results.nutritionSummary, margin, yPosition);
   yPosition += 10;
 
   pdf.setTextColor(...textColor);
@@ -330,10 +330,10 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
   };
 
   const macros = [
-    { key: 'energy_kcal', name: data.translations.results.dailyCalories, actualVal: data.nutrients.calories, targetVal: data.dailyNeeds.calories, actual: `${formatVal(data.nutrients.calories)} kcal`, target: getNutrientTargetRange('energy_kcal', data.dailyNeeds.calories, 'kcal') },
-    { key: 'carbohydrate_g', name: data.translations.results.carbs, actualVal: data.nutrients.carbs, targetVal: data.dailyNeeds.carbs, actual: `${formatVal(data.nutrients.carbs)}g`, target: getNutrientTargetRange('carbohydrate_g', data.dailyNeeds.carbs, 'g') },
-    { key: 'protein_g', name: data.translations.results.protein, actualVal: data.nutrients.protein, targetVal: data.dailyNeeds.protein, actual: `${formatVal(data.nutrients.protein)}g`, target: getNutrientTargetRange('protein_g', data.dailyNeeds.protein, 'g') },
-    { key: 'fat_g', name: data.translations.results.fat, actualVal: data.nutrients.fat, targetVal: data.dailyNeeds.fat, actual: `${formatVal(data.nutrients.fat)}g`, target: getNutrientTargetRange('fat_g', data.dailyNeeds.fat, 'g') },
+    { key: 'energy_kcal', name: t.results.dailyCalories, actualVal: data.nutrients.calories, targetVal: data.dailyNeeds.calories, actual: `${formatVal(data.nutrients.calories)} kcal`, target: getNutrientTargetRange('energy_kcal', data.dailyNeeds.calories, 'kcal') },
+    { key: 'carbohydrate_g', name: t.results.carbs, actualVal: data.nutrients.carbs, targetVal: data.dailyNeeds.carbs, actual: `${formatVal(data.nutrients.carbs)}g`, target: getNutrientTargetRange('carbohydrate_g', data.dailyNeeds.carbs, 'g') },
+    { key: 'protein_g', name: t.results.protein, actualVal: data.nutrients.protein, targetVal: data.dailyNeeds.protein, actual: `${formatVal(data.nutrients.protein)}g`, target: getNutrientTargetRange('protein_g', data.dailyNeeds.protein, 'g') },
+    { key: 'fat_g', name: t.results.fat, actualVal: data.nutrients.fat, targetVal: data.dailyNeeds.fat, actual: `${formatVal(data.nutrients.fat)}g`, target: getNutrientTargetRange('fat_g', data.dailyNeeds.fat, 'g') },
   ];
 
   macros.forEach((macro) => {
@@ -392,7 +392,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
     hardConstraints.forEach((nutrientKey) => {
       const rule = data.analysisGuidelines.nutrients[nutrientKey];
       const unit = rule.unit || getNutrientUnit(nutrientKey as any);
-      const name = data.translations.nutrients[nutrientKey] || nutrientKey;
+      const name = (t.nutrients as Record<string, string>)[nutrientKey] || nutrientKey;
       
       const actualVal = data.nutrients?.[nutrientKey] != null
         ? Math.round(Number(data.nutrients[nutrientKey]))
@@ -487,7 +487,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
     group.nutrients.forEach((nutrientKey: string) => {
       const value = data.dailyNeeds[nutrientKey];
       const unit = getNutrientUnit(nutrientKey as any);
-      const name = data.translations.nutrients[nutrientKey] || nutrientKey;
+      const name = (t.nutrients as Record<string, string>)[nutrientKey] || nutrientKey;
       
       const actual = data.nutrients?.[nutrientKey] != null 
         ? Math.round(Number(data.nutrients[nutrientKey])) 
@@ -522,7 +522,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
     pdf.setTextColor(...primaryColor);
     pdf.setFontSize(16);
     setSerif('bold');
-    pdf.text(data.translations.report.tabs.nutrition || "Nutrition Analysis", margin, yPosition);
+    pdf.text(t.report.tabs.nutrition || "Nutrition Analysis", margin, yPosition);
     yPosition += 10;
 
     const chartWidth = pageWidth - 2 * margin;
@@ -556,7 +556,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
     pdf.setTextColor(...primaryColor);
     pdf.setFontSize(16);
     setSerif('bold');
-    pdf.text(data.translations.report.tabs.tips, margin, yPosition);
+    pdf.text(t.report.tabs.tips, margin, yPosition);
     yPosition += 10;
 
     pdf.setTextColor(...textColor);
@@ -567,7 +567,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
         checkNewPage(20);
         pdf.setFontSize(12);
         setSans('bold');
-        pdf.text(data.translations.input.health[condition], margin, yPosition);
+        pdf.text((t.input.health as Record<string, string>)[condition], margin, yPosition);
         yPosition += 6;
 
         setSans('normal');

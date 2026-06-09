@@ -1,5 +1,7 @@
 // Daftar lengkap 34 nutriens dalam urutan yang benar
 // Carbohydrate, Protein, Fat di 3 teratas
+import { t } from './translations';
+
 export const nutrientsList = [
   'carbohydrate_g',
   'protein_g',
@@ -48,6 +50,6 @@ export function getNutrientUnit(nutrientKey: NutrientKey): string {
 }
 
 // Helper function untuk get nutrient display name
-export function getNutrientDisplayName(nutrientKey: NutrientKey, translations: any): string {
-  return translations.nutrients[nutrientKey] || nutrientKey;
+export function getNutrientDisplayName(nutrientKey: NutrientKey): string {
+  return (t.nutrients as Record<string, string>)[nutrientKey] || nutrientKey;
 }
