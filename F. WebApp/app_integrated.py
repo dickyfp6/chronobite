@@ -717,13 +717,13 @@ def generate_menu():
                 result_container["error"] = f"Thread exception: {str(e)}\n{traceback.format_exc()}"
                 result_container["error_code"] = 500
                 
-        # Start and join thread with 60 seconds timeout
+        # Start and join thread with 115 seconds timeout
         opt_thread = threading.Thread(target=run_optimization)
         opt_thread.start()
-        opt_thread.join(timeout=60.0)
+        opt_thread.join(timeout=115.0)
         
         if opt_thread.is_alive():
-            print("[TIMEOUT] /api/generate-menu timed out after 60 seconds")
+            print("[TIMEOUT] /api/generate-menu timed out after 115 seconds")
             return jsonify({
                 "success": False,
                 "error": "Menu generation request timed out. Please try again or use a faster algorithm."
