@@ -1233,8 +1233,8 @@ def run_ga(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    generations: int = 84,
-    pop_size: int = 46,
+    generations: int = 143,
+    pop_size: int = 48,
     elite_ratio: float = 0.25,
     mutation_rate: float = 0.3,
     verbose: bool = True
@@ -1490,7 +1490,7 @@ def local_search(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    iterations: int = 38,
+    iterations: int = 27,
     verbose: bool = False
 ) -> pd.DataFrame:
     """

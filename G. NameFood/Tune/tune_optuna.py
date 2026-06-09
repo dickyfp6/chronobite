@@ -1,8 +1,10 @@
+
 import sys
 import os
 import time
 import pandas as pd
 import numpy as np
+# pyrefly: ignore [missing-import]
 import optuna
 
 # Setup paths
@@ -61,7 +63,7 @@ TIME_LIMIT = 45.0
 
 def objective(trial):
     # Suggest values using Bayesian optimization (step of 1)
-    pop_size = trial.suggest_int('pop_size', 30, 100)
+    pop_size = trial.suggest_int('pop_size', 25, 100)
     generations = trial.suggest_int('generations', 50, 150)
     ls_iterations = trial.suggest_int('ls_iterations', 20, 50)
     
