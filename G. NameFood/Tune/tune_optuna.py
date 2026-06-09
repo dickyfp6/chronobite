@@ -148,7 +148,7 @@ def save_results_callback(study, trial):
     cols_to_keep = [c for c in cols_to_keep if c in df.columns]
     
     df_filtered = df[cols_to_keep]
-    df_filtered.to_csv(os.path.join(current_dir, "optuna_tuning_results.csv"), index=False)
+    df_filtered.to_csv(os.path.join(current_dir, "optuna_kaggle.csv"), index=False)
 
 def main():
     print("========================================")
@@ -177,7 +177,7 @@ def main():
     print(f"  ls_iterations: {best_trial.params['ls_iterations']}")
     print(f"  Fitness: {best_trial.user_attrs['actual_fitness']:.2f}")
     print(f"  Execution Time: {best_trial.user_attrs['avg_time_sec']:.2f}s")
-    print(f"\nAll results saved to: {os.path.join(current_dir, 'optuna_tuning_results.csv')}")
+    print(f"\nAll results saved to: {os.path.join(current_dir, 'optuna_kaggle.csv')}")
 
 if __name__ == '__main__':
     main()
