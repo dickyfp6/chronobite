@@ -1276,7 +1276,7 @@ def run_ga(
         population.append(solution)
     
     if verbose:
-        print(f"   ✓ Generated {len(population)} initial solutions")
+        print(f"   [OK] Generated {len(population)} initial solutions")
         print(f"   - Guided (toward macro): {max(1, pop_size // 2)} solutions")
         print(f"   - Random (diversity): {pop_size - max(1, pop_size // 2)} solutions\n")
     
@@ -1556,7 +1556,7 @@ def local_search(
         # Jika tidak ada violation, stop
         if len(hard_violations) == 0:
             if verbose:
-                print(f"\n[ITER {iteration}] ✓ All HARD constraints OK! Total deviation: 0.0")
+                print(f"\n[ITER {iteration}] [OK] All HARD constraints OK! Total deviation: 0.0")
             break
         
         # ════════════════════════════════════════════════════════════════

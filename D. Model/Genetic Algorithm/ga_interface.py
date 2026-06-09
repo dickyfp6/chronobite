@@ -244,7 +244,7 @@ class GeneticAlgorithmInterface:
                 pop_size=100,       # Naik dari 50 untuk diversity lebih baik
                 elite_ratio=0.15,   # Turun dari 0.25 → kurangi elite dominance
                 mutation_rate=0.35, # Sedikit naik untuk eksplorasi lebih baik
-                verbose=False
+                verbose=True
             )
             
             if best_solution is None or len(best_solution) < 10:
