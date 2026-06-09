@@ -147,7 +147,7 @@ export function Landing({ onStart }: { onStart: () => void }) {
                       {slide.badge}
                     </span>
                     
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight font-serif tracking-tight md:min-h-[160px] flex items-center">
+                    <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight font-serif tracking-tight md:min-h-[130px] flex items-center">
                       {slideContent.title}
                     </h1>
                     

@@ -324,8 +324,9 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                 )}
 
                 {step === 1 && (
-                  <div className="w-full">
-                    <div className="w-full space-y-12">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
+                    {/* Left Column: Sliders */}
+                    <div className="lg:col-span-8 space-y-10 w-full">
                       {/* Age Slider */}
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
@@ -538,13 +539,15 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
                           }}
                         />
                       </div>
+                    </div>
 
-                      {/* BMI Visual Indicator */}
+                    {/* Right Column: BMI Visual Indicator */}
+                    <div className="lg:col-span-4 w-full flex flex-col justify-center h-full">
                       {data.weight > 0 && data.height > 0 && (
                         <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="mt-6 p-6 rounded-2xl text-center border"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="p-6 sm:p-8 rounded-2xl text-center border flex flex-col justify-center min-h-[180px] lg:min-h-[260px] w-full"
                           style={{
                             borderColor: (() => {
                               const bmi = data.weight / ((data.height / 100) ** 2);

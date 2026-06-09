@@ -1454,7 +1454,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
                   onClick={() => {
                     const link = document.createElement('a');
                     link.href = previewUrl;
-                    link.download = `NutriPlan_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+                    link.download = `ChronoBite_Report_${new Date().toISOString().split('T')[0]}.pdf`;
                     link.click();
                   }}
                   className="px-6 py-2.5 text-sm font-semibold bg-primary text-white hover:bg-primary-hover dark:bg-emerald-600 dark:hover:bg-emerald-500 rounded-xl shadow-lg cursor-pointer transition-colors flex items-center gap-2"
