@@ -9,7 +9,8 @@
     "**/__pycache__"
   ],
   "ignore": [
-    ".venv/**"
+    ".venv/**",
+    "c:\\__pyrefly_virtual__\\**"
   ],
   "pythonPath": ".",
   "useLibraryCodeForTypes": false,
