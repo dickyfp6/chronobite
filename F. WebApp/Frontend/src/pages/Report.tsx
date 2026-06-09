@@ -5,7 +5,7 @@ import { t } from '../utils/translations';
 import type { UserInputData } from './InputWizard';
 import { calculateDailyNeeds } from '../utils/healthCalculations';
 import { NutritionChart } from '../components/figma/NutritionChart';
-import { getNutrientUnit } from '../utils/nutrientsList';
+import { getNutrientUnit, formatNutrient } from '../utils/nutrientsList';
 import { generateNutritionPDF, preFetchFonts } from '../utils/pdfGenerator';
 import html2canvas from 'html2canvas';
 
@@ -330,31 +330,22 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  }
  } else {
  // It's a Micronutrient Constraint! (e.g. fiber_g, zinc_mg, sodium_mg)
- const friendlyName = t.nutrients[key as keyof typeof t.nutrients] || key.split('_')[0].toUpperCase();
- 
- let unit = rule.unit || 'mg';
- const keyLower = key.toLowerCase();
- const isMicro = keyLower.includes('b12') || keyLower.includes('mcg') || keyLower.includes('ug') || keyLower.includes('μg');
- if (isMicro) {
- unit = 'mcg';
- }
+  const friendlyName = t.nutrients[key as keyof typeof t.nutrients] || key.split('_')[0].toUpperCase();
+  
+  const formattedActual = formatNutrient(key, actualNutrients?.[key] || 0);
+  const formattedMin = rule.min != null ? formatNutrient(key, rule.min) : null;
+  const formattedMax = rule.max != null ? formatNutrient(key, rule.max) : null;
 
- const scaleAndRound = (val: any) => {
- if (val === null || val === undefined || typeof val !== 'number' || !Number.isFinite(val)) return val;
- const factor = isMicro ? 1000 : 1;
- return Math.round(val * factor * 10) / 10;
- };
-
- const dataPoint = {
- nutrient: friendlyName,
- actual: scaleAndRound(actualNutrients?.[key] || 0),
- min: rule.min != null ? scaleAndRound(rule.min) : 0,
- max: rule.max != null ? scaleAndRound(rule.max) : Infinity,
- diseases: rule.diseases || [],
- basis: rule.basis || '1',
- source: rule.source || 'guideline',
- unit: unit
- };
+  const dataPoint = {
+    nutrient: friendlyName,
+    actual: formattedActual.val,
+    min: formattedMin ? formattedMin.val : 0,
+    max: formattedMax ? formattedMax.val : Infinity,
+    diseases: rule.diseases || [],
+    basis: rule.basis || '1',
+    source: rule.source || 'guideline',
+    unit: formattedActual.unit
+  };
 
  // Separate into Macro (g) or Micro (mg/mcg)
  if (key.endsWith('_g')) {
@@ -386,14 +377,24 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  const warnings: { message: string; type: 'deficient' | 'excessive'; nutrient: string }[] = [];
 
  const checkNutrient = (key: string, name: string, actualValue: number, minVal: number | null, maxVal: number | null, unit: string) => {
-    if (minVal !== null && actualValue < minVal) {
-      const diff = Math.round(minVal - actualValue);
-      const msg = `${name}: ↓ ${diff}${unit}`;
-      warnings.push({ message: msg, type: 'deficient', nutrient: key });
-    } else if (maxVal !== null && maxVal !== Infinity && actualValue > maxVal) {
-      const diff = Math.round(actualValue - maxVal);
-      const msg = `${name}: ↑ ${diff}${unit}`;
-      warnings.push({ message: msg, type: 'excessive', nutrient: key });
+    const formattedActual = formatNutrient(key, actualValue);
+    const formattedMin = minVal !== null ? formatNutrient(key, minVal) : null;
+    const formattedMax = maxVal !== null && maxVal !== Infinity ? formatNutrient(key, maxVal) : null;
+
+    if (formattedMin !== null && formattedActual.val < formattedMin.val) {
+      const rawDiff = minVal - actualValue;
+      const formattedDiff = formatNutrient(key, rawDiff);
+      if (formattedDiff.val > 0 && parseFloat(formattedDiff.formatted) > 0) {
+        const msg = `${name}: ↓ ${formattedDiff.formatted}${formattedDiff.unit}`;
+        warnings.push({ message: msg, type: 'deficient', nutrient: key });
+      }
+    } else if (formattedMax !== null && formattedActual.val > formattedMax.val) {
+      const rawDiff = actualValue - maxVal;
+      const formattedDiff = formatNutrient(key, rawDiff);
+      if (formattedDiff.val > 0 && parseFloat(formattedDiff.formatted) > 0) {
+        const msg = `${name}: ↑ ${formattedDiff.formatted}${formattedDiff.unit}`;
+        warnings.push({ message: msg, type: 'excessive', nutrient: key });
+      }
     }
   };
 
@@ -722,24 +723,25 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  const unit = rule.unit || getNutrientUnit(key as any);
  
  let rangeText = '';
- const minVal = rule.min != null ? Math.round(rule.min) : null;
- const maxVal = rule.max != null && Number.isFinite(rule.max) ? Math.round(rule.max) : null;
- 
- if (minVal !== null && maxVal !== null) {
- if (minVal === maxVal) {
- rangeText = `± ${minVal} ${unit}`;
- } else {
- rangeText = `${minVal}-${maxVal} ${unit}`;
- }
- } else if (minVal !== null) {
- rangeText = `min. ${minVal} ${unit}`;
- } else if (maxVal !== null) {
- rangeText = `max. ${maxVal} ${unit}`;
- } else {
- rangeText = 'No limits';
- }
+  const formattedMin = rule.min != null ? formatNutrient(key, rule.min) : null;
+  const formattedMax = rule.max != null && Number.isFinite(rule.max) ? formatNutrient(key, rule.max) : null;
+  const displayUnit = formattedMin ? formattedMin.unit : formattedMax ? formattedMax.unit : unit;
 
- let cardStyle = '';
+  if (formattedMin && formattedMax) {
+    if (formattedMin.val === formattedMax.val) {
+      rangeText = `± ${formattedMin.formatted} ${displayUnit}`;
+    } else {
+      rangeText = `${formattedMin.formatted}-${formattedMax.formatted} ${displayUnit}`;
+    }
+  } else if (formattedMin) {
+    rangeText = `min. ${formattedMin.formatted} ${displayUnit}`;
+  } else if (formattedMax) {
+    rangeText = `max. ${formattedMax.formatted} ${displayUnit}`;
+  } else {
+    rangeText = 'No limits';
+  }
+  
+  let cardStyle = '';
  let titleColor = '';
  let rangeColor = '';
 
@@ -1154,145 +1156,152 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
 
  {(() => {
  const getNutrientCardData = (nutrientKey: string) => {
- const rule = analysisGuidelines?.nutrients?.[nutrientKey];
- const unit = getNutrientUnit(nutrientKey as any);
- const name = t.nutrients[nutrientKey as keyof typeof t.nutrients] || nutrientKey.split('_')[0].toUpperCase();
- 
- // Get actual value
- const staticVal = Number(dailyNeeds[nutrientKey as keyof typeof dailyNeeds]) || 0;
- let actual = actualNutrients && actualNutrients[nutrientKey] !== undefined
- ? Math.round(actualNutrients[nutrientKey])
- : Math.round(staticVal * (0.7 + Math.random() * 0.4));
+  const rule = analysisGuidelines?.nutrients?.[nutrientKey];
+  
+  // Get actual value
+  const staticVal = Number(dailyNeeds[nutrientKey as keyof typeof dailyNeeds]) || 0;
+  const rawActual = actualNutrients && actualNutrients[nutrientKey] !== undefined
+    ? actualNutrients[nutrientKey]
+    : staticVal * (0.7 + Math.random() * 0.4);
 
- let targetValText = '';
- let percentage = 0;
- let isDeficient = false;
- let isExcessive = false;
+  const formattedActual = formatNutrient(nutrientKey, rawActual);
+  const unit = formattedActual.unit;
+  const actual = formattedActual.val;
+  const name = t.nutrients[nutrientKey as keyof typeof t.nutrients] || nutrientKey.split('_')[0].toUpperCase();
 
- if (nutrientKey === 'water_g') {
- const minGram = Math.round(waterTargetLiters.min * 1000);
- const maxGram = Math.round(waterTargetLiters.max * 1000);
- 
- targetValText = `${minGram}-${maxGram}`;
- percentage = maxGram > 0 ? Math.round((actual / maxGram) * 100) : 100;
- 
- if (actual < minGram) {
- isDeficient = true;
- } else if (actual > maxGram) {
- isExcessive = true;
- }
- } else if (rule) {
- const minVal = rule.min != null ? Number(rule.min) : null;
- const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
+  let targetValText = '';
+  let percentage = 0;
+  let isDeficient = false;
+  let isExcessive = false;
 
- // 1. Format Target Text
- if (minVal !== null && maxVal !== null) {
- if (minVal === maxVal) {
- targetValText = `${Math.round(minVal)}`;
- } else {
- targetValText = `${Math.round(minVal)}-${Math.round(maxVal)}`;
- }
- } else if (minVal !== null) {
- targetValText = `min. ${Math.round(minVal)}`;
- } else if (maxVal !== null) {
- targetValText = `max. ${Math.round(maxVal)}`;
- } else {
- targetValText = 'No limit';
- }
+  if (nutrientKey === 'water_g') {
+    const minGram = Math.round(waterTargetLiters.min * 1000);
+    const maxGram = Math.round(waterTargetLiters.max * 1000);
+    
+    targetValText = `${minGram}-${maxGram}`;
+    percentage = maxGram > 0 ? Math.round((rawActual / maxGram) * 100) : 100;
+    
+    if (rawActual < minGram) {
+      isDeficient = true;
+    } else if (rawActual > maxGram) {
+      isExcessive = true;
+    }
+  } else if (rule) {
+    const minVal = rule.min != null ? Number(rule.min) : null;
+    const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
 
- // 2. Status & Percentage
- if (minVal !== null && maxVal !== null) {
- if (actual < minVal) {
- isDeficient = true;
- percentage = minVal > 0 ? Math.round((actual / minVal) * 100) : 100;
- } else if (actual > maxVal) {
- isExcessive = true;
- percentage = maxVal > 0 ? Math.round((actual / maxVal) * 100) : 100;
- } else {
- percentage = minVal > 0 ? Math.round((actual / minVal) * 100) : 100;
- }
- } else if (minVal !== null) {
- if (actual < minVal) {
- isDeficient = true;
- }
- percentage = minVal > 0 ? Math.round((actual / minVal) * 100) : 100;
- } else if (maxVal !== null) {
- if (actual > maxVal) {
- isExcessive = true;
- }
- percentage = maxVal > 0 ? Math.round((actual / maxVal) * 100) : 100;
- } else {
- percentage = 100;
- }
- } else {
- targetValText = `${staticVal}`;
- percentage = staticVal > 0 ? Math.round((actual / staticVal) * 100) : 100;
+    const formattedMin = minVal !== null ? formatNutrient(nutrientKey, minVal) : null;
+    const formattedMax = maxVal !== null ? formatNutrient(nutrientKey, maxVal) : null;
 
- const isLimitNutrient = [
- 'sodium_mg',
- 'cholesterol_mg',
- 'sugar_g',
- 'saturated_fat_g',
- 'trans_fat_g'
-].includes(nutrientKey);
+    // 1. Format Target Text
+    if (formattedMin && formattedMax) {
+      if (formattedMin.val === formattedMax.val) {
+        targetValText = `${formattedMin.formatted}`;
+      } else {
+        targetValText = `${formattedMin.formatted}-${formattedMax.formatted}`;
+      }
+    } else if (formattedMin) {
+      targetValText = `min. ${formattedMin.formatted}`;
+    } else if (formattedMax) {
+      targetValText = `max. ${formattedMax.formatted}`;
+    } else {
+      targetValText = 'No limit';
+    }
 
- if (isLimitNutrient) {
- if (actual > staticVal) {
- isExcessive = true;
- }
- } else {
- if (percentage < 100) {
- isDeficient = true;
- } else if (percentage > 200) {
- isExcessive = true;
- }
- }
- }
+    // 2. Status & Percentage
+    if (minVal !== null && maxVal !== null) {
+      if (actual < formattedMin!.val) {
+        isDeficient = true;
+        percentage = formattedMin!.val > 0 ? Math.round((actual / formattedMin!.val) * 100) : 100;
+      } else if (actual > formattedMax!.val) {
+        isExcessive = true;
+        percentage = formattedMax!.val > 0 ? Math.round((actual / formattedMax!.val) * 100) : 100;
+      } else {
+        percentage = formattedMin!.val > 0 ? Math.round((actual / formattedMin!.val) * 100) : 100;
+      }
+    } else if (minVal !== null) {
+      if (actual < formattedMin!.val) {
+        isDeficient = true;
+      }
+      percentage = formattedMin!.val > 0 ? Math.round((actual / formattedMin!.val) * 100) : 100;
+    } else if (maxVal !== null) {
+      if (actual > formattedMax!.val) {
+        isExcessive = true;
+      }
+      percentage = formattedMax!.val > 0 ? Math.round((actual / formattedMax!.val) * 100) : 100;
+    } else {
+      percentage = 100;
+    }
+  } else {
+    const formattedStatic = formatNutrient(nutrientKey, staticVal);
+    targetValText = `${formattedStatic.formatted}`;
+    percentage = formattedStatic.val > 0 ? Math.round((actual / formattedStatic.val) * 100) : 100;
 
- let statusLabel = 'Optimal';
- let showBadge = true;
- let cardBg = 'bg-green-50/90 border-green-300 ';
- let badgeBg = 'bg-green-100 text-green-700 ';
- let textColor = 'text-green-700 ';
- let titleColor = 'text-green-900 ';
- let priority = 3;
+    const isLimitNutrient = [
+      'sodium_mg',
+      'cholesterol_mg',
+      'sugar_g',
+      'saturated_fat_g',
+      'trans_fat_g'
+    ].includes(nutrientKey);
 
- if (isDeficient) {
- statusLabel = 'Deficient';
- showBadge = true;
- priority = 1;
- cardBg = 'bg-red-50/90 border-red-300 ';
- badgeBg = 'bg-red-100 text-red-700 ';
- textColor = 'text-red-700 ';
- titleColor = 'text-red-900 ';
- } else if (isExcessive) {
- statusLabel = 'Excessive';
- showBadge = true;
- priority = 2;
- cardBg = 'bg-amber-50/90 border-amber-300 ';
- badgeBg = 'bg-amber-100 text-amber-700 ';
- textColor = 'text-amber-700 ';
- titleColor = 'text-amber-900 ';
- }
+    if (isLimitNutrient) {
+      if (actual > formattedStatic.val) {
+        isExcessive = true;
+      }
+    } else {
+      if (percentage < 100) {
+        isDeficient = true;
+      } else if (percentage > 200) {
+        isExcessive = true;
+      }
+    }
+  }
 
- return {
- nutrientKey,
- name,
- actual,
- unit,
- targetValText,
- percentage,
- status: {
- label: statusLabel,
- showBadge,
- priority,
- cardBg,
- badgeBg,
- textColor,
- titleColor
- }
- };
- };
+  let statusLabel = 'Optimal';
+  let showBadge = true;
+  let cardBg = 'bg-green-50/90 border-green-300 ';
+  let badgeBg = 'bg-green-100 text-green-700 ';
+  let textColor = 'text-green-700 ';
+  let titleColor = 'text-green-900 ';
+  let priority = 3;
+
+  if (isDeficient) {
+    statusLabel = 'Deficient';
+    showBadge = true;
+    priority = 1;
+    cardBg = 'bg-red-50/90 border-red-350 ';
+    badgeBg = 'bg-red-105 text-red-700 ';
+    textColor = 'text-red-700 ';
+    titleColor = 'text-red-900 ';
+  } else if (isExcessive) {
+    statusLabel = 'Excessive';
+    showBadge = true;
+    priority = 2;
+    cardBg = 'bg-amber-50/90 border-amber-300 ';
+    badgeBg = 'bg-amber-100 text-amber-700 ';
+    textColor = 'text-amber-700 ';
+    titleColor = 'text-amber-900 ';
+  }
+
+  return {
+    nutrientKey,
+    name,
+    actual,
+    unit,
+    targetValText,
+    percentage,
+    status: {
+      label: statusLabel,
+      showBadge,
+      priority,
+      cardBg,
+      badgeBg,
+      textColor,
+      titleColor
+    }
+  };
+};
 
  return (
  <>

@@ -4,6 +4,7 @@ import { ArrowRight, ArrowLeft, HeartPulse, Scale, FileText, Loader2, ChevronDow
 import type { UserInputData } from './InputWizard';
 import { calculateDailyNeeds } from '../utils/healthCalculations';
 import { api } from '../services/api';
+import { formatNutrient } from '../utils/nutrientsList';
 
 interface ProfileSummaryProps {
  userData: UserInputData;
@@ -149,50 +150,45 @@ function getGuidelineItems(guidelines: any): GuidelineItem[] {
  }));
 }
 
-function formatGuidelineBound(value: number | string | null | undefined) {
- if (value === null || value === undefined) {
- return 'No limit';
- }
- if (typeof value === 'number' && !Number.isFinite(value)) {
- return 'No limit';
- }
- // Format angka dengan 2 decimal places jika perlu, otherwise integer
- if (typeof value === 'number') {
- return value % 1 === 0 ? value.toString() : value.toFixed(2);
- }
- return value;
-}
-
 function formatGuidelineDisplay(item: GuidelineItem) {
- const minText = formatGuidelineBound(item.min);
- const maxText = formatGuidelineBound(item.max);
+  const formattedMin = item.min !== null && item.min !== undefined && typeof item.min === 'number'
+    ? formatNutrient(item.key, item.min)
+    : null;
+  const formattedMax = item.max !== null && item.max !== undefined && typeof item.max === 'number'
+    ? formatNutrient(item.key, item.max)
+    : null;
 
- if (item.min !== null && item.max !== null) {
- const minNumeric = typeof item.min === 'number' ? item.min : Number(item.min);
- const maxNumeric = typeof item.max === 'number' ? item.max : Number(item.max);
+  const displayUnit = formattedMin ? formattedMin.unit : formattedMax ? formattedMax.unit : item.unit;
 
- // Exact value (min === max)
- if (Number.isFinite(minNumeric) && Number.isFinite(maxNumeric) && minNumeric === maxNumeric) {
- return `± ${minText} ${item.unit}`.trim();
- }
+  const minText = formattedMin ? formattedMin.formatted : (item.min !== null && item.min !== undefined ? String(item.min) : 'No limit');
+  const maxText = formattedMax ? formattedMax.formatted : (item.max !== null && item.max !== undefined ? String(item.max) : 'No limit');
 
- // Both min and max are finite (range)
- if (Number.isFinite(minNumeric) && Number.isFinite(maxNumeric)) {
- return `${minText}-${maxText} ${item.unit}`.trim();
- }
- }
+  if (item.min !== null && item.max !== null) {
+    const minNumeric = typeof item.min === 'number' ? item.min : Number(item.min);
+    const maxNumeric = typeof item.max === 'number' ? item.max : Number(item.max);
 
- // Only max is unlimited (min only)
- if (maxText === 'No limit' && minText !== 'No limit') {
- return `min. ${minText} ${item.unit}`.trim();
- }
+    // Exact value (min === max)
+    if (Number.isFinite(minNumeric) && Number.isFinite(maxNumeric) && minNumeric === maxNumeric) {
+      return `± ${minText} ${displayUnit}`.trim();
+    }
 
- // Only min is unlimited (max only - rare case)
- if (minText === 'No limit' && maxText !== 'No limit') {
- return `max. ${maxText} ${item.unit}`.trim();
- }
+    // Both min and max are finite (range)
+    if (Number.isFinite(minNumeric) && Number.isFinite(maxNumeric)) {
+      return `${minText}-${maxText} ${displayUnit}`.trim();
+    }
+  }
 
- return `${minText}-${maxText} ${item.unit}`.trim();
+  // Only max is unlimited (min only)
+  if ((item.max === null || item.max === undefined || (typeof item.max === 'number' && !Number.isFinite(item.max))) && item.min !== null && item.min !== undefined) {
+    return `min. ${minText} ${displayUnit}`.trim();
+  }
+
+  // Only min is unlimited (max only)
+  if ((item.min === null || item.min === undefined) && item.max !== null && item.max !== undefined) {
+    return `max. ${maxText} ${displayUnit}`.trim();
+  }
+
+  return `${minText}-${maxText} ${displayUnit}`.trim();
 }
 
 // Fallback logic representing Python's DISEASE_MACROS logic if API fails

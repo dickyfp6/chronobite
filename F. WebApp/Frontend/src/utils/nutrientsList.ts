@@ -53,3 +53,66 @@ export function getNutrientUnit(nutrientKey: NutrientKey): string {
 export function getNutrientDisplayName(nutrientKey: NutrientKey): string {
   return (t.nutrients as Record<string, string>)[nutrientKey] || nutrientKey;
 }
+
+export interface NutrientDisplay {
+  val: number;
+  formatted: string;
+  unit: string;
+}
+
+export function formatNutrient(key: string, rawVal: number | null | undefined): NutrientDisplay {
+  if (rawVal === null || rawVal === undefined) {
+    return { val: 0, formatted: '0', unit: '' };
+  }
+
+  const keyLower = key.toLowerCase();
+  let unit = '';
+  let scaleFactor = 1;
+  let decimals = 1;
+
+  if (keyLower.endsWith('_g')) {
+    unit = 'g';
+    decimals = rawVal >= 100 ? 0 : 1;
+  } else if (keyLower.endsWith('_mg')) {
+    unit = 'mg';
+    if (keyLower.includes('b12')) {
+      unit = 'mcg';
+      scaleFactor = 1000;
+      decimals = 1;
+    } else if (
+      keyLower.includes('vitamin_a') ||
+      keyLower.includes('folate') ||
+      keyLower.includes('selenium') ||
+      keyLower.includes('vitamin_k')
+    ) {
+      unit = 'mcg';
+      scaleFactor = 1000;
+      decimals = 0;
+    } else if (keyLower.includes('vitamin_d')) {
+      unit = 'mcg';
+      scaleFactor = 1;
+      decimals = 0;
+    } else {
+      if (rawVal < 1) {
+        decimals = 2;
+      } else if (rawVal < 10) {
+        decimals = 1;
+      } else {
+        decimals = 0;
+      }
+    }
+  } else if (keyLower === 'energy_kcal') {
+    unit = 'kcal';
+    decimals = 0;
+  }
+
+  const val = rawVal * scaleFactor;
+  const formatted = val.toFixed(decimals);
+  
+  return {
+    val: Math.round(val * 100) / 100,
+    formatted,
+    unit
+  };
+}
+
