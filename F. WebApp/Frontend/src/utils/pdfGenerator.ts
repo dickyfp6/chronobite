@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { nutrientsList, getNutrientUnit } from './nutrientsList';
+import { nutrientsList, getNutrientUnit, formatNutrient } from './nutrientsList';
 import { t } from './translations';
 import logoWhite from '../assets/ChronoBite White.png';
 
@@ -292,17 +292,22 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
   const getNutrientTargetRange = (key: string, fallbackTarget: number, unit: string) => {
     const rule = data.analysisGuidelines?.nutrients?.[key];
     if (rule) {
-      const minVal = rule.min != null ? Math.round(rule.min) : null;
-      const maxVal = rule.max != null && Number.isFinite(rule.max) ? Math.round(rule.max) : null;
+      const minVal = rule.min != null ? Number(rule.min) : null;
+      const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
       
-      if (minVal !== null && maxVal !== null) {
-        if (minVal === maxVal) return `± ${minVal} ${unit}`;
-        return `${minVal}-${maxVal} ${unit}`;
+      const formattedMin = minVal !== null ? formatNutrient(key, minVal) : null;
+      const formattedMax = maxVal !== null ? formatNutrient(key, maxVal) : null;
+      const displayUnit = formattedMin ? formattedMin.unit : formattedMax ? formattedMax.unit : unit;
+
+      if (formattedMin && formattedMax) {
+        if (formattedMin.val === formattedMax.val) return `± ${formattedMin.formatted} ${displayUnit}`;
+        return `${formattedMin.formatted}-${formattedMax.formatted} ${displayUnit}`;
       }
-      if (minVal !== null) return `min. ${minVal} ${unit}`;
-      if (maxVal !== null) return `max. ${maxVal} ${unit}`;
+      if (formattedMin) return `min. ${formattedMin.formatted} ${displayUnit}`;
+      if (formattedMax) return `max. ${formattedMax.formatted} ${displayUnit}`;
     }
-    return `${Math.round(fallbackTarget)} ${unit}`;
+    const formattedFallback = formatNutrient(key, fallbackTarget);
+    return `${formattedFallback.formatted} ${formattedFallback.unit}`;
   };
 
   const isMacroFulfilled = (key: string, actual: number, fallbackTarget: number) => {
@@ -329,11 +334,16 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
     return actual >= target;
   };
 
+  const getFormattedActualMacro = (key: string, rawVal: any) => {
+    const f = formatNutrient(key, rawVal);
+    return `${f.formatted} ${f.unit}`;
+  };
+
   const macros = [
-    { key: 'energy_kcal', name: t.results.dailyCalories, actualVal: data.nutrients.calories, targetVal: data.dailyNeeds.calories, actual: `${formatVal(data.nutrients.calories)} kcal`, target: getNutrientTargetRange('energy_kcal', data.dailyNeeds.calories, 'kcal') },
-    { key: 'carbohydrate_g', name: t.results.carbs, actualVal: data.nutrients.carbs, targetVal: data.dailyNeeds.carbs, actual: `${formatVal(data.nutrients.carbs)}g`, target: getNutrientTargetRange('carbohydrate_g', data.dailyNeeds.carbs, 'g') },
-    { key: 'protein_g', name: t.results.protein, actualVal: data.nutrients.protein, targetVal: data.dailyNeeds.protein, actual: `${formatVal(data.nutrients.protein)}g`, target: getNutrientTargetRange('protein_g', data.dailyNeeds.protein, 'g') },
-    { key: 'fat_g', name: t.results.fat, actualVal: data.nutrients.fat, targetVal: data.dailyNeeds.fat, actual: `${formatVal(data.nutrients.fat)}g`, target: getNutrientTargetRange('fat_g', data.dailyNeeds.fat, 'g') },
+    { key: 'energy_kcal', name: t.results.dailyCalories, actualVal: data.nutrients.calories, targetVal: data.dailyNeeds.calories, actual: getFormattedActualMacro('energy_kcal', data.nutrients.calories), target: getNutrientTargetRange('energy_kcal', data.dailyNeeds.calories, 'kcal') },
+    { key: 'carbohydrate_g', name: t.results.carbs, actualVal: data.nutrients.carbs, targetVal: data.dailyNeeds.carbs, actual: getFormattedActualMacro('carbohydrate_g', data.nutrients.carbs), target: getNutrientTargetRange('carbohydrate_g', data.dailyNeeds.carbs, 'g') },
+    { key: 'protein_g', name: t.results.protein, actualVal: data.nutrients.protein, targetVal: data.dailyNeeds.protein, actual: getFormattedActualMacro('protein_g', data.nutrients.protein), target: getNutrientTargetRange('protein_g', data.dailyNeeds.protein, 'g') },
+    { key: 'fat_g', name: t.results.fat, actualVal: data.nutrients.fat, targetVal: data.dailyNeeds.fat, actual: getFormattedActualMacro('fat_g', data.nutrients.fat), target: getNutrientTargetRange('fat_g', data.dailyNeeds.fat, 'g') },
   ];
 
   macros.forEach((macro) => {
@@ -394,24 +404,29 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
       const unit = rule.unit || getNutrientUnit(nutrientKey as any);
       const name = (t.nutrients as Record<string, string>)[nutrientKey] || nutrientKey;
       
-      const actualVal = data.nutrients?.[nutrientKey] != null
-        ? Math.round(Number(data.nutrients[nutrientKey]))
-        : Math.round(Number(data.dailyNeeds[nutrientKey]) * 0.9);
+      const rawActual = data.nutrients?.[nutrientKey] != null
+        ? Number(data.nutrients[nutrientKey])
+        : Number(data.dailyNeeds[nutrientKey]) * 0.9;
 
-      const minVal = rule.min != null ? Math.round(rule.min) : null;
-      const maxVal = rule.max != null && Number.isFinite(rule.max) ? Math.round(rule.max) : null;
+      const formattedActual = formatNutrient(nutrientKey, rawActual);
+      const minVal = rule.min != null ? Number(rule.min) : null;
+      const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
+      
+      const formattedMin = minVal !== null ? formatNutrient(nutrientKey, minVal) : null;
+      const formattedMax = maxVal !== null ? formatNutrient(nutrientKey, maxVal) : null;
+      const displayUnit = formattedMin ? formattedMin.unit : formattedMax ? formattedMax.unit : unit;
       
       let rangeText = '';
-      if (minVal !== null && maxVal !== null) {
-        if (minVal === maxVal) {
-          rangeText = `± ${minVal} ${unit}`;
+      if (formattedMin && formattedMax) {
+        if (formattedMin.val === formattedMax.val) {
+          rangeText = `± ${formattedMin.formatted} ${displayUnit}`;
         } else {
-          rangeText = `${minVal}-${maxVal} ${unit}`;
+          rangeText = `${formattedMin.formatted}-${formattedMax.formatted} ${displayUnit}`;
         }
-      } else if (minVal !== null) {
-        rangeText = `min. ${minVal} ${unit}`;
-      } else if (maxVal !== null) {
-        rangeText = `max. ${maxVal} ${unit}`;
+      } else if (formattedMin) {
+        rangeText = `min. ${formattedMin.formatted} ${displayUnit}`;
+      } else if (formattedMax) {
+        rangeText = `max. ${formattedMax.formatted} ${displayUnit}`;
       } else {
         rangeText = 'No limits';
       }
@@ -420,7 +435,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
       pdf.setTextColor(...textColor);
       pdf.text(`${name}`, margin + 3, yPosition);
       
-      const fulfilled = isHardConstraintFulfilled(rule, actualVal);
+      const fulfilled = isHardConstraintFulfilled(rule, rawActual);
       if (fulfilled) {
         setSans('bold');
         pdf.setTextColor(46, 125, 50);
@@ -428,7 +443,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
         setSans('normal');
         pdf.setTextColor(...textColor);
       }
-      pdf.text(`${actualVal}${unit}`, margin + 50, yPosition);
+      pdf.text(`${formattedActual.formatted}${formattedActual.unit}`, margin + 50, yPosition);
       
       setSans('normal');
       pdf.setTextColor(...textColor);
@@ -486,18 +501,20 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
 
     group.nutrients.forEach((nutrientKey: string) => {
       const value = data.dailyNeeds[nutrientKey];
-      const unit = getNutrientUnit(nutrientKey as any);
       const name = (t.nutrients as Record<string, string>)[nutrientKey] || nutrientKey;
       
-      const actual = data.nutrients?.[nutrientKey] != null 
-        ? Math.round(Number(data.nutrients[nutrientKey])) 
-        : Math.round(Number(value) * (0.7 + Math.random() * 0.4));
+      const rawActual = data.nutrients?.[nutrientKey] != null 
+        ? Number(data.nutrients[nutrientKey]) 
+        : Number(value) * (0.7 + Math.random() * 0.4);
+
+      const formattedActual = formatNutrient(nutrientKey, rawActual);
+      const formattedTarget = formatNutrient(nutrientKey, value);
 
       checkNewPage(6);
       pdf.setTextColor(...textColor);
       pdf.text(`${name}`, margin + 3, yPosition);
       
-      const fulfilled = isOtherNutrientFulfilled(actual, Number(value));
+      const fulfilled = isOtherNutrientFulfilled(formattedActual.val, formattedTarget.val);
       if (fulfilled) {
         setSans('bold');
         pdf.setTextColor(46, 125, 50);
@@ -505,11 +522,11 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
         setSans('normal');
         pdf.setTextColor(...textColor);
       }
-      pdf.text(`${actual}${unit}`, margin + 50, yPosition);
+      pdf.text(`${formattedActual.formatted}${formattedActual.unit}`, margin + 50, yPosition);
       
       setSans('normal');
       pdf.setTextColor(...textColor);
-      pdf.text(`${value}${unit}`, margin + 75, yPosition);
+      pdf.text(`${formattedTarget.formatted}${formattedTarget.unit}`, margin + 75, yPosition);
       yPosition += 5;
     });
     yPosition += 3;

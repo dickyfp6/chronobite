@@ -67,13 +67,34 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 # Enable CORS for React frontend (allow all origins for Vercel/production deployment)
-CORS(app, resources={ # type: ignore
-    r"/api/*": {
-        "origins": "*",
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"]
-    }
-})
+CORS_CONFIG = {
+    "origins": "*",
+    "methods": ["GET", "POST", "OPTIONS"],
+    "allow_headers": ["Content-Type"]
+}
+
+CORS(app, resources={r"/api/*": CORS_CONFIG}) # type: ignore
+
+def get_allowed_origin():
+    """Reads allowed origin from CORS_CONFIG and matches it with Request Origin"""
+    origins = CORS_CONFIG.get("origins", "*")
+    if origins == "*":
+        return "*"
+    
+    # Check if request has an Origin header
+    origin_header = request.headers.get("Origin")
+    if not origin_header:
+        return ""
+        
+    if isinstance(origins, list):
+        if origin_header in origins:
+            return origin_header
+    elif isinstance(origins, str):
+        if origin_header == origins:
+            return origin_header
+            
+    return ""
+
 
 # Global service instances (initialize on first request)
 nutrition_service = None
@@ -104,6 +125,9 @@ def init_services():
             print("[OK] GeneticAlgorithmInterface initialized")
         except Exception as e:
             print(f"[ERROR] Failed to initialize GeneticAlgorithmInterface: {e}")
+
+# Eagerly initialize services on module load (avoids request-time cold-start latency)
+init_services()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -400,7 +424,7 @@ def analyze():
         
         if errors:
             error_msg = ", ".join(errors)
-            print(f"⚠️ /api/analyze validation error: {error_msg}")
+            print(f"[WARNING] /api/analyze validation error: {error_msg}")
             return jsonify({
                 "success": False,
                 "error": error_msg
@@ -410,7 +434,7 @@ def analyze():
         result = nutrition_service.calculate_nutrition_needs(user_input)
         
         if not result.get('success'):
-            print(f"⚠️ /api/analyze calculation error: {result.get('error', 'Unknown error')}")
+            print(f"[WARNING] /api/analyze calculation error: {result.get('error', 'Unknown error')}")
             return jsonify(result), 400
         
         # Add meal distribution untuk display
@@ -431,7 +455,7 @@ def analyze():
         return jsonify(result), 200
     
     except Exception as e:
-        print(f"❌ /api/analyze error: {e}")
+        print(f"[ERROR] /api/analyze error: {e}")
         import traceback
         traceback.print_exc()
         return jsonify({
@@ -508,7 +532,7 @@ def get_drinks():
         }), 200
         
     except Exception as e:
-        print(f"❌ /api/get-drinks error: {e}")
+        print(f"[ERROR] /api/get-drinks error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/api/generate-final-menu", methods=["POST"])
@@ -592,7 +616,7 @@ def generate_final_menu():
         }), 200
         
     except Exception as e:
-        print(f"❌ /api/generate-final-menu error: {e}")
+        print(f"[ERROR] /api/generate-final-menu error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -601,114 +625,125 @@ def generate_menu():
     """
     ENDPOINT 2: Generate meal menu menggunakan algorithm
     """
+    req_data = None
     try:
         init_services()
         
-        data = request.get_json()
-        algorithm_choice = data.get('algorithm', 'greedy').lower()
+        req_data = request.get_json() or {}
+        algorithm_choice = req_data.get('algorithm', 'greedy').lower()
         
-        analysis_data = data.get('analysis_data', {})
-        user_input = data.get('user_input') or data.get('user_profile') or {}
+        analysis_data = req_data.get('analysis_data', {})
+        user_input = req_data.get('user_input') or req_data.get('user_profile') or {}
         if isinstance(user_input, dict) and 'user_input' in user_input:
             user_input = user_input.get('user_input', {})
         tdee = analysis_data.get('energy', {}).get('tdee', 2100)
         
-        if algorithm_choice == 'genetic':
-            if genetic_algorithm is None:
-                return jsonify({
-                    "success": False,
-                    "error": "Genetic Algorithm not available"
-                }), 500
+        # Prepare guidelines and database in main thread
+        nutrition_guidelines = analysis_data.get('guidelines', {})
+        
+        food_database = None
+        if nutrition_service and nutrition_service.guideline_loader:
+            base_df = nutrition_service.guideline_loader.food_df
+            if base_df is not None:
+                food_database = base_df.copy()
+                
+        # Apply cuisine preference filtering (shared logic)
+        food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
+        if food_database is not None and food_preferences:
+            normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
             
-            # Initialize GA with food database and guidelines
-            food_database = None
-            if nutrition_service and nutrition_service.guideline_loader:
-                base_df = nutrition_service.guideline_loader.food_df
-                if base_df is not None:
-                    food_database = base_df.copy()
-            
-            # Apply cuisine preference filtering (same as greedy)
-            food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
-            if food_database is not None and food_preferences:
-                normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
-                allowed = normalized_prefs + ['Generic']  # always include Generic
+            if algorithm_choice == 'genetic':
+                # Genetic algorithm filters cuisine using generic fallback
+                allowed = normalized_prefs + ['Generic']
                 if 'cuisine_label' in food_database.columns:
                     filtered = food_database[food_database['cuisine_label'].isin(allowed)].copy()
-                    if len(filtered) >= 50:  # only apply if enough items remain
+                    if len(filtered) >= 50:
                         food_database = filtered
-            
-            if food_database is None:
-                return jsonify({
-                    "success": False,
-                    "error": "Food database not available"
-                }), 500
-            
-            nutrition_guidelines = analysis_data.get('guidelines', {})
-            genetic_algorithm.initialize(food_database, nutrition_guidelines)
-            
-            # GA signature: generate_menu_plan(user_profile, tdee)
-            menu_plan = genetic_algorithm.generate_menu_plan(
-                user_profile=user_input,
-                tdee=tdee
-            )
-        
-        else:  # greedy (default)
-            if greedy_algorithm is None:
-                return jsonify({
-                    "success": False,
-                    "error": "Greedy Algorithm not available"
-                }), 500
-            
-            food_database = None
-            if nutrition_service is not None and nutrition_service.guideline_loader is not None:
-                base_df = nutrition_service.guideline_loader.food_df
-                if base_df is not None:
-                    food_database = base_df.copy()
-            
-            print(f"[DEBUG] food_database size before preferences: {len(food_database) if food_database is not None else 0}")
-            print(f"[DEBUG] food_preferences: {user_input.get('food_preferences', [])}")
-
-            food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
-            if food_database is not None and food_preferences:
-                normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
-                
+            else:
+                # Greedy algorithm filter
                 if 'cuisine' in food_database.columns:
                     food_database = food_database[food_database['cuisine'].isin(normalized_prefs)].copy()
                 elif 'cuisine_label' in food_database.columns:
                     food_database = food_database[food_database['cuisine_label'].isin(normalized_prefs)].copy()
-
-            print(f"[DEBUG] food_database size after preferences: {len(food_database) if food_database is not None else 0}")
-
-            nutrition_guidelines = analysis_data.get('guidelines', {})
+                    
+        # Check database availability
+        if food_database is None or len(food_database) == 0:
+            print("[WARNING] food_database is empty or missing before algorithm execution")
             
-            if food_database is None or len(food_database) == 0:
-                print("[ERROR] food_database is EMPTY before initializing Greedy Algorithm!")
-                
-            if food_database is None or nutrition_guidelines is None:
-                return jsonify({
-                    "success": False,
-                    "error": "Missing food database or guidelines"
-                }), 400
-            
+        # Thread container for outputs
+        import threading
+        result_container = {"menu_plan": None, "error": None, "error_code": 500}
+        
+        def run_optimization():
             try:
-                greedy_algorithm.initialize(food_database, nutrition_guidelines)
-            except Exception as init_err:
-                return jsonify({
-                    "success": False,
-                    "error": f"Failed to initialize algorithm: {init_err}"
-                }), 500
+                if algorithm_choice == 'genetic':
+                    if genetic_algorithm is None:
+                        result_container["error"] = "Genetic Algorithm not available"
+                        result_container["error_code"] = 500
+                        return
+                    if food_database is None:
+                        result_container["error"] = "Food database not available"
+                        result_container["error_code"] = 500
+                        return
+                    
+                    genetic_algorithm.initialize(food_database, nutrition_guidelines)
+                    result_container["menu_plan"] = genetic_algorithm.generate_menu_plan(
+                        user_profile=user_input,
+                        tdee=tdee
+                    )
+                else:
+                    if greedy_algorithm is None:
+                        result_container["error"] = "Greedy Algorithm not available"
+                        result_container["error_code"] = 500
+                        return
+                    if food_database is None or nutrition_guidelines is None:
+                        result_container["error"] = "Missing food database or guidelines"
+                        result_container["error_code"] = 400
+                        return
+                    
+                    try:
+                        greedy_algorithm.initialize(food_database, nutrition_guidelines)
+                    except Exception as init_err:
+                        result_container["error"] = f"Failed to initialize algorithm: {init_err}"
+                        result_container["error_code"] = 500
+                        return
+                        
+                    result_container["menu_plan"] = greedy_algorithm.generate_menu_plan(
+                        user_profile=user_input,
+                        tdee=tdee
+                    )
+            except Exception as e:
+                import traceback
+                result_container["error"] = f"Thread exception: {str(e)}\n{traceback.format_exc()}"
+                result_container["error_code"] = 500
+                
+        # Start and join thread with 60 seconds timeout
+        opt_thread = threading.Thread(target=run_optimization)
+        opt_thread.start()
+        opt_thread.join(timeout=60.0)
+        
+        if opt_thread.is_alive():
+            print("[TIMEOUT] /api/generate-menu timed out after 60 seconds")
+            return jsonify({
+                "success": False,
+                "error": "Menu generation request timed out. Please try again or use a faster algorithm."
+            }), 504
             
-            menu_plan = greedy_algorithm.generate_menu_plan(
-                user_profile=user_input,
-                tdee=tdee
-            )
+        if result_container["error"]:
+            print(f"[ERROR] Thread execution error: {result_container['error']}")
+            return jsonify({
+                "success": False,
+                "error": result_container["error"]
+            }), result_container["error_code"]
             
+        menu_plan = result_container["menu_plan"]
+        
         if menu_plan is None:
             return jsonify({
                 "success": False,
                 "error": f"Failed to generate menu with {algorithm_choice} algorithm"
             }), 500
-        
+            
         menu_dict = _menu_plan_to_frontend(menu_plan)
         menu_dict = sanitize_infinity(menu_dict)
         
@@ -721,14 +756,20 @@ def generate_menu():
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
-        print(f"❌ /api/generate-menu error: {e}")
+        print(f"[ERROR] /api/generate-menu error: {e}")
         print(f"Full traceback:\n{error_details}")
+        
+        algo_name = 'unknown'
+        if isinstance(req_data, dict):
+            algo_name = req_data.get('algorithm', 'unknown')
+            
         return jsonify({
             "success": False,
             "error": str(e),
-            # pyrefly: ignore [unbound-name]
-            "algorithm": data.get('algorithm', 'unknown') if 'data' in locals() else 'unknown'
+            "algorithm": algo_name
         }), 500
+
+
 
 
 @app.route("/api/refresh-menu", methods=["POST"])
@@ -755,17 +796,38 @@ def health_check_services():
 
 
 # ═════════════════════════════════════════════════════════════════════════════════
-# ERROR HANDLERS
+# CORS CATCH-ALL & ERROR HANDLERS
 # ═════════════════════════════════════════════════════════════════════════════════
+
+@app.after_request
+def add_cors_headers(response):
+    origin = get_allowed_origin()
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+
 
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({"error": "Not found"}), 404
+    response = jsonify({"error": "Not found"})
+    origin = get_allowed_origin()
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+    return response, 404
 
 
 @app.errorhandler(500)
 def server_error(error):
-    return jsonify({"error": "Internal server error"}), 500
+    import traceback
+    traceback.print_exc()
+    response = jsonify({"error": "Internal server error", "details": str(error)})
+    origin = get_allowed_origin()
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+    return response, 500
+
 
 
 # ═════════════════════════════════════════════════════════════════════════════════
