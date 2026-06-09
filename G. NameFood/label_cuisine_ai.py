@@ -26,7 +26,7 @@ OLD_CACHE_FILE = os.path.join(CURRENT_DIR, "Cuisine", "cuisine_cache.json")
 # AI Provider options: "gemini" atau "github"
 # PENTING: GitHub Models memiliki limit harian yang rendah (150 request per hari).
 # Jika terkena limit GitHub, Anda bisa beralih ke "gemini" yang limitnya jauh lebih besar.
-AI_PROVIDER = "gemini"
+AI_PROVIDER = "github"
 
 # Model Names
 GEMINI_MODEL = "gemini-2.5-flash"  # atau "gemini-1.5-flash"
@@ -139,7 +139,7 @@ def normalize_cuisine(ans):
 def call_ai_batch(names_list, provider, api_key):
     """Call AI (Gemini or GitHub Models API) to classify a batch of foods at once"""
     categories_str = ", ".join(ALLOWED_CUISINES)
-    foods_text = "\n".join([f"{i+1}. {name}" for i, name in enumerate(names_list)])
+    foods_text = "\n".join([f"- {name}" for name in names_list])
 
     prompt = (
         f"You are an expert culinary classifier. Your task is to categorize each of the given food names "
@@ -149,9 +149,10 @@ def call_ai_batch(names_list, provider, api_key):
         f"- Western: European/American cuisines.\n"
         f"- Mediterranean: Middle-Eastern or Mediterranean cuisines.\n"
         f"- Generic: Raw ingredients, plain fruits, plain vegetables, raw meats, sweets, or no specific cultural origin.\n\n"
-        f"Output format: Return ONLY a valid JSON array of strings matching the exact length and order of the input list. "
+        f"Output format: Return ONLY a valid JSON object where the keys are the exact food names from the input list, "
+        f"and the values are their corresponding cuisine categories. "
         f"Do not return markdown (e.g. no ```json blocks), do not return any explanations. "
-        f"Return ONLY the plain JSON array.\n\n"
+        f"Return ONLY the plain JSON object.\n\n"
         f"Foods to classify:\n{foods_text}"
     )
 
@@ -207,7 +208,7 @@ def call_ai_batch(names_list, provider, api_key):
                     except Exception:
                         pass
                 print(f"  -> [RATE LIMIT] Terlalu cepat ({provider} Rate Limit). Response: {response.text}")
-                print(f"  -> Menunggu {sleep_sec} detik sebelum mencoba lagi...")
+                print(f"  -> [RETRY] Menunggu {sleep_sec} detik sebelum mencoba lagi...")
                 time.sleep(sleep_sec)
                 continue
 
@@ -230,14 +231,25 @@ def call_ai_batch(names_list, provider, api_key):
                         raw_ans = re.sub(r"\n```$", "", raw_ans)
                         raw_ans = raw_ans.strip()
 
-                    result_list = json.loads(raw_ans)
+                    result_data = json.loads(raw_ans)
 
-                    if isinstance(result_list, list) and len(result_list) == len(names_list):
-                        # FIX #3: Gunakan normalize_cuisine() yang lebih aman
-                        cleaned = [normalize_cuisine(ans) for ans in result_list]
+                    if isinstance(result_data, dict):
+                        # Key-based lookup (case-insensitive & stripped match for reliability)
+                        normalized_results = {str(k).strip().lower(): v for k, v in result_data.items()}
+                        cleaned = []
+                        for name in names_list:
+                            key = str(name).strip().lower()
+                            val = normalized_results.get(key, "Generic")
+                            cleaned.append(normalize_cuisine(val))
                         return cleaned
+                    elif isinstance(result_data, list):
+                        if len(result_data) == len(names_list):
+                            cleaned = [normalize_cuisine(ans) for ans in result_data]
+                            return cleaned
+                        else:
+                            print(f"  -> [WARN] Length mismatch for list response. Expected {len(names_list)}, got {len(result_data)}")
                     else:
-                        print(f"  -> [WARN] Length mismatch. Expected {len(names_list)}, got {len(result_list) if isinstance(result_list, list) else 'Not a list'}")
+                        print(f"  -> [WARN] Unexpected JSON format from AI (not dict or list): {type(result_data)}")
                 except Exception as e:
                     print(f"  -> [WARN] Failed to parse JSON from AI response: {e}")
                     print(f"  -> [DEBUG] Raw Output: {res_data}")

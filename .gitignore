@@ -1,1 +1,23 @@
+# Dependency directories
+node_modules/
+**/node_modules/
+.venv/
+**/.venv/
+__pycache__/
+**/*.pyc
+
+# Local environment variables
+.env
+**/.env
+.env.local
+.env.*.local
+
+# Build directories
+dist/
+**/dist/
+build/
+
+# Trash and IDE configs
 Z. Trash/
+.vscode/
+.idea/
