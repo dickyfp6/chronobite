@@ -239,10 +239,10 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                generations=91,    # Optimal dari tuning final Kaggle
-                pop_size=71,       # Optimal dari tuning final Kaggle
-                elite_ratio=0.15,   # Turun dari 0.25 → kurangi elite dominance
-                mutation_rate=0.35, # Sedikit naik untuk eksplorasi lebih baik
+                generations=150,   # Sync with ga_v1.py
+                pop_size=100,      # Sync with ga_v1.py
+                elite_ratio=0.25,  # Sync with ga_v1.py
+                mutation_rate=0.3, # Sync with ga_v1.py
                 verbose=True,
                 deadline=deadline
             )
@@ -258,7 +258,7 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                iterations=37,      # Optimal dari tuning final Kaggle
+                iterations=20,      # Sync with ga_v1.py
                 verbose=False,
                 deadline=deadline
             )

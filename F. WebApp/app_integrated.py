@@ -557,10 +557,8 @@ def generate_final_menu():
         
         # Generate final plan
         import time
-        kwargs = {}
         if algorithm_choice == 'genetic':
-            kwargs['deadline'] = time.time() + 45.0
-            
+            pass # Removed deadline to let it run fully
         menu_plan = algorithm_engine.generate_menu_with_drinks(
             user_profile=user_input,
             meal_distribution={
@@ -570,8 +568,7 @@ def generate_final_menu():
                 'dinner': 0.2875
             },
             user_tdee=tdee,
-            selected_drinks=selected_drinks,
-            **kwargs
+            selected_drinks=selected_drinks
         )
         
         if not menu_plan:
@@ -606,11 +603,10 @@ def _run_ga_job(job_id, algorithm_choice, food_database, nutrition_guidelines, t
                 return
             
             genetic_algorithm.initialize(food_database, nutrition_guidelines)
-            # Pass a deadline 45.0s from start_time
+            # Removed deadline to let it run fully
             menu_plan = genetic_algorithm.generate_menu_plan(
                 user_profile=user_input,
-                tdee=tdee,
-                deadline=start_time + 45.0
+                tdee=tdee
             )
         else:
             if greedy_algorithm is None:
