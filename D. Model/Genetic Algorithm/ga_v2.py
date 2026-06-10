@@ -1231,11 +1231,12 @@ def run_ga(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    generations: int = 91,
-    pop_size: int = 71,
+    generations: int = 150,
+    pop_size: int = 100,
     elite_ratio: float = 0.25,
     mutation_rate: float = 0.3,
-    verbose: bool = True
+    verbose: bool = True,
+    deadline: Optional[float] = None
 ) -> Tuple[pd.DataFrame, List[pd.DataFrame]]:
     """
     Jalankan Genetic Algorithm untuk mencari optimal meal plan
@@ -1318,6 +1319,11 @@ def run_ga(
         print(f"{'-'*50}")
     
     for gen in range(generations):
+        # Check deadline to prevent Vercel/frontend timeouts
+        if deadline and time.time() > deadline:
+            if verbose:
+                print(f"\n[TIMEOUT] Genetic Algorithm stopping early at generation {gen}/{generations} due to deadline")
+            break
 
         # 2a. Evaluate fitness semua population
         fitness_scores = []
@@ -1372,9 +1378,10 @@ def run_ga(
         # Update population
         population = new_population[:pop_size]
         
-        # Explicit garbage collection to prevent memory spike
-        import gc
-        gc.collect()
+        # Explicit garbage collection to prevent memory spike (reduced frequency)
+        if gen % 30 == 0:
+            import gc
+            gc.collect()
         
         # Random injection setiap 10 generasi untuk maintain diversity
         # 3 random + 2 guided untuk balance eksplorasi dan eksploitasi
@@ -1480,8 +1487,9 @@ def local_search(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    iterations: int = 37,
-    verbose: bool = False
+    iterations: int = 20,
+    verbose: bool = False,
+    deadline: Optional[float] = None
 ) -> pd.DataFrame:
     """
     TASK 1-6 - LOCAL SEARCH dengan UNIFIED FITNESS EVALUATION
@@ -1539,6 +1547,11 @@ def local_search(
     no_improvement_count = 0  # TASK 5: Stop after 2 consecutive iterations without improvement
     
     while iteration < iterations:
+        # Check deadline to prevent Vercel/frontend timeouts
+        if deadline and time.time() > deadline:
+            if verbose or True:
+                print(f"\n[TIMEOUT] Local Search stopping early at iteration {iteration}/{iterations} due to deadline")
+            break
 
         iteration += 1
         
@@ -1722,7 +1735,7 @@ def local_search(
             if verbose:
                 old_name = best_swap['current_food'].get('food_name', '?') # type: ignore
                 new_name = best_swap['new_food'].get('food_name', '?') # type: ignore
-                print(f"  ✓ Swap at slot {best_swap['gene_idx']}: {old_name} → {new_name}")
+                print(f"  [OK] Swap at slot {best_swap['gene_idx']}: {old_name} -> {new_name}")
                 print(f"    Old fitness: {best_swap['old_fitness']:.1f}")
                 print(f"    New fitness: {best_swap['new_fitness']:.1f}")
                 print(f"    Improvement: {best_swap['improvement']:+.1f}")
@@ -1730,7 +1743,7 @@ def local_search(
         else:
             # No improvement found
             if verbose:
-                print(f"  ✗ No swap improved fitness")
+                print(f"  [x] No swap improved fitness")
                 print(f"    Accepted: False")
             
             no_improvement_count += 1
@@ -1744,7 +1757,7 @@ def local_search(
     if verbose:
         final_fitness = fitness(best_solution, guidelines, tdee)
         print(f"\n{'='*70}")
-        print(f"✓ Local Search Complete")
+        print(f"[OK] Local Search Complete")
         print(f"  Improvements: {improvements}")
         print(f"  Iterations: {iteration}")
         print(f"  Final fitness score: {final_fitness:.1f}")
@@ -2232,7 +2245,7 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
         
         penalty = 0
-        status = "✓ OK"
+        status = "OK"
         
         if value < min_val:
             # HARD: Kurang dari minimum dengan weight * 10
@@ -2268,7 +2281,7 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
         
         penalty = 0
-        status = "✓ OK"
+        status = "OK"
         
         if value < min_val:
             # SOFT: Kurang dari minimum dengan weight * 1
@@ -2292,7 +2305,7 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         max_energy = 1.2 * tdee
         
         energy_penalty = 0
-        energy_status = "✓ OK"
+        energy_status = "OK"
         
         if current_energy < min_energy:
             energy_penalty = (min_energy - current_energy) * 20
@@ -2319,7 +2332,7 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
                         15 if 'ENERGY-OVER' in severity else 1
             print(f"   {nutrient:20} ({severity:18}): penalty = {penalty:8.2f}")
     else:
-        print(f"   ✅ No violations! All constraints satisfied")
+        print(f"   [OK] No violations! All constraints satisfied")
     
     print(f"\n   Total Penalty Score: {total_penalty:.2f}")
 

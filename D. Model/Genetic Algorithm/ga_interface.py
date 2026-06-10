@@ -227,7 +227,7 @@ class GeneticAlgorithmInterface:
             include_drink=True
         )
 
-    def generate_menu_plan(self, user_profile: Dict, tdee: float) -> Optional[MenuPlan]:
+    def generate_menu_plan(self, user_profile: Dict, tdee: float, deadline: Optional[float] = None) -> Optional[MenuPlan]:
         """
         Generate complete menu plan using Genetic Algorithm.
         """
@@ -243,7 +243,8 @@ class GeneticAlgorithmInterface:
                 pop_size=70,       # Optimal dari tuning final Kaggle
                 elite_ratio=0.10,   # Turun dari 0.25 → kurangi elite dominance
                 mutation_rate=0.25, # Sedikit naik untuk eksplorasi lebih baik
-                verbose=True
+                verbose=True,
+                deadline=deadline
             )
             
             if best_solution is None or len(best_solution) < 10:
@@ -409,7 +410,7 @@ class GeneticAlgorithmInterface:
             
         return results
         
-    def generate_menu_with_drinks(self, user_profile: Dict, meal_distribution: Dict, user_tdee: float, selected_drinks: Dict) -> Optional[MenuPlan]:
+    def generate_menu_with_drinks(self, user_profile: Dict, meal_distribution: Dict, user_tdee: float, selected_drinks: Dict, deadline: Optional[float] = None) -> Optional[MenuPlan]:
         """
         Ideally GA would fix the drink genes and optimize the rest.
         For V1, we just run the full generation ignoring the pre-selected drinks,
@@ -418,4 +419,4 @@ class GeneticAlgorithmInterface:
         A better implementation would fix the chromosomes for drinks.
         """
         print("[INFO] GA currently ignores pre-selected drinks and generates full optimal plan.")
-        return self.generate_menu_plan(user_profile, user_tdee)
+        return self.generate_menu_plan(user_profile, user_tdee, deadline=deadline)
