@@ -1229,10 +1229,10 @@ def run_ga(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    generations: int = 150,
-    pop_size: int = 100,
-    elite_ratio: float = 0.25,
-    mutation_rate: float = 0.3,
+    generations: int = 110,
+    pop_size: int = 70,
+    elite_ratio: float = 0.10,
+    mutation_rate: float = 0.25,
     verbose: bool = True
 ) -> Tuple[pd.DataFrame, List[pd.DataFrame]]:
     """
@@ -1476,7 +1476,7 @@ def local_search(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    iterations: int = 20,
+    iterations: int = 30,
     verbose: bool = False
 ) -> pd.DataFrame:
     """

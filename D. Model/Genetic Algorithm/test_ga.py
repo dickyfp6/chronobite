@@ -843,10 +843,10 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            generations=100,
-            pop_size=50,
-            elite_ratio=0.15,
-            mutation_rate=0.35,
+            generations=110,
+            pop_size=70,
+            elite_ratio=0.10,
+            mutation_rate=0.25,
             verbose=False  # Changed to False for cleaner output
         )
         print("✓ GA optimization complete")
@@ -861,7 +861,7 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            iterations=35,
+            iterations=30,
             verbose=True  # Show improvements
         )
         print("✓ Local search optimization complete")
