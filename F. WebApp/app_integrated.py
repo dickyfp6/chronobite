@@ -16,6 +16,11 @@ import json
 import pandas as pd
 from datetime import datetime
 import importlib.util
+import uuid
+import threading
+
+# Global job store
+jobs = {}
 
 # Add parent directories untuk imports (F. WebApp is one level deep, so one .. to get to root)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'C. System Flow'))
@@ -342,46 +347,6 @@ def health_check():
 def analyze():
     """
     ENDPOINT 1: Analyze user profile dan calculate nutrition needs
-    
-    Input (JSON from form):
-    {
-        "gender": "M",
-        "age": 30,
-        "weight": 70.0,
-        "height": 170.0,
-        "activity": "1.845",
-        "diseases": ["normal"] atau ["dm2", "hypertension"],
-        "food_preferences": [] atau ["Asian", "Western"]
-    }
-    
-    Output:
-    {
-        "success": true,
-        "user_input": {...},
-        "anthropometrics": {
-            "bmi": 24.2,
-            "bmi_category": "Normal",
-            "bmi_color": "green",
-            "bbi": 63.0,
-            "age_group": {...},
-            ...
-        },
-        "energy": {
-            "bmr": 1750,
-            "tdee": 3228
-        },
-        "guidelines": {
-            "nutrients": {...}
-        },
-        "meal_distribution": {
-            "breakfast": 0.2375,
-            "lunch": 0.3375,
-            ...
-        },
-        "food_data": {
-            "total_items": 1234
-        }
-    }
     """
     try:
         init_services()
@@ -518,8 +483,6 @@ def get_drinks():
         for meal_time, items in drinks.items():
             formatted_drinks[meal_time] = []
             for item in items:
-                # Wrap in a fake MealCourse for _course_to_item to work
-                # Use local import for MealCourse to avoid circularity if any
                 from meal_schema import MealCourse
                 temp_course = MealCourse(course_type='Drink', candidates=[item], 
                                          total_calories=item.energy_kcal, total_protein_g=item.protein_g,
@@ -534,6 +497,7 @@ def get_drinks():
     except Exception as e:
         print(f"[ERROR] /api/get-drinks error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
+
 
 @app.route("/api/generate-final-menu", methods=["POST"])
 def generate_final_menu():
@@ -626,10 +590,78 @@ def generate_final_menu():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+def _run_ga_job(job_id, algorithm_choice, food_database, nutrition_guidelines, tdee, user_input):
+    """
+    Background worker function to run Genetic or Greedy optimization.
+    """
+    import time
+    start_time = time.time()
+    try:
+        if algorithm_choice == 'genetic':
+            if genetic_algorithm is None:
+                jobs[job_id] = {"status": "error", "result": None, "error": "Genetic Algorithm not available"}
+                return
+            if food_database is None:
+                jobs[job_id] = {"status": "error", "result": None, "error": "Food database not available"}
+                return
+            
+            genetic_algorithm.initialize(food_database, nutrition_guidelines)
+            # Pass a deadline 45.0s from start_time
+            menu_plan = genetic_algorithm.generate_menu_plan(
+                user_profile=user_input,
+                tdee=tdee,
+                deadline=start_time + 45.0
+            )
+        else:
+            if greedy_algorithm is None:
+                jobs[job_id] = {"status": "error", "result": None, "error": "Greedy Algorithm not available"}
+                return
+            if food_database is None or nutrition_guidelines is None:
+                jobs[job_id] = {"status": "error", "result": None, "error": "Missing food database or guidelines"}
+                return
+            
+            try:
+                greedy_algorithm.initialize(food_database, nutrition_guidelines)
+            except Exception as init_err:
+                jobs[job_id] = {"status": "error", "result": None, "error": f"Failed to initialize algorithm: {init_err}"}
+                return
+                
+            menu_plan = greedy_algorithm.generate_menu_plan(
+                user_profile=user_input,
+                tdee=tdee
+            )
+            
+        if menu_plan is None:
+            jobs[job_id] = {
+                "status": "error",
+                "result": None,
+                "error": f"Failed to generate menu with {algorithm_choice} algorithm"
+            }
+            return
+            
+        menu_dict = _menu_plan_to_frontend(menu_plan)
+        menu_dict = sanitize_infinity(menu_dict)
+        
+        jobs[job_id] = {
+            "status": "done",
+            "result": menu_dict,
+            "error": None
+        }
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"[ERROR] _run_ga_job exception: {e}\n{error_details}")
+        jobs[job_id] = {
+            "status": "error",
+            "result": None,
+            "error": str(e)
+        }
+
+
 @app.route("/api/generate-menu", methods=["POST"])
 def generate_menu():
     """
-    ENDPOINT 2: Generate meal menu menggunakan algorithm
+    ENDPOINT 2: Generate meal menu menggunakan algorithm (Async Background Job)
     """
     req_data = None
     try:
@@ -676,92 +708,22 @@ def generate_menu():
         if food_database is None or len(food_database) == 0:
             print("[WARNING] food_database is empty or missing before algorithm execution")
             
-        # Thread container for outputs
-        import threading
-        import time
-        start_time = time.time()
-        result_container = {"menu_plan": None, "error": None, "error_code": 500}
+        # Create job_id
+        job_id = str(uuid.uuid4())
         
-        def run_optimization():
-            try:
-                if algorithm_choice == 'genetic':
-                    if genetic_algorithm is None:
-                        result_container["error"] = "Genetic Algorithm not available"
-                        result_container["error_code"] = 500
-                        return
-                    if food_database is None:
-                        result_container["error"] = "Food database not available"
-                        result_container["error_code"] = 500
-                        return
-                    
-                    genetic_algorithm.initialize(food_database, nutrition_guidelines)
-                    # Pass a deadline 45.0s from start_time
-                    result_container["menu_plan"] = genetic_algorithm.generate_menu_plan(
-                        user_profile=user_input,
-                        tdee=tdee,
-                        deadline=start_time + 45.0
-                    )
-                else:
-                    if greedy_algorithm is None:
-                        result_container["error"] = "Greedy Algorithm not available"
-                        result_container["error_code"] = 500
-                        return
-                    if food_database is None or nutrition_guidelines is None:
-                        result_container["error"] = "Missing food database or guidelines"
-                        result_container["error_code"] = 400
-                        return
-                    
-                    try:
-                        greedy_algorithm.initialize(food_database, nutrition_guidelines)
-                    except Exception as init_err:
-                        result_container["error"] = f"Failed to initialize algorithm: {init_err}"
-                        result_container["error_code"] = 500
-                        return
-                        
-                    result_container["menu_plan"] = greedy_algorithm.generate_menu_plan(
-                        user_profile=user_input,
-                        tdee=tdee
-                    )
-            except Exception as e:
-                import traceback
-                result_container["error"] = f"Thread exception: {str(e)}\n{traceback.format_exc()}"
-                result_container["error_code"] = 500
-                
-        # Start and join thread with 50 seconds timeout (to guarantee responding before Vercel 60s timeout)
-        opt_thread = threading.Thread(target=run_optimization)
-        opt_thread.start()
-        opt_thread.join(timeout=50.0)
+        # Set jobs initial status
+        jobs[job_id] = {"status": "running", "result": None, "error": None}
         
-        if opt_thread.is_alive():
-            print("[TIMEOUT] /api/generate-menu timed out after 50 seconds")
-            return jsonify({
-                "success": False,
-                "error": "Menu generation request timed out. Please try again or use a faster algorithm."
-            }), 504
-            
-        if result_container["error"]:
-            print(f"[ERROR] Thread execution error: {result_container['error']}")
-            return jsonify({
-                "success": False,
-                "error": result_container["error"]
-            }), result_container["error_code"]
-            
-        menu_plan = result_container["menu_plan"]
+        # Start background thread calling _run_ga_job()
+        job_thread = threading.Thread(
+            target=_run_ga_job,
+            args=(job_id, algorithm_choice, food_database, nutrition_guidelines, tdee, user_input)
+        )
+        job_thread.daemon = True
+        job_thread.start()
         
-        if menu_plan is None:
-            return jsonify({
-                "success": False,
-                "error": f"Failed to generate menu with {algorithm_choice} algorithm"
-            }), 500
-            
-        menu_dict = _menu_plan_to_frontend(menu_plan)
-        menu_dict = sanitize_infinity(menu_dict)
-        
-        return jsonify({
-            "success": True,
-            "menu_plan": menu_dict,
-            "algorithm_used": algorithm_choice
-        }), 200
+        # Return immediately
+        return jsonify({"success": True, "job_id": job_id}), 202
         
     except Exception as e:
         import traceback
@@ -780,6 +742,31 @@ def generate_menu():
         }), 500
 
 
+@app.route("/api/job-status/<job_id>", methods=["GET"])
+def get_job_status(job_id):
+    """
+    ENDPOINT: Check the status of a menu generation job
+    """
+    if job_id not in jobs:
+        return jsonify({"success": False, "error": "Job not found"}), 404
+        
+    job = jobs[job_id]
+    status = job.get("status")
+    
+    if status == "running":
+        return jsonify({"success": True, "status": "running"}), 200
+        
+    elif status == "done":
+        result = job.get("result")
+        jobs.pop(job_id, None)
+        return jsonify({"success": True, "status": "done", "menu_plan": result}), 200
+        
+    elif status == "error":
+        error = job.get("error")
+        jobs.pop(job_id, None)
+        return jsonify({"success": False, "status": "error", "error": error}), 500
+        
+    return jsonify({"success": False, "status": "unknown"}), 500
 
 
 @app.route("/api/refresh-menu", methods=["POST"])
@@ -788,7 +775,6 @@ def refresh_menu():
     ENDPOINT 3: Regenerate menu dengan alternative candidates
     Same as generate-menu tapi dengan fresh random generation
     """
-    # Same sebagai generate_menu - greedy algorithm otomatis generate alternatives
     return generate_menu()
 
 
@@ -837,7 +823,6 @@ def server_error(error):
     if origin:
         response.headers['Access-Control-Allow-Origin'] = origin
     return response, 500
-
 
 
 # ═════════════════════════════════════════════════════════════════════════════════

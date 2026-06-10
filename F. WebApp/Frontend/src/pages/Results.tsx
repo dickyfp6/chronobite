@@ -5,13 +5,22 @@ import type { UserInputData } from './InputWizard';
 import { api } from '../services/api';
 import { motion, AnimatePresence } from 'motion/react';
 
-const loadingSteps = [
- "Analyzing physical profile & energy needs...",
- "Evaluating medical constraints & health history...",
- "Filtering nutritional food database...",
- "Formulating optimal daily meal combinations...",
- "Balancing macro & micro nutrient distributions...",
- "Finalizing customized recommendations for you..."
+const greedyLoadingSteps = [
+  "Analyzing physical profile & energy needs...",
+  "Evaluating medical constraints & health history...",
+  "Filtering nutritional food database...",
+  "Formulating optimal daily meal combinations...",
+  "Balancing macro & micro nutrient distributions...",
+  "Finalizing customized recommendations for you..."
+];
+
+const geneticLoadingSteps = [
+  "Initializing genetic population...",
+  "Evaluating fitness across generations...",
+  "Selecting elite meal combinations...",
+  "Applying crossover & mutation operators...",
+  "Running local search fine-tuning...",
+  "Finalizing optimal meal plan for you..."
 ];
 
 interface ResultsProps {
@@ -148,21 +157,21 @@ const timeLabels: Record<string, string> = {
 };
 
 export function Results({ userData, algorithm, analysisResult, menuPromise, onViewReport, selectedItems, onSelectedItemsChange }: ResultsProps) {
+  const loadingSteps = algorithm === 'genetic' ? geneticLoadingSteps : greedyLoadingSteps;
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [menuData, setMenuData] = useState<Record<string, Meal> | null>(null);
+  const [statusIndex, setStatusIndex] = useState(0);
 
- const [loading, setLoading] = useState(true);
- const [error, setError] = useState<string | null>(null);
- const [menuData, setMenuData] = useState<Record<string, Meal> | null>(null);
- const [statusIndex, setStatusIndex] = useState(0);
-
- // Rotate status message every 2 seconds
- useEffect(() => {
- if (!loading) return;
- const interval = setInterval(() => {
- setStatusIndex((prev) => (prev + 1) % loadingSteps.length);
- }, 2000);
- return () => clearInterval(interval);
- }, [loading]);
+  // Rotate status message every 2 seconds
+  useEffect(() => {
+    if (!loading) return;
+    const interval = setInterval(() => {
+      setStatusIndex((prev) => (prev + 1) % loadingSteps.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [loading, loadingSteps]);
 
  // Helper function to scale alternative candidates (option 2 & 3) to match option 1's calorie target
  const scaleCandidates = (candidates: Candidate[]): Candidate[] => {

@@ -187,6 +187,34 @@ export const api = {
     return normalizeAnalysisResult(rawResult);
   },
 
+  async pollMenuJob(jobId: string): Promise<MenuResult> {
+    const maxAttempts = 60; // 60 × 3s = 3 minutes max
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      await new Promise(r => setTimeout(r, 3000)); // wait 3s
+      
+      const response = await fetch(getApiUrl(`/api/job-status/${jobId}`), {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.status === 'done') {
+        return normalizeMenuResult(data);
+      } else if (data.status === 'error') {
+        throw new Error(data.error || 'Menu generation failed');
+      }
+      // if 'running', continue polling
+    }
+    
+    throw new Error('Menu generation timed out after 3 minutes');
+  },
+
   async generateMenu(menuRequest: MenuRequest): Promise<MenuResult> {
     const response = await fetch(getApiUrl('/api/generate-menu'), {
       method: 'POST',
@@ -199,6 +227,13 @@ export const api = {
     }
 
     const rawResult = (await response.json()) as Record<string, any>;
+    
+    // If backend returned job_id (async mode for genetic algorithm)
+    if (rawResult.job_id) {
+      return await api.pollMenuJob(rawResult.job_id);
+    }
+    
+    // Otherwise synchronous response (greedy)
     return normalizeMenuResult(rawResult);
   },
 };
