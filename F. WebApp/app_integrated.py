@@ -592,6 +592,11 @@ def generate_final_menu():
         algorithm_engine.initialize(food_database, nutrition_guidelines)
         
         # Generate final plan
+        import time
+        kwargs = {}
+        if algorithm_choice == 'genetic':
+            kwargs['deadline'] = time.time() + 45.0
+            
         menu_plan = algorithm_engine.generate_menu_with_drinks(
             user_profile=user_input,
             meal_distribution={
@@ -601,7 +606,8 @@ def generate_final_menu():
                 'dinner': 0.2875
             },
             user_tdee=tdee,
-            selected_drinks=selected_drinks
+            selected_drinks=selected_drinks,
+            **kwargs
         )
         
         if not menu_plan:
@@ -672,6 +678,8 @@ def generate_menu():
             
         # Thread container for outputs
         import threading
+        import time
+        start_time = time.time()
         result_container = {"menu_plan": None, "error": None, "error_code": 500}
         
         def run_optimization():
@@ -687,9 +695,11 @@ def generate_menu():
                         return
                     
                     genetic_algorithm.initialize(food_database, nutrition_guidelines)
+                    # Pass a deadline 45.0s from start_time
                     result_container["menu_plan"] = genetic_algorithm.generate_menu_plan(
                         user_profile=user_input,
-                        tdee=tdee
+                        tdee=tdee,
+                        deadline=start_time + 45.0
                     )
                 else:
                     if greedy_algorithm is None:
@@ -717,13 +727,13 @@ def generate_menu():
                 result_container["error"] = f"Thread exception: {str(e)}\n{traceback.format_exc()}"
                 result_container["error_code"] = 500
                 
-        # Start and join thread with 115 seconds timeout
+        # Start and join thread with 50 seconds timeout (to guarantee responding before Vercel 60s timeout)
         opt_thread = threading.Thread(target=run_optimization)
         opt_thread.start()
-        opt_thread.join(timeout=115.0)
+        opt_thread.join(timeout=50.0)
         
         if opt_thread.is_alive():
-            print("[TIMEOUT] /api/generate-menu timed out after 115 seconds")
+            print("[TIMEOUT] /api/generate-menu timed out after 50 seconds")
             return jsonify({
                 "success": False,
                 "error": "Menu generation request timed out. Please try again or use a faster algorithm."

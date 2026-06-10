@@ -23,10 +23,10 @@ service = NutritionService()
 user_input = {
     'gender': 'M',
     'age': 45,
-    'weight': 70,
+    'weight': 85,
     'height': 165,
-    'activity_factor': 1.545,
-    'disease': ['normal'],
+    'activity_factor': 1.725,
+    'disease': ['dm2'],
     'food_preferences': []
 }
 result = service.calculate_nutrition_needs(user_input)
@@ -84,7 +84,7 @@ if best_solution is not None:
     print("\n================ TEST COMPLETED ================")
     print(f"Time Taken: {duration:.2f}s")
     print(f"Fitness Score (Lower is better): {fit:.4f}")
-    print(f"Compliance: {val.get('compliance_rate', 0)*100:.1f}% ({val.get('summary', '')})")
+    print(f"Compliance Details: {val.get('summary', '')}")
     print("================================================")
 else:
     print("GA failed to find a solution.")

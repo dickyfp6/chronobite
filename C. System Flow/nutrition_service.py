@@ -187,6 +187,36 @@ class NutritionService:
             if not merged_guidelines:
                 raise ValueError(f"No guideline found for {disease}, age {age}")
             
+            # BUG FIX: Clamp TDEE according to disease-specific energy_kcal guidelines (min/max boundaries)
+            # If Kal. User A > Min-Max, maka Kal. A=Max
+            # If Kal. User A ~ Min-Max, maka Kal. A=Kal. A
+            # If Kal. User A < Min-Max, maka Kal. A=Min
+            energy_guideline = merged_guidelines.get('energy_kcal')
+            if energy_guideline:
+                energy_min = energy_guideline.get('min')
+                energy_max = energy_guideline.get('max')
+                
+                original_tdee = tdee
+                
+                if energy_min is not None and energy_min > 0:
+                    if tdee < energy_min:
+                        tdee = energy_min
+                if energy_max is not None and energy_max < float('inf'):
+                    if tdee > energy_max:
+                        tdee = energy_max
+                
+                if tdee != original_tdee:
+                    print(f"[INFO] TDEE clamped by disease guidelines: {original_tdee:.2f} -> {tdee:.2f}")
+                    # Update result['energy'] to reflect clamped tdee
+                    result['energy']['tdee'] = tdee
+                    # Update user_params tdee
+                    user_params['tdee'] = tdee
+                    # Re-run merge_disease_guidelines so other relative macronutrients (e.g. basis: 'TDEE')
+                    # are correctly converted using the clamped tdee value as their basis.
+                    merged_guidelines = self.guideline_loader.merge_disease_guidelines(
+                        disease, age, gender, user_params=user_params
+                    )
+            
             # Get DRI untuk fallback
             dri_row = self.guideline_loader.get_dri_by_age_gender(age, gender)
             
