@@ -33,7 +33,7 @@ USE_INTERACTIVE_INPUT = True
 # ====================================
 
 # Import GA engine
-from ga_v1 import (
+from ga_v2 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
@@ -845,7 +845,8 @@ def test_ga_with_nutrition_service():
             guidelines=guidelines,
             tdee=tdee,
             **GA_PARAMS,
-            verbose=False  # Changed to False for cleaner output
+            verbose=False,  # Changed to False for cleaner output
+            deadline=None
         )
         print("✓ GA optimization complete")
         
@@ -860,7 +861,8 @@ def test_ga_with_nutrition_service():
             guidelines=guidelines,
             tdee=tdee,
             **LS_PARAMS,
-            verbose=True  # Show improvements
+            verbose=True,  # Show improvements
+            deadline=None
         )
         print("✓ Local search optimization complete")
         
