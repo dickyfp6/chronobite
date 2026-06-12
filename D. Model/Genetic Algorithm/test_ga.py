@@ -33,6 +33,7 @@ USE_INTERACTIVE_INPUT = True
 # ====================================
 
 # Import GA engine
+# pyrefly: ignore [missing-import]
 from ga_v1 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 

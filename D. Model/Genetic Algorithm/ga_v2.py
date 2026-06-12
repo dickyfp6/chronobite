@@ -1479,8 +1479,8 @@ def calculate_total_hard_deviation(solution: pd.DataFrame, guidelines: Dict) -> 
 
 
 # ═════════════════════════════════════════════════════════════════════════════
-# 7. LOCAL SEARCH - Fine-tuning setelah GA untuk memperbaiki solusi locally
-# ═════════════════════════════════════════════════════════════════════════════
+# 7. LOCAL SEARCH - Fine-tuning setelah GA untuk memperbaiki ═solusi locally
+# ════════════════════════════════════════════════════════════════════════════
 
 def local_search(
     solution: pd.DataFrame,
@@ -2556,9 +2556,18 @@ def calculate_portion_sizes_dynamic(
     # STEP 5-12: Normalize per meal, distribute energy, calc gram, clamp, renormalize
     # ════════════════════════════════════════════════════════════════════════
     
-    for meal_type, ratio in meal_ratio.items():
-        # TASK 5: Target energy untuk meal ini
-        target_meal_energy = TDEE * ratio
+    meal_ranges = {
+        'breakfast': (0.20, 0.25),
+        'lunch': (0.30, 0.35),
+        'dinner': (0.25, 0.30),
+        'snack': (0.10, 0.15)
+    }
+    
+    for meal_type, (min_r, max_r) in meal_ranges.items():
+        min_target_energy = TDEE * min_r
+        max_target_energy = TDEE * max_r
+        mid_ratio = (min_r + max_r) / 2
+        target_meal_energy = TDEE * mid_ratio
         
         # Get items untuk meal ini
         meal_items = weights_per_meal[meal_type]
@@ -2591,9 +2600,14 @@ def calculate_portion_sizes_dynamic(
             grams_first_pass.append((idx, gram_clamped, energy_per_100g))
             meal_energy_first += energy_per_100g * gram_clamped / 100
         
-        # Renormalize setelah clamp untuk match target meal energy
+        # Renormalize setelah clamp untuk match target meal energy RANGE
         if meal_energy_first > 0:
-            scale = target_meal_energy / meal_energy_first
+            if meal_energy_first < min_target_energy:
+                scale = min_target_energy / meal_energy_first
+            elif meal_energy_first > max_target_energy:
+                scale = max_target_energy / meal_energy_first
+            else:
+                scale = 1.0
         else:
             scale = 1.0
         
@@ -2628,14 +2642,13 @@ def calculate_portion_sizes_dynamic(
         
         # Allow 0.6x to 1.4x scaling (reasonable range)
         if 0.6 <= energy_scale <= 1.4:
-            # Scale, round to the nearest integer, and clamp to respect limits
+            # Scale, round to the nearest integer
+            # BUG FIX: HINDARI DOUBLE CLAMPING!
+            # Kita tidak melakukan clamping ulang di sini agar porsi yang telah
+            # dinaikkan secara dinamis saat renormalisasi tidak terpangkas kembali.
             scaled_grams = result_df['gram'] * energy_scale
             rounded_grams = scaled_grams.round().astype(float)
             
-            for idx in range(len(result_df)):
-                min_g, max_g = protein_portion_limits.get(idx, (50, 150))
-                rounded_grams.at[idx] = max(min_g, min(max_g, rounded_grams.at[idx]))
-                
             result_df['gram'] = rounded_grams
             
             # RE-SCALE ALL NUTRIENTS with new grams (TASK 1 - critical!)
