@@ -34,12 +34,13 @@ USE_INTERACTIVE_INPUT = True
 
 # Import GA engine
 # pyrefly: ignore [missing-import]
-from ga_v1 import (
+from ga_v2 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
     local_search, display_nutrition_analysis_table
 )
+from ga_config import GA_PARAMS, LS_PARAMS
 
 # Import NutritionService
 try:
@@ -844,11 +845,9 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            generations=100,
-            pop_size=50,
-            elite_ratio=0.15,
-            mutation_rate=0.35,
-            verbose=False  # Changed to False for cleaner output
+            **GA_PARAMS,
+            verbose=False,  # Changed to False for cleaner output
+            deadline=None
         )
         print("✓ GA optimization complete")
         
@@ -862,8 +861,9 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            iterations=35,
-            verbose=True  # Show improvements
+            **LS_PARAMS,
+            verbose=True,  # Show improvements
+            deadline=None
         )
         print("✓ Local search optimization complete")
         

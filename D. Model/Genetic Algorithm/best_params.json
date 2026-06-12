@@ -1,0 +1,11 @@
+{
+  "pop_size": 70,
+  "generations": 90,
+  "elite_ratio": 0.15000000000000002,
+  "mutation_rate": 0.25,
+  "ls_iterations": 20,
+  "_trial_number": 4,
+  "_mean_fitness": 253229.55891754842,
+  "_mean_csr": 48.41269841269841,
+  "_note": "Dipilih dari Pareto front berdasarkan CSR tertinggi"
+}
