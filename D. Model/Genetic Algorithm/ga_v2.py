@@ -2400,13 +2400,21 @@ def calculate_portion_sizes_dynamic(
         9: 'snack'
     }
     
-    # Gram constraints realistic - TASK 4: Protein portion limiting
+   # Scale max_g proporsional ke TDEE (baseline 2000 kcal).
+    # Untuk penyakit, TDEE sudah di-clamp di nutrition_service sebelum sampai sini,
+    # jadi scale tidak akan berlebihan. Cap 2.5x supaya tidak tak terbatas.
+    tdee_scale = min(TDEE / 2000, 2.5)
     gram_constraints = {
-        'Main Course': (100, 300),
-        'Side Dish': (50, 150),
-        'Drink': (150, 300),
-        'Snack': (30, 100)
+        'Main Course': (100, int(350 * tdee_scale)),   # naik sedikit baseline-nya
+        'Side Dish':   (50,  int(200 * tdee_scale)),   # sedikit lebih longgar dari sebelumnya
+        'Drink':       (100, int(250 * tdee_scale)),   # min turun, max dikap lebih kecil dari Main
+        'Snack':       (30,  int(120 * tdee_scale))    # sedikit naik
     }
+    
+    # Enforce hierarki: Drink max tidak boleh melebihi Side Dish max
+    drink_min, drink_max = gram_constraints['Drink']
+    side_min, side_max   = gram_constraints['Side Dish']
+    gram_constraints['Drink'] = (drink_min, min(drink_max, side_max))
     
     # Label adjustment factors
     label_adjustments = {
@@ -2626,28 +2634,30 @@ def calculate_portion_sizes_dynamic(
     if total_energy_after > 0 and TDEE > 0:
         energy_scale = TDEE / total_energy_after
         
-        # Allow 0.6x to 1.4x scaling (reasonable range)
-        if 0.6 <= energy_scale <= 1.4:
-            # Scale, round to the nearest integer, and clamp to respect limits
-            scaled_grams = result_df['gram'] * energy_scale
-            rounded_grams = scaled_grams.round().astype(float)
+        # Always rescale regardless of how far off first-pass was.
+        # The 0.6–1.4 guard was skipping rescale when first-pass diverged badly
+        # (e.g. energy_scale ~1.8x), leaving total energy far below TDEE.
+        # Clamping to protein_portion_limits below handles cases where scale is large.
+        # Scale, round to the nearest integer, and clamp to respect limits
+        scaled_grams = result_df['gram'] * energy_scale
+        rounded_grams = scaled_grams.round().astype(float)
+        
+        for idx in range(len(result_df)):
+            min_g, max_g = protein_portion_limits.get(idx, (50, 150))
+            rounded_grams.at[idx] = max(min_g, min(max_g, rounded_grams.at[idx]))
             
-            for idx in range(len(result_df)):
-                min_g, max_g = protein_portion_limits.get(idx, (50, 150))
-                rounded_grams.at[idx] = max(min_g, min(max_g, rounded_grams.at[idx]))
-                
-            result_df['gram'] = rounded_grams
+        result_df['gram'] = rounded_grams
+        
+        # RE-SCALE ALL NUTRIENTS with new grams (TASK 1 - critical!)
+        for idx in range(len(result_df)):
+            gram = result_df.at[idx, 'gram']
+            actual_item = selected_df.iloc[idx]
             
-            # RE-SCALE ALL NUTRIENTS with new grams (TASK 1 - critical!)
-            for idx in range(len(result_df)):
-                gram = result_df.at[idx, 'gram']
-                actual_item = selected_df.iloc[idx]
-                
-                for nutrient in nutrient_cols:
-                    if nutrient in actual_item.index:
-                        value_per_100g = actual_item.get(nutrient, 0) or 0
-                        final_value = value_per_100g * gram / 100
-                        result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+            for nutrient in nutrient_cols:
+                if nutrient in actual_item.index:
+                    value_per_100g = actual_item.get(nutrient, 0) or 0
+                    final_value = value_per_100g * gram / 100
+                    result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
     # ════════════════════════════════════════════════════════════════════════
     # TASK 6: VALIDATION - Ensure scaling didn't cause anomalies
