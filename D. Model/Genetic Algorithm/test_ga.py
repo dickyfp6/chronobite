@@ -616,7 +616,7 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         current_row += 1
         
         # Header tabel Bagian 5
-        headers_5 = ['Nutrisi', 'Min – Max', 'Aktual', 'Keterpenuhan (%)', '']
+        headers_5 = ['Nutrisi', 'Min – Max', 'Aktual', 'Keterpenuhan (%)', 'Status']
         for col_idx, header in enumerate(headers_5, 1):
             try:
                 cell = ws.cell(row=current_row, column=col_idx)
@@ -643,20 +643,32 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
                 pct = calculate_fulfillment_percentage(actual, min_val, max_val)
                 pct_str = f"{pct:.1f}%"
                 actual_str = f"{actual:.1f}"
+                
+                # Determine status: OVER LIMIT, BELOW MIN, or OK
+                if actual > max_val:
+                    status = "⚠️ OVER LIMIT"
+                elif actual < min_val:
+                    status = "⚠️ BELOW MIN"
+                else:
+                    status = "OK"
             else:
                 pct_str = "N/A"
                 actual_str = "N/A"
+                status = "—"
             
             ws[f'A{current_row}'] = nutrient_key.replace('_', ' ').title()
             ws[f'B{current_row}'] = range_str
             ws[f'C{current_row}'] = actual_str
             ws[f'D{current_row}'] = pct_str
+            ws[f'E{current_row}'] = status
             
-            for col_idx in range(1, 5):
+            for col_idx in range(1, 6):
                 cell = ws.cell(row=current_row, column=col_idx)
                 cell.border = border
                 if col_idx in [2, 3, 4]:  # Kolom range, actual, percentage
                     cell.alignment = Alignment(horizontal='right')
+                elif col_idx == 5:  # Kolom status
+                    cell.alignment = Alignment(horizontal='center')
             
             current_row += 1
         
@@ -698,7 +710,11 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
             if actual is not None:
                 pct = calculate_fulfillment_percentage(actual, min_val, max_val)
                 status_text, _, _ = get_status_category(pct)
-                actual_str = f"{actual:.2f}"
+                # Fix: jika actual sangat kecil (< 0.01 dan != 0), gunakan 4 desimal
+                if actual != 0 and actual < 0.01:
+                    actual_str = f"{actual:.4f}"
+                else:
+                    actual_str = f"{actual:.2f}"
                 pct_str = f"{pct:.1f}%"
             else:
                 status_text = "—"
@@ -716,6 +732,8 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
                 cell.border = border
                 if col_idx in [2, 3, 4]:  # Kolom target, actual, keterpenuhan
                     cell.alignment = Alignment(horizontal='right')
+                elif col_idx == 5:  # Kolom status
+                    cell.alignment = Alignment(horizontal='center')
             
             current_row += 1
         
