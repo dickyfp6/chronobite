@@ -37,7 +37,7 @@ from ga_v2 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
-    local_search, display_nutrition_analysis_table
+    local_search, display_nutrition_analysis_table, calculate_total_nutrition_from_portions
 )
 from ga_config import GA_PARAMS, LS_PARAMS
 
@@ -334,9 +334,10 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         # ════════════════════════════════════════════════════════════════════════
         print("\n[DEBUG export] Inspecting columns...")
         
-        # Inspect total nutrition keys
-        total_nutrition = calculate_total_nutrition(selected_df)
-        print(f"[DEBUG export] Total nutrition keys: {list(total_nutrition.keys())}")
+        # BUG FIX: Use actual nutrition from portion sizing, not per-100g values
+        # Inspect total nutrition keys from ACTUAL portion results
+        total_nutrition = calculate_total_nutrition_from_portions(portion_result_df)
+        print(f"[DEBUG export] Total nutrition keys (from portions): {list(total_nutrition.keys())}")
         
         # Inspect portion_result_df columns
         print(f"[DEBUG export] portion_result_df columns: {list(portion_result_df.columns)}")

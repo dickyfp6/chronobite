@@ -535,6 +535,32 @@ def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
     return total_nutrition
 
 
+def calculate_total_nutrition_from_portions(portion_df: pd.DataFrame) -> Dict[str, float]:
+    """
+    Hitung total nutrisi AKTUAL berdasarkan kolom final_* (hasil portion sizing).
+    
+    PENTING: Fungsi ini digunakan untuk BAGIAN 5 (HARD CONSTRAINT validation)
+    karena menggunakan nilai AKTUAL setelah portion sizing, bukan nilai per 100g.
+    
+    Args:
+        portion_df: DataFrame hasil calculate_portion_sizes_dynamic, 
+                     punya kolom final_* untuk setiap nutrient.
+    
+    Returns:
+        Dict: {nutrient_name: total_value, ...} 
+        Key TANPA prefix 'final_', contoh: {'energy_kcal': 1850, 'protein_g': 65, ...}
+    
+    Example:
+        Input: portion_df dengan kolom ['food_id', 'gram', 'final_energy_kcal', 'final_protein_g', ...]
+        Output: {'energy_kcal': 1850.5, 'protein_g': 65.2, ...}
+    """
+    result = {}
+    for col in portion_df.columns:
+        if col.startswith('final_'):
+            nutrient_name = col[len('final_'):]
+            result[nutrient_name] = float(portion_df[col].sum())
+    return result
+
 
 # ═════════════════════════════════════════════════════════════════════════════
 # 2.5 FEASIBILITY CHECK - Validate HARD constraints with tolerance
