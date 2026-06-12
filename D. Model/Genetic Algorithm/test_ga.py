@@ -39,6 +39,7 @@ from ga_v1 import (
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
     local_search, display_nutrition_analysis_table
 )
+from ga_config import GA_PARAMS, LS_PARAMS
 
 # Import NutritionService
 try:
@@ -843,10 +844,7 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            generations=110,
-            pop_size=70,
-            elite_ratio=0.10,
-            mutation_rate=0.25,
+            **GA_PARAMS,
             verbose=False  # Changed to False for cleaner output
         )
         print("✓ GA optimization complete")
@@ -861,7 +859,7 @@ def test_ga_with_nutrition_service():
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
-            iterations=30,
+            **LS_PARAMS,
             verbose=True  # Show improvements
         )
         print("✓ Local search optimization complete")

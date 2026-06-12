@@ -13,6 +13,7 @@ if parent_dir not in sys.path:
 
 from meal_schema import MenuPlan, Meal, MealCourse, SnackMeal, FoodItem
 from ga_v2 import run_ga, local_search, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES # type: ignore
+from ga_config import GA_PARAMS, LS_PARAMS
 
 class GeneticAlgorithmInterface:
     def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):
@@ -239,10 +240,7 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                generations=110,    # Optimal dari tuning final Kaggle
-                pop_size=70,       # Optimal dari tuning final Kaggle
-                elite_ratio=0.10,   # Turun dari 0.25 → kurangi elite dominance
-                mutation_rate=0.25, # Sedikit naik untuk eksplorasi lebih baik
+                **GA_PARAMS,
                 verbose=True,
                 deadline=deadline
             )
@@ -258,7 +256,7 @@ class GeneticAlgorithmInterface:
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,
-                iterations=30,      # Optimal dari tuning final Kaggle
+                **LS_PARAMS,
                 verbose=False
             )
             print("[OK] Local Search complete")
