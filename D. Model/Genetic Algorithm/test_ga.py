@@ -1012,9 +1012,15 @@ def test_ga_with_nutrition_service():
                 excel_filename = "hasil_meal_plan"
             excel_filename += ".xlsx"
             
+            # Set output path to current directory (D. Model/Genetic Algorithm)
+            output_dir = os.path.dirname(os.path.abspath(__file__))
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            excel_filepath = os.path.join(output_dir, excel_filename)
+            
             # Call export_to_excel
             export_to_excel(
-                filename=excel_filename,
+                filename=excel_filepath,
                 user_input=user_input,
                 nutrition_result=nutrition_result,
                 guidelines_all=guidelines_all,
