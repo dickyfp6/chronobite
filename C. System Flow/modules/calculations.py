@@ -43,19 +43,35 @@ class NutritionCalculator:
         }
     
     @staticmethod
-    def calculate_bbi(height):
+    def calculate_bbi(height, gender):
         """
-        Hitung Berat Badan Ideal (BBI) menggunakan target BMI 22
-        Rumus: BBI = 22 * (height_in_meters ^ 2)
+        Hitung Berat Badan Ideal (BBI) menggunakan Rumus Broca.
+        
+        Pria:   BBI = (TB - 100) - [(TB - 100) x 10%]
+                Jika TB < 160 cm, pengurangan 10% dihilangkan -> BBI = (TB - 100)
+        Wanita: BBI = (TB - 100) - [(TB - 100) x 15%]
+                Jika TB < 150 cm, pengurangan 15% dihilangkan -> BBI = (TB - 100)
         
         Args:
             height: float (cm)
+            gender: str ('M' untuk Pria, 'F' untuk Wanita)
         
         Returns:
             float: Berat badan ideal (kg)
         """
-        height_m = height / 100
-        bbi = 22 * (height_m ** 2)
+        base = height - 100
+        
+        if gender == 'M':
+            if height < 160:
+                bbi = base
+            else:
+                bbi = base - (base * 0.10)
+        else:
+            if height < 150:
+                bbi = base
+            else:
+                bbi = base - (base * 0.15)
+        
         return round(bbi, 2)
     
     @staticmethod
@@ -316,7 +332,7 @@ def calculate_user_nutrition_needs(user_data):
     bmi_result = calc.calculate_bmi(user_data['weight'], user_data['height'])
     
     # 2. BBI
-    bbi = calc.calculate_bbi(user_data['height'])
+    bbi = calc.calculate_bbi(user_data['height'], user_data['gender'])
     
     # 3. Pilih BB untuk BMR
     if bmi_result['category'] == "Healthy Weight":

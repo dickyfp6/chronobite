@@ -177,9 +177,18 @@ def calculate_bmi(weight, height):
 
 
 def calculate_bbi(height, gender):
-    if gender == "M":
-        return round((height - 100) * 0.9, 1)
-    return round((height - 100) * 0.85, 1)
+    base = height - 100
+    if gender == 'M':
+        if height < 160:
+            bbi = base
+        else:
+            bbi = base - (base * 0.10)
+    else:
+        if height < 150:
+            bbi = base
+        else:
+            bbi = base - (base * 0.15)
+    return round(bbi, 2)
 
 
 def calculate_bmr(weight, height, age, gender):

@@ -38,7 +38,7 @@ from ga_v2 import (
     run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
-    local_search, display_nutrition_analysis_table
+    local_search, display_nutrition_analysis_table, calculate_total_nutrition_from_portions
 )
 from ga_config import GA_PARAMS, LS_PARAMS
 
@@ -308,7 +308,7 @@ def find_column_in_df(df, priority_list):
 
 
 def export_to_excel(filename, user_input, nutrition_result, guidelines_all, 
-                   selected_df, portion_result_df, guidelines, tdee):
+                   selected_df, portion_result_df, guidelines, tdee, best_solution):
     """
     Export meal planning results ke Excel dengan format template validasi ahli gizi.
     
@@ -335,9 +335,10 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         # ════════════════════════════════════════════════════════════════════════
         print("\n[DEBUG export] Inspecting columns...")
         
-        # Inspect total nutrition keys
-        total_nutrition = calculate_total_nutrition(selected_df)
-        print(f"[DEBUG export] Total nutrition keys: {list(total_nutrition.keys())}")
+        # BUG FIX: Use actual nutrition from portion sizing, not per-100g values
+        # Inspect total nutrition keys from ACTUAL portion results
+        total_nutrition = calculate_total_nutrition_from_portions(portion_result_df)
+        print(f"[DEBUG export] Total nutrition keys (from portions): {list(total_nutrition.keys())}")
         
         # Inspect portion_result_df columns
         print(f"[DEBUG export] portion_result_df columns: {list(portion_result_df.columns)}")
@@ -431,9 +432,6 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
             ('BMR (kcal)', f"{nutrition_result['energy']['bmr']:.1f}"),
             ('TDEE (kcal)', f"{nutrition_result['energy']['tdee']:.0f}"),
             ('Energi Harian (kcal)', f"{energy_daily:.0f}"),
-            ('Protein (g)', f"{safe_get_min(guidelines_all, 'protein'):.1f}"),
-            ('Lemak / Fat (g)', f"{safe_get_min(guidelines_all, 'fat'):.1f}"),
-            ('Karbohidrat (g)', f"{safe_get_min(guidelines_all, 'carbohydrate'):.1f}"),
         ]
         
         # Tambahkan Water dengan fallback
@@ -617,7 +615,7 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         current_row += 1
         
         # Header tabel Bagian 5
-        headers_5 = ['Nutrisi', 'Min – Max', 'Aktual', 'Keterpenuhan (%)', '']
+        headers_5 = ['Nutrisi', 'Min – Max', 'Aktual', 'Keterpenuhan (%)', 'Status']
         for col_idx, header in enumerate(headers_5, 1):
             try:
                 cell = ws.cell(row=current_row, column=col_idx)
@@ -644,20 +642,32 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
                 pct = calculate_fulfillment_percentage(actual, min_val, max_val)
                 pct_str = f"{pct:.1f}%"
                 actual_str = f"{actual:.1f}"
+                
+                # Determine status: OVER LIMIT, BELOW MIN, or OK
+                if actual > max_val:
+                    status = "⚠️ OVER LIMIT"
+                elif actual < min_val:
+                    status = "⚠️ BELOW MIN"
+                else:
+                    status = "OK"
             else:
                 pct_str = "N/A"
                 actual_str = "N/A"
+                status = "—"
             
             ws[f'A{current_row}'] = nutrient_key.replace('_', ' ').title()
             ws[f'B{current_row}'] = range_str
             ws[f'C{current_row}'] = actual_str
             ws[f'D{current_row}'] = pct_str
+            ws[f'E{current_row}'] = status
             
-            for col_idx in range(1, 5):
+            for col_idx in range(1, 6):
                 cell = ws.cell(row=current_row, column=col_idx)
                 cell.border = border
                 if col_idx in [2, 3, 4]:  # Kolom range, actual, percentage
                     cell.alignment = Alignment(horizontal='right')
+                elif col_idx == 5:  # Kolom status
+                    cell.alignment = Alignment(horizontal='center')
             
             current_row += 1
         
@@ -699,7 +709,11 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
             if actual is not None:
                 pct = calculate_fulfillment_percentage(actual, min_val, max_val)
                 status_text, _, _ = get_status_category(pct)
-                actual_str = f"{actual:.2f}"
+                # Fix: jika actual sangat kecil (< 0.01 dan != 0), gunakan 4 desimal
+                if actual != 0 and actual < 0.01:
+                    actual_str = f"{actual:.4f}"
+                else:
+                    actual_str = f"{actual:.2f}"
                 pct_str = f"{pct:.1f}%"
             else:
                 status_text = "—"
@@ -717,7 +731,57 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
                 cell.border = border
                 if col_idx in [2, 3, 4]:  # Kolom target, actual, keterpenuhan
                     cell.alignment = Alignment(horizontal='right')
+                elif col_idx == 5:  # Kolom status
+                    cell.alignment = Alignment(horizontal='center')
             
+            current_row += 1
+        
+        # ════════════════════════════════════════════════════════════════════════
+        # BAGIAN 7 — RINGKASAN PERFORMA GA
+        # ════════════════════════════════════════════════════════════════════════
+        current_row += 2  # 2 baris kosong pemisah
+        
+        # Title Bagian 7
+        ws[f'A{current_row}'] = "BAGIAN 7 — RINGKASAN PERFORMA GA"
+        ws[f'A{current_row}'].font = title_font
+        ws[f'A{current_row}'].fill = title_fill
+        ws.merge_cells(f'A{current_row}:E{current_row}')
+        current_row += 1
+        
+        # Hitung CSR (Constraint Satisfaction Rate) - HARD constraints only
+        # Konsisten dengan cara hitung di ga_evaluation.py / greedy_evaluation.py
+        hard_constraints_passed = 0
+        total_hard_constraints = 0
+        
+        for nutrient_key, constraint in guidelines['hard'].items():
+            min_val = constraint.get('min', 0)
+            max_val = constraint.get('max', float('inf'))
+            actual = lookup_nutrition(total_nutrition, nutrient_key, HARD_NUTRIENT_KEY_MAP)
+            
+            if actual is not None:
+                total_hard_constraints += 1
+                if min_val <= actual <= max_val:
+                    hard_constraints_passed += 1
+        
+        csr = (hard_constraints_passed / total_hard_constraints * 100) if total_hard_constraints > 0 else 0
+        
+        # Best fitness dari best_solution
+        best_fitness = getattr(best_solution, 'best_fitness_score', None)
+        fitness_str = f"{best_fitness:.2f}" if best_fitness is not None else "N/A"
+        
+        performance_data = [
+            ('Best Fitness Score (GA Penalty)', fitness_str),
+            ('Keterangan Fitness', 'Lower = Better (Scale: macro×5000 + hard×10000 + soft×100)'),
+            ('Hard Constraints Terpenuhi', f"{hard_constraints_passed} / {total_hard_constraints}"),
+            ('Constraint Satisfaction Rate (CSR)', f"{csr:.1f}%"),
+        ]
+        
+        for label, value in performance_data:
+            ws[f'A{current_row}'] = label
+            ws[f'B{current_row}'] = value
+            ws[f'A{current_row}'].border = border
+            ws[f'B{current_row}'].border = border
+            ws.merge_cells(f'B{current_row}:E{current_row}')
             current_row += 1
         
         # ════════════════════════════════════════════════════════════════════════
@@ -1013,16 +1077,23 @@ def test_ga_with_nutrition_service():
                 excel_filename = "hasil_meal_plan"
             excel_filename += ".xlsx"
             
+            # Set output path to current directory (D. Model/Genetic Algorithm)
+            output_dir = os.path.dirname(os.path.abspath(__file__))
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            excel_filepath = os.path.join(output_dir, excel_filename)
+            
             # Call export_to_excel
             export_to_excel(
-                filename=excel_filename,
+                filename=excel_filepath,
                 user_input=user_input,
                 nutrition_result=nutrition_result,
                 guidelines_all=guidelines_all,
                 selected_df=selected_df,
                 portion_result_df=portion_result_df,
                 guidelines=guidelines,
-                tdee=tdee
+                tdee=tdee,
+                best_solution=best_solution
             )
             
             print("\n✓ MEAL PLANNING SYSTEM - COMPLETE")
