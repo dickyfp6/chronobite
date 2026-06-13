@@ -838,5 +838,6 @@ def server_error(error):
 # ═════════════════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
+    # Force auto-reload of guidelines and CSV data
     init_services()
     app.run(debug=True, port=5000)

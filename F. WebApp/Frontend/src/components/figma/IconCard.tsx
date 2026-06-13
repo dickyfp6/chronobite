@@ -8,9 +8,26 @@ interface IconCardProps {
  disabled?: boolean;
  onClick?: () => void;
  onDoubleClick?: () => void;
+ className?: string;
+ iconBgSelectedClass?: string;
+ iconBgUnselectedClass?: string;
 }
 
-export function IconCard({ icon: Icon, title, description, selected, disabled, onClick, onDoubleClick }: IconCardProps) {
+export function IconCard({
+  icon: Icon,
+  title,
+  description,
+  selected,
+  disabled,
+  onClick,
+  onDoubleClick,
+  className = '',
+  iconBgSelectedClass = 'bg-primary',
+  iconBgUnselectedClass = 'bg-primary/80'
+}: IconCardProps) {
+  const bgSelected = `${iconBgSelectedClass} text-white`;
+  const bgUnselected = `${iconBgUnselectedClass} text-slate-100/90`;
+
  return (
  <motion.button
  whileHover={{ scale: disabled ? 1 : 1.015, y: disabled ? 0 : -2 }}
@@ -24,10 +41,10 @@ export function IconCard({ icon: Icon, title, description, selected, disabled, o
  : disabled
  ? 'border-border/45 bg-slate-50/50 opacity-35 cursor-not-allowed'
  : 'border-border/80 bg-white/40 hover:border-primary/80 :border-primary/60 hover:shadow-md hover:bg-white/95 :bg-slate-800/80 hover:shadow-primary/5'
- }`}
+ } ${className}`}
  >
  <div className="flex items-center gap-4">
- <div className={`p-3 rounded-xl shrink-0 transition-all duration-300 ${selected ? 'bg-primary text-primary-foreground shadow-sm scale-105' : 'bg-primary/10 text-primary '}`}>
+  <div className={`p-3 rounded-xl shrink-0 transition-all duration-300 ${selected ? `${bgSelected} shadow-md scale-105 ring-2 ring-white/25` : bgUnselected}`}>
  <Icon className="w-6 h-6" />
  </div>
  <div className="flex-1 min-w-0">

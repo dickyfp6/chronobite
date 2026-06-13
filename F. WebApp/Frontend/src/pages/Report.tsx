@@ -38,6 +38,7 @@ const dietTips = {
  'Minimize foods with added sugars and excessive salt.',
 ],
  cholesterol: [
+ 'Strictly avoid and limit foods high in saturated fats and trans fats to manage cholesterol levels.',
  'Reduce foods high in saturated fat such as fatty meats and full-fat dairy products.',
  'Limit dietary cholesterol intake.',
  'Eat more soluble fiber from oats, fruits, and legumes.',
@@ -741,22 +742,18 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
   }
   
   let cardStyle = '';
- let titleColor = '';
- let rangeColor = '';
+  let titleColor = '';
+  let rangeColor = '';
 
- if (key === 'energy_kcal') {
- cardStyle = 'bg-primary text-primary-foreground border-primary/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300';
- titleColor = 'text-primary-foreground font-bold';
- rangeColor = 'text-primary-foreground/90 font-medium';
- } else if (['carbohydrate_g', 'protein_g', 'fat_g'].includes(key)) {
- cardStyle = 'bg-destructive text-destructive-foreground border-destructive/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300';
- titleColor = 'text-destructive-foreground font-bold';
- rangeColor = 'text-destructive-foreground/90 font-medium';
- } else {
- cardStyle = 'bg-red-500/10 border-red-500/15 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300';
- titleColor = 'text-gray-900 font-semibold';
- rangeColor = 'text-gray-600 ';
- }
+  if (key === 'energy_kcal' || ['carbohydrate_g', 'protein_g', 'fat_g'].includes(key)) {
+    cardStyle = 'bg-amber-600 text-white border-amber-700/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300';
+    titleColor = 'text-white font-bold';
+    rangeColor = 'text-amber-50/90 font-medium';
+  } else {
+    cardStyle = 'bg-amber-600/10 border-amber-600/15 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300';
+    titleColor = 'text-gray-900 font-semibold';
+    rangeColor = 'text-gray-600 ';
+  }
 
  return (
  <div key={key} className={`rounded-2xl p-3 border text-left flex flex-col justify-center font-sans ${cardStyle}`}>
@@ -1268,19 +1265,19 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
   if (isDeficient) {
     statusLabel = 'Deficient';
     showBadge = true;
-    priority = 1;
-    cardBg = 'bg-red-50/90 border-red-350 ';
-    badgeBg = 'bg-red-105 text-red-700 ';
-    textColor = 'text-red-700 ';
-    titleColor = 'text-red-900 ';
-  } else if (isExcessive) {
-    statusLabel = 'Excessive';
-    showBadge = true;
     priority = 2;
     cardBg = 'bg-amber-50/90 border-amber-300 ';
     badgeBg = 'bg-amber-100 text-amber-700 ';
     textColor = 'text-amber-700 ';
     titleColor = 'text-amber-900 ';
+  } else if (isExcessive) {
+    statusLabel = 'Excessive';
+    showBadge = true;
+    priority = 1;
+    cardBg = 'bg-red-50/90 border-red-350 ';
+    badgeBg = 'bg-red-105 text-red-700 ';
+    textColor = 'text-red-700 ';
+    titleColor = 'text-red-900 ';
   }
 
   return {

@@ -90,7 +90,7 @@ export function formatNutrient(key: string, rawVal: number | null | undefined): 
       decimals = 0;
     } else if (keyLower.includes('vitamin_d')) {
       unit = 'mcg';
-      scaleFactor = 1;
+      scaleFactor = 1000;
       decimals = 0;
     } else {
       if (rawVal < 1) {

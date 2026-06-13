@@ -411,26 +411,29 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
 
  <div className="space-y-5">
  {priorityGuidelineItems.length > 0 && (
- <div className="rounded-2xl bg-transparent p-4 border border-red-550/20 mb-4">
- <p className="text-xs font-bold text-destructive/80 uppercase tracking-wider mb-3">Priority guidelines for your condition</p>
+ <div className="rounded-2xl bg-transparent p-4 border border-amber-500/20 mb-4">
+ <p className="text-xs font-bold text-amber-700/80 uppercase tracking-wider mb-3">Priority guidelines for your condition</p>
  <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
- {priorityGuidelineItems.map((item) => (
- <div
- key={item.key}
- className={
- item.key === 'energy_kcal'
- ? 'rounded-xl bg-primary text-primary-foreground p-2.5 border border-primary/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'
- : isEnergyOrMacroKey(item.key)
- ? 'rounded-xl bg-destructive text-destructive-foreground p-2.5 border border-destructive/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'
- : 'rounded-xl bg-red-500/10 p-2.5 border border-red-500/15 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300'
- }
- >
- <div className="flex items-center justify-between">
- <p className="text-xs font-bold truncate">{item.label}</p>
- </div>
- <p className="text-[11px] font-semibold mt-1 font-serif">{formatGuidelineDisplay(item)}</p>
- </div>
- ))}
+  {priorityGuidelineItems.map((item) => {
+    const isMacro = item.key === 'energy_kcal' || isEnergyOrMacroKey(item.key);
+    return (
+      <div
+        key={item.key}
+        className={
+          isMacro
+            ? 'rounded-xl bg-amber-600 text-white p-2.5 border border-amber-700/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'
+            : 'rounded-xl bg-amber-600/10 text-gray-900 p-2.5 border border-amber-600/15 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300'
+        }
+      >
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-bold truncate">{item.label}</p>
+        </div>
+        <p className={`text-[11px] font-semibold mt-1 font-serif ${isMacro ? 'text-amber-50/90' : 'text-gray-600'}`}>
+          {formatGuidelineDisplay(item)}
+        </p>
+      </div>
+    );
+  })}
  </div>
  </div>
  )}

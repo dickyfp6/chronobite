@@ -49,8 +49,11 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
     bmiPercent = Math.min(80 + ((bmi - 30) / 10) * 20, 100);
   }
 
-  // 2. BBI (Ideal Body Weight)
-  const bbi = 22 * (heightInMeters * heightInMeters);
+  // 2. BBI (Ideal Body Weight) using Broca's Formula
+  const baseWeight = height - 100;
+  const bbi = gender === 'male'
+    ? (height < 160 ? baseWeight : baseWeight - (baseWeight * 0.10))
+    : (height < 150 ? baseWeight : baseWeight - (baseWeight * 0.15));
 
   // 3. BMR Calculations
   const bmrHarrisBenedict = gender === 'male'

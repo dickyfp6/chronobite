@@ -120,6 +120,7 @@ export const t = {
       carbs: 'Carbs',
       fat: 'Fat',
       fiber: 'Fiber',
+      chooseOne: 'Choose one option for each course (Main Course, Side Dish, Drink) by clicking on it.',
     },
     nutrients: {
       carbohydrate_g: 'Carbohydrates',

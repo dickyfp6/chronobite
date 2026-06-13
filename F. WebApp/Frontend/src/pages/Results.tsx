@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ArrowRight, RotateCcw } from 'lucide-react';
+import { ArrowRight, RotateCcw, Info } from 'lucide-react';
 import { t } from '../utils/translations';
 import type { UserInputData } from './InputWizard';
 import { api } from '../services/api';
@@ -711,6 +711,21 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  return (
  <>
  <div className="w-full pb-28 sm:pb-20 lg:pb-8">
+ {/* Banner Instruction "Choose One" */}
+ <div className="mb-6 bg-gradient-to-r from-emerald-50/80 to-teal-50/40 backdrop-blur-md border border-emerald-100/80 rounded-2xl p-4 flex items-start gap-3 shadow-sm">
+ <div className="p-2 bg-emerald-100 text-emerald-700 rounded-xl shrink-0">
+ <Info className="w-5 h-5" />
+ </div>
+ <div>
+ <h4 className="font-bold text-gray-900 text-sm font-sans mb-0.5">
+ Choose One
+ </h4>
+ <p className="text-xs text-gray-600 font-sans leading-relaxed">
+ {t.results.chooseOne}
+ </p>
+ </div>
+ </div>
+
  <div className="space-y-8">
  {['breakfast', 'lunch', 'dinner'].map((mealName) => {
  const meal = menuData[mealName];

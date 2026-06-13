@@ -622,11 +622,26 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  default: return Heart;
  }
  };
+ const getHealthDescription = (c: string) => {
+ switch (c) {
+ case 'normal': return 'Healthy eating guidelines for general well-being';
+ case 'dm2': return 'Manage blood glucose levels and carbohydrate intake';
+ case 'hypertension': return 'Lower blood pressure with sodium-restricted meals';
+ case 'cvd': return 'Support cardiovascular health and lower saturated fats';
+ case 'cholesterol': return 'Reduce cholesterol levels with fiber-rich options';
+ case 'ckd': return 'Specifically for non-hemodialysis patients';
+ default: return undefined;
+ }
+ };
  return (
  <IconCard
  key={condition}
  icon={getHealthIcon(condition)}
  title={t.input.health[condition as keyof typeof t.input.health] as string}
+ description={getHealthDescription(condition)}
+ className="h-full"
+ iconBgSelectedClass={condition === 'normal' ? 'bg-blue-900' : undefined}
+ iconBgUnselectedClass={condition === 'normal' ? 'bg-blue-900/80' : undefined}
  selected={data.healthConditions.includes(condition)}
  disabled={
  (condition === 'normal' && data.healthConditions.some(c => c !== 'normal')) ||

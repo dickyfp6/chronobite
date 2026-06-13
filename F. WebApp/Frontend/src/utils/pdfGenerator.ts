@@ -323,7 +323,18 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
     return true;
   };
 
-  const isOtherNutrientFulfilled = (actual: number, target: number) => {
+  const isOtherNutrientFulfilled = (key: string, actual: number, target: number) => {
+    const isLimitNutrient = [
+      'sodium_mg',
+      'cholesterol_mg',
+      'sugar_g',
+      'saturated_fat_g',
+      'trans_fat_g'
+    ].includes(key);
+
+    if (isLimitNutrient) {
+      return actual <= target;
+    }
     return actual >= target;
   };
 
@@ -493,21 +504,69 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
     pdf.setFontSize(10);
 
     group.nutrients.forEach((nutrientKey: string) => {
-      const value = data.dailyNeeds[nutrientKey];
+      const defaultValue = data.dailyNeeds[nutrientKey];
       const name = (t.nutrients as Record<string, string>)[nutrientKey] || nutrientKey;
       
       const rawActual = data.nutrients?.[nutrientKey] != null 
         ? Number(data.nutrients[nutrientKey]) 
-        : Number(value) * (0.7 + Math.random() * 0.4);
+        : Number(defaultValue) * (0.7 + Math.random() * 0.4);
 
       const formattedActual = formatNutrient(nutrientKey, rawActual);
-      const formattedTarget = formatNutrient(nutrientKey, value);
+
+      // Check if there is an active guideline rule
+      const rule = data.analysisGuidelines?.nutrients?.[nutrientKey];
+      let targetValText = '';
+      let targetCompareVal = defaultValue;
+
+      if (rule) {
+        const minVal = rule.min != null ? Number(rule.min) : null;
+        const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
+
+        const formattedMin = minVal !== null ? formatNutrient(nutrientKey, minVal) : null;
+        const formattedMax = maxVal !== null ? formatNutrient(nutrientKey, maxVal) : null;
+
+        if (formattedMin && formattedMax) {
+          if (formattedMin.val === formattedMax.val) {
+            targetValText = `${formattedMin.formatted}${formattedMin.unit}`;
+          } else {
+            targetValText = `${formattedMin.formatted}-${formattedMax.formatted}${formattedMin.unit}`;
+          }
+          targetCompareVal = formattedMin.val;
+        } else if (formattedMin) {
+          targetValText = `min. ${formattedMin.formatted}${formattedMin.unit}`;
+          targetCompareVal = minVal;
+        } else if (formattedMax) {
+          targetValText = `max. ${formattedMax.formatted}${formattedMax.unit}`;
+          targetCompareVal = maxVal;
+        } else {
+          targetValText = 'No limit';
+          targetCompareVal = 0;
+        }
+      } else {
+        const formattedTarget = formatNutrient(nutrientKey, defaultValue);
+        targetValText = `${formattedTarget.formatted}${formattedTarget.unit}`;
+        targetCompareVal = defaultValue;
+      }
 
       checkNewPage(6);
       pdf.setTextColor(...textColor);
       pdf.text(`${name}`, margin + 3, yPosition);
       
-      const fulfilled = isOtherNutrientFulfilled(formattedActual.val, formattedTarget.val);
+      // Check fulfillment based on rule (range check) or fallback
+      let fulfilled = false;
+      if (rule) {
+        const minVal = rule.min != null ? Number(rule.min) : null;
+        const maxVal = rule.max != null && Number.isFinite(rule.max) ? Number(rule.max) : null;
+        const formattedMin = minVal !== null ? formatNutrient(nutrientKey, minVal) : null;
+        const formattedMax = maxVal !== null ? formatNutrient(nutrientKey, maxVal) : null;
+
+        const minCheck = formattedMin ? formattedActual.val >= formattedMin.val : true;
+        const maxCheck = formattedMax ? formattedActual.val <= formattedMax.val : true;
+        fulfilled = minCheck && maxCheck;
+      } else {
+        fulfilled = isOtherNutrientFulfilled(nutrientKey, formattedActual.val, targetCompareVal);
+      }
+
       if (fulfilled) {
         setSans('bold');
         pdf.setTextColor(46, 125, 50);
@@ -519,7 +578,7 @@ export async function generateNutritionPDF(data: PDFData, preview: boolean = fal
       
       setSans('normal');
       pdf.setTextColor(...textColor);
-      pdf.text(`${formattedTarget.formatted}${formattedTarget.unit}`, margin + 75, yPosition);
+      pdf.text(`${targetValText}`, margin + 75, yPosition);
       yPosition += 5;
     });
     yPosition += 3;
