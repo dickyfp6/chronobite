@@ -307,7 +307,7 @@ def find_column_in_df(df, priority_list):
 
 
 def export_to_excel(filename, user_input, nutrition_result, guidelines_all, 
-                   selected_df, portion_result_df, guidelines, tdee):
+                   selected_df, portion_result_df, guidelines, tdee, best_solution):
     """
     Export meal planning results ke Excel dengan format template validasi ahli gizi.
     
@@ -431,9 +431,6 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
             ('BMR (kcal)', f"{nutrition_result['energy']['bmr']:.1f}"),
             ('TDEE (kcal)', f"{nutrition_result['energy']['tdee']:.0f}"),
             ('Energi Harian (kcal)', f"{energy_daily:.0f}"),
-            ('Protein (g)', f"{safe_get_min(guidelines_all, 'protein'):.1f}"),
-            ('Lemak / Fat (g)', f"{safe_get_min(guidelines_all, 'fat'):.1f}"),
-            ('Karbohidrat (g)', f"{safe_get_min(guidelines_all, 'carbohydrate'):.1f}"),
         ]
         
         # Tambahkan Water dengan fallback
@@ -736,6 +733,54 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
                 elif col_idx == 5:  # Kolom status
                     cell.alignment = Alignment(horizontal='center')
             
+            current_row += 1
+        
+        # ════════════════════════════════════════════════════════════════════════
+        # BAGIAN 7 — RINGKASAN PERFORMA GA
+        # ════════════════════════════════════════════════════════════════════════
+        current_row += 2  # 2 baris kosong pemisah
+        
+        # Title Bagian 7
+        ws[f'A{current_row}'] = "BAGIAN 7 — RINGKASAN PERFORMA GA"
+        ws[f'A{current_row}'].font = title_font
+        ws[f'A{current_row}'].fill = title_fill
+        ws.merge_cells(f'A{current_row}:E{current_row}')
+        current_row += 1
+        
+        # Hitung CSR (Constraint Satisfaction Rate) - HARD constraints only
+        # Konsisten dengan cara hitung di ga_evaluation.py / greedy_evaluation.py
+        hard_constraints_passed = 0
+        total_hard_constraints = 0
+        
+        for nutrient_key, constraint in guidelines['hard'].items():
+            min_val = constraint.get('min', 0)
+            max_val = constraint.get('max', float('inf'))
+            actual = lookup_nutrition(total_nutrition, nutrient_key, HARD_NUTRIENT_KEY_MAP)
+            
+            if actual is not None:
+                total_hard_constraints += 1
+                if min_val <= actual <= max_val:
+                    hard_constraints_passed += 1
+        
+        csr = (hard_constraints_passed / total_hard_constraints * 100) if total_hard_constraints > 0 else 0
+        
+        # Best fitness dari best_solution
+        best_fitness = getattr(best_solution, 'best_fitness_score', None)
+        fitness_str = f"{best_fitness:.2f}" if best_fitness is not None else "N/A"
+        
+        performance_data = [
+            ('Best Fitness Score (GA Penalty)', fitness_str),
+            ('Keterangan Fitness', 'Lower = Better (Scale: macro×5000 + hard×10000 + soft×100)'),
+            ('Hard Constraints Terpenuhi', f"{hard_constraints_passed} / {total_hard_constraints}"),
+            ('Constraint Satisfaction Rate (CSR)', f"{csr:.1f}%"),
+        ]
+        
+        for label, value in performance_data:
+            ws[f'A{current_row}'] = label
+            ws[f'B{current_row}'] = value
+            ws[f'A{current_row}'].border = border
+            ws[f'B{current_row}'].border = border
+            ws.merge_cells(f'B{current_row}:E{current_row}')
             current_row += 1
         
         # ════════════════════════════════════════════════════════════════════════
@@ -1046,7 +1091,8 @@ def test_ga_with_nutrition_service():
                 selected_df=selected_df,
                 portion_result_df=portion_result_df,
                 guidelines=guidelines,
-                tdee=tdee
+                tdee=tdee,
+                best_solution=best_solution
             )
             
             print("\n✓ MEAL PLANNING SYSTEM - COMPLETE")

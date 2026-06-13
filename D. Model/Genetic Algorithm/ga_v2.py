@@ -352,6 +352,10 @@ def guided_solution(food_df: pd.DataFrame, guidelines: Dict) -> pd.DataFrame:
     target_protein = hard_constraints.get('protein_g', {}).get('min', 50)
     target_fat = hard_constraints.get('fat_g', {}).get('min', 30)
     
+    target_carb_max = hard_constraints.get('carbohydrate_g', {}).get('max', float('inf'))
+    target_protein_max = hard_constraints.get('protein_g', {}).get('max', float('inf'))
+    target_fat_max = hard_constraints.get('fat_g', {}).get('max', float('inf'))
+    
     remaining_carb = target_carb
     remaining_protein = target_protein
     remaining_fat = target_fat
@@ -377,10 +381,37 @@ def guided_solution(food_df: pd.DataFrame, guidelines: Dict) -> pd.DataFrame:
            'protein_g' in scored_candidates.columns and \
            'fat_g' in scored_candidates.columns:
             
+            # Calculate how much of each macro has already been consumed
+            protein_already_consumed = target_protein - remaining_protein
+            carb_already_consumed = target_carb - remaining_carb
+            fat_already_consumed = target_fat - remaining_fat
+            
             # Base score: contribution to deficient nutrients
-            carb_score = scored_candidates['carbohydrate_g'] / (remaining_carb + 1)
-            protein_score = scored_candidates['protein_g'] / (remaining_protein + 1)
-            fat_score = scored_candidates['fat_g'] / (remaining_fat + 1)
+            # WITH PENALTY if target max is already exceeded
+            
+            # Protein scoring: reward until max, then penalize
+            if protein_already_consumed >= target_protein_max:
+                # Target max already exceeded - penalize protein items
+                protein_score = -(scored_candidates['protein_g'] / 10)
+            else:
+                # Still below max - reward as usual
+                protein_score = scored_candidates['protein_g'] / (remaining_protein + 1)
+            
+            # Carbohydrate scoring: reward until max, then penalize
+            if carb_already_consumed >= target_carb_max:
+                # Target max already exceeded - penalize carb items
+                carb_score = -(scored_candidates['carbohydrate_g'] / 10)
+            else:
+                # Still below max - reward as usual
+                carb_score = scored_candidates['carbohydrate_g'] / (remaining_carb + 1)
+            
+            # Fat scoring: reward until max, then penalize
+            if fat_already_consumed >= target_fat_max:
+                # Target max already exceeded - penalize fat items
+                fat_score = -(scored_candidates['fat_g'] / 10)
+            else:
+                # Still below max - reward as usual
+                fat_score = scored_candidates['fat_g'] / (remaining_fat + 1)
             
             # Slot-specific weighting (TASK 3)
             if 'main' in slot_label.lower():
