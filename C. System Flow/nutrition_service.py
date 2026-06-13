@@ -145,7 +145,7 @@ class NutritionService:
             
             # 2. Calculate anthropometrics
             bmi_calc = self.calculator.calculate_bmi(weight, height)
-            bbi = self.calculator.calculate_bbi(height)
+            bbi = self.calculator.calculate_bbi(height, gender)
             age_group = self.calculator.classify_age_group(age)
             
             result['anthropometrics'] = {
