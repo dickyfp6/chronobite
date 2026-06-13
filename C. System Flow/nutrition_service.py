@@ -262,6 +262,10 @@ class NutritionService:
                     if dri_col in ['age_min', 'age_max', 'gender']:
                         continue
                     
+                    # Skip UL/max columns - akan dipakai sebagai 'max' untuk nutrient dasarnya
+                    if dri_col.endswith('_max'):
+                        continue
+                    
                     nutrient_key = dri_col
                     
                     # Check if this nutrient already exists di guideline
@@ -271,9 +275,17 @@ class NutritionService:
                         # Only add jika value tidak null/NaN
                         if pd.notna(dri_value):
                             unit = self._infer_unit(nutrient_key)
+                            
+                            # Cek apakah ada kolom UL/max untuk nutrient ini
+                            max_col = f"{nutrient_key}_max"
+                            if max_col in dri_row.index and pd.notna(dri_row[max_col]):
+                                max_value = float(dri_row[max_col])
+                            else:
+                                max_value = float('inf')
+                            
                             nutrients_dict[nutrient_key] = {
                                 'min': float(dri_value),
-                                'max': float('inf'),  # DRI is minimum, not exact target; excess micronutrients are safe
+                                'max': max_value,
                                 'basis': 'DRI',
                                 'tipe': 'dri',
                                 'constraint_type': 'dri_micronutrient',
