@@ -1,10 +1,7 @@
 GA_PARAMS = {
-    "generations": 75,
-    "pop_size": 75,
-    "elite_ratio": 0.216181970863973,
-    "mutation_rate": 0.3748657075745643,
+    "generations": 70,
+    "pop_size": 110,
+    "elite_ratio": 0.10,
+    "mutation_rate": 0.25,
 }
-
-LS_PARAMS = {
-    "iterations": 30,
-}
+LS_PARAMS = {"iterations": 30}

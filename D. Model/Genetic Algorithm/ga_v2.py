@@ -239,6 +239,9 @@ NUTRIENT_WEIGHTS = {
 # Duplicate penalty weight
 DUPLICATE_PENALTY_WEIGHT = 50.0  # Penalty for each duplicate food item
 
+# Nutrients excluded from soft penalty: conceptually wrong or data too sparse to be meaningful
+SKIP_SOFT_NUTRIENTS = {'water_g', 'fluoride_mg'}
+
 
 # ═════════════════════════════════════════════════════════════════════════════
 # 1. RANDOM SOLUTION - Generate meal plan random
@@ -749,6 +752,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
     soft_penalty = 0.0
     
     for nutrient_name, constraint in soft_constraints.items():
+        if nutrient_name in SKIP_SOFT_NUTRIENTS:
+            continue
         if constraint.get('constraint_type') == 'unlimited':
             continue
         
@@ -2432,9 +2437,9 @@ def calculate_portion_sizes_dynamic(
     tdee_scale = min(TDEE / 2000, 2.5)
     gram_constraints = {
         'Main Course': (100, int(350 * tdee_scale)),   # naik sedikit baseline-nya
-        'Side Dish':   (50,  int(200 * tdee_scale)),   # sedikit lebih longgar dari sebelumnya
+        'Side Dish':   (100, int(200 * tdee_scale)),   # sedikit lebih longgar dari sebelumnya
         'Drink':       (100, int(250 * tdee_scale)),   # min turun, max dikap lebih kecil dari Main
-        'Snack':       (30,  int(120 * tdee_scale))    # sedikit naik
+        'Snack':       (30,  int(200 * tdee_scale))    # sedikit naik
     }
     
     # Enforce hierarki: Drink max tidak boleh melebihi Side Dish max
@@ -2653,29 +2658,44 @@ def calculate_portion_sizes_dynamic(
                 result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
     # ════════════════════════════════════════════════════════════════════════
-    # HARD CONSTRAINTS: Energy rescale to match TDEE
+    # HARD CONSTRAINTS: Energy rescale to match TDEE (PER-MEAL)
     # ════════════════════════════════════════════════════════════════════════
-    total_energy_after = result_df['final_energy_kcal'].sum()
+    # Rescale grams untuk setiap meal secara terpisah agar distribusi per-meal
+    # tetap terjaga. Total energy akan otomatis mendekati TDEE karena sum semua
+    # target_meal_energy = TDEE.
     
-    if total_energy_after > 0 and TDEE > 0:
-        energy_scale = TDEE / total_energy_after
+    for meal_type, ratio in meal_ratio.items():
+        target_meal_energy = TDEE * ratio
         
-        # Always rescale regardless of how far off first-pass was.
-        # The 0.6–1.4 guard was skipping rescale when first-pass diverged badly
-        # (e.g. energy_scale ~1.8x), leaving total energy far below TDEE.
-        # Clamping to protein_portion_limits below handles cases where scale is large.
-        # Scale, round to the nearest integer, and clamp to respect limits
-        scaled_grams = result_df['gram'] * energy_scale
-        rounded_grams = scaled_grams.round().astype(float)
+        # Find indices untuk meal ini
+        meal_indices = [idx for idx in range(CHROMOSOME_SIZE) if slot_to_meal.get(idx) == meal_type]
         
-        for idx in range(len(result_df)):
-            min_g, max_g = protein_portion_limits.get(idx, (50, 150))
-            rounded_grams.at[idx] = max(min_g, min(max_g, rounded_grams.at[idx]))
+        if not meal_indices:
+            continue
+        
+        # Calculate energy untuk meal ini (berdasarkan final_energy_kcal sebelum rescale)
+        energy_meal_after = sum(result_df.at[idx, 'final_energy_kcal'] for idx in meal_indices)
+        
+        # Skip jika energy meal = 0
+        if energy_meal_after <= 0:
+            continue
+        
+        # Calculate rescale factor untuk meal ini
+        meal_scale = target_meal_energy / energy_meal_after
+        
+        # Apply meal_scale ke gram items dalam meal
+        for idx in meal_indices:
+            scaled_gram = result_df.at[idx, 'gram'] * meal_scale
+            rounded_gram = round(scaled_gram)
             
-        result_df['gram'] = rounded_grams
+            # Clamp ke protein_portion_limits
+            min_g, max_g = protein_portion_limits.get(idx, (50, 150))
+            clamped_gram = max(min_g, min(max_g, rounded_gram))
+            
+            result_df.at[idx, 'gram'] = float(clamped_gram)
         
-        # RE-SCALE ALL NUTRIENTS with new grams (TASK 1 - critical!)
-        for idx in range(len(result_df)):
+        # Re-scale ALL NUTRIENTS untuk items dalam meal dengan gram baru (TASK 1)
+        for idx in meal_indices:
             gram = result_df.at[idx, 'gram']
             actual_item = selected_df.iloc[idx]
             
