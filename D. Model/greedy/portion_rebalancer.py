@@ -25,9 +25,9 @@ from meal_schema import FoodItem, Meal, SnackMeal, MealCourse
 
 # Portion limits (same as in optimizer)
 PORTION_RANGE = {
-    'Main Course': (150, 400),
+    'Main Course': (100, 400),
     'Side Dish': (50, 250),
-    'Drink': (150, 300),
+    'Drink': (100, 300),
     'Snack': (30, 100)
 }
 
@@ -217,15 +217,26 @@ class PortionRebalancer:
         for attempt in range(3):  # Make up to 3 passes
             if total_gap_magnitude < 0.05:
                 break
-            
+            # Find current main course portion
+            main_port = None
+            for f in foods_to_rebalance:
+                if f['course_type'] == 'Main':
+                    main_port = f['current_portion']
+                    break
+
             # Find best food to increase (highest energy density for energy gaps)
             best_food = None
             best_score = 0
             best_idx = -1
             
             for idx, food_dict in enumerate(foods_to_rebalance):
-                if food_dict['current_portion'] >= food_dict['max_portion']:
-                    continue  # Already at max
+                # Enforce portion hierarchy constraints: Main > Side and Main > Drink
+                max_allowed_portion = food_dict['max_portion']
+                if food_dict['course_type'] in ['Side', 'Drink'] and main_port is not None:
+                    max_allowed_portion = min(max_allowed_portion, main_port - 1.0)
+
+                if food_dict['current_portion'] >= max_allowed_portion:
+                    continue  # Already at max or constrained by Main Course
                 
                 # Score based on nutrient gap priorities
                 score = 0
@@ -240,17 +251,36 @@ class PortionRebalancer:
                     best_idx = idx
             
             if best_food is None:
-                break  # All foods at max portions
+                break  # All foods at max portions or constrained
             
             # Increase portion by increments
             old_portion = best_food['current_portion']
-            max_increase = best_food['max_portion'] - old_portion
+            # Recheck max allowed portion for best_food
+            max_allowed_portion = best_food['max_portion']
+            if best_food['course_type'] in ['Side', 'Drink'] and main_port is not None:
+                max_allowed_portion = min(max_allowed_portion, main_port - 1.0)
+
+            max_increase = max_allowed_portion - old_portion
             increment = max(1.0, max_increase * 0.2)
-            new_portion = min(old_portion + increment, best_food['max_portion'])
+            new_portion = min(old_portion + increment, max_allowed_portion)
             # Ensure final portion is rounded to nearest whole integer gram
             new_portion = float(round(new_portion))
             
             best_food['current_portion'] = new_portion
+
+        # Final safety enforcement of portion hierarchy constraints
+        main_port = None
+        for f in foods_to_rebalance:
+            if f['course_type'] == 'Main':
+                main_port = f['current_portion']
+                break
+                
+        if main_port is not None:
+            for f in foods_to_rebalance:
+                if f['course_type'] in ['Side', 'Drink']:
+                    if f['current_portion'] >= main_port:
+                        f['current_portion'] = max(f['min_portion'], main_port - 1.0)
+                        f['current_portion'] = float(round(f['current_portion']))
             
             # Recalculate gap with new portions
             new_totals = {

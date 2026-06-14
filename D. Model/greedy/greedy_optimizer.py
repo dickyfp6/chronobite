@@ -38,9 +38,9 @@ COURSE_DISTRIBUTION = {
 
 # Realistic portion ranges (must be applied during optimization)
 PORTION_RANGE = {
-    'Main Course': (150, 300),
+    'Main Course': (100, 300),
     'Side Dish':   (50,  150),
-    'Drink':       (150, 250),
+    'Drink':       (100, 250),
     'Snack':       (30,   80),
 }
 
@@ -91,6 +91,107 @@ class GreedyOptimizer:
         self.constraint_bag = constraint_bag
         self.selected_items = []
         self._init_cumulative_tracking()
+        
+    def optimize_meal_portions(
+        self,
+        main_item: Optional[Dict],
+        side_item: Optional[Dict],
+        drink_item: Optional[Dict],
+        min_target: float, max_target: float,
+        min_m=100.0, max_m=300.0,
+        min_s=50.0, max_s=150.0,
+        min_d=100.0, max_d=250.0
+    ) -> Tuple[float, float, float]:
+        """
+        Find portion sizes (main_g, side_g, drink_g) that:
+        1. Satisfy min/max limits for each course
+        2. Satisfy portion hierarchy: main_g >= side_g + 1 and main_g >= drink_g + 1
+        3. Keep total meal calories within [min_target, max_target], or as close as possible.
+        4. Minimize violations of HARD micronutrient constraints.
+        """
+        best_error = float('inf')
+        best_portions = (min_m, min_s, min_d)
+        
+        target_mid = (min_target + max_target) / 2.0
+        
+        energy_m = float(main_item.get('energy_kcal', 0) or 0) if main_item else 0.0
+        energy_s = float(side_item.get('energy_kcal', 0) or 0) if side_item else 0.0
+        energy_d = float(drink_item.get('energy_kcal', 0) or 0) if drink_item else 0.0
+        
+        # Load guidelines and cumulative nutrients
+        nutrients = self.constraint_bag.get('nutrients', {})
+        
+        # Pre-extract hard micronutrient constraints for performance inside search loops
+        hard_micros = {}
+        for nutrient, constraint in nutrients.items():
+            if nutrient in ['energy_kcal', 'protein_g', 'carbohydrate_g', 'fat_g']:
+                continue
+            if constraint.get('hard_soft_type') == 'HARD' and constraint.get('constraint_type') != 'unlimited':
+                hard_micros[nutrient] = {
+                    'min': float(constraint.get('min') or 0.0),
+                    'max': float(constraint.get('max') or float('inf')),
+                    'val_m': float(main_item.get(nutrient, 0) or 0) if main_item else 0.0,
+                    'val_s': float(side_item.get(nutrient, 0) or 0) if side_item else 0.0,
+                    'val_d': float(drink_item.get(nutrient, 0) or 0) if drink_item else 0.0,
+                    'cumulative': float(self.cumulative_nutrients.get(nutrient, 0.0)),
+                }
+
+        # Grid search over possible Main Course portions (since step is 1g, it is very fast)
+        for m in range(int(min_m), int(max_m) + 1):
+            s_upper = min(max_s, m - 1.0)
+            if s_upper < min_s:
+                continue
+                
+            d_upper = min(max_d, m - 1.0)
+            if d_upper < min_d:
+                continue
+                
+            # Search over Side Dish portions
+            for s in range(int(min_s), int(s_upper) + 1):
+                # Target remaining calories for drink
+                cal_ms = (m * energy_m + s * energy_s) / 100.0
+                needed_cal_d = target_mid - cal_ms
+                
+                if energy_d > 0:
+                    ideal_d = (needed_cal_d * 100.0) / energy_d
+                else:
+                    ideal_d = min_d
+                    
+                # Clamp drink portion
+                d = max(min_d, min(d_upper, ideal_d))
+                d = float(round(d))
+                
+                # Calculate total calories and error
+                total_cal = cal_ms + (d * energy_d) / 100.0
+                
+                if total_cal < min_target:
+                    error = min_target - total_cal
+                elif total_cal > max_target:
+                    error = total_cal - max_target
+                else:
+                    # Inside target range! Prioritize getting closer to midpoint
+                    error = abs(total_cal - target_mid) * 0.1
+                
+                # Calculate hard micronutrient penalties
+                micro_penalty = 0.0
+                for nutrient, data in hard_micros.items():
+                    added_val = (m * data['val_m'] + s * data['val_s'] + d * data['val_d']) / 100.0
+                    total_daily_val = data['cumulative'] + added_val
+                    
+                    if total_daily_val < data['min']:
+                        deviation = (data['min'] - total_daily_val) / max(data['min'], 1.0)
+                        micro_penalty += deviation * 500.0
+                    elif total_daily_val > data['max']:
+                        deviation = (total_daily_val - data['max']) / max(data['max'], 1.0)
+                        micro_penalty += deviation * 500.0
+                        
+                error += micro_penalty
+                    
+                if error < best_error:
+                    best_error = error
+                    best_portions = (float(m), float(s), float(d))
+                    
+        return best_portions
     
     # ================================================================
     # PHASE 1: FOOD SELECTION - Generate diverse candidates
@@ -109,8 +210,20 @@ class GreedyOptimizer:
         """
         # 1. CALORIE SCORE (40%)
         target_calories = max(target_calories, 1)
-        energy_100g = candidate.get('energy_kcal', 0)
-        calorie_error = abs(energy_100g - target_calories) / target_calories
+        energy_100g = float(candidate.get('energy_kcal', 0) or 0)
+        
+        # Estimate portion size for scoring
+        consumption_label = str(candidate.get('consumption_label', 'Main Course'))
+        min_p, max_p = PORTION_RANGE.get(consumption_label, (50, 400))
+        if energy_100g > 0:
+            est_portion = (target_calories / energy_100g) * 100.0
+        else:
+            est_portion = (min_p + max_p) / 2.0
+        est_portion = max(min_p, min(max_p, est_portion))
+        est_scale = est_portion / 100.0
+        
+        energy_est = energy_100g * est_scale
+        calorie_error = abs(energy_est - target_calories) / target_calories
         calorie_score = max(0, 100 - (calorie_error * 100))
 
         # 2. CONSTRAINT SATISFACTION SCORE (40%)
@@ -126,19 +239,20 @@ class GreedyOptimizer:
                 
                 cumulative = cumulative_nutrients.get(nutrient, 0.0)
                 food_val_per_100g = float(candidate.get(nutrient, 0) or 0)
+                food_val_est = food_val_per_100g * est_scale
                 max_val = constraint.get('max')
                 min_val = float(constraint.get('min') or 0)
                 
                 # PENALTY: food would push cumulative over max
                 if max_val is not None and max_val > 0:
-                    if (cumulative + food_val_per_100g) > max_val:
-                        over_ratio = ((cumulative + food_val_per_100g) - max_val) / max_val
+                    if (cumulative + food_val_est) > max_val:
+                        over_ratio = ((cumulative + food_val_est) - max_val) / max_val
                         constraint_score -= min(50, over_ratio * 60)
                 
                 # BONUS: food helps reach unfulfilled minimum
                 remaining = min_val - cumulative
-                if remaining > 0 and food_val_per_100g > 0:
-                    help_ratio = min(food_val_per_100g, remaining) / max(min_val, 1)
+                if remaining > 0 and food_val_est > 0:
+                    help_ratio = min(food_val_est, remaining) / max(min_val, 1)
                     constraint_score += min(20, help_ratio * 25)
             
             constraint_score = max(0, min(100, constraint_score))
@@ -419,19 +533,80 @@ class GreedyOptimizer:
         # Clamp scale factor to [0.5, 2.0] for portion realism
         scale = max(0.5, min(2.0, scale))
 
-        # 5. Apply portion scaling and build MealCourse items
-        # Main Course
-        if main_candidates_per_100g and main_per_100g:
-            main_portion_scaled = float(round(main_portion * scale))
-            main_scaled = self.scale_nutrients(main_per_100g, main_portion_scaled)
-            
-            # Create MealCourse with all 3 candidates (scaled for display)
-            main_candidates_scaled = []
-            for cand_per_100g in main_candidates_per_100g:
-                portion = self.optimize_portion(cand_per_100g, main_target, 'Main Course')
-                scaled = self.scale_nutrients(cand_per_100g, float(round(portion * scale)))
+        # 5. Optimize portions for the selected candidates to hit target calories while obeying hierarchy
+        energy_m = float(main_per_100g.get('energy_kcal', 0)) if main_per_100g else 0.0
+        energy_s = float(side_per_100g.get('energy_kcal', 0)) if side_per_100g else 0.0
+        energy_d = float(drink_per_100g.get('energy_kcal', 0)) if drink_per_100g else 0.0
+
+        min_m, max_m = PORTION_RANGE['Main Course']
+        min_s, max_s = PORTION_RANGE['Side Dish']
+        min_d, max_d = PORTION_RANGE['Drink']
+
+        main_port_opt, side_port_opt, drink_port_opt = self.optimize_meal_portions(
+            main_per_100g, side_per_100g, drink_per_100g,
+            min_target, max_target,
+            min_m, max_m,
+            min_s, max_s,
+            min_d, max_d
+        )
+
+        # Scale alternative Side and Drink candidates, clamping them below main_port_opt
+        epsilon = 1.0  # strict inequality
+        
+        side_candidates_scaled = []
+        if side_candidates_per_100g:
+            for idx, cand_per_100g in enumerate(side_candidates_per_100g):
+                if idx == 0:
+                    portion_scaled = side_port_opt
+                else:
+                    portion = self.optimize_portion(cand_per_100g, side_target, 'Side Dish')
+                    portion_scaled = float(round(portion * scale))
+                    if portion_scaled >= main_port_opt:
+                        portion_scaled = max(50.0, main_port_opt - epsilon)
+                portion_scaled = float(round(portion_scaled))
+                scaled = self.scale_nutrients(cand_per_100g, portion_scaled)
+                side_candidates_scaled.append(scaled)
+
+        drink_candidates_scaled = []
+        if drink_candidates_per_100g:
+            for idx, cand_per_100g in enumerate(drink_candidates_per_100g):
+                if idx == 0:
+                    portion_scaled = drink_port_opt
+                else:
+                    portion = self.optimize_portion(cand_per_100g, drink_target, 'Drink')
+                    portion_scaled = float(round(portion * scale))
+                    if portion_scaled >= main_port_opt:
+                        portion_scaled = max(150.0, main_port_opt - epsilon)
+                portion_scaled = float(round(portion_scaled))
+                scaled = self.scale_nutrients(cand_per_100g, portion_scaled)
+                drink_candidates_scaled.append(scaled)
+
+        # Find the maximum portion size among all Side Dish and Drink candidates
+        max_non_main = 0.0
+        if side_candidates_scaled:
+            max_non_main = max(max_non_main, max([c.portion_gram for c in side_candidates_scaled]))
+        if drink_candidates_scaled:
+            max_non_main = max(max_non_main, max([c.portion_gram for c in drink_candidates_scaled]))
+
+        # Now scale all Main Course candidates and enforce: Main Course > max_non_main
+        main_candidates_scaled = []
+        if main_candidates_per_100g:
+            for idx, cand_per_100g in enumerate(main_candidates_per_100g):
+                if idx == 0:
+                    portion_scaled = main_port_opt
+                else:
+                    portion = self.optimize_portion(cand_per_100g, main_target, 'Main Course')
+                    portion_scaled = float(round(portion * scale))
+                    if portion_scaled <= max_non_main:
+                        portion_scaled = min(300.0, max_non_main + epsilon)
+                portion_scaled = float(round(portion_scaled))
+                scaled = self.scale_nutrients(cand_per_100g, portion_scaled)
                 main_candidates_scaled.append(scaled)
-            
+
+        # Now construct the MealCourse objects using these static candidate lists
+        # Main Course
+        if main_candidates_scaled:
+            main_scaled = main_candidates_scaled[0]
             courses['Main'] = MealCourse(
                 course_type='Main',
                 candidates=main_candidates_scaled,
@@ -444,16 +619,8 @@ class GreedyOptimizer:
             self._update_cumulative(main_scaled)
         
         # Side Dish
-        if side_candidates_per_100g and side_per_100g:
-            side_portion_scaled = float(round(side_portion * scale))
-            side_scaled = self.scale_nutrients(side_per_100g, side_portion_scaled)
-            
-            side_candidates_scaled = []
-            for cand_per_100g in side_candidates_per_100g:
-                portion = self.optimize_portion(cand_per_100g, side_target, 'Side Dish')
-                scaled = self.scale_nutrients(cand_per_100g, float(round(portion * scale)))
-                side_candidates_scaled.append(scaled)
-            
+        if side_candidates_scaled:
+            side_scaled = side_candidates_scaled[0]
             courses['Side'] = MealCourse(
                 course_type='Side',
                 candidates=side_candidates_scaled,
@@ -466,32 +633,8 @@ class GreedyOptimizer:
             self._update_cumulative(side_scaled)
         
         # Drink
-        if drink_candidates_per_100g and drink_per_100g:
-            drink_portion_scaled = float(round(drink_portion * scale))
-            drink_scaled = self.scale_nutrients(drink_per_100g, drink_portion_scaled)
-            
-            drink_candidates_scaled = []
-            for cand_per_100g in drink_candidates_per_100g:
-                portion = self.optimize_portion(cand_per_100g, drink_target, 'Drink')
-                scaled = self.scale_nutrients(cand_per_100g, float(round(portion * scale)))
-                drink_candidates_scaled.append(scaled)
-            
-            # Append Mineral Water as the permanent 4th candidate
-            water = FoodItem(
-                fdc_id='water_000',
-                food_name='Mineral Water',
-                food_group='Beverages',
-                consumption_label='Drink',
-                cuisine_label='Generic',
-                portion_gram=250.0,
-                energy_kcal=0.0,
-                protein_g=0.0,
-                carbohydrate_g=0.0,
-                fat_g=0.0,
-                micronutrients={}
-            )
-            drink_candidates_scaled.append(water)
-            
+        if drink_candidates_scaled:
+            drink_scaled = drink_candidates_scaled[0]
             courses['Drink'] = MealCourse(
                 course_type='Drink',
                 candidates=drink_candidates_scaled,

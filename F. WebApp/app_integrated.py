@@ -219,6 +219,7 @@ def _course_to_all_candidates(course):
             'protein': round(getattr(candidate, 'protein_g', 0), 2),
             'carbs': round(getattr(candidate, 'carbohydrate_g', 0), 2),
             'fat': round(getattr(candidate, 'fat_g', 0), 2),
+            'micronutrients': getattr(candidate, 'micronutrients', {}),
             'is_selected': idx == 0,
         })
     return candidates

@@ -43,6 +43,7 @@ type Candidate = {
  serving_size: number;
  is_selected: boolean;
  cuisine_label?: string;
+ micronutrients?: Record<string, number>;
 };
 
 type Course = {
@@ -423,100 +424,61 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  const newSelected = {
  ...selectedItems,
  [key]: candidate,
- };
+};
  // Let the useEffect handle propagating the changes
  onSelectedItemsChange(newSelected);
  };
 
- // Dynamically rebalance portions of Main Course and Side Dish if Drink is Mineral Water
- const rebalancedSelectedItems = useMemo(() => {
- const rebalanced = { ...selectedItems };
- if (!menuData) return rebalanced;
+  // Portions are statically guaranteed by the backend optimizer to satisfy constraints, no dynamic scaling is needed
+  const rebalancedSelectedItems = useMemo(() => {
+    return selectedItems;
+  }, [selectedItems]);
 
- ['breakfast', 'lunch', 'dinner'].forEach((mealName) => {
- const mainKey = `${mealName}_Main`;
- const sideKey = `${mealName}_Side`;
- const drinkKey = `${mealName}_Drink`;
+  // Sync rebalanced items back to parent and session storage safely
+  useEffect(() => {
+    if (Object.keys(rebalancedSelectedItems).length > 0) {
+      const prevString = sessionStorage.getItem('dss_selected_items');
+      const newString = JSON.stringify(rebalancedSelectedItems);
+      if (prevString !== newString) {
+        sessionStorage.setItem('dss_selected_items', newString);
+        onSelectedItemsChange(rebalancedSelectedItems);
+      }
 
- const main = selectedItems[mainKey];
- const side = selectedItems[sideKey];
- const drink = selectedItems[drinkKey];
+      // Dynamically calculate and update actual daily nutrients including micronutrients
+      const items = Object.values(rebalancedSelectedItems);
+      const calories = items.reduce((sum: number, item: any) => sum + (item.calories || 0), 0);
+      const protein = items.reduce((sum: number, item: any) => sum + (item.protein || 0), 0);
+      const carbs = items.reduce((sum: number, item: any) => sum + (item.carbs || 0), 0);
+      const fat = items.reduce((sum: number, item: any) => sum + (item.fat || 0), 0);
 
- if (!main || !side || !drink) return;
+      const dynamicActual: Record<string, number> = {
+        calories,
+        protein,
+        carbs,
+        fat
+      };
 
- // Check if the selected drink is Mineral Water (0 kcal)
- if (drink.name === 'Mineral Water') {
- const mealTarget = menuData[mealName as keyof typeof menuData]?.target_calories || 0;
- 
- // Find default candidate values from the original menuData
- const defaultMain = menuData[mealName as keyof typeof menuData]?.courses?.Main?.candidates?.find((c: any) => c.name === main.name) || main;
- const defaultSide = menuData[mealName as keyof typeof menuData]?.courses?.Side?.candidates?.find((c: any) => c.name === side.name) || side;
+      // Sum up micronutrients dynamically
+      items.forEach((item: any) => {
+        if (item.micronutrients) {
+          Object.entries(item.micronutrients).forEach(([key, val]) => {
+            dynamicActual[key] = (dynamicActual[key] || 0) + (val as number);
+          });
+        }
+      });
 
- const currentCalories = defaultMain.calories + defaultSide.calories;
- const deficit = mealTarget - currentCalories;
+      // Round values
+      Object.keys(dynamicActual).forEach(key => {
+        if (key === 'calories' || key === 'protein' || key === 'carbs' || key === 'fat') {
+          dynamicActual[key] = Math.round(dynamicActual[key] * 100) / 100;
+        } else {
+          dynamicActual[key] = Math.round(dynamicActual[key] * 10000) / 10000;
+        }
+      });
 
- if (deficit > 0) {
- // Distribute deficit: 65% to Main, 35% to Side
- const mainDeficitShare = deficit * 0.65;
- const sideDeficitShare = deficit * 0.35;
-
- // Scale Main Course
- if (defaultMain.calories > 0) {
- const mainKcalPerGram = defaultMain.calories / defaultMain.serving_size;
- let newMainPortion = defaultMain.serving_size + (mainDeficitShare / mainKcalPerGram);
- newMainPortion = Math.min(newMainPortion, 400); // Clamp to max portion limit (400g)
- 
- const scale = newMainPortion / defaultMain.serving_size;
- rebalanced[mainKey] = {
- ...defaultMain,
- serving_size: Math.round(newMainPortion),
- calories: Math.round(defaultMain.calories * scale * 10) / 10,
- protein: Math.round(defaultMain.protein * scale * 100) / 100,
- carbs: Math.round(defaultMain.carbs * scale * 100) / 100,
- fat: Math.round(defaultMain.fat * scale * 100) / 100,
- };
- }
-
- // Scale Side Dish
- if (defaultSide.calories > 0) {
- const sideKcalPerGram = defaultSide.calories / defaultSide.serving_size;
- let newSidePortion = defaultSide.serving_size + (sideDeficitShare / sideKcalPerGram);
- newSidePortion = Math.min(newSidePortion, 250); // Clamp to max portion limit (250g)
- 
- const scale = newSidePortion / defaultSide.serving_size;
- rebalanced[sideKey] = {
- ...defaultSide,
- serving_size: Math.round(newSidePortion),
- calories: Math.round(defaultSide.calories * scale * 10) / 10,
- protein: Math.round(defaultSide.protein * scale * 100) / 100,
- carbs: Math.round(defaultSide.carbs * scale * 100) / 100,
- fat: Math.round(defaultSide.fat * scale * 100) / 100,
- };
- }
- }
- } else {
- // Restore standard portion values if they switched back to a caloric drink
- const defaultMain = menuData[mealName as keyof typeof menuData]?.courses?.Main?.candidates?.find((c: any) => c.name === main.name) || main;
- const defaultSide = menuData[mealName as keyof typeof menuData]?.courses?.Side?.candidates?.find((c: any) => c.name === side.name) || side;
- rebalanced[mainKey] = defaultMain;
- rebalanced[sideKey] = defaultSide;
- }
- });
-
- return rebalanced;
- }, [selectedItems, menuData]);
-
- // Sync rebalanced items back to parent and session storage safely
- useEffect(() => {
- if (Object.keys(rebalancedSelectedItems).length > 0) {
- const prevString = sessionStorage.getItem('dss_selected_items');
- const newString = JSON.stringify(rebalancedSelectedItems);
- if (prevString !== newString) {
- sessionStorage.setItem('dss_selected_items', newString);
- onSelectedItemsChange(rebalancedSelectedItems);
- }
- }
- }, [rebalancedSelectedItems, onSelectedItemsChange]);
+      sessionStorage.setItem('dss_actual_nutrients', JSON.stringify(dynamicActual));
+    }
+  }, [rebalancedSelectedItems, onSelectedItemsChange]);
 
  // Calculate totals from currently selected (rebalanced) items
  const totalCalories = Object.values(rebalancedSelectedItems).reduce((sum: number, item: any) => sum + (item.calories || 0), 0);

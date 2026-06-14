@@ -175,22 +175,6 @@ class GeneticAlgorithmInterface:
         side_candidates = get_candidates(side_key, side_item)
         drink_candidates = get_candidates(drink_key, drink_item)
         
-        # Append Mineral Water as the permanent 4th candidate
-        water = FoodItem(
-            fdc_id='water_000',
-            food_name='Mineral Water',
-            food_group='Beverages',
-            consumption_label='Drink',
-            cuisine_label='Generic',
-            portion_gram=250.0,
-            energy_kcal=0.0,
-            protein_g=0.0,
-            carbohydrate_g=0.0,
-            fat_g=0.0,
-            micronutrients={}
-        )
-        drink_candidates.append(water)
-        
         main_course = MealCourse(
             course_type='Main',
             candidates=main_candidates,
