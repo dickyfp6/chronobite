@@ -421,14 +421,14 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
         key={item.key}
         className={
           isMacro
-            ? 'rounded-xl bg-amber-600 text-white p-2.5 border border-amber-700/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'
+            ? 'rounded-xl bg-amber-600/25 text-gray-900 p-2.5 border border-amber-600/35 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'
             : 'rounded-xl bg-amber-600/10 text-gray-900 p-2.5 border border-amber-600/15 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300'
         }
       >
         <div className="flex items-center justify-between">
           <p className="text-xs font-bold truncate">{item.label}</p>
         </div>
-        <p className={`text-[11px] font-semibold mt-1 font-serif ${isMacro ? 'text-amber-50/90' : 'text-gray-600'}`}>
+        <p className={`text-[11px] font-semibold mt-1 font-serif ${isMacro ? 'text-amber-800' : 'text-gray-600'}`}>
           {formatGuidelineDisplay(item)}
         </p>
       </div>

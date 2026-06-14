@@ -746,9 +746,9 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
   let rangeColor = '';
 
   if (key === 'energy_kcal' || ['carbohydrate_g', 'protein_g', 'fat_g'].includes(key)) {
-    cardStyle = 'bg-amber-600 text-white border-amber-700/20 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300';
-    titleColor = 'text-white font-bold';
-    rangeColor = 'text-amber-50/90 font-medium';
+    cardStyle = 'bg-amber-600/25 border-amber-600/35 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300';
+    titleColor = 'text-gray-900 font-bold';
+    rangeColor = 'text-amber-800 font-medium';
   } else {
     cardStyle = 'bg-amber-600/10 border-amber-600/15 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300';
     titleColor = 'text-gray-900 font-semibold';
