@@ -2,8 +2,9 @@ import pandas as pd
 import os
 import re
 
-INPUT_FILE = r'C:\Users\Silfia\Documents\FILE TA\TugasAkhirDSS\A. Data\Data Processed\05_final_dataset.csv'
-OUTPUT_FILE = r'C:\Users\Silfia\Documents\FILE TA\TugasAkhirDSS\A. Data\Data Processed\06_final_dataset.csv'
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+INPUT_FILE = os.path.normpath(os.path.join(CURRENT_DIR, "..", "A. Data", "Data Processed", "05_final_dataset.csv"))
+OUTPUT_FILE = os.path.normpath(os.path.join(CURRENT_DIR, "..", "A. Data", "Data Processed", "06_final_dataset.csv"))
 
 def bersihkan_dataset(input_file, output_file):
     if not os.path.exists(input_file):

@@ -13,44 +13,29 @@ import sys
 # Import classifier
 ml_path = Path(__file__).parent / 'ML Klasifikasi'
 sys.path.insert(0, str(ml_path))
-from food_classifier import FoodClassifier  # type: ignore
 from rule_based_classifier import RuleBasedFoodClassifier  # type: ignore
 
 # ======================
-# APPLY ML CLASSIFICATION
+# LOAD DATA & RULE-BASED CLASSIFICATION
 # ======================
 print("\n" + "="*70)
-print("STEP 05: Apply ML Classification + Final Dataset")
+print("STEP 05: Apply Rule-Based Classification + Final Dataset")
 print("="*70)
 
-print("\n[1/4] Loading ML classifier...")
-model_path = Path(__file__).parent / 'ML Klasifikasi/food_classifier_model.pkl'
-classifier = FoodClassifier.load(str(model_path))
-print(f"[OK] Model loaded: {model_path}")
-
-print(f"\n[2/4] Loading raw data (03_dataset_halal.csv)...")
+print(f"\n[1/4] Loading raw data (03_dataset_halal.csv)...")
 input_file = Path(__file__).parent.parent / 'A. Data/Data Processed/03_dataset_halal.csv'
 data = pd.read_csv(input_file)
-print(f"[OK] Loaded {len(data)} items")
-
-print(f"\n[3/4] Predicting consumption and cuisine labels...")
-
-# consumption_label: rule-based (replaces unreliable ML)
-
 rule_clf = RuleBasedFoodClassifier()
 data['consumption_label'] = rule_clf.predict(data)
 print(f"  [rule-based] consumption_label assigned")
+print(f"[OK] Loaded {len(data)} items")
 
-# cuisine_label: still ML from pickle (unchanged)
-cuisine_preds = classifier.predict(data, return_both=True)
-data['cuisine_label'] = cuisine_preds.get('cuisine_label', 'Generic')
-print(f"  [ML] cuisine_label assigned")
+# We removed the ML classifier since step 07 completely overwrites cuisine_label using AI.
+# This prevents crashes caused by missing xgboost/broken ML models.
+print(f"\n[2/4] Assigning generic cuisine labels (will be overwritten by AI in Step 07)...")
+data['cuisine_label'] = 'Generic'
 
-# Clean up cuisine labels (remove leading/trailing spaces)
-if 'cuisine_label' in data.columns:
-    data['cuisine_label'] = data['cuisine_label'].str.strip()
-
-print(f"[OK] Labels predicted")
+print(f"[OK] Labels assigned")
 
 print(f"\nJumlah data awal: {len(data)}")
 

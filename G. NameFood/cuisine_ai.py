@@ -15,8 +15,8 @@ import shutil
 # =====================================================================
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-INPUT_FILE = os.path.join(CURRENT_DIR, "output", "03_dataset_halal_ai.csv")
-OUTPUT_FILE = os.path.join(CURRENT_DIR, "output", "03_dataset_halal_cuisine.csv")
+INPUT_FILE = os.path.join(CURRENT_DIR, "output", "food_name_ai.csv")
+OUTPUT_FILE = os.path.join(CURRENT_DIR, "output", "cuisine_ai.csv")
 CACHE_FILE = os.path.join(CURRENT_DIR, "output", "cuisine_cache.json")
 ENV_FILE = os.path.join(CURRENT_DIR, ".env")
 

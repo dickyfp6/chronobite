@@ -24,8 +24,8 @@ BATCH_SIZE = 30
 # Output paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 INPUT_CSV = os.path.join(CURRENT_DIR, "..", "A. Data", "Data Processed", "03_dataset_halal.csv")
-OUTPUT_CSV = os.path.join(CURRENT_DIR, "output", "03_dataset_halal_ai.csv")
-CACHE_FILE = os.path.join(CURRENT_DIR, "output", "translation_cache.json")
+OUTPUT_CSV = os.path.join(CURRENT_DIR, "output", "food_name_ai.csv")
+CACHE_FILE = os.path.join(CURRENT_DIR, "output", "food_name_cache.json")
 # =====================================================================
 
 def load_env_file():
