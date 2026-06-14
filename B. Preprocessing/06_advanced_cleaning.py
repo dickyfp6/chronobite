@@ -75,7 +75,8 @@ def bersihkan_dataset(input_file, output_file):
     invalid_keywords = ['extract', 'flavoring', 'seasoning', 'yeast']
     junk_keywords = ['candy', 'candy bar', 'confection', 'sweet candy',
                      'fudge', 'brownie', 'frosting', 'icing', 'ice cream', 
-                     'mousse', 'caramel']
+                     'mousse', 'caramel', 'human milk', 'infant formula', 
+                     'nutritional shake', 'nutritional drink', 'shake mix']
     all_keywords = invalid_keywords + junk_keywords
     
     # Filter keyword normal untuk semua kategori

@@ -91,12 +91,18 @@ def call_ai_batch(names_batch, api_key):
         "Output format: A JSON array of the same length containing only the simplified names. "
         "Do not return markdown (e.g. no ```json blocks), do not return any explanations. "
         "Return ONLY the plain JSON array.\n\n"
+        "CRITICAL INSTRUCTIONS:\n"
+        "- Do NOT make the names too generic. Preserve important identifying characteristics.\n"
+        "- Preserve major brand names if they are iconic or significant (e.g. 'Nestle', 'Kellogg\\'s', 'Pillsbury', 'McDonald\\'s').\n"
+        "- Preserve specific flavors and main ingredients (e.g. 'Chocolate', 'Strawberry', 'Peanut Butter').\n"
+        "- If it's a nutritional or meal supplement, keep the brand name so it's not just 'Nutritional Drink'.\n\n"
         "Example Input:\n"
         '[\n  "Pillsbury Golden Layer Buttermilk Biscuits, Artificial Flavor, refrigerated dough",\n'
         '  "Waffle, buttermilk, frozen, ready-to-heat, toasted",\n'
+        '  "Beverages, NESTLE, Boost plus, nutritional drink, ready-to-drink",\n'
         '  "Crackers, cream, Gamesa Sabrosas"\n]\n\n'
         "Example Output:\n"
-        '[\n  "Buttermilk Biscuits",\n  "Toasted Buttermilk Waffles",\n  "Cream Crackers"\n]'
+        '[\n  "Pillsbury Buttermilk Biscuits",\n  "Toasted Buttermilk Waffles",\n  "Nestle Boost Plus Nutritional Drink",\n  "Gamesa Cream Crackers"\n]'
     )
     
     payload = {
