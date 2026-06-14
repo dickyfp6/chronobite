@@ -19,7 +19,7 @@ MODEL_NAME = "gpt-4o-mini"
 API_BASE_URL = "https://models.inference.ai.azure.com/chat/completions"
 
 # Batch size: how many names to translate in one API request (1-50).
-BATCH_SIZE = 30
+BATCH_SIZE = 40
 
 # Output paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -119,19 +119,24 @@ def call_ai_batch(names_batch, api_key):
     for attempt in range(5):
         try:
             response = requests.post(API_BASE_URL, headers=headers, json=payload, timeout=30)
+        except requests.RequestException as req_err:
+            print(f"[WARN] Network error during batch processing (Attempt {attempt+1}/5): {req_err}")
+            time.sleep(3)
+            continue
             
-            if response.status_code == 429:
-                # Rate limit
-                retry_after = int(response.headers.get("Retry-After", 5))
-                print(f"[RATE LIMIT] Hit rate limit. Waiting {retry_after} seconds (Attempt {attempt+1}/5)...")
-                time.sleep(retry_after)
-                continue
-                
-            if response.status_code != 200:
-                print(f"[ERROR] API returned error status {response.status_code}: {response.text}")
-                time.sleep(3)
-                continue
-                
+        if response.status_code == 429:
+            # Rate limit
+            retry_after = int(response.headers.get("Retry-After", 5))
+            print(f"[RATE LIMIT] Hit rate limit. Waiting {retry_after} seconds (Attempt {attempt+1}/5)...")
+            time.sleep(retry_after)
+            continue
+            
+        if response.status_code != 200:
+            print(f"[ERROR] API returned error status {response.status_code}: {response.text}")
+            time.sleep(3)
+            continue
+            
+        try:
             res_data = response.json()
             ai_output = res_data["choices"][0]["message"]["content"].strip()
             
@@ -151,10 +156,9 @@ def call_ai_batch(names_batch, api_key):
                 raise ValueError(f"Response length mismatch (Expected {len(names_batch)}, got {len(results)})")
                 
             return results
-            
-        except Exception as e:
-            print(f"[WARN] Error during batch processing (Attempt {attempt+1}/5): {e}")
-            time.sleep(3)
+        except (ValueError, KeyError, json.JSONDecodeError) as val_err:
+            print(f"[WARN] Validation error on API response: {val_err}. Immediately falling back to single-item translation.")
+            return None
             
     return None
 
