@@ -16,7 +16,7 @@ sys.path.append(os.path.join(root_dir, 'D. Model', 'Genetic Algorithm'))
 
 from nutrition_service import NutritionService
 from ga_interface import GeneticAlgorithmInterface # type: ignore
-from ga_v2 import run_ga, local_search, fitness, validate_final_solution, calculate_portion_sizes_dynamic # type: ignore
+from ga_v1 import run_ga, local_search, fitness, validate_final_solution, calculate_portion_sizes_dynamic # type: ignore
 
 print("Initializing NutritionService...")
 service = NutritionService()

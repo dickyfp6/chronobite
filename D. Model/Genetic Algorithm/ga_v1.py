@@ -27,7 +27,9 @@ Tanpa class, hanya functions murni.
 import pandas as pd
 import numpy as np
 import random
+import time
 from typing import List, Dict, Tuple, Optional, cast
+
 
 # ═════════════════════════════════════════════════════════════════════════════
 # GUIDELINE UTILITIES - Consistency helpers
@@ -237,6 +239,9 @@ NUTRIENT_WEIGHTS = {
 # Duplicate penalty weight
 DUPLICATE_PENALTY_WEIGHT = 50.0  # Penalty for each duplicate food item
 
+# Nutrients excluded from soft penalty: conceptually wrong or data too sparse to be meaningful
+SKIP_SOFT_NUTRIENTS = {'water_g', 'fluoride_mg'}
+
 
 # ═════════════════════════════════════════════════════════════════════════════
 # 1. RANDOM SOLUTION - Generate meal plan random
@@ -347,6 +352,10 @@ def guided_solution(food_df: pd.DataFrame, guidelines: Dict) -> pd.DataFrame:
     target_protein = hard_constraints.get('protein_g', {}).get('min', 50)
     target_fat = hard_constraints.get('fat_g', {}).get('min', 30)
     
+    target_carb_max = hard_constraints.get('carbohydrate_g', {}).get('max', float('inf'))
+    target_protein_max = hard_constraints.get('protein_g', {}).get('max', float('inf'))
+    target_fat_max = hard_constraints.get('fat_g', {}).get('max', float('inf'))
+    
     remaining_carb = target_carb
     remaining_protein = target_protein
     remaining_fat = target_fat
@@ -372,10 +381,37 @@ def guided_solution(food_df: pd.DataFrame, guidelines: Dict) -> pd.DataFrame:
            'protein_g' in scored_candidates.columns and \
            'fat_g' in scored_candidates.columns:
             
+            # Calculate how much of each macro has already been consumed
+            protein_already_consumed = target_protein - remaining_protein
+            carb_already_consumed = target_carb - remaining_carb
+            fat_already_consumed = target_fat - remaining_fat
+            
             # Base score: contribution to deficient nutrients
-            carb_score = scored_candidates['carbohydrate_g'] / (remaining_carb + 1)
-            protein_score = scored_candidates['protein_g'] / (remaining_protein + 1)
-            fat_score = scored_candidates['fat_g'] / (remaining_fat + 1)
+            # WITH PENALTY if target max is already exceeded
+            
+            # Protein scoring: reward until max, then penalize
+            if protein_already_consumed >= target_protein_max:
+                # Target max already exceeded - penalize protein items
+                protein_score = -(scored_candidates['protein_g'] / 10)
+            else:
+                # Still below max - reward as usual
+                protein_score = scored_candidates['protein_g'] / (remaining_protein + 1)
+            
+            # Carbohydrate scoring: reward until max, then penalize
+            if carb_already_consumed >= target_carb_max:
+                # Target max already exceeded - penalize carb items
+                carb_score = -(scored_candidates['carbohydrate_g'] / 10)
+            else:
+                # Still below max - reward as usual
+                carb_score = scored_candidates['carbohydrate_g'] / (remaining_carb + 1)
+            
+            # Fat scoring: reward until max, then penalize
+            if fat_already_consumed >= target_fat_max:
+                # Target max already exceeded - penalize fat items
+                fat_score = -(scored_candidates['fat_g'] / 10)
+            else:
+                # Still below max - reward as usual
+                fat_score = scored_candidates['fat_g'] / (remaining_fat + 1)
             
             # Slot-specific weighting (TASK 3)
             if 'main' in slot_label.lower():
@@ -532,6 +568,32 @@ def calculate_total_nutrition(solution: pd.DataFrame) -> Dict[str, float]:
     total_nutrition = solution[_numeric_cols_cache].sum().to_dict()
     return total_nutrition
 
+
+def calculate_total_nutrition_from_portions(portion_df: pd.DataFrame) -> Dict[str, float]:
+    """
+    Hitung total nutrisi AKTUAL berdasarkan kolom final_* (hasil portion sizing).
+    
+    PENTING: Fungsi ini digunakan untuk BAGIAN 5 (HARD CONSTRAINT validation)
+    karena menggunakan nilai AKTUAL setelah portion sizing, bukan nilai per 100g.
+    
+    Args:
+        portion_df: DataFrame hasil calculate_portion_sizes_dynamic, 
+                     punya kolom final_* untuk setiap nutrient.
+    
+    Returns:
+        Dict: {nutrient_name: total_value, ...} 
+        Key TANPA prefix 'final_', contoh: {'energy_kcal': 1850, 'protein_g': 65, ...}
+    
+    Example:
+        Input: portion_df dengan kolom ['food_id', 'gram', 'final_energy_kcal', 'final_protein_g', ...]
+        Output: {'energy_kcal': 1850.5, 'protein_g': 65.2, ...}
+    """
+    result = {}
+    for col in portion_df.columns:
+        if col.startswith('final_'):
+            nutrient_name = col[len('final_'):]
+            result[nutrient_name] = float(portion_df[col].sum())
+    return result
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -721,6 +783,8 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
     soft_penalty = 0.0
     
     for nutrient_name, constraint in soft_constraints.items():
+        if nutrient_name in SKIP_SOFT_NUTRIENTS:
+            continue
         if constraint.get('constraint_type') == 'unlimited':
             continue
         
@@ -1229,11 +1293,12 @@ def run_ga(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    generations: int = 110,
-    pop_size: int = 70,
-    elite_ratio: float = 0.10,
-    mutation_rate: float = 0.25,
-    verbose: bool = True
+    generations: int = 150,
+    pop_size: int = 100,
+    elite_ratio: float = 0.25,
+    mutation_rate: float = 0.3,
+    verbose: bool = True,
+    deadline: Optional[float] = None
 ) -> Tuple[pd.DataFrame, List[pd.DataFrame]]:
     """
     Jalankan Genetic Algorithm untuk mencari optimal meal plan
@@ -1305,6 +1370,7 @@ def run_ga(
     best_solution = population[0].copy()
     best_fitness = fitness(best_solution, guidelines, tdee=tdee)
     
+    
     # ════════════════════════════════════════════════════════════════════════
     # STEP 2 - MAIN GA LOOP
     # ════════════════════════════════════════════════════════════════════════
@@ -1315,6 +1381,12 @@ def run_ga(
         print(f"{'-'*50}")
     
     for gen in range(generations):
+        # Check deadline to prevent Vercel/frontend timeouts
+        if deadline and time.time() > deadline:
+            if verbose:
+                print(f"\n[TIMEOUT] Genetic Algorithm stopping early at generation {gen}/{generations} due to deadline")
+            break
+
         # 2a. Evaluate fitness semua population
         fitness_scores = []
         for solution in population:
@@ -1368,9 +1440,10 @@ def run_ga(
         # Update population
         population = new_population[:pop_size]
         
-        # Explicit garbage collection to prevent memory spike
-        import gc
-        gc.collect()
+        # Explicit garbage collection to prevent memory spike (reduced frequency)
+        if gen % 30 == 0:
+            import gc
+            gc.collect()
         
         # Random injection setiap 10 generasi untuk maintain diversity
         # 3 random + 2 guided untuk balance eksplorasi dan eksploitasi
@@ -1476,8 +1549,9 @@ def local_search(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    iterations: int = 30,
-    verbose: bool = False
+    iterations: int = 20,
+    verbose: bool = False,
+    deadline: Optional[float] = None
 ) -> pd.DataFrame:
     """
     TASK 1-6 - LOCAL SEARCH dengan UNIFIED FITNESS EVALUATION
@@ -1509,6 +1583,7 @@ def local_search(
         Best solution found
     """
     
+
     if verbose:
         print(f"\n{'='*70}")
         print(f"LOCAL SEARCH - STABLE (GLOBAL HARD DEVIATION)")
@@ -1534,6 +1609,12 @@ def local_search(
     no_improvement_count = 0  # TASK 5: Stop after 2 consecutive iterations without improvement
     
     while iteration < iterations:
+        # Check deadline to prevent Vercel/frontend timeouts
+        if deadline and time.time() > deadline:
+            if verbose or True:
+                print(f"\n[TIMEOUT] Local Search stopping early at iteration {iteration}/{iterations} due to deadline")
+            break
+
         iteration += 1
         
         # ════════════════════════════════════════════════════════════════
@@ -1716,7 +1797,7 @@ def local_search(
             if verbose:
                 old_name = best_swap['current_food'].get('food_name', '?') # type: ignore
                 new_name = best_swap['new_food'].get('food_name', '?') # type: ignore
-                print(f"  ✓ Swap at slot {best_swap['gene_idx']}: {old_name} → {new_name}")
+                print(f"  [OK] Swap at slot {best_swap['gene_idx']}: {old_name} -> {new_name}")
                 print(f"    Old fitness: {best_swap['old_fitness']:.1f}")
                 print(f"    New fitness: {best_swap['new_fitness']:.1f}")
                 print(f"    Improvement: {best_swap['improvement']:+.1f}")
@@ -1724,7 +1805,7 @@ def local_search(
         else:
             # No improvement found
             if verbose:
-                print(f"  ✗ No swap improved fitness")
+                print(f"  [x] No swap improved fitness")
                 print(f"    Accepted: False")
             
             no_improvement_count += 1
@@ -1738,7 +1819,7 @@ def local_search(
     if verbose:
         final_fitness = fitness(best_solution, guidelines, tdee)
         print(f"\n{'='*70}")
-        print(f"✓ Local Search Complete")
+        print(f"[OK] Local Search Complete")
         print(f"  Improvements: {improvements}")
         print(f"  Iterations: {iteration}")
         print(f"  Final fitness score: {final_fitness:.1f}")
@@ -2226,7 +2307,7 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
         
         penalty = 0
-        status = "✓ OK"
+        status = "OK"
         
         if value < min_val:
             # HARD: Kurang dari minimum dengan weight * 10
@@ -2262,7 +2343,7 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         weight = NUTRIENT_WEIGHTS.get(nutrient_name, 1.0)
         
         penalty = 0
-        status = "✓ OK"
+        status = "OK"
         
         if value < min_val:
             # SOFT: Kurang dari minimum dengan weight * 1
@@ -2286,7 +2367,7 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
         max_energy = 1.2 * tdee
         
         energy_penalty = 0
-        energy_status = "✓ OK"
+        energy_status = "OK"
         
         if current_energy < min_energy:
             energy_penalty = (min_energy - current_energy) * 20
@@ -2313,7 +2394,7 @@ def display_fitness_details(solution: pd.DataFrame, guidelines: Dict, tdee: Opti
                         15 if 'ENERGY-OVER' in severity else 1
             print(f"   {nutrient:20} ({severity:18}): penalty = {penalty:8.2f}")
     else:
-        print(f"   ✅ No violations! All constraints satisfied")
+        print(f"   [OK] No violations! All constraints satisfied")
     
     print(f"\n   Total Penalty Score: {total_penalty:.2f}")
 
@@ -2381,13 +2462,21 @@ def calculate_portion_sizes_dynamic(
         9: 'snack'
     }
     
-    # Gram constraints realistic - TASK 4: Protein portion limiting
+   # Scale max_g proporsional ke TDEE (baseline 2000 kcal).
+    # Untuk penyakit, TDEE sudah di-clamp di nutrition_service sebelum sampai sini,
+    # jadi scale tidak akan berlebihan. Cap 2.5x supaya tidak tak terbatas.
+    tdee_scale = min(TDEE / 2000, 2.5)
     gram_constraints = {
-        'Main Course': (100, 300),
-        'Side Dish': (50, 150),
-        'Drink': (150, 300),
-        'Snack': (30, 100)
+        'Main Course': (100, int(350 * tdee_scale)),   # naik sedikit baseline-nya
+        'Side Dish':   (100, int(200 * tdee_scale)),   # sedikit lebih longgar dari sebelumnya
+        'Drink':       (100, int(250 * tdee_scale)),   # min turun, max dikap lebih kecil dari Main
+        'Snack':       (30,  int(200 * tdee_scale))    # sedikit naik
     }
+    
+    # Enforce hierarki: Drink max tidak boleh melebihi Side Dish max
+    drink_min, drink_max = gram_constraints['Drink']
+    side_min, side_max   = gram_constraints['Side Dish']
+    gram_constraints['Drink'] = (drink_min, min(drink_max, side_max))
     
     # Label adjustment factors
     label_adjustments = {
@@ -2537,18 +2626,9 @@ def calculate_portion_sizes_dynamic(
     # STEP 5-12: Normalize per meal, distribute energy, calc gram, clamp, renormalize
     # ════════════════════════════════════════════════════════════════════════
     
-    meal_ranges = {
-        'breakfast': (0.20, 0.25),
-        'lunch': (0.30, 0.35),
-        'dinner': (0.25, 0.30),
-        'snack': (0.10, 0.15)
-    }
-    
-    for meal_type, (min_r, max_r) in meal_ranges.items():
-        min_target_energy = TDEE * min_r
-        max_target_energy = TDEE * max_r
-        mid_ratio = (min_r + max_r) / 2
-        target_meal_energy = TDEE * mid_ratio
+    for meal_type, ratio in meal_ratio.items():
+        # TASK 5: Target energy untuk meal ini
+        target_meal_energy = TDEE * ratio
         
         # Get items untuk meal ini
         meal_items = weights_per_meal[meal_type]
@@ -2581,14 +2661,9 @@ def calculate_portion_sizes_dynamic(
             grams_first_pass.append((idx, gram_clamped, energy_per_100g))
             meal_energy_first += energy_per_100g * gram_clamped / 100
         
-        # Renormalize setelah clamp untuk match target meal energy RANGE
+        # Renormalize setelah clamp untuk match target meal energy
         if meal_energy_first > 0:
-            if meal_energy_first < min_target_energy:
-                scale = min_target_energy / meal_energy_first
-            elif meal_energy_first > max_target_energy:
-                scale = max_target_energy / meal_energy_first
-            else:
-                scale = 1.0
+            scale = target_meal_energy / meal_energy_first
         else:
             scale = 1.0
         
@@ -2614,34 +2689,52 @@ def calculate_portion_sizes_dynamic(
                 result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
     # ════════════════════════════════════════════════════════════════════════
-    # HARD CONSTRAINTS: Energy rescale to match TDEE
+    # HARD CONSTRAINTS: Energy rescale to match TDEE (PER-MEAL)
     # ════════════════════════════════════════════════════════════════════════
-    total_energy_after = result_df['final_energy_kcal'].sum()
+    # Rescale grams untuk setiap meal secara terpisah agar distribusi per-meal
+    # tetap terjaga. Total energy akan otomatis mendekati TDEE karena sum semua
+    # target_meal_energy = TDEE.
     
-    if total_energy_after > 0 and TDEE > 0:
-        energy_scale = TDEE / total_energy_after
+    for meal_type, ratio in meal_ratio.items():
+        target_meal_energy = TDEE * ratio
         
-        # Allow 0.6x to 1.4x scaling (reasonable range)
-        if 0.6 <= energy_scale <= 1.4:
-            # Scale, round to the nearest integer
-            # BUG FIX: HINDARI DOUBLE CLAMPING!
-            # Kita tidak melakukan clamping ulang di sini agar porsi yang telah
-            # dinaikkan secara dinamis saat renormalisasi tidak terpangkas kembali.
-            scaled_grams = result_df['gram'] * energy_scale
-            rounded_grams = scaled_grams.round().astype(float)
+        # Find indices untuk meal ini
+        meal_indices = [idx for idx in range(CHROMOSOME_SIZE) if slot_to_meal.get(idx) == meal_type]
+        
+        if not meal_indices:
+            continue
+        
+        # Calculate energy untuk meal ini (berdasarkan final_energy_kcal sebelum rescale)
+        energy_meal_after = sum(result_df.at[idx, 'final_energy_kcal'] for idx in meal_indices)
+        
+        # Skip jika energy meal = 0
+        if energy_meal_after <= 0:
+            continue
+        
+        # Calculate rescale factor untuk meal ini
+        meal_scale = target_meal_energy / energy_meal_after
+        
+        # Apply meal_scale ke gram items dalam meal
+        for idx in meal_indices:
+            scaled_gram = result_df.at[idx, 'gram'] * meal_scale
+            rounded_gram = round(scaled_gram)
             
-            result_df['gram'] = rounded_grams
+            # Clamp ke protein_portion_limits
+            min_g, max_g = protein_portion_limits.get(idx, (50, 150))
+            clamped_gram = max(min_g, min(max_g, rounded_gram))
             
-            # RE-SCALE ALL NUTRIENTS with new grams (TASK 1 - critical!)
-            for idx in range(len(result_df)):
-                gram = result_df.at[idx, 'gram']
-                actual_item = selected_df.iloc[idx]
-                
-                for nutrient in nutrient_cols:
-                    if nutrient in actual_item.index:
-                        value_per_100g = actual_item.get(nutrient, 0) or 0
-                        final_value = value_per_100g * gram / 100
-                        result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
+            result_df.at[idx, 'gram'] = float(clamped_gram)
+        
+        # Re-scale ALL NUTRIENTS untuk items dalam meal dengan gram baru (TASK 1)
+        for idx in meal_indices:
+            gram = result_df.at[idx, 'gram']
+            actual_item = selected_df.iloc[idx]
+            
+            for nutrient in nutrient_cols:
+                if nutrient in actual_item.index:
+                    value_per_100g = actual_item.get(nutrient, 0) or 0
+                    final_value = value_per_100g * gram / 100
+                    result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     
     # ════════════════════════════════════════════════════════════════════════
     # TASK 6: VALIDATION - Ensure scaling didn't cause anomalies

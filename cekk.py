@@ -24,7 +24,7 @@ if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
 from nutrition_service import NutritionService
-from ga_v2 import (
+from ga_v1 import (
     run_ga,
     local_search,
     calculate_portion_sizes_dynamic,

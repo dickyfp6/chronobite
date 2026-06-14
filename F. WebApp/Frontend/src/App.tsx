@@ -63,7 +63,7 @@ function SidebarNutritionSummary({ selectedItems, analysisResult }: { selectedIt
 
  return (
  <div className="hidden lg:block mt-6 pt-6 border-t border-border/80 ">
- <h3 className="font-bold text-sm text-gray-900 mb-4 font-serif">Ketercapaian Target</h3>
+ <h3 className="font-bold text-sm text-gray-900 mb-4 font-serif">Target Fulfillment</h3>
  <div className="space-y-4">
  {/* Calories */}
  <div>
@@ -402,7 +402,7 @@ export default function App() {
  {/* Collapsed 4-point Sidebar */}
  <div className="sticky top-16 lg:top-24 z-30 lg:col-span-3 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible scrollbar-none gap-3 lg:gap-0 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-5 py-3 lg:py-5 bg-white/95 lg:bg-white/50 lg: backdrop-blur-md border-b border-border/50 lg:border lg:border-border/80 lg: rounded-none lg:rounded-3xl shadow-sm lg:shadow-lg lg:shadow-primary/5 ">
  {[
- { id: 'input', label: 'Profil Input', summary: 'Edit measurements', icon: User },
+ { id: 'input', label: 'Profile Input', summary: 'Edit measurements', icon: User },
  { id: 'profile', label: 'Summary', summary: 'Nutrition constraints', icon: FileText },
  { id: 'results', label: 'Meal Plan', summary: 'Recommended menus', icon: UtensilsCrossed },
  { id: 'report', label: 'Complete Report', summary: 'Detailed analysis', icon: ClipboardList },
