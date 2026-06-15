@@ -197,7 +197,9 @@ class NutritionCalculator:
             'carbohydrate_g',
             'protein_g',
             'fiber_g',
+            'sugar_g',
         ]
+
 
         if nutrient_name in fat_nutrients:
             return 9

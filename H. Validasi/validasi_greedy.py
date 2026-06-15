@@ -62,21 +62,25 @@ NUTRIENT_DISPLAY = {
     'fiber_g': 'Serat / Fiber (g)',
     'calcium_mg': 'Calcium (mg)',
     'iron_mg': 'Iron / Zat Besi (mg)',
+    'sugar_g': 'Sugar (g)',
+    'saturated_fat_g': 'Saturated Fat (g)',
+    'trans_fat_g': 'Trans Fat (g)',
 }
 
+
 SOFT_ORDER = [
-    'vitamin_a_rae_mg',        # display: Vitamin A
-    'vitamin_c_mg',            # display: Vitamin C
-    'vitamin_d_mg',            # display: Vitamin D
-    'vitamin_e_mg',            # display: Vitamin E
-    'vitamin_k_mg',            # display: Vitamin K
-    'vitamin_b1_thiamin_mg',   # display: Vitamin B1 (Thiamine)
-    'vitamin_b2_riboflavin_mg',# display: Vitamin B2 (Riboflavin)
-    'vitamin_b3_niacin_mg',    # display: Vitamin B3 (Niacin)
-    'vitamin_b5_pantothenic_acid_mg', # display: Vitamin B5 (Pantothenic Acid)
-    'vitamin_b6_mg',           # display: Vitamin B6
-    'folate_mg',               # display: Vitamin B9 (Folate)
-    'vitamin_b12_mg',          # display: Vitamin B12
+    'vitamin_a_rae_mg',        # display: Vitamin A (mg RAE)
+    'vitamin_c_mg',            # display: Vitamin C (mg)
+    'vitamin_d_mg',            # display: Vitamin D (mg)
+    'vitamin_e_mg',            # display: Vitamin E (mg)
+    'vitamin_k_mg',            # display: Vitamin K (mg)
+    'vitamin_b1_thiamin_mg',   # display: Vitamin B1 (Thiamine) (mg)
+    'vitamin_b2_riboflavin_mg',# display: Vitamin B2 (Riboflavin) (mg)
+    'vitamin_b3_niacin_mg',    # display: Vitamin B3 (Niacin) (mg)
+    'vitamin_b5_pantothenic_acid_mg', # display: Vitamin B5 (Pantothenic Acid) (mg)
+    'vitamin_b6_mg',           # display: Vitamin B6 (mg)
+    'folate_mg',               # display: Vitamin B9 (Folate) (mg)
+    'vitamin_b12_mg',          # display: Vitamin B12 (mg)
     'calcium_mg',              # display: Calcium (mg)
     'iron_mg',                 # display: Iron / Zat Besi (mg)
     'magnesium_mg',            # display: Magnesium (mg)
@@ -92,18 +96,18 @@ SOFT_ORDER = [
 ]
 
 SOFT_DISPLAY = {
-    'vitamin_a_rae_mg': 'Vitamin A',
-    'vitamin_c_mg': 'Vitamin C',
-    'vitamin_d_mg': 'Vitamin D',
-    'vitamin_e_mg': 'Vitamin E',
-    'vitamin_k_mg': 'Vitamin K',
-    'vitamin_b1_thiamin_mg': 'Vitamin B1 (Thiamine)',
-    'vitamin_b2_riboflavin_mg': 'Vitamin B2 (Riboflavin)',
-    'vitamin_b3_niacin_mg': 'Vitamin B3 (Niacin)',
-    'vitamin_b5_pantothenic_acid_mg': 'Vitamin B5 (Pantothenic Acid)',
-    'vitamin_b6_mg': 'Vitamin B6',
-    'folate_mg': 'Vitamin B9 (Folate)',
-    'vitamin_b12_mg': 'Vitamin B12',
+    'vitamin_a_rae_mg': 'Vitamin A (mg RAE)',
+    'vitamin_c_mg': 'Vitamin C (mg)',
+    'vitamin_d_mg': 'Vitamin D (mg)',
+    'vitamin_e_mg': 'Vitamin E (mg)',
+    'vitamin_k_mg': 'Vitamin K (mg)',
+    'vitamin_b1_thiamin_mg': 'Vitamin B1 (Thiamine) (mg)',
+    'vitamin_b2_riboflavin_mg': 'Vitamin B2 (Riboflavin) (mg)',
+    'vitamin_b3_niacin_mg': 'Vitamin B3 (Niacin) (mg)',
+    'vitamin_b5_pantothenic_acid_mg': 'Vitamin B5 (Pantothenic Acid) (mg)',
+    'vitamin_b6_mg': 'Vitamin B6 (mg)',
+    'folate_mg': 'Vitamin B9 (Folate) (mg)',
+    'vitamin_b12_mg': 'Vitamin B12 (mg)',
     'calcium_mg': 'Calcium (mg)',
     'iron_mg': 'Iron / Zat Besi (mg)',
     'magnesium_mg': 'Magnesium (mg)',
@@ -127,7 +131,7 @@ DISEASE_MAP = {
     'ckd': 'CKD'
 }
 
-def format_target(nutrient_key, min_val, max_val):
+def format_target(nutrient_key, min_val, max_val, tipe='range'):
     def fmt(val):
         if val is None or val == float('inf'):
             return ""
@@ -139,6 +143,9 @@ def format_target(nutrient_key, min_val, max_val):
             return f"{val:.4f}"
         else:
             return f"{val:.1f}"
+
+    if tipe == 'max' and max_val is not None and max_val != float('inf'):
+        return f"≤ {fmt(max_val)}"
 
     if min_val is not None and max_val is not None and max_val != float('inf'):
         return f"{fmt(min_val)} – {fmt(max_val)}"
@@ -199,9 +206,10 @@ def main():
     default_sheet = wb.active
     wb.remove(default_sheet)  # type: ignore
 
-    for i, case in enumerate(CASES):
+    for i, case_raw in enumerate(CASES):
+        case: Any = case_raw
         print(f"[{i+1}/13] Generating: {case['sheet']} ({case['disease']})...")
-        ws = wb.create_sheet(title=case['sheet'])
+        ws = wb.create_sheet(title=str(case['sheet']))
         
         # Set column widths
         ws.column_dimensions['A'].width = 35
@@ -221,13 +229,14 @@ def main():
                 'food_preferences': []
             }
             
-            analysis_result = nutrition_service.calculate_nutrition_needs(profile)
+            analysis_result: Any = nutrition_service.calculate_nutrition_needs(profile)
             if not analysis_result.get('success'):
                 raise ValueError(f"Nutrition analysis failed: {analysis_result.get('error')}")
                 
             tdee = analysis_result['energy']['tdee']
-            guidelines = analysis_result['guidelines']
+            guidelines: Any = analysis_result['guidelines']
             food_database = analysis_result['food_data']['dataframe']
+
             
             greedy_engine = GreedyAlgorithmInterface(food_database, guidelines)
             menu_plan = greedy_engine.generate_menu_plan(profile, tdee)
@@ -258,8 +267,9 @@ def main():
             
             # --- SECTION 1: IDENTITAS USER ---
             ws.merge_cells('A1:B1')
-            ws['A1'] = "IDENTITAS USER"
+            ws['A1'].value = "IDENTITAS USER"
             ws['A1'].font = Font(bold=True)
+
             
             gender_display = 'Pria' if case['gender'] == 'M' else 'Wanita'
             activity_display = {
@@ -283,8 +293,9 @@ def main():
             ws['B7'] = disease_display
             
             # --- SECTION 2: KEBUTUHAN NUTRISI USER ---
-            ws['A9'] = "KEBUTUHAN NUTRISI USER"
+            ws['A9'].value = "KEBUTUHAN NUTRISI USER"
             ws['A9'].font = Font(bold=True)
+
             
             bmr = analysis_result['energy']['bmr']
             tdee = analysis_result['energy']['tdee']
@@ -299,13 +310,21 @@ def main():
                 nut = guidelines['nutrients'].get(nutrient_key, {})
                 min_val = nut.get('min')
                 max_val = nut.get('max')
+                tipe_val = nut.get('tipe', 'range')
                 if min_val is None and max_val is None:
-                    return '-'
+                    if nutrient_key == 'energy_kcal':
+                        min_val = tdee * 0.95
+                        max_val = tdee * 1.05
+                    else:
+                        return '-'
+                if tipe_val == 'max' and max_val is not None and max_val != float('inf'):
+                    return f"≤ {max_val:.1f}"
                 if max_val == float('inf') or max_val is None:
                     return f"≥ {min_val:.1f}" if min_val is not None else "-"
                 if min_val is None or min_val == 0:
                     return f"≤ {max_val:.1f}"
                 return f"{min_val:.1f} – {max_val:.1f}"
+
                 
             ws['A12'] = "Energi Harian (kcal)"
             ws['B12'] = format_min_max('energy_kcal')
@@ -415,13 +434,63 @@ def main():
             if hasattr(menu_plan, 'daily_micronutrients') and menu_plan.daily_micronutrients:
                 actual_nutrients.update(menu_plan.daily_micronutrients)
                 
+            # Define the fixed order and display names for the primary nutrients
+            primary_hard_keys = [
+                ('energy_kcal', 'Energy (kcal)'),
+                ('protein_g', 'Protein (g)'),
+                ('fat_g', 'Fat (g)'),
+                ('carbohydrate_g', 'Carbohydrate (g)'),
+                ('sodium_mg', 'Sodium (mg)'),
+                ('sugar_g', 'Sugar (g)'),
+                ('cholesterol_mg', 'Cholesterol (mg)'),
+            ]
+
+            
+            # Print the primary nutrients in the exact fixed order
+            printed_keys = set()
+
+            for nutrient_key, display_name in primary_hard_keys:
+                printed_keys.add(nutrient_key)
+                constraint = guidelines['nutrients'].get(nutrient_key)
+                
+                min_v = None
+                max_v = None
+                tipe_val = 'range'
+                if constraint:
+                    min_v = constraint.get('min')
+                    max_v = constraint.get('max')
+                    tipe_val = constraint.get('tipe', 'range')
+                elif nutrient_key == 'energy_kcal':
+                    min_v = tdee * 0.95
+                    max_v = tdee * 1.05
+                    tipe_val = 'range'
+
+                limit_str = format_target(nutrient_key, min_v, max_v, tipe=tipe_val)
+                actual_val = actual_nutrients.get(nutrient_key, 0.0)
+                actual_str = format_actual(nutrient_key, actual_val)
+                
+                if min_v is None and max_v is None:
+                    fulfillment_str = "-"
+                else:
+                    fulfillment_str = get_fulfillment(actual_val, min_v, max_v)
+                
+                ws.cell(row=current_row, column=1, value=display_name)
+                ws.cell(row=current_row, column=2, value=limit_str)
+                ws.cell(row=current_row, column=3, value=actual_str)
+                ws.cell(row=current_row, column=4, value=fulfillment_str)
+                current_row += 1
+
+            # Print any OTHER hard constraints that might be active for this profile (e.g. saturated_fat_g, potassium_mg, etc.)
             for nutrient_key, constraint in guidelines['nutrients'].items():
+                if nutrient_key in printed_keys:
+                    continue
                 if constraint.get('hard_soft_type') == 'HARD' and constraint.get('constraint_type') != 'unlimited':
                     display_name = NUTRIENT_DISPLAY.get(nutrient_key, nutrient_key)
                     min_v = constraint.get('min')
                     max_v = constraint.get('max')
+                    tipe_val = constraint.get('tipe', 'range')
                     
-                    limit_str = format_target(nutrient_key, min_v, max_v)
+                    limit_str = format_target(nutrient_key, min_v, max_v, tipe=tipe_val)
                     actual_val = actual_nutrients.get(nutrient_key, 0.0)
                     actual_str = format_actual(nutrient_key, actual_val)
                     fulfillment_str = get_fulfillment(actual_val, min_v, max_v)
@@ -458,8 +527,9 @@ def main():
                 display_name = SOFT_DISPLAY.get(nutrient_key, nutrient_key)
                 min_v = constraint.get('min')
                 max_v = constraint.get('max')
+                tipe_val = constraint.get('tipe', 'range')
                 
-                limit_str = format_target(nutrient_key, min_v, max_v)
+                limit_str = format_target(nutrient_key, min_v, max_v, tipe=tipe_val)
                 actual_val = actual_nutrients.get(nutrient_key, 0.0)
                 actual_str = format_actual(nutrient_key, actual_val)
                 fulfillment_str = get_fulfillment(actual_val, min_v, max_v)
@@ -483,12 +553,12 @@ def main():
                     cell.value = None
             
             # Write error message in A1
-            ws['A1'] = "GAGAL GENERATE MENU"
+            ws['A1'].value = "GAGAL GENERATE MENU"
             ws['A1'].font = Font(bold=True)
 
     output_dir = os.path.join(current_dir, 'output')
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'validasi_ahli_gizi.xlsx')
+    output_path = os.path.join(output_dir, 'validasi_greedy.xlsx')
     wb.save(output_path)
     print(f"\n[SUCCESS] Saved validation results to: {output_path}")
 

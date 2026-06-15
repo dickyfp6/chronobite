@@ -221,6 +221,41 @@ class GuidelineLoader:
                             max_converted
                         )
                     all_nutrients[nutrient]['diseases'].append(disease)
+
+        # Fallback: Inherit normal guidelines for nutrients not defined in selected diseases
+        if 'normal' not in diseases:
+            normal_df = self.get_guideline_by_disease('normal', age, gender)
+            if not normal_df.empty:
+                for idx, row in normal_df.iterrows():
+                    nutrient = row['nutrient']
+                    if nutrient not in all_nutrients:
+                        min_val = row['min']
+                        max_val = row['max']
+                        basis = row['basis']
+                        tipe = row.get('tipe', 'range')
+                        
+                        try:
+                            min_val = float(min_val) if pd.notna(min_val) else None
+                            max_val = float(max_val) if pd.notna(max_val) else None
+                        except (ValueError, TypeError):
+                            min_val = None
+                            max_val = None
+                        
+                        converted = calculator.convert_guideline_value(
+                            min_val, max_val, basis, user_params, nutrient_name=nutrient
+                        )
+                        
+                        if converted['constraint_type'] not in ('invalid', 'unknown'):
+                            min_converted = float(converted['min_converted']) if converted['min_converted'] is not None else None
+                            max_converted = float(converted['max_converted']) if converted['max_converted'] is not None else None
+                            
+                            all_nutrients[nutrient] = {
+                                'min': min_converted,
+                                'max': max_converted,
+                                'basis': '1',
+                                'tipe': tipe,
+                                'diseases': ['normal']
+                            }
         
         # ════════════════════════════════════════════════════════════════════════
         # CONFLICT RESOLUTION: Detect & fix min > max situations after merge
