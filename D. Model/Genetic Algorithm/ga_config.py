@@ -1,6 +1,6 @@
 GA_PARAMS = {
-    "generations": 70,
-    "pop_size": 110,
+    "generations": 100,
+    "pop_size": 150,
     "elite_ratio": 0.10,
     "mutation_rate": 0.25,
 }
