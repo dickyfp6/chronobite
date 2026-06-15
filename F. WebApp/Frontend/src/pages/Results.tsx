@@ -239,6 +239,8 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  });
  }
 
+ console.log("Backend generateMenu output:", result);
+
  if (!result.success || !result.menu_plan?.meals) {
  throw new Error('Failed to generate valid menu plan from backend');
  }
@@ -340,6 +342,8 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  analysis_data: analysisResult || {},
  user_input: analysisResult || {},
  });
+
+ console.log("Backend regenerate generateMenu output:", result);
 
  if (!result.success || !result.menu_plan?.meals) {
  throw new Error('Failed to generate valid menu plan from backend');

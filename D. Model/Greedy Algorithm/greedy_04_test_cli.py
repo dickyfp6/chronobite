@@ -1,59 +1,12 @@
 """
-GREEDY ALGORITHM - CLI TEST INTERFACE
-======================================
-
-Comprehensive CLI for testing the 7-Phase DSS Meal Optimization Pipeline:
-1. User Profile → 2. Nutrition Constraints → 3. Greedy Optimization
-4. Portion Optimization → 5. Nutrition Recalculation → 6. Final Recommendation
-7. User Substitution (stub for future implementation)
-
-USAGE MODES:
-============
-
-1. Normal User (Default):
-   $ python test_cli.py
-   or
-   $ python test_cli.py normal
-
-2. Interactive Mode (Custom Input):
-   $ python test_cli.py interactive
-   
-   Then enter:
-   - Gender (M/F)
-   - Age
-   - Weight (kg)
-   - Height (cm)
-   - Activity Factor
-   - Disease (normal, dm2, hypertension, ckd, obesity)
-
-3. Pre-configured Disease Tests:
-   $ python test_cli.py disease       # Diabetes (dm2)
-   $ python test_cli.py hypertension  # Hypertension
-   $ python test_cli.py ckd           # Chronic Kidney Disease
-   $ python test_cli.py obesity       # Obesity
-
-OUTPUT:
-=======
-
-For each meal (Breakfast, Lunch, Dinner, Snack):
-- Main Course (3 candidates with scaled portions & nutrients)
-- Side Dish (3 candidates with scaled portions & nutrients)
-- Drink (3 candidates with scaled portions & nutrients)
-- Snack (3 candidates with scaled portions & nutrients)
-
-Daily Totals:
-- Total Calories, Protein, Carbs, Fat
-- All scaled to actual portion sizes (NOT per 100g)
-
-ARCHITECTURE:
-=============
-
-Phase 1: Generate 3 diverse food candidates per course (per-100g basis)
-Phase 2: Optimize portions → portion_g = (target_kcal / kcal_per_100g) * 100
-Phase 3: Scale all nutrients → nutrient_actual = nutrient_per_100g * (portion_g / 100)
-Phase 4: Return MenuPlan with all courses having scaled values
-
-All values in output are ACTUAL portions (grams/ml) with SCALED nutrients.
+================================================================================
+greedy_04_test_cli.py - Antarmuka Pengujian CLI (Test CLI)
+================================================================================
+File ini memproses:
+1. Menyediakan Command Line Interface (CLI) untuk menjalankan simulasi generate menu plan.
+2. Memuat data profil user pengujian (CKD, DM2, Hipertensi, Obesitas, Normal) atau mode interaktif.
+3. Menguji kepatuhan gizi terhadap batasan medis (Hard/Soft constraints) secara lokal dan mencetak laporan kepatuhannya di terminal.
+================================================================================
 """
 
 import sys
@@ -207,7 +160,6 @@ def test_greedy_algorithm():
         
         guidelines = ns_result.get('guidelines', {})
         tdee = ns_result['energy']['tdee']
-        # pyrefly: ignore [missing-attribute]
         food_db = ns_result.get('food_data', {}).get('dataframe')
         
         if food_db is None or len(food_db) == 0:
@@ -222,8 +174,8 @@ def test_greedy_algorithm():
             print(f"  - Disease: {guidelines['disease']}")
             
         print("\n[4/4] Initializing Greedy Algorithm and generating menu...")
-        # Get interface
-        from greedy_interface import get_greedy_algorithm  # type: ignore
+        # Get interface from the new renamed greedy_01_interface.py
+        from greedy_01_interface import get_greedy_algorithm  # type: ignore
         greedy = get_greedy_algorithm(food_db, guidelines)
         
         # Generate menu using TDEE (NEW ARCHITECTURE)

@@ -1,13 +1,12 @@
 """
-REDESIGNED Greedy Algorithm - Proper DSS Architecture
-================================================
-
-Three-Phase Flow:
-1. FOOD SELECTION: Generate diverse candidates without portion scaling
-2. PORTION OPTIMIZATION: Calculate realistic portions + scale nutrients
-3. POST-SELECTION REBALANCING: Adjust portions after user substitutions (optional)
-
-All dataset values are PER 100g. Scaling happens AFTER food selection.
+================================================================================
+greedy_02_optimizer.py - Logika Utama Optimasi Greedy (Greedy Optimizer)
+================================================================================
+File ini memproses:
+1. Phase 1 (Food Selection): Memilih kandidat makanan yang bervariasi untuk setiap waktu makan berdasarkan target kalori awal (TDEE).
+2. Phase 2 (Portion Optimization): Menghitung porsi makanan yang realistis (clamping gramasi) dan melakukan scaling nilai gizi (makro & mikro) dari basis per 100g ke porsi aktual.
+3. Grid Search Optimization: Menentukan kombinasi porsi Main Course, Side Dish, dan Drink agar total kalori mendekati target dan tidak melanggar batasan medis (Hard/Soft constraints) menggunakan metode Proportional Remaining Allocation (RPA).
+================================================================================
 """
 
 import pandas as pd
@@ -18,8 +17,8 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from meal_schema import FoodItem, MealCourse, Meal, SnackMeal, MenuPlan
-from candidate_generator import CandidateGenerator
-from similarity_checker import SimilarityChecker
+from greedy_05_candidate_generator import CandidateGenerator
+from greedy_06_similarity_checker import SimilarityChecker
 
 # Validated meal distribution (DO NOT CHANGE)
 MEAL_DISTRIBUTION = {
@@ -71,6 +70,7 @@ class GreedyOptimizer:
         self.similarity_checker = SimilarityChecker()
         self.selected_items = []
         self.cumulative_nutrients = {}
+        self.current_tdee = 2000.0
         self._init_cumulative_tracking()
     
     def _init_cumulative_tracking(self):
@@ -90,6 +90,7 @@ class GreedyOptimizer:
         self.food_db = food_database.copy()
         self.constraint_bag = constraint_bag
         self.selected_items = []
+        self.current_tdee = 2000.0
         self._init_cumulative_tracking()
         
     def optimize_meal_portions(
@@ -121,19 +122,38 @@ class GreedyOptimizer:
         # Load guidelines and cumulative nutrients
         nutrients = self.constraint_bag.get('nutrients', {})
         
-        # Pre-extract hard micronutrient constraints for performance inside search loops
-        hard_micros = {}
+        # Proportional Remaining Allocation (RPA) for hard constraints
+        tdee = getattr(self, 'current_tdee', 2000.0)
+        energy_so_far = self.cumulative_nutrients.get('energy_kcal', 0.0)
+        energy_remain = max(tdee - energy_so_far, 100.0)
+        prop = min(1.0, max(0.0, target_mid / energy_remain))
+
+        hard_constraints = {}
         for nutrient, constraint in nutrients.items():
-            if nutrient in ['energy_kcal', 'protein_g', 'carbohydrate_g', 'fat_g']:
+            # energy_kcal is handled by main calorie target optimization, but protein, carb, fat must be constrained!
+            if nutrient == 'energy_kcal':
                 continue
             if constraint.get('hard_soft_type') == 'HARD' and constraint.get('constraint_type') != 'unlimited':
-                hard_micros[nutrient] = {
-                    'min': float(constraint.get('min') or 0.0),
-                    'max': float(constraint.get('max') or float('inf')),
+                min_val = float(constraint.get('min') or 0.0)
+                max_val = float(constraint.get('max') or float('inf'))
+                cumulative = float(self.cumulative_nutrients.get(nutrient, 0.0))
+                
+                # Calculate remaining daily allowance
+                remain_min = max(0.0, min_val - cumulative)
+                remain_max = max(0.0, max_val - cumulative) if max_val != float('inf') else float('inf')
+                
+                # Proportional meal target
+                meal_min = prop * remain_min
+                meal_max = prop * remain_max if remain_max != float('inf') else float('inf')
+                
+                hard_constraints[nutrient] = {
+                    'meal_min': meal_min,
+                    'meal_max': meal_max,
+                    'max_daily': max_val,
+                    'cumulative': cumulative,
                     'val_m': float(main_item.get(nutrient, 0) or 0) if main_item else 0.0,
                     'val_s': float(side_item.get(nutrient, 0) or 0) if side_item else 0.0,
                     'val_d': float(drink_item.get(nutrient, 0) or 0) if drink_item else 0.0,
-                    'cumulative': float(self.cumulative_nutrients.get(nutrient, 0.0)),
                 }
 
         # Grid search over possible Main Course portions (since step is 1g, it is very fast)
@@ -162,7 +182,8 @@ class GreedyOptimizer:
                 d = float(round(d))
                 
                 # Calculate total calories and error
-                total_cal = cal_ms + (d * energy_d) / 100.0
+                cal_d = (d * energy_d) / 100.0
+                total_cal = cal_ms + cal_d
                 
                 if total_cal < min_target:
                     error = min_target - total_cal
@@ -172,18 +193,42 @@ class GreedyOptimizer:
                     # Inside target range! Prioritize getting closer to midpoint
                     error = abs(total_cal - target_mid) * 0.1
                 
-                # Calculate hard micronutrient penalties
+                # Calculate course distribution penalty
+                if total_cal > 0:
+                    cal_m = (m * energy_m) / 100.0
+                    cal_s = (s * energy_s) / 100.0
+                    perc_m = cal_m / total_cal
+                    perc_s = cal_s / total_cal
+                    perc_d = cal_d / total_cal
+                    
+                    dist_error_m = abs(perc_m - COURSE_DISTRIBUTION['Main'])
+                    dist_error_s = abs(perc_s - COURSE_DISTRIBUTION['Side'])
+                    dist_error_d = abs(perc_d - COURSE_DISTRIBUTION['Drink'])
+                    
+                    # Moderate penalty to keep courses balanced (medical guidelines take priority)
+                    dist_penalty = (dist_error_m + dist_error_s + dist_error_d) * 200.0
+                    error += dist_penalty
+                
+                # Calculate constraint penalties using RPA + Daily Hard Cap
                 micro_penalty = 0.0
-                for nutrient, data in hard_micros.items():
+                for nutrient, data in hard_constraints.items():
                     added_val = (m * data['val_m'] + s * data['val_s'] + d * data['val_d']) / 100.0
                     total_daily_val = data['cumulative'] + added_val
                     
-                    if total_daily_val < data['min']:
-                        deviation = (data['min'] - total_daily_val) / max(data['min'], 1.0)
-                        micro_penalty += deviation * 500.0
-                    elif total_daily_val > data['max']:
-                        deviation = (total_daily_val - data['max']) / max(data['max'], 1.0)
-                        micro_penalty += deviation * 500.0
+                    # 1. HARD DAILY MAXIMUM PENALTY (Critical, cannot be violated)
+                    if data['max_daily'] < float('inf') and total_daily_val > data['max_daily']:
+                        deviation = (total_daily_val - data['max_daily']) / max(data['max_daily'], 1.0)
+                        micro_penalty += deviation * 2000.0  # Very high penalty weight
+                        
+                    # 2. SOFT MEAL-LEVEL MAXIMUM PENALTY (Flexible guide, allows borrowing from later meals)
+                    elif data['meal_max'] < float('inf') and added_val > data['meal_max']:
+                        deviation = (added_val - data['meal_max']) / max(data['meal_max'], 1.0)
+                        micro_penalty += deviation * 100.0  # Much softer penalty weight
+                        
+                    # 3. SOFT MEAL-LEVEL MINIMUM PENALTY (Flexible guide)
+                    if data['meal_min'] > 0.0 and added_val < data['meal_min']:
+                        deviation = (data['meal_min'] - added_val) / data['meal_min']
+                        micro_penalty += deviation * 100.0  # Softer penalty weight
                         
                 error += micro_penalty
                     
@@ -231,6 +276,12 @@ class GreedyOptimizer:
         if cumulative_nutrients is not None:
             nutrients = self.constraint_bag.get('nutrients', {})
             
+            # RPA Setup
+            tdee = getattr(self, 'current_tdee', 2000.0)
+            energy_so_far = cumulative_nutrients.get('energy_kcal', 0.0)
+            energy_remain = max(tdee - energy_so_far, 100.0)
+            prop = min(1.0, max(0.0, target_calories / energy_remain))
+            
             for nutrient, constraint in nutrients.items():
                 if constraint.get('hard_soft_type') != 'HARD':
                     continue
@@ -243,11 +294,18 @@ class GreedyOptimizer:
                 max_val = constraint.get('max')
                 min_val = float(constraint.get('min') or 0)
                 
-                # PENALTY: food would push cumulative over max
+                # Proportional targets
+                meal_max = prop * max(0.0, max_val - cumulative) if max_val is not None and max_val > 0 else float('inf')
+                meal_min = prop * max(0.0, min_val - cumulative)
+                
+                # PENALTY: food would push cumulative over max OR exceed proportional meal limit
                 if max_val is not None and max_val > 0:
                     if (cumulative + food_val_est) > max_val:
                         over_ratio = ((cumulative + food_val_est) - max_val) / max_val
-                        constraint_score -= min(50, over_ratio * 60)
+                        constraint_score -= min(60, over_ratio * 80)
+                    elif food_val_est > meal_max:
+                        over_ratio = (food_val_est - meal_max) / max(meal_max, 1.0)
+                        constraint_score -= min(30, over_ratio * 30)
                 
                 # BONUS: food helps reach unfulfilled minimum
                 remaining = min_val - cumulative
@@ -718,6 +776,7 @@ class GreedyOptimizer:
         - Dinner: 28.75%
         - Snack: 13.75%
         """
+        self.current_tdee = tdee
         self._init_cumulative_tracking()
         self.selected_items = []
         
@@ -738,7 +797,6 @@ class GreedyOptimizer:
         lunch = self.generate_meal('Lunch', lunch_target)
         dinner = self.generate_meal('Dinner', dinner_target)
         snack = self.generate_snack(snack_target)
-        
         
         # Create MenuPlan
         feasible = True

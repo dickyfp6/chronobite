@@ -1,11 +1,12 @@
-﻿"""
-Interface for Greedy Algorithm to connect with NutritionService.
-Standardizes input from system space to algorithm space.
-
-REDESIGNED ARCHITECTURE:
-- Phase 1: Food Selection (generate diverse candidates)
-- Phase 2: Portion Optimization (calculate realistic portions + scale nutrients)
-- Phase 3: Post-Selection Portion Rebalancing (optional, after user substitutions)
+"""
+================================================================================
+greedy_01_interface.py - Jembatan API ke Frontend / Interface
+================================================================================
+File ini memproses:
+1. Jembatan komunikasi antara Flask backend API dengan logika Greedy Optimizer.
+2. Menerjemahkan profile user dan data makanan ke bentuk yang siap dioptimasi.
+3. Memanggil logika penyeimbangan ulang porsi (Portion Rebalancing) paska substitusi.
+================================================================================
 """
 
 import sys
@@ -15,8 +16,8 @@ from typing import Dict, List, Any, Optional
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from meal_schema import MenuPlan
-from greedy_optimizer import GreedyOptimizer
-from portion_rebalancer import PortionRebalancer
+from greedy_02_optimizer import GreedyOptimizer
+from greedy_03_portion_rebalancer import PortionRebalancer
 
 class GreedyAlgorithmInterface:
     def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):

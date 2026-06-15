@@ -6,10 +6,10 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT_DIR)
 sys.path.insert(0, os.path.join(ROOT_DIR, "C. System Flow"))
 sys.path.insert(0, os.path.join(ROOT_DIR, "D. Model"))
-sys.path.insert(0, os.path.join(ROOT_DIR, "D. Model", "greedy"))
+sys.path.insert(0, os.path.join(ROOT_DIR, "D. Model", "Greedy Algorithm"))
 
 from nutrition_service import NutritionService
-from greedy_interface import GreedyAlgorithmInterface
+from greedy_01_interface import GreedyAlgorithmInterface
 
 def main():
     profile = {

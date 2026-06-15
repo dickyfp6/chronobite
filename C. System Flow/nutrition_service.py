@@ -308,10 +308,11 @@ class NutritionService:
                 if 'cuisine' in food_df.columns:
                     cuisine_counts = food_df['cuisine'].value_counts().to_dict()
                     
-                    # Filter by preferences jika ada
+                    # Filter by preferences jika ada (with Generic fallback)
                     if food_preferences:
                         normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
-                        filtered_df = food_df[food_df['cuisine'].isin(normalized_prefs)].copy()
+                        allowed = normalized_prefs + ['Generic']
+                        filtered_df = food_df[food_df['cuisine'].isin(allowed)].copy()
                     else:
                         filtered_df = food_df.copy()
                 else:

@@ -11,10 +11,10 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 sys.path.insert(0, os.path.join(parent_dir, 'C. System Flow'))
 sys.path.insert(0, os.path.join(parent_dir, 'D. Model'))
-sys.path.insert(0, os.path.join(parent_dir, 'D. Model', 'greedy'))
+sys.path.insert(0, os.path.join(parent_dir, 'D. Model', 'Greedy Algorithm'))
 
 from nutrition_service import NutritionService # type: ignore
-from greedy_interface import GreedyAlgorithmInterface # type: ignore
+from greedy_01_interface import GreedyAlgorithmInterface # type: ignore
 
 # Test Profiles
 PROFILES = [

@@ -25,7 +25,7 @@ jobs = {}
 # Add parent directories untuk imports (F. WebApp is one level deep, so one .. to get to root)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'C. System Flow'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'greedy'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Greedy Algorithm'))
 
 # Import system components
 try:
@@ -40,8 +40,8 @@ except ImportError as e:
 # Special handling for Greedy Algorithm (folder has space in name)
 GreedyAlgorithmInterface = None
 try:
-    greedy_path = os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'greedy', 'greedy_interface.py')
-    spec = importlib.util.spec_from_file_location("greedy_interface", greedy_path)
+    greedy_path = os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Greedy Algorithm', 'greedy_01_interface.py')
+    spec = importlib.util.spec_from_file_location("greedy_01_interface", greedy_path)
     if spec is not None and spec.loader is not None:
         greedy_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(greedy_module)
@@ -694,24 +694,19 @@ def generate_menu():
             if base_df is not None:
                 food_database = base_df.copy()
                 
-        # Apply cuisine preference filtering (shared logic)
+        # Apply cuisine preference filtering (shared logic with Generic fallback)
         food_preferences = user_input.get('food_preferences', []) if isinstance(user_input, dict) else []
         if food_database is not None and food_preferences:
             normalized_prefs = [p.title() if isinstance(p, str) else p for p in food_preferences]
+            allowed = normalized_prefs + ['Generic']
             
-            if algorithm_choice == 'genetic':
-                # Genetic algorithm filters cuisine using generic fallback
-                allowed = normalized_prefs + ['Generic']
-                if 'cuisine_label' in food_database.columns:
-                    filtered = food_database[food_database['cuisine_label'].isin(allowed)].copy()
-                    if len(filtered) >= 50:
-                        food_database = filtered
-            else:
-                # Greedy algorithm filter
-                if 'cuisine' in food_database.columns:
-                    food_database = food_database[food_database['cuisine'].isin(normalized_prefs)].copy()
-                elif 'cuisine_label' in food_database.columns:
-                    food_database = food_database[food_database['cuisine_label'].isin(normalized_prefs)].copy()
+            # Determine which column to filter on: 'cuisine' first, then 'cuisine_label'
+            cuisine_col = 'cuisine' if 'cuisine' in food_database.columns else 'cuisine_label'
+            
+            if cuisine_col in food_database.columns:
+                filtered = food_database[food_database[cuisine_col].isin(allowed)].copy()
+                if len(filtered) >= 50:
+                    food_database = filtered
                     
         # Check database availability
         if food_database is None or len(food_database) == 0:

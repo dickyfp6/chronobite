@@ -1,8 +1,12 @@
 """
-Meal Schema dan Output Contract
-Definisikan struktur output final untuk algoritma meal planning
-
-Output final akan selalu mengikuti kontrak ini, terlepas dari algoritma Greedy atau Genetic.
+================================================================================
+meal_schema.py - Skema Struktur Menu dan Kontrak Output (Meal Schema)
+================================================================================
+File ini memproses:
+1. Menentukan kontrak objek data gizi (seperti FoodItem, MealCourse, Meal, SnackMeal, MenuPlan) untuk algoritma Greedy maupun Genetic Algorithm.
+2. Menyediakan fungsi serialisasi objek menu makanan ke dictionary untuk dikonversi menjadi data JSON yang dikirimkan ke frontend web.
+3. Mengatur pembagian proporsi kalori standar untuk menu makanan (Meal Distribution) dengan atau tanpa minuman.
+================================================================================
 """
 
 from typing import List, Dict, Optional
@@ -23,7 +27,6 @@ class FoodItem:
     carbohydrate_g: float
     fat_g: float
     micronutrients: Dict = field(default_factory=dict)
-    # Tambahan nutrient lainnya bisa di-extend di sini
     
     def to_dict(self):
         """Convert ke dictionary untuk serialization"""
@@ -213,9 +216,7 @@ class MealDistribution:
         return distribution
 
 
-# Example usage untuk dokumentasi
 if __name__ == "__main__":
-    # Contoh pembuatan struktur
     sample_item = FoodItem(
         fdc_id="167516",
         food_name="Waffles, buttermilk",
@@ -229,10 +230,6 @@ if __name__ == "__main__":
         fat_g=9.22
     )
     
-    # Test distribution
-    breakfast_calories = 594  # 23.75% dari 2500
+    breakfast_calories = 594
     distribution = MealDistribution.distribute(breakfast_calories, include_drink=True)
     print(f"Distribution dengan drink: {distribution}")
-    
-    distribution_no_drink = MealDistribution.distribute(breakfast_calories, include_drink=False)
-    print(f"Distribution without drink: {distribution_no_drink}")

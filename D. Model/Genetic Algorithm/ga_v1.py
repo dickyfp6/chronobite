@@ -2069,7 +2069,7 @@ def generate_meal_options(
         dataset_items = _apply_quality_filter(dataset_items, expected_label)
         
         # Filter by cuisine jika ada preference
-        cuisine_col = 'cuisine_label' if 'cuisine_label' in dataset_items.columns else 'cuisine'
+        cuisine_col = 'cuisine' if 'cuisine' in dataset_items.columns else 'cuisine_label'
         if allowed_cuisine and cuisine_col in dataset_items.columns:
             dataset_items = dataset_items[dataset_items[cuisine_col].isin(allowed_cuisine)]
         

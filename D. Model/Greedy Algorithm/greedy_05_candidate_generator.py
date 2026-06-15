@@ -1,11 +1,21 @@
 """
-Candidate Generator - Generate 3 kandidat makanan per slot dengan similarity check
-Menggunakan regex-based similarity dari food_name untuk menghindari duplikasi jenis makanan
+================================================================================
+greedy_05_candidate_generator.py - Pembangkit Kandidat Makanan (Candidate Generator)
+================================================================================
+File ini memproses:
+1. Menyeleksi dan memfilter database makanan berdasarkan kategori slot waktu makan (Main Course, Side Dish, Drink, Snack).
+2. Memilih kandidat makanan terbaik yang paling sesuai dengan target kalori awal yang diinginkan.
+3. Melakukan pemeriksaan keberagaman bahan makanan (Ingredient Diversity Check) berdasarkan regex kata nama makanan untuk mencegah rekomendasi makanan sejenis yang berulang pada waktu makan yang berbeda.
+================================================================================
 """
 
+import sys
+import os
 import pandas as pd
 import re
 from typing import List, Dict, Set, Optional, cast
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from meal_schema import FoodItem
 
 
@@ -59,8 +69,6 @@ class CandidateGenerator:
         
         # Fallback: return first word if exists
         return words[0] if words else None
-    
-
     
     @staticmethod
     def is_similar_ingredient(food_name1: str, food_name2: str) -> bool:
@@ -152,6 +160,12 @@ class CandidateGenerator:
         else:
             # Shuffle filtered to ensure diversity, avoiding taking N clustered items with the same ingredient
             filtered = filtered.sample(frac=1).reset_index(drop=True)
+            
+            # Prioritize preferred cuisine (non-Generic) over Generic fallback
+            cuisine_col = 'cuisine' if 'cuisine' in filtered.columns else 'cuisine_label'
+            if cuisine_col in filtered.columns:
+                is_generic = (filtered[cuisine_col] == 'Generic')
+                filtered = filtered.iloc[is_generic.argsort(kind='mergesort')].reset_index(drop=True)
         
         # Step 2: Remove exclusions based on ingredient similarity
         result_candidates = []
@@ -198,7 +212,7 @@ class CandidateGenerator:
             candidate['food_name'] = str(row['food_name'])
             candidate['food_group'] = str(row['food_group'])
             candidate['consumption_label'] = str(row.get('consumption_label', row.get('menu_category', 'Unknown')))
-            candidate['cuisine_label'] = str(row.get('cuisine_label', 'Unknown'))
+            candidate['cuisine_label'] = str(row.get('cuisine', row.get('cuisine_label', 'Unknown')))
             candidate['energy_kcal'] = float(row['energy_kcal'])
             candidate['protein_g'] = float(row.get('protein_g', 0))
             candidate['carbohydrate_g'] = float(row.get('carbohydrate_g', 0))
@@ -232,8 +246,6 @@ class CandidateGenerator:
             'Snack': 'Snack',
         }
 
-
-
         label = SLOT_TO_LABEL.get(slot_category)
         if label is None:
             print(f"[WARN] Unknown slot_category: {slot_category}")
@@ -262,16 +274,15 @@ class CandidateGenerator:
             tolerance=tol
         )
 
-# Test
+
 if __name__ == "__main__":
-    # Test ingredient similarity
     test_cases = [
-        ("Chicken Breast", "Grilled Chicken"),  # Same ingredient
-        ("Spinach Salad", "Cooked Spinach"),    # Same ingredient
-        ("Salmon Fillet", "Baked Salmon"),      # Same ingredient
-        ("Salmon Fillet", "Grilled Chicken"),   # Different ingredient
-        ("Sawi Rebus", "Sawi Goreng"),          # Same ingredient
-        ("Nasi Kuning", "Nasi Goreng"),         # Same ingredient
+        ("Chicken Breast", "Grilled Chicken"),
+        ("Spinach Salad", "Cooked Spinach"),
+        ("Salmon Fillet", "Baked Salmon"),
+        ("Salmon Fillet", "Grilled Chicken"),
+        ("Sawi Rebus", "Sawi Goreng"),
+        ("Nasi Kuning", "Nasi Goreng"),
     ]
     
     for name1, name2 in test_cases:

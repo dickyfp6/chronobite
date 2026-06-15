@@ -1,10 +1,20 @@
 """
-Similarity Checker - Detect duplicate/similar items across candidate arrays dalam MenuPlan
-Memberikan comprehensive view tentang keunikan dan diversity menu yang dihasilkan
+================================================================================
+greedy_06_similarity_checker.py - Pemeriksa Kemiripan Menu (Similarity Checker)
+================================================================================
+File ini memproses:
+1. Mendeteksi adanya item makanan yang serupa/duplikat baik di dalam slot waktu makan yang sama (kandidat alternatif) maupun antar waktu makan yang berbeda.
+2. Mengekstrak jenis sumber protein utama (seperti ayam, sapi, ikan, telur, tahu, tempe) dan bahan makanan utama dari nama makanan menggunakan pencocokan teks berbasis kata kunci.
+3. Menghitung nilai keberagaman menu harian (Diversity Score) dari 0 s.d. 100 dan memberikan rekomendasi perbaikan variasi menu.
+================================================================================
 """
 
+import sys
+import os
 import re
 from typing import List, Dict, Set, Tuple, Optional
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from meal_schema import FoodItem, MenuPlan, Meal, SnackMeal
 
 
@@ -149,28 +159,18 @@ class SimilarityChecker:
         
         Returns:
             Dict {slot_key: [food_names]}
-            Contoh:
-            {
-                'breakfast_main': ['Chicken Breast', 'Beef Steak', 'Salmon'],
-                'breakfast_side': ['Rice', 'Bread', 'Pasta'],
-                'lunch_main': ['Pork Chop', 'Chicken Soup', 'Fish'],
-                ...
-            }
         """
         foods_by_slot = {}
         
-        # Process regular meals (Breakfast, Lunch, Dinner)
         for meal in [menu_plan.breakfast, menu_plan.lunch, menu_plan.dinner]:
             meal_name = meal.meal_type.lower()
             
-            # Extract dari each course
             for course_type, course in meal.courses.items():
                 slot_key = f"{meal_name}_{course_type.lower()}"
                 foods_by_slot[slot_key] = [
                     item.food_name for item in course.candidates
                 ]
         
-        # Process snack
         snack_key = 'snack'
         foods_by_slot[snack_key] = [
             item.food_name for item in menu_plan.snack.candidates
@@ -182,8 +182,6 @@ class SimilarityChecker:
     def check_within_slot_duplicates(menu_plan: MenuPlan) -> Dict[str, List[Tuple[str, str, float]]]:
         """
         Check for duplicates WITHIN masing-masing slot (dalam 3 candidates)
-        
-        Contoh error: Breakfast Main punya [Chicken Breast, Grilled Chicken, Chicken Soup]
         
         Args:
             menu_plan: MenuPlan object
@@ -217,12 +215,8 @@ class SimilarityChecker:
         duplicates_across = {}
         
         if compare_types == 'same':
-            # Compare Main courses across meals
             main_slots = {k: v for k, v in foods_by_slot.items() if '_main' in k}
-            side_slots = {k: v for k, v in foods_by_slot.items() if '_side' in k}
-            drink_slots = {k: v for k, v in foods_by_slot.items() if '_drink' in k}
             
-            # Check Main courses
             slots_list = list(main_slots.items())
             for i in range(len(slots_list)):
                 for j in range(i + 1, len(slots_list)):
@@ -244,31 +238,16 @@ class SimilarityChecker:
     def calculate_diversity_score(menu_plan: MenuPlan) -> float:
         """
         Calculate overall diversity score dari MenuPlan (0-100)
-        
-        Metric:
-        - No duplicates dalam slot: +20 points
-        - No similar items dalam slot: +10 points
-        - Good variety across meals: +20 points per meal type
-        - Protein variation: +50 points
-        
-        Args:
-            menu_plan: MenuPlan object
-        
-        Returns:
-            Diversity score (0-100)
         """
         score = 0
         
-        # Check within-slot duplicates
         within_dups = SimilarityChecker.check_within_slot_duplicates(menu_plan)
         if len(within_dups) == 0:
-            score += 20  # No duplicates
+            score += 20
         else:
-            # Reduce score based on number of duplicate pairs
             penalty = len(within_dups) * 5
             score += max(0, 20 - penalty)
         
-        # Check protein variation
         foods_by_slot = SimilarityChecker.extract_all_food_names(menu_plan)
         all_proteins = set()
         
@@ -278,11 +257,9 @@ class SimilarityChecker:
                 if prot:
                     all_proteins.add(prot)
         
-        # Award for variety
         protein_score = min(50, len(all_proteins) * 10)
         score += protein_score
         
-        # Check across-meal variety
         across_dups = SimilarityChecker.check_across_slots_duplicates(menu_plan, 'same')
         if len(across_dups) == 0:
             score += 30
@@ -295,17 +272,6 @@ class SimilarityChecker:
     def generate_similarity_report(menu_plan: MenuPlan) -> Dict:
         """
         Generate comprehensive similarity report untuk MenuPlan
-        
-        Args:
-            menu_plan: MenuPlan object
-        
-        Returns:
-            Dict report dengan:
-            - within_slot_duplicates
-            - across_slot_similar
-            - protein_variety
-            - diversity_score
-            - recommendations
         """
         report = {
             'within_slot_duplicates': SimilarityChecker.check_within_slot_duplicates(menu_plan),
@@ -314,7 +280,6 @@ class SimilarityChecker:
             'recommendations': []
         }
         
-        # Generate recommendations
         if report['within_slot_duplicates']:
             report['recommendations'].append(
                 "⚠️  Found similar items within same slot - regenerate candidates to increase variety"
@@ -341,9 +306,7 @@ class SimilarityChecker:
         return report
 
 
-# Test
 if __name__ == "__main__":
-    # Test similarity
     test_pairs = [
         ("Chicken Breast", "Grilled Chicken"),
         ("Salmon Fillet", "Baked Salmon"),
@@ -355,10 +318,3 @@ if __name__ == "__main__":
     for name1, name2 in test_pairs:
         score = SimilarityChecker.calculate_similarity_score(name1, name2)
         print(f"{name1} vs {name2}: {score:.2f}")
-    
-    # Test find duplicates
-    print("\n=== Test Find Duplicates ===")
-    foods = ["Chicken Breast", "Grilled Chicken", "Salmon Fillet", "Baked Salmon", "Rice"]
-    dups = SimilarityChecker.find_duplicates(foods)
-    for dup in dups:
-        print(f"{dup[0]} ~ {dup[1]}: {dup[2]:.2f}")

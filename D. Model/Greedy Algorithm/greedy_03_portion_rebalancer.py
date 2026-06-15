@@ -1,17 +1,12 @@
 """
-PHASE 3: POST-SELECTION PORTION REBALANCING
-==============================================
-
-After user makes substitutions (e.g., choosing Water instead of selected drink),
-attempt to recover nutritional deficits by adjusting portions of already-selected foods.
-
-IMPORTANT RULES:
-- DO NOT change which foods are selected
-- DO NOT replace foods
-- DO NOT generate new foods
-- Only adjust portion_g for foods already selected
-- Respect realistic portion limits
-- Maximize nutritional coverage
+================================================================================
+greedy_03_portion_rebalancer.py - Penyeimbang Ulang Porsi (Portion Rebalancer)
+================================================================================
+File ini memproses:
+1. Phase 3 (Post-Selection Portion Rebalancing): Menghitung kembali dan menyesuaikan porsi makanan yang sudah terpilih setelah pengguna melakukan substitusi (misalnya mengganti minuman manis dengan air putih).
+2. Menghitung kesenjangan gizi (Nutrition Gap) antara target harian dengan nutrisi saat ini setelah ada perubahan menu.
+3. Mengatur ulang porsi (meningkatkan porsi makanan lain yang padat gizi) tanpa mengganti jenis makanan yang sudah dipilih, agar target gizi harian tetap tercapai secara optimal.
+================================================================================
 """
 
 from typing import Dict, List, Tuple, Optional
@@ -195,7 +190,6 @@ class PortionRebalancer:
             # Determine max portion for this food
             consumption_label = food_item.consumption_label
             # Map consumption_label to portion range category
-            # e.g., 'Main Course' -> 'Main Course', or handle any variations
             min_p, max_p = PORTION_RANGE.get(consumption_label, (50, 400))
             
             foods_to_rebalance.append({
@@ -227,7 +221,6 @@ class PortionRebalancer:
             # Find best food to increase (highest energy density for energy gaps)
             best_food = None
             best_score = 0
-            best_idx = -1
             
             for idx, food_dict in enumerate(foods_to_rebalance):
                 # Enforce portion hierarchy constraints: Main > Side and Main > Drink
@@ -248,7 +241,6 @@ class PortionRebalancer:
                 if score > best_score:
                     best_score = score
                     best_food = food_dict
-                    best_idx = idx
             
             if best_food is None:
                 break  # All foods at max portions or constrained
@@ -299,7 +291,6 @@ class PortionRebalancer:
             
             # Update nutrition gap
             nutrition_gap = PortionRebalancer.calculate_nutrition_gap(target_nutrition, new_totals)
-            total_gap_magnitude = nutrition_gap.magnitude
         
         # Build new meal with rebalanced portions
         new_meal = Meal(
@@ -328,10 +319,7 @@ class PortionRebalancer:
             scaled_item = PortionRebalancer.scale_food_to_portion(original_item, new_portion)
             
             # Find which course this belongs to
-            for food_check in foods_to_rebalance:
-                if food_check['item'] == original_item:
-                    course_type = food_check['course_type']
-                    break
+            course_type = food_dict['course_type']
             
             # Create course with rebalanced item as first candidate
             candidates = [scaled_item]  # Only show the selected (rebalanced) item
@@ -393,7 +381,7 @@ class PortionRebalancer:
             'carbohydrate_g': 0.0,
         }
         
-        # Aggregate from meals (simplified - would need to iterate through courses)
+        # Aggregate from meals
         if breakfast:
             new_nutrition['energy_kcal'] += breakfast.actual_calories
         if lunch:
