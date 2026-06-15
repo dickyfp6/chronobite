@@ -39,14 +39,14 @@ def plot_radar_chart(df, title, filename):
         # Plot Greedy
         values = df['CS Rate_Greedy'].values.flatten().tolist()
         values += values[:1]
-        ax.plot(angles, values, linewidth=2, linestyle='solid', label="Greedy", color='teal')
-        ax.fill(angles, values, 'teal', alpha=0.1)
+        ax.plot(angles, values, linewidth=2, linestyle='solid', label="Greedy", color='gold')
+        ax.fill(angles, values, 'gold', alpha=0.1)
         
         # Plot GA
         values = df['CS Rate_GA'].values.flatten().tolist()
         values += values[:1]
-        ax.plot(angles, values, linewidth=2, linestyle='solid', label="Genetic Algorithm", color='coral')
-        ax.fill(angles, values, 'coral', alpha=0.1)
+        ax.plot(angles, values, linewidth=2, linestyle='solid', label="Genetic Algorithm", color='purple')
+        ax.fill(angles, values, 'purple', alpha=0.1)
         
         plt.title(title, size=15, y=1.1)
         plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
@@ -89,11 +89,11 @@ def main():
     width = 0.35
     
     fig, ax = plt.subplots(figsize=(12, 6))
-    rects1 = ax.bar(x - width/2, merged['CS Rate_Greedy'], width, label='Greedy', color='teal')
-    rects2 = ax.bar(x + width/2, merged['CS Rate_GA'], width, label='Genetic Algorithm', color='coral')
+    rects1 = ax.bar(x - width/2, merged['CS Rate_Greedy'], width, label='Greedy', color='gold')
+    rects2 = ax.bar(x + width/2, merged['CS Rate_GA'], width, label='Genetic Algorithm', color='purple')
     
     ax.set_ylabel('Constraint Satisfaction Rate (%)')
-    ax.set_title('Constraint Satisfaction: Greedy vs Genetic Algorithm')
+    ax.set_title('Constraint Satisfaction: Greedy vs Genetic Algorithm\n(HARD Constraints Only)')
     ax.set_xticks(x)
     ax.set_xticklabels(merged['Profile'], rotation=15, ha='right')
     ax.legend()
@@ -106,11 +106,11 @@ def main():
     # Plot Side-by-Side Avg Deviation (Lower is better)
     plt.figure(figsize=(12, 6))
     fig, ax = plt.subplots(figsize=(12, 6))
-    rects1 = ax.bar(x - width/2, merged['Avg Deviation_Greedy'], width, label='Greedy', color='teal')
-    rects2 = ax.bar(x + width/2, merged['Avg Deviation_GA'], width, label='Genetic Algorithm', color='coral')
+    rects1 = ax.bar(x - width/2, merged['Avg Deviation_Greedy'], width, label='Greedy', color='gold')
+    rects2 = ax.bar(x + width/2, merged['Avg Deviation_GA'], width, label='Genetic Algorithm', color='purple')
     
     ax.set_ylabel('Average Deviation from Target (%)')
-    ax.set_title('Average Deviation: Greedy vs Genetic Algorithm (Lower is Better)')
+    ax.set_title('Average Deviation: Greedy vs Genetic Algorithm (Lower is Better)\n(HARD Constraints Only)')
     ax.set_xticks(x)
     ax.set_xticklabels(merged['Profile'], rotation=15, ha='right')
     ax.legend()
@@ -120,14 +120,15 @@ def main():
     plt.close()
     
     # Plot radar chart
-    plot_radar_chart(merged, 'Constraint Satisfaction Radar Profile Comparison', 'comparison_radar.png')
+    plot_radar_chart(merged, 'Constraint Satisfaction Radar Profile Comparison\n(HARD Constraints Only)', 'comparison_radar.png')
 
     print("\nFINAL COMPARISON SUMMARY:")
     print("==========================================================================================")
-    print(f"{'Profile':<50} | {'CS Rate (Greedy)':<18} | {'CS Rate (GA)':<15}")
-    print("-" * 90)
+    print(f"{'Profile':<50} | {'CS Rate (Greedy)':<22} | {'CS Rate (GA)':<15}")
+    print("-" * 95)
     for idx, row in merged.iterrows():
-        print(f"{row['Profile']:<50} | {row['CS Rate_Greedy']:<17.1f}% | {row['CS Rate_GA']:<14.1f}%")
+        greedy_std = row.get('CS Rate Std_Greedy', 0)
+        print(f"{row['Profile']:<50} | {row['CS Rate_Greedy']:<8.1f}% ± {greedy_std:<8.1f} | {row['CS Rate_GA']:<14.1f}%")
     print("==========================================================================================")
     
     print("\n==========================================================================================")

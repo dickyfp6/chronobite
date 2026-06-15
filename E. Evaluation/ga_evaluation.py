@@ -15,7 +15,6 @@ sys.path.insert(0, os.path.join(parent_dir, 'D. Model', 'Genetic Algorithm'))
 
 from nutrition_service import NutritionService # type: ignore
 from ga_interface import GeneticAlgorithmInterface # type: ignore
-from ga_v1 import fitness as calculate_fitness # type: ignore # Needed for fitness if not exposed directly
 
 PROFILES = [
     {'name': 'Normal',
@@ -202,7 +201,7 @@ def main():
                 dev_df = pd.DataFrame(deviations_all_runs)
                 dev_df = dev_df.sort_values('deviation_pct', ascending=False)
                 
-                sns.barplot(data=dev_df, x='nutrient', y='deviation_pct', hue='type')
+                sns.barplot(data=dev_df, x='nutrient', y='deviation_pct', hue='type', palette={'SOFT': 'blue', 'HARD': 'orange'})
                 plt.title(f"Deviation Analysis - GA (Run 1) - {profile['name']}")
                 plt.ylabel("Deviation from Target (%)")
                 plt.xlabel("Nutrient")
