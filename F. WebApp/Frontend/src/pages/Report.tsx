@@ -1448,7 +1448,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  </motion.div>
 
  {/* Hidden charts for PDF export */}
- <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', pointerEvents: 'none', opacity: 0 }}>
+ <div style={{ position: 'fixed', top: 0, left: 0, zIndex: -9999, pointerEvents: 'none', opacity: 0 }}>
  <div id="pdf-export-container" style={{ width: '800px', backgroundColor: 'white', padding: '20px' }}>
  <div id="pdf-macro-chart" style={{ width: '800px', height: '400px' }}>
  <NutritionChart data={macroData} />

@@ -249,14 +249,14 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  {/* Form Contents */}
  <div className="flex-1">
  {step === 0 && (
- <div className="w-full space-y-10">
+ <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-12">
  {/* Gender Selection Section */}
- <div className="space-y-4">
+ <div className="space-y-4 h-full flex flex-col">
  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
  <User className="w-5 h-5 text-primary" />
  {t.input.gender.title}
  </h3>
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full">
+ <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-6 w-full flex-1">
  <IconCard
  icon={(props: any) => (
  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -287,16 +287,16 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  </div>
  </div>
 
- {/* Divider */}
- <div className="border-t border-border/70 " />
+ {/* Divider - Mobile only */}
+ <div className="xl:hidden border-t border-border/70 " />
 
  {/* Activity Selection Section */}
- <div className="space-y-4">
+ <div className="space-y-4 h-full flex flex-col">
  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
  <Activity className="w-5 h-5 text-primary" />
  {t.input.activity.title}
  </h3>
- <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+ <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-4 sm:gap-6 w-full flex-1">
  <IconCard
  icon={Footprints}
  title={t.input.activity.light}
