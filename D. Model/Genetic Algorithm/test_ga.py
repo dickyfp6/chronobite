@@ -89,7 +89,7 @@ def calculate_fulfillment_percentage(value, min_val, max_val):
         percent = (value / min_val * 100) if min_val > 0 else 0
     elif value > max_val:
         # Above maximum - calculate excess percentage
-        percent = (max_val / value * 100) if value > 0 else 0
+        percent = (value / max_val * 100) if value > 0 else 0
     else:
         # Within range - 100%
         percent = 100.0
@@ -632,8 +632,8 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         for nutrient_key, constraint in sorted(guidelines['hard'].items()):
             min_val = constraint.get('min', 0)
             max_val = constraint.get('max', float('inf'))
-            max_str = "∞" if max_val == float('inf') else f"{max_val:.1f}"
-            range_str = f"{min_val:.1f} – {max_str}"
+            max_str = "∞" if max_val == float('inf') else f"{max_val:.5f}"
+            range_str = f"{min_val:.5f} – {max_str}"
             
             # Lookup aktual dari total_nutrition
             actual = lookup_nutrition(total_nutrition, nutrient_key, HARD_NUTRIENT_KEY_MAP)
@@ -641,7 +641,7 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
             if actual is not None:
                 pct = calculate_fulfillment_percentage(actual, min_val, max_val)
                 pct_str = f"{pct:.1f}%"
-                actual_str = f"{actual:.1f}"
+                actual_str = f"{actual:.5f}"
                 
                 # Determine status: OVER LIMIT, BELOW MIN, or OK
                 if actual > max_val:
@@ -701,8 +701,8 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         for nutrient_key, constraint in sorted(guidelines['soft'].items()):
             min_val = constraint.get('min', 0)
             max_val = constraint.get('max', float('inf'))
-            max_str = "∞" if max_val == float('inf') else f"{max_val:.1f}"
-            target_str = f"{min_val:.1f} – {max_str}"
+            max_str = "∞" if max_val == float('inf') else f"{max_val:.5f}"
+            target_str = f"{min_val:.5f} – {max_str}"
             
             actual = lookup_nutrition(total_nutrition, nutrient_key, SOFT_NUTRIENT_KEY_MAP)
             
@@ -711,10 +711,10 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
                 status_text, _, _ = get_status_category(pct)
                 # Fix: jika actual sangat kecil (< 0.01 dan != 0), gunakan 4 desimal
                 if actual != 0 and actual < 0.01:
-                    actual_str = f"{actual:.4f}"
+                    actual_str = f"{actual:.5f}"
                 else:
-                    actual_str = f"{actual:.2f}"
-                pct_str = f"{pct:.1f}%"
+                    actual_str = f"{actual:.5f}"
+                pct_str = f"{pct:.5f}%"
             else:
                 status_text = "—"
                 actual_str = "N/A"
@@ -773,7 +773,7 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
             ('Best Fitness Score (GA Penalty)', fitness_str),
             ('Keterangan Fitness', 'Lower = Better (Scale: macro×5000 + hard×10000 + soft×100)'),
             ('Hard Constraints Terpenuhi', f"{hard_constraints_passed} / {total_hard_constraints}"),
-            ('Constraint Satisfaction Rate (CSR)', f"{csr:.1f}%"),
+            ('Constraint Satisfaction Rate (CSR)', f"{csr:.5f}%"),
         ]
         
         for label, value in performance_data:
