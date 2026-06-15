@@ -1,4 +1,3 @@
-
 // Calculate recommended daily intake untuk semua 34 nutrients
 export function calculateDailyNeeds(weight: number, height: number, age: number, gender: string, activity: string) {
   let bmr = 0;
