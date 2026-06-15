@@ -3,7 +3,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Greedy Algorithm')))
-from greedy_02_optimizer import GreedyOptimizer
+from b_greedy_algorithm import GreedyOptimizer
 
 def main():
     opt = GreedyOptimizer(pd.DataFrame(), {})

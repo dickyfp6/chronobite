@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(parent_dir, 'D. Model', 'Greedy Algorithm'))
 
 from nutrition_service import NutritionService # type: ignore
 from ga_interface import GeneticAlgorithmInterface # type: ignore
-from greedy_01_interface import GreedyAlgorithmInterface # type: ignore
+from greedy_interface import GreedyAlgorithmInterface # type: ignore
 from ga_v1 import run_ga, fitness as calculate_fitness, local_search # type: ignore
 
 PROFILES = [

@@ -1,6 +1,6 @@
 """
 ================================================================================
-greedy_01_interface.py - Jembatan API ke Frontend / Interface
+greedy_interface.py - Jembatan API ke Frontend / Interface
 ================================================================================
 File ini memproses:
 1. Jembatan komunikasi antara Flask backend API dengan logika Greedy Optimizer.
@@ -16,8 +16,8 @@ from typing import Dict, List, Any, Optional
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from meal_schema import MenuPlan
-from greedy_02_optimizer import GreedyOptimizer
-from greedy_03_portion_rebalancer import PortionRebalancer
+from b_greedy_algorithm import GreedyOptimizer
+from c_post_processing import PortionRebalancer
 
 class GreedyAlgorithmInterface:
     def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):

@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.normpath(os.path.join(os.path.dirname(__file__), ".."
 sys.path.insert(0, os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "D. Model", "Greedy Algorithm")))
 
 from nutrition_service import NutritionService
-from greedy_02_optimizer import GreedyOptimizer
+from b_greedy_algorithm import GreedyOptimizer
 
 def main():
     service = NutritionService()

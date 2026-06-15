@@ -1,6 +1,6 @@
 """
 ================================================================================
-greedy_04_test_cli.py - Antarmuka Pengujian CLI (Test CLI)
+greedy_testing.py - Antarmuka Pengujian CLI (Test CLI)
 ================================================================================
 File ini memproses:
 1. Menyediakan Command Line Interface (CLI) untuk menjalankan simulasi generate menu plan.
@@ -174,8 +174,7 @@ def test_greedy_algorithm():
             print(f"  - Disease: {guidelines['disease']}")
             
         print("\n[4/4] Initializing Greedy Algorithm and generating menu...")
-        # Get interface from the new renamed greedy_01_interface.py
-        from greedy_01_interface import get_greedy_algorithm  # type: ignore
+        from greedy_interface import get_greedy_algorithm
         greedy = get_greedy_algorithm(food_db, guidelines)
         
         # Generate menu using TDEE (NEW ARCHITECTURE)
@@ -214,22 +213,22 @@ def test_greedy_algorithm():
             
             if min_ok and max_ok:
                 hard_passed.append(
-                    f"  ✅ {nutrient}: {actual:.1f} {unit} "
+                    f"  [PASS] {nutrient}: {actual:.1f} {unit} "
                     f"(target: {min_v:.1f}-{max_v if max_v else '∞'} {unit})"
                 )
             else:
                 hard_violations.append(
-                    f"  ❌ {nutrient}: {actual:.1f} {unit} "
+                    f"  [FAIL] {nutrient}: {actual:.1f} {unit} "
                     f"(target: {min_v:.1f}-{max_v if max_v else '∞'} {unit})"
                 )
         
         if hard_violations:
-            print(f"Status: ⚠️  INFEASIBLE ({len(hard_violations)} violation(s))")
+            print(f"Status: [WARN] INFEASIBLE ({len(hard_violations)} violation(s))")
             print("\nViolations:")
             for v in hard_violations:
                 print(v)
         else:
-            print("Status: ✅ FEASIBLE - All HARD constraints satisfied!")
+            print("Status: [PASS] FEASIBLE - All HARD constraints satisfied!")
         
         if hard_passed:
             print(f"\nPassed ({len(hard_passed)}):")

@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(ROOT_DIR, "D. Model"))
 sys.path.insert(0, os.path.join(ROOT_DIR, "D. Model", "Greedy Algorithm"))
 
 from nutrition_service import NutritionService
-from greedy_01_interface import GreedyAlgorithmInterface
+from greedy_interface import GreedyAlgorithmInterface
 
 def main():
     profile = {

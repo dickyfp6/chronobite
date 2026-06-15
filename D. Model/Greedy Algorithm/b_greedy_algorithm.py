@@ -1,6 +1,6 @@
 """
 ================================================================================
-greedy_02_optimizer.py - Logika Utama Optimasi Greedy (Greedy Optimizer)
+b_greedy_algorithm.py - Logika Utama Optimasi Greedy (Greedy Optimizer)
 ================================================================================
 File ini memproses:
 1. Phase 1 (Food Selection): Memilih kandidat makanan yang bervariasi untuk setiap waktu makan berdasarkan target kalori awal (TDEE).
@@ -17,8 +17,8 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from meal_schema import FoodItem, MealCourse, Meal, SnackMeal, MenuPlan
-from greedy_05_candidate_generator import CandidateGenerator
-from greedy_06_similarity_checker import SimilarityChecker
+from a_pre_processing import CandidateGenerator
+from c_post_processing import SimilarityChecker
 
 # Validated meal distribution (DO NOT CHANGE)
 MEAL_DISTRIBUTION = {
@@ -359,9 +359,9 @@ class GreedyOptimizer:
         # Generate 30 raw candidates from database using SHORT form ('Main', 'Side', 'Drink', 'Snack')
         raw_candidates = CandidateGenerator.generate_candidates_for_slot(
             food_database=self.food_db,
-            slot_category=course_type,  # Pass short form directly: 'Main', 'Side', 'Drink', 'Snack'
+            slot_category=course_type,
             target_calories=target_calories_per_100g,
-            num_candidates=30,  # Increased from 10 to 30 to provide enough pool for diversity filtering
+            num_candidates=30,
             exclusion_names=global_excluded,
         )
         
@@ -470,8 +470,6 @@ class GreedyOptimizer:
         
         scale = portion_gram / 100.0
         
-        # Get all available nutrient columns from the database row
-        # For now, we scale the main macronutrients
         food_item = FoodItem(
             fdc_id=str(candidate_per_100g.get('fdc_id', 'unknown')),
             food_name=str(candidate_per_100g.get('food_name', 'Unknown')),
@@ -561,7 +559,6 @@ class GreedyOptimizer:
         total_energy_initial = main_energy_initial + side_energy_initial + drink_energy_initial
 
         # 4. RANGE-BASED SCALING
-        # Estimate TDEE: target_calories = TDEE * MEAL_DISTRIBUTION[meal_type.lower()]
         meal_key = meal_type.lower()
         tdee_est = target_calories / MEAL_DISTRIBUTION.get(meal_key, 0.25)
         
@@ -661,7 +658,6 @@ class GreedyOptimizer:
                 scaled = self.scale_nutrients(cand_per_100g, portion_scaled)
                 main_candidates_scaled.append(scaled)
 
-        # Now construct the MealCourse objects using these static candidate lists
         # Main Course
         if main_candidates_scaled:
             main_scaled = main_candidates_scaled[0]
@@ -758,10 +754,6 @@ class GreedyOptimizer:
             actual_calories=selected_calories
         )
     
-    # ================================================================
-    # MAIN ENTRY POINT - Generate complete menu plan
-    # ================================================================
-    
     def generate_menu(
         self,
         user_profile: Dict,
@@ -769,12 +761,6 @@ class GreedyOptimizer:
     ) -> MenuPlan:
         """
         Generate complete menu plan using TDEE.
-        
-        Calculates meal targets using validated distribution percentages:
-        - Breakfast: 23.75%
-        - Lunch: 33.75%
-        - Dinner: 28.75%
-        - Snack: 13.75%
         """
         self.current_tdee = tdee
         self._init_cumulative_tracking()
@@ -798,13 +784,8 @@ class GreedyOptimizer:
         dinner = self.generate_meal('Dinner', dinner_target)
         snack = self.generate_snack(snack_target)
         
-        # Create MenuPlan
         feasible = True
         violations = []
-        
-        # TODO: Evaluate compliance using validate_final_solution
-        # Currently portioned_df is not exposed by greedy optimizer
-        # Need to reconstruct or modify optimizer to track it
         
         menu_plan = MenuPlan(
             algorithm_used='Greedy',
@@ -820,9 +801,9 @@ class GreedyOptimizer:
             daily_micronutrients=self.cumulative_nutrients,
             feasible=feasible,
             violations=violations,
-            compliance_rate=0.0,        # Placeholder: evaluate in future
-            n_constraints_passed=0,     # Placeholder: evaluate in future
-            n_constraints_total=0       # Placeholder: evaluate in future
+            compliance_rate=0.0,
+            n_constraints_passed=0,
+            n_constraints_total=0
         )
         
         return menu_plan

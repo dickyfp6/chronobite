@@ -3,8 +3,8 @@ Greedy Algorithm Module
 Contains implementation of Greedy Algorithm for meal planning optimization
 """
 
-from greedy_02_optimizer import GreedyOptimizer
-from greedy_01_interface import GreedyAlgorithmInterface, get_greedy_algorithm
+from b_greedy_algorithm import GreedyOptimizer
+from greedy_interface import GreedyAlgorithmInterface, get_greedy_algorithm
 
 __all__ = [
     'GreedyOptimizer',
