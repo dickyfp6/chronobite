@@ -269,7 +269,7 @@ def _filter_food_by_slot(food_df: pd.DataFrame, slot_idx: int, debug: bool = Fal
         - Fallback: return sample max 20 items jika tidak ada match
     """
     global _filter_cache
-    cache_key = (id(food_df), slot_idx)
+    cache_key = (food_df.index[0], len(food_df), slot_idx)
     if cache_key in _filter_cache:
         return _filter_cache[cache_key]
 
@@ -1331,7 +1331,8 @@ def run_ga(
         
         Return: best individual + top 10 solutions dari semua generasi
     """
-    
+    global _numeric_cols_cache
+    _numeric_cols_cache = food_df.select_dtypes(include=[np.number]).columns.tolist()
     if verbose:
         print(f"\n{'='*70}")
         print(f"GENETIC ALGORITHM - IMPROVED (MACRO-AWARE, GUIDED)")
@@ -1590,10 +1591,10 @@ def local_search(
         print(f"{'='*70}")
     
     # Use full food database (already cleaned in preprocessing)
-    food_df_clean = food_df.copy()
+    food_df_clean = food_df
     
     if len(food_df_clean) < CHROMOSOME_SIZE:
-        food_df_clean = food_df.copy()
+        food_df_clean = food_df
     
     if verbose:
         print(f"[SETUP] Candidates: {len(food_df_clean)} items (clean)")
