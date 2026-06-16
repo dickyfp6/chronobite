@@ -188,7 +188,7 @@ export const api = {
   },
 
   async pollMenuJob(jobId: string): Promise<MenuResult> {
-    const maxAttempts = 140; // 140 × 3s = 7 minutes max
+    const maxAttempts = 60; // 60 × 3s = 3 minutes max
     
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       await new Promise(r => setTimeout(r, 3000)); // wait 3s
@@ -212,7 +212,7 @@ export const api = {
       // if 'running', continue polling
     }
     
-    throw new Error('Menu generation timed out after 7 minutes');
+    throw new Error('Menu generation timed out after 3 minutes');
   },
 
   async generateMenu(menuRequest: MenuRequest): Promise<MenuResult> {
