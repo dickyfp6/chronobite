@@ -2431,7 +2431,7 @@ def local_search(
     food_df: pd.DataFrame,
     guidelines: Dict,
     tdee: Optional[float] = None,
-    iterations: int = 30,
+    iterations: int = 20,
     verbose: bool = False,
     deadline: Optional[float] = None
 ) -> pd.DataFrame:
