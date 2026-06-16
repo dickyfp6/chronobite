@@ -619,7 +619,7 @@ def _run_ga_job(job_id, algorithm_choice, food_database, nutrition_guidelines, t
             menu_plan = genetic_algorithm.generate_menu_plan(
                 user_profile=user_input,
                 tdee=tdee,
-                deadline=start_time + 150.0
+                deadline=start_time + 360.0
             )
         else:
             if greedy_algorithm is None:
