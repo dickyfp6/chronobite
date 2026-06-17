@@ -10,8 +10,8 @@ WORKDIR $APP_HOME
 
 # Install system dependencies if any are needed (none for now)
 # COPY requirements first to leverage Docker cache
-COPY F.WebApp/requirements.txt ./F.WebApp/requirements.txt
-RUN pip install --no-cache-dir -r ./F.WebApp/requirements.txt
+COPY ["F. WebApp/requirements.txt", "./F. WebApp/requirements.txt"]
+RUN pip install --no-cache-dir -r "./F. WebApp/requirements.txt"
 
 # Copy all code/folders from workspace into container
 COPY . ./
@@ -24,4 +24,4 @@ ENV PORT 8080
 
 # Run the web service using Gunicorn.
 # We run from F.WebApp subdirectory using --chdir.
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 --chdir F.WebApp app_integrated:app
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 --chdir "F. WebApp" app_integrated:app
