@@ -1484,7 +1484,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  initial={{ opacity: 0, scale: 0.95 }}
  animate={{ opacity: 1, scale: 1 }}
  exit={{ opacity: 0, scale: 0.95 }}
- className="bg-white w-full max-w-2xl h-[85vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-slate-200 "
+ className="bg-white w-full max-w-4xl h-[90vh] max-h-[calc(100vh-2rem)] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-slate-200 "
  >
  {/* Header */}
  <div className="flex items-center justify-between p-5 border-b border-slate-200 ">
@@ -1510,7 +1510,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  </div>
 
  {/* Iframe Preview */}
- <div className="flex-1 bg-slate-100 p-4 flex items-center justify-center">
+ <div className="flex-1 min-h-0 bg-slate-100 p-4 flex items-center justify-center">
  <iframe
  src={previewUrl}
  className="h-full aspect-[1/1.414] max-w-full rounded-2xl border border-slate-200/80 shadow-sm bg-white"
