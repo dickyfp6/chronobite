@@ -1,0 +1,2 @@
+number,value,datetime_start,datetime_complete,duration,params_elite_ratio,params_generations,params_ls_iterations,params_mutation_rate,params_pop_size,system_attrs_fixed_params,state
+0,74454.68978274093,2026-06-17 14:56:45.755349,2026-06-17 14:59:25.449148,0 days 00:02:39.693799,0.05,270,35,0.55,150,"{'pop_size': 150, 'generations': 270, 'elite_ratio': 0.05, 'mutation_rate': 0.55, 'ls_iterations': 35}",COMPLETE
