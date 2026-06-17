@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 from meal_schema import MenuPlan, Meal, MealCourse, SnackMeal, FoodItem
-from ga_v2_numpy import run_ga_numpy as run_ga, local_search, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES
+from ga_dicky import run_ga_numpy as run_ga, local_search, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES
 from ga_config import GA_PARAMS, LS_PARAMS
 
 class GeneticAlgorithmInterface:
@@ -246,7 +246,7 @@ class GeneticAlgorithmInterface:
             print("[OK] Local Search complete")
 
             # Calculate fitness score of best solution (after LS)
-            from ga_v1 import fitness as _calc_fitness # type: ignore
+            from ga_dicky import fitness as _calc_fitness
             best_fitness_score = _calc_fitness(best_solution, self.constraint_bag, tdee=tdee)
                 
             # Generate 3 options per slot (with cuisine preference filtering)
@@ -258,12 +258,8 @@ class GeneticAlgorithmInterface:
                 food_preferences=food_preferences
             )
                 
-            # 2. Calculate dynamic portion sizes to match TDEE and limits
-            portioned_df = calculate_portion_sizes_dynamic(
-                selected_df=best_solution,
-                TDEE=tdee,
-                guidelines=self.constraint_bag
-            )
+            # 2. Use portioned DataFrame directly from best_solution (pre-portioned during GA/LS)
+            portioned_df = best_solution
             
             # 3. Construct the MenuPlan
             # Calculate target calories per meal using ratios
