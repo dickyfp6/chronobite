@@ -373,6 +373,21 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  return { macroData: macros, microData: micros };
  }, [dailyNeeds, t, actualNutrients, analysisGuidelines, selectedItems]);
 
+  const sortedMicroData = useMemo(() => {
+    return [...microData].sort((a, b) => {
+      const aMaxFinite = Number.isFinite(a.max);
+      const bMaxFinite = Number.isFinite(b.max);
+      
+      if (aMaxFinite && !bMaxFinite) return -1;
+      if (!aMaxFinite && bMaxFinite) return 1;
+      
+      if (a.min !== b.min) {
+        return b.min - a.min;
+      }
+      return a.nutrient.localeCompare(b.nutrient);
+    });
+  }, [microData]);
+
  // Collect nutrient deficiency/excess warnings dynamically (strictly for HARD constraints only)
  const nutritionalWarnings = useMemo(() => {
  const warnings: { message: string; type: 'deficient' | 'excessive'; nutrient: string }[] = [];
@@ -516,7 +531,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  };
 
  const macroChart = await captureChart('pdf-macro-chart');
- const microChart = microData.length > 0 ? await captureChart('pdf-micro-chart') : null;
+ const microChart = sortedMicroData.length > 0 ? await captureChart('pdf-micro-chart') : null;
 
  try {
  const pdfPayload = {
@@ -1134,14 +1149,14 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  <NutritionChart data={macroData} />
  </div>
  
- {microData.length > 0 && (
- <div className="mt-8">
- <h3 className="text-lg font-bold mb-2 text-primary font-serif">
- Micronutrient Analysis
- </h3>
- <NutritionChart data={microData} unit="mg" />
- </div>
- )}
+  {sortedMicroData.length > 0 && (
+  <div className="mt-8">
+  <h3 className="text-lg font-bold mb-2 text-primary font-serif">
+  Micronutrient Analysis
+  </h3>
+  <NutritionChart data={sortedMicroData} unit="mg" />
+  </div>
+  )}
 
  </div>
  )}
@@ -1453,11 +1468,11 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  <div id="pdf-macro-chart" style={{ width: '800px', height: '400px' }}>
  <NutritionChart data={macroData} />
  </div>
- {microData.length > 0 && (
- <div id="pdf-micro-chart" style={{ width: '800px', height: '400px' }}>
- <NutritionChart data={microData} unit="mg" />
- </div>
- )}
+  {sortedMicroData.length > 0 && (
+  <div id="pdf-micro-chart" style={{ width: '800px', height: '400px' }}>
+  <NutritionChart data={sortedMicroData} unit="mg" />
+  </div>
+  )}
  </div>
  </div>
 

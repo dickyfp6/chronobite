@@ -612,7 +612,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
  {['normal', 'dm2', 'hypertension', 'cvd', 'cholesterol', 'ckd'].map((condition) => {
  const getHealthIcon = (c: string) => {
- switch (c) {
+  switch (c) {
  case 'normal': return Leaf;
  case 'dm2': return Droplet;
  case 'hypertension': return Activity;
@@ -759,23 +759,23 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  </div>
 
  {/* Bottom Navigation Buttons */}
- <div className="flex flex-col-reverse sm:flex-row gap-3 justify-between mt-8 pt-6 border-t border-border/70">
+ <div className="flex flex-row gap-2.5 sm:gap-3 justify-between mt-8 pt-6 border-t border-border/70">
  <button
  onClick={back}
  disabled={step === 0}
- className="w-full sm:w-auto px-5 py-2.5 justify-center rounded-2xl font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary :bg-slate-800 border border-border text-gray-700 flex items-center gap-2 cursor-pointer text-sm"
+ className="flex-1 sm:flex-none px-4 py-2.5 justify-center rounded-2xl font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary :bg-slate-800 border border-border text-gray-700 flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm"
  >
- <ChevronLeft className="w-5 h-5" />
+ <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
  {t.input.back}
  </button>
 
  <button
  onClick={next}
  disabled={!canProceed()}
- className="w-full sm:w-auto px-6 py-2.5 justify-center bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-200 :bg-slate-800 disabled:text-gray-400 flex items-center gap-2 shadow-sm hover:shadow-md hover:shadow-primary/10 cursor-pointer text-sm"
+ className="flex-1 sm:flex-none px-4 py-2.5 justify-center bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-200 :bg-slate-800 disabled:text-gray-400 flex items-center justify-center gap-2 shadow-sm hover:shadow-md hover:shadow-primary/10 cursor-pointer text-xs sm:text-sm"
  >
  {step === 3 ? t.input.generate : t.input.next}
- {step < 3 && <ChevronRight className="w-5 h-5" />}
+ {step < 3 && <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />}
  </button>
  </div>
  </motion.div>

@@ -16,14 +16,23 @@
 # }
 # LS_PARAMS = {"iterations": 35}
 
-# Balanced parameters (Kaggle Tuning - Trial 59)
+# New parameters (Optimized from Kaggle Tuning - Trial 147)
 GA_PARAMS = {
-    "generations": 150,
-    "pop_size": 70,
-    "elite_ratio": 0.30,
-    "mutation_rate": 0.25,
+    "generations": 100,
+    "pop_size": 150,
+    "elite_ratio": 0.3,
+    "mutation_rate": 0.4,
 }
+LS_PARAMS = {"iterations": 60}
 
-LS_PARAMS = {
-    "iterations": 35 
-}
+# Balanced parameters (Kaggle Tuning - Trial 59)
+# GA_PARAMS = {
+#     "generations": 150,
+#     "pop_size": 70,
+#     "elite_ratio": 0.30,
+#     "mutation_rate": 0.25,
+# }
+
+# LS_PARAMS = {
+#     "iterations": 35 
+# }

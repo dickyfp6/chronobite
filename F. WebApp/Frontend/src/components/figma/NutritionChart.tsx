@@ -195,6 +195,16 @@ const CustomActiveDot = (props: any) => {
 
 export function NutritionChart({ data, unit = 'g' }: NutritionChartProps) {
   const chartData: NutritionDataPoint[] = useMemo(() => {
+    let overallMax = 0;
+    data.forEach(item => {
+      if (item.max !== null && Number.isFinite(item.max)) {
+        overallMax = Math.max(overallMax, item.max);
+      }
+      overallMax = Math.max(overallMax, item.min, item.actual);
+    });
+
+    const topChartValue = overallMax > 0 ? overallMax * 1.05 : 100;
+
     return data.map((item, index) => {
       let status: 'below' | 'within' | 'above' = 'within';
       if (item.actual < item.min) status = 'below';
@@ -202,8 +212,9 @@ export function NutritionChart({ data, unit = 'g' }: NutritionChartProps) {
 
       const id = `nutrient-${index}-${item.nutrient.toLowerCase().replace(/\s+/g, '-')}`;
 
-      // Visual maximum to fill the area indefinitely if there is no actual maximum
-      const visualMax = (item.max !== null && Number.isFinite(item.max)) ? item.max : Math.max(item.actual, item.min) * 1.5;
+      // Visual maximum to fill the area indefinitely if there is no actual maximum (drawn from the very top of the chart)
+      const hasLimit = item.max !== null && Number.isFinite(item.max);
+      const visualMax = hasLimit ? (item.max as number) : topChartValue;
 
       return {
         id,
