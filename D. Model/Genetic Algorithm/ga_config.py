@@ -7,14 +7,14 @@
 # }
 # LS_PARAMS = {"iterations": 30}
 
-# New parameters (Numpy-based increased limits)
+# New parameters (Optimized from Kaggle Tuning - Trial 147)
 GA_PARAMS = {
-    "generations": 150,
-    "pop_size": 120,
-    "elite_ratio": 0.15,
-    "mutation_rate": 0.30,
+    "generations": 270,
+    "pop_size": 70,
+    "elite_ratio": 0.05,
+    "mutation_rate": 0.55,
 }
 
 LS_PARAMS = {
-    "iterations": 40 
+    "iterations": 35 
 }
