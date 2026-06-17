@@ -18,8 +18,8 @@
 
 # New parameters (Optimized from Kaggle Tuning - Trial 147)
 GA_PARAMS = {
-    "generations": 100,
-    "pop_size": 150,
+    "generations": 150,
+    "pop_size": 200,
     "elite_ratio": 0.3,
     "mutation_rate": 0.4,
 }
