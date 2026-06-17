@@ -9,9 +9,12 @@
 
 # New parameters (Numpy-based increased limits)
 GA_PARAMS = {
-    "generations": 500,
-    "pop_size": 300,
-    "elite_ratio": 0.20,
+    "generations": 150,
+    "pop_size": 120,
+    "elite_ratio": 0.15,
     "mutation_rate": 0.30,
 }
-LS_PARAMS = {"iterations": 150}
+
+LS_PARAMS = {
+    "iterations": 40 
+}
