@@ -1972,7 +1972,28 @@ def calculate_total_nutrition_numpy(
         
         clamped_grams = np.clip(grams, min_grams, max_grams)
         clamped_grams = np.round(clamped_grams)
-        
+
+        # Enforce portion hierarchy: Main > Side and Main > Drink for Breakfast, Lunch, Dinner
+        is_1d = clamped_grams.ndim == 1
+        if is_1d:
+            clamped_grams = clamped_grams[np.newaxis, :]
+        epsilon = 1.0
+        for m, s, d in [(0, 1, 2), (3, 4, 5), (6, 7, 8)]:
+            # 1. Adjust Side if Side >= Main
+            violation_side = clamped_grams[:, s] >= clamped_grams[:, m]
+            clamped_grams[violation_side, s] = np.maximum(min_grams[s], clamped_grams[violation_side, m] - epsilon)
+            
+            # 2. Adjust Drink if Drink >= Main
+            violation_drink = clamped_grams[:, d] >= clamped_grams[:, m]
+            clamped_grams[violation_drink, d] = np.maximum(min_grams[d], clamped_grams[violation_drink, m] - epsilon)
+            
+            # 3. Adjust Main if Main <= max(Side, Drink)
+            max_non_main = np.maximum(clamped_grams[:, s], clamped_grams[:, d])
+            violation_main = clamped_grams[:, m] <= max_non_main
+            clamped_grams[violation_main, m] = np.minimum(max_grams[m], max_non_main[violation_main] + epsilon)
+        if is_1d:
+            clamped_grams = clamped_grams[0]
+
         multipliers = clamped_grams / 100.0
         
         # Scale nutrients
@@ -2262,7 +2283,28 @@ def indices_to_dataframe(
             
         clamped_grams = np.clip(grams, min_grams, max_grams)
         clamped_grams = np.round(clamped_grams)
-        
+
+        # Enforce portion hierarchy: Main > Side and Main > Drink for Breakfast, Lunch, Dinner
+        is_1d = clamped_grams.ndim == 1
+        if is_1d:
+            clamped_grams = clamped_grams[np.newaxis, :]
+        epsilon = 1.0
+        for m, s, d in [(0, 1, 2), (3, 4, 5), (6, 7, 8)]:
+            # 1. Adjust Side if Side >= Main
+            violation_side = clamped_grams[:, s] >= clamped_grams[:, m]
+            clamped_grams[violation_side, s] = np.maximum(min_grams[s], clamped_grams[violation_side, m] - epsilon)
+            
+            # 2. Adjust Drink if Drink >= Main
+            violation_drink = clamped_grams[:, d] >= clamped_grams[:, m]
+            clamped_grams[violation_drink, d] = np.maximum(min_grams[d], clamped_grams[violation_drink, m] - epsilon)
+            
+            # 3. Adjust Main if Main <= max(Side, Drink)
+            max_non_main = np.maximum(clamped_grams[:, s], clamped_grams[:, d])
+            violation_main = clamped_grams[:, m] <= max_non_main
+            clamped_grams[violation_main, m] = np.minimum(max_grams[m], max_non_main[violation_main] + epsilon)
+        if is_1d:
+            clamped_grams = clamped_grams[0]
+
         result['gram'] = clamped_grams
         
         for idx, col in enumerate(nutrient_cols):
@@ -3684,24 +3726,54 @@ def calculate_portion_sizes_dynamic(
         for idx in meal_indices:
             scaled_gram = result_df.at[idx, 'gram'] * meal_scale
             rounded_gram = round(scaled_gram)
-            
+
             # Clamp ke protein_portion_limits
             min_g, max_g = protein_portion_limits.get(idx, (50, 150))
             clamped_gram = max(min_g, min(max_g, rounded_gram))
-            
+
             result_df.at[idx, 'gram'] = float(clamped_gram)
+
+    # ENFORCE PORTION HIERARCHY (Main > Side and Main > Drink)
+    epsilon = 1.0
+    for m, s, d in [(0, 1, 2), (3, 4, 5), (6, 7, 8)]:
+        min_m, max_m = protein_portion_limits.get(m, (100, 300))
+        min_s, max_s = protein_portion_limits.get(s, (50, 150))
+        min_d, max_d = protein_portion_limits.get(d, (100, 250))
         
-        # Re-scale ALL NUTRIENTS untuk items dalam meal dengan gram baru (TASK 1)
-        for idx in meal_indices:
-            gram = result_df.at[idx, 'gram']
-            actual_item = selected_df.iloc[idx]
+        main_g = result_df.at[m, 'gram']
+        side_g = result_df.at[s, 'gram']
+        drink_g = result_df.at[d, 'gram']
+        
+        # 1. Adjust Side if Side >= Main
+        if side_g >= main_g:
+            side_g = max(min_s, main_g - epsilon)
+            result_df.at[s, 'gram'] = float(round(side_g))
             
-            for nutrient in nutrient_cols:
-                if nutrient in actual_item.index:
-                    value_per_100g = actual_item.get(nutrient, 0) or 0
-                    final_value = value_per_100g * gram / 100
-                    result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
-    
+        # 2. Adjust Drink if Drink >= Main
+        if drink_g >= main_g:
+            drink_g = max(min_d, main_g - epsilon)
+            result_df.at[d, 'gram'] = float(round(drink_g))
+            
+        # 3. If Main is still <= max(Side, Drink), we must increase Main
+        main_g = result_df.at[m, 'gram']
+        side_g = result_df.at[s, 'gram']
+        drink_g = result_df.at[d, 'gram']
+        max_non_main = max(side_g, drink_g)
+        
+        if main_g <= max_non_main:
+            main_g = min(max_m, max_non_main + epsilon)
+            result_df.at[m, 'gram'] = float(round(main_g))
+
+    # Re-scale ALL NUTRIENTS untuk semua items dengan gram baru (TASK 1)
+    for idx in range(CHROMOSOME_SIZE):
+        gram = result_df.at[idx, 'gram']
+        actual_item = selected_df.iloc[idx]
+
+        for nutrient in nutrient_cols:
+            if nutrient in actual_item.index:
+                value_per_100g = actual_item.get(nutrient, 0) or 0
+                final_value = value_per_100g * gram / 100
+                result_df.at[idx, f'final_{nutrient}'] = round(final_value, 2)
     # ════════════════════════════════════════════════════════════════════════
     # TASK 6: VALIDATION - Ensure scaling didn't cause anomalies
     # ════════════════════════════════════════════════════════════════════════
