@@ -1,0 +1,29 @@
+# Git and IDE configs
+.git
+.gitignore
+.vscode
+.idea
+.gemini
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Python virtual environment
+.venv
+venv
+ENV
+
+# Node.js / Frontend dependencies and builds
+F.WebApp/Frontend/node_modules
+F.WebApp/Frontend/dist
+F.WebApp/Frontend/dev-dist
+F.WebApp/Frontend/.env.development
+F.WebApp/Frontend/.env.production
+
+# Scratchpad/temp directories
+scratch
+Z. Trash
+hasil_meal_plan.xlsx
+*.xlsx
+*.log
