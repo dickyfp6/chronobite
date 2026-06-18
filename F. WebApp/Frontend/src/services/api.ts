@@ -114,6 +114,29 @@ const normalizeMenuResult = (raw: Record<string, any>): MenuResult => {
         })
       : [];
 
+    let mealCalories = pickNumber(sourceMeal.calories, sourceMeal.total_calories, sourceMeal.actual_calories);
+    let mealProtein = pickNumber(sourceMeal.protein, sourceMeal.total_protein, sourceMacros.protein);
+    let mealCarbs = pickNumber(sourceMeal.carbs, sourceMeal.total_carbs, sourceMacros.carbs);
+    let mealFat = pickNumber(sourceMeal.fat, sourceMeal.total_fat, sourceMacros.fat);
+
+    if (mealCalories === 0 && sourceMeal.courses) {
+      Object.values(sourceMeal.courses).forEach((course: any) => {
+        if (course?.candidates && course.candidates[0]) {
+          const cand = course.candidates[0];
+          mealCalories += pickNumber(cand.calories, cand.energy_kcal);
+          mealProtein += pickNumber(cand.protein, cand.protein_g);
+          mealCarbs += pickNumber(cand.carbs, cand.carbohydrate_g);
+          mealFat += pickNumber(cand.fat, cand.fat_g);
+        }
+      });
+    } else if (mealCalories === 0 && sourceMeal.candidates && sourceMeal.candidates[0]) {
+      const cand = sourceMeal.candidates[0];
+      mealCalories = pickNumber(cand.calories, cand.energy_kcal);
+      mealProtein = pickNumber(cand.protein, cand.protein_g);
+      mealCarbs = pickNumber(cand.carbs, cand.carbohydrate_g);
+      mealFat = pickNumber(cand.fat, cand.fat_g);
+    }
+
     acc[mealName] = {
       ...sourceMeal,
       meal_name: sourceMeal.meal_name ?? mealName,
@@ -123,10 +146,10 @@ const normalizeMenuResult = (raw: Record<string, any>): MenuResult => {
         sourceMeal.total_calories,
         sourceMeal.calories
       ),
-      calories: pickNumber(sourceMeal.calories, sourceMeal.total_calories),
-      protein: pickNumber(sourceMeal.protein, sourceMeal.total_protein, sourceMacros.protein),
-      carbs: pickNumber(sourceMeal.carbs, sourceMeal.total_carbs, sourceMacros.carbs),
-      fat: pickNumber(sourceMeal.fat, sourceMeal.total_fat, sourceMacros.fat),
+      calories: mealCalories,
+      protein: mealProtein,
+      carbs: mealCarbs,
+      fat: mealFat,
       items,
     };
 
@@ -145,10 +168,10 @@ const normalizeMenuResult = (raw: Record<string, any>): MenuResult => {
     menu_plan: {
       ...rawMenu,
       meals,
-      total_calories: pickNumber(rawMenu.total_calories, sumCalories),
-      total_protein: pickNumber(rawMenu.total_protein, rawMenu?.macros?.protein, sumProtein),
-      total_carbs: pickNumber(rawMenu.total_carbs, rawMenu?.macros?.carbs, sumCarbs),
-      total_fat: pickNumber(rawMenu.total_fat, rawMenu?.macros?.fat, sumFat),
+      total_calories: pickNumber(rawMenu.total_calories, rawMenu.total_daily_calories, sumCalories),
+      total_protein: pickNumber(rawMenu.total_protein, rawMenu.total_daily_protein_g, rawMenu?.macros?.protein, sumProtein),
+      total_carbs: pickNumber(rawMenu.total_carbs, rawMenu.total_daily_carb_g, rawMenu?.macros?.carbs, sumCarbs),
+      total_fat: pickNumber(rawMenu.total_fat, rawMenu.total_daily_fat_g, rawMenu?.macros?.fat, sumFat),
     },
   };
 };

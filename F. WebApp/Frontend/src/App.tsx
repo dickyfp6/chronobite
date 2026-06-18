@@ -196,6 +196,14 @@ export default function App() {
  setDownloadPDFTrigger({ fn });
  }, []);
 
+ const clearMenuCache = useCallback(() => {
+    setMenuPromise(null);
+    setSelectedItems({});
+    sessionStorage.removeItem('dss_menu_data');
+    sessionStorage.removeItem('dss_selected_items');
+    sessionStorage.removeItem('dss_actual_nutrients');
+ }, []);
+
  const startMenuPrefetch = (analysis: any) => {
  if (menuPromise) return; // already prefetching
 
@@ -415,7 +423,7 @@ export default function App() {
  key={item.id}
  onClick={() => {
  if (item.id === 'input') {
- setMenuPromise(null);
+ clearMenuCache();
  setCurrentPage('input');
  } else if (item.id === 'profile') {
  setCurrentPage('profile');
@@ -476,7 +484,7 @@ export default function App() {
  <ProfileSummary
  userData={userData}
  onBack={() => {
- setMenuPromise(null);
+ clearMenuCache();
  setCurrentPage('input');
  }}
  onContinue={() => setCurrentPage('results')}
@@ -567,7 +575,7 @@ export default function App() {
  <AlgorithmSelect
  selected={algorithm}
  onSelect={(algo) => {
- setMenuPromise(null);
+ clearMenuCache();
  setAlgorithm(algo);
  }}
  onContinue={() => setCurrentPage('input')}
@@ -587,7 +595,7 @@ export default function App() {
  <InputWizard
  data={userData}
  onUpdate={(data) => {
- setMenuPromise(null);
+ clearMenuCache();
  setUserData({ ...userData, ...data });
  }}
  onComplete={() => setCurrentPage('profile')}

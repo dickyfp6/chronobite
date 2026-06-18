@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ArrowRight, RotateCcw, Info } from 'lucide-react';
+import { ArrowRight, RotateCcw, Info, Flame, Wheat, Beef, Droplet } from 'lucide-react';
 import { t } from '../utils/translations';
 import type { UserInputData } from './InputWizard';
 import { api } from '../services/api';
@@ -116,7 +116,7 @@ const mealThemes: Record<string, {
  },
  dinner: {
  color: "indigo",
- glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-indigo-500/40 via-purple-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
+ glowClass: "absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-indigo-50/40 via-purple-450/20 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  glowClass2: "absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-purple-500/20 via-indigo-500/10 to-transparent rounded-full blur-3xl pointer-events-none hidden md:block",
  containerBg: "bg-gradient-to-br from-indigo-100/35 via-indigo-50/15 to-purple-100/30 ",
  containerBorder: "border border-indigo-200/60 shadow-sm",
@@ -419,16 +419,29 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  }
  };
 
- useEffect(() => {
- fetchMenu();
- }, []);
+  useEffect(() => {
+    const savedMenu = sessionStorage.getItem('dss_menu_data');
+    const savedSelected = sessionStorage.getItem('dss_selected_items');
+    if (savedMenu && savedSelected) {
+      try {
+        setMenuData(JSON.parse(savedMenu));
+        onSelectedItemsChange(JSON.parse(savedSelected));
+        setLoading(false);
+      } catch (e) {
+        console.error("Failed to parse cached menu data", e);
+        fetchMenu();
+      }
+    } else {
+      fetchMenu();
+    }
+  }, []);
 
  const handleSelect = (meal: string, category: string, candidate: Candidate) => {
  const key = `${meal}_${category}`;
  const newSelected = {
  ...selectedItems,
  [key]: candidate,
-};
+ };
  // Let the useEffect handle propagating the changes
  onSelectedItemsChange(newSelected);
  };
@@ -440,6 +453,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
 
   // Sync rebalanced items back to parent and session storage safely
   useEffect(() => {
+    if (loading) return;
     if (Object.keys(rebalancedSelectedItems).length > 0) {
       const prevString = sessionStorage.getItem('dss_selected_items');
       const newString = JSON.stringify(rebalancedSelectedItems);
@@ -490,10 +504,47 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  const totalCarbs = Object.values(rebalancedSelectedItems).reduce((sum: number, item: any) => sum + (item.carbs || 0), 0);
  const totalFat = Object.values(rebalancedSelectedItems).reduce((sum: number, item: any) => sum + (item.fat || 0), 0);
 
- // Use the calculated TDEE from analysisResult if available
- const targetCalories = analysisResult?.energy?.tdee
- ? Math.round(analysisResult.energy.tdee)
- : 2000;
+  // Use the calculated TDEE from analysisResult if available
+  const targetCalories = (analysisResult?.guidelines?.nutrients?.energy_kcal?.max && analysisResult.guidelines.nutrients.energy_kcal.max !== Infinity)
+    ? Math.round(analysisResult.guidelines.nutrients.energy_kcal.max)
+    : (analysisResult?.energy?.tdee ? Math.round(analysisResult.energy.tdee) : 2000);
+
+  const getRange = (macroKey: string, keyG: string, fallbackMin: number, fallbackMax: number, factor: number) => {
+    const guide = analysisResult?.guidelines?.nutrients?.[keyG];
+    if (guide && (guide.min !== undefined || guide.max !== undefined)) {
+      return { 
+        min: guide.min ?? 0, 
+        max: (guide.max !== null && Number.isFinite(guide.max)) ? guide.max : Infinity 
+      };
+    }
+    const minPct = analysisResult?.macros?.[macroKey]?.pct?.[0];
+    const maxPct = analysisResult?.macros?.[macroKey]?.pct?.[1];
+    if (minPct !== undefined && maxPct !== undefined) {
+      return {
+        min: (targetCalories * minPct / 100) / factor,
+        max: (targetCalories * maxPct / 100) / factor
+      };
+    }
+    return {
+      min: (targetCalories * fallbackMin / 100) / factor,
+      max: (targetCalories * fallbackMax / 100) / factor
+    };
+  };
+
+  const proteinRange = getRange('protein', 'protein_g', 10, 35, 4);
+  const carbsRange = getRange('carbs', 'carbohydrate_g', 45, 65, 4);
+  const fatRange = getRange('fat', 'fat_g', 20, 35, 9);
+  const calorieRange = getRange('energy', 'energy_kcal', 90, 110, 1);
+
+  const targetProtein = analysisResult?.guidelines?.nutrients?.protein_g?.max || analysisResult?.macros?.protein?.gram || Math.round((targetCalories * 0.15) / 4);
+  const targetCarbs = analysisResult?.guidelines?.nutrients?.carbohydrate_g?.max || analysisResult?.macros?.carbs?.gram || Math.round((targetCalories * 0.55) / 4);
+  const targetFat = analysisResult?.guidelines?.nutrients?.fat_g?.max || analysisResult?.macros?.fat?.gram || Math.round((targetCalories * 0.3) / 9);
+
+  const getMacroColor = (actual: number, range: { min: number, max: number }) => {
+    if (actual < range.min) return 'bg-orange-500';
+    if (actual > range.max) return 'bg-[#a63a3a]'; // classy brick red for over limit
+    return 'bg-primary'; // forest green
+  };
 
  if (loading) {
  const currentStepText = loadingSteps[statusIndex];
@@ -506,7 +557,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  { emoji: '🥩', start: 2.8, targetX: -18, targetY: 96, rotate: 55 },
  { emoji: '🥚', start: 3.5, targetX: 16, targetY: 86, rotate: -30 },
  { emoji: '🥑', start: 4.2, targetX: 0, targetY: 74, rotate: 12 },
-];
+ ];
 
  const getFoodAnimation = (food: typeof foods[0]) => {
  const duration = 8.0;
@@ -676,7 +727,7 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
 
  return (
  <>
- <div className="w-full pb-28 sm:pb-20 lg:pb-8">
+ <div className="w-full pb-12 sm:pb-20 lg:pb-8">
  {/* Banner Instruction "Choose One" */}
  <div className="mb-6 bg-gradient-to-r from-emerald-50/80 to-teal-50/40 backdrop-blur-md border border-emerald-100/80 rounded-2xl p-4 flex items-start gap-3 shadow-sm">
  <div className="p-2 bg-emerald-100 text-emerald-700 rounded-xl shrink-0">
@@ -875,17 +926,17 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  })()}
  </div>
 
- <div className="flex flex-col-reverse sm:flex-row items-center justify-center gap-3 mt-12 mb-2 w-full max-w-xl mx-auto px-4">
+ <div className="flex flex-row items-center justify-between gap-2.5 sm:gap-3 mt-8 sm:mt-12 mb-2 w-full">
  <button
  onClick={handleRegenerate}
- className="w-full sm:w-auto px-8 py-3.5 text-base bg-white text-foreground rounded-2xl font-semibold hover:bg-gray-50 :bg-slate-700 transition-all inline-flex items-center justify-center gap-2 border border-border shadow-sm cursor-pointer transform hover:-translate-y-0.5"
+ className="flex-1 sm:flex-none px-4 py-2.5 text-xs sm:text-sm bg-white text-foreground rounded-2xl font-semibold hover:bg-gray-50 :bg-slate-700 transition-all inline-flex items-center justify-center gap-2 border border-border shadow-sm cursor-pointer transform hover:-translate-y-0.5"
  >
  <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
  Regenerate Menu
  </button>
  <button
  onClick={onViewReport}
- className="w-full sm:w-auto px-8 py-3.5 text-base bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all inline-flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer transform hover:-translate-y-0.5"
+ className="flex-1 sm:flex-none px-4 py-2.5 text-xs sm:text-sm bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all inline-flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:shadow-primary/10 cursor-pointer transform hover:-translate-y-0.5"
  >
  {t.results.viewReport}
  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -894,32 +945,67 @@ export function Results({ userData, algorithm, analysisResult, menuPromise, onVi
  </div>
 
  {/* Sticky Nutrition Summary (Mobile only) */}
- <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-border/80 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40">
- <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
- <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
- <div className="text-center">
- <p className="text-[10px] sm:text-xs text-gray-600 mb-0.5 sm:mb-1 font-sans">{t.results.dailyCalories}</p>
- <p className="text-sm sm:text-lg md:text-xl font-bold text-primary font-serif">
- {Math.round(totalCalories)} / {targetCalories}
- </p>
+ <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-border/80 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] z-40">
+ <div className="max-w-4xl mx-auto px-4 py-3">
+ <div className="grid grid-cols-4 gap-3">
+ {/* Calories */}
+ <div className="flex flex-col gap-1">
+ <div className="flex justify-between items-center text-[10px] text-gray-600 font-sans">
+ <span className="flex items-center gap-0.5 font-medium">
+ <Flame className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+ Cal
+ </span>
+ <span className="font-bold text-gray-900">{Math.round(totalCalories)}</span>
  </div>
- <div className="text-center">
- <p className="text-[10px] sm:text-xs text-gray-600 mb-0.5 sm:mb-1 font-sans">{t.results.carbs}</p>
- <p className="text-sm sm:text-lg md:text-xl font-bold text-primary font-serif">
- {Math.round(totalCarbs)}g
- </p>
+ <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden">
+ <div className={`h-full rounded-full transition-all ${getMacroColor(totalCalories, calorieRange)}`} style={{ width: `${Math.min((totalCalories / targetCalories) * 100, 100)}%` }} />
  </div>
- <div className="text-center">
- <p className="text-[10px] sm:text-xs text-gray-600 mb-0.5 sm:mb-1 font-sans">{t.results.protein}</p>
- <p className="text-sm sm:text-lg md:text-xl font-bold text-primary font-serif">
- {Math.round(totalProtein)}g
- </p>
+ <span className="text-[8px] text-gray-400 text-center font-sans">Target: {targetCalories}</span>
  </div>
- <div className="text-center">
- <p className="text-[10px] sm:text-xs text-gray-600 mb-0.5 sm:mb-1 font-sans">{t.results.fat}</p>
- <p className="text-sm sm:text-lg md:text-xl font-bold text-primary font-serif">
- {Math.round(totalFat)}g
- </p>
+
+ {/* Carbs */}
+ <div className="flex flex-col gap-1">
+ <div className="flex justify-between items-center text-[10px] text-gray-600 font-sans">
+ <span className="flex items-center gap-0.5 font-medium">
+ <Wheat className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+ Carb
+ </span>
+ <span className="font-bold text-gray-900">{Math.round(totalCarbs)}g</span>
+ </div>
+ <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden">
+ <div className={`h-full rounded-full transition-all ${getMacroColor(totalCarbs, carbsRange)}`} style={{ width: `${Math.min((totalCarbs / Math.max(targetCarbs, carbsRange.max)) * 100, 100)}%` }} />
+ </div>
+ <span className="text-[8px] text-gray-400 text-center font-sans">Target: {Math.round(targetCarbs)}g</span>
+ </div>
+
+ {/* Protein */}
+ <div className="flex flex-col gap-1">
+ <div className="flex justify-between items-center text-[10px] text-gray-600 font-sans">
+ <span className="flex items-center gap-0.5 font-medium">
+ <Beef className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+ Pro
+ </span>
+ <span className="font-bold text-gray-900">{Math.round(totalProtein)}g</span>
+ </div>
+ <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden">
+ <div className={`h-full rounded-full transition-all ${getMacroColor(totalProtein, proteinRange)}`} style={{ width: `${Math.min((totalProtein / Math.max(targetProtein, proteinRange.max)) * 100, 100)}%` }} />
+ </div>
+ <span className="text-[8px] text-gray-400 text-center font-sans">Target: {Math.round(targetProtein)}g</span>
+ </div>
+
+ {/* Fat */}
+ <div className="flex flex-col gap-1">
+ <div className="flex justify-between items-center text-[10px] text-gray-600 font-sans">
+ <span className="flex items-center gap-0.5 font-medium">
+ <Droplet className="w-3.5 h-3.5 text-red-500 shrink-0" />
+ Fat
+ </span>
+ <span className="font-bold text-gray-900">{Math.round(totalFat)}g</span>
+ </div>
+ <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden">
+ <div className={`h-full rounded-full transition-all ${getMacroColor(totalFat, fatRange)}`} style={{ width: `${Math.min((totalFat / Math.max(targetFat, fatRange.max)) * 100, 100)}%` }} />
+ </div>
+ <span className="text-[8px] text-gray-400 text-center font-sans">Target: {Math.round(targetFat)}g</span>
  </div>
  </div>
  </div>
