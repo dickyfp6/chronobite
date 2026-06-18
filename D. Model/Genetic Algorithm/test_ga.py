@@ -34,9 +34,9 @@ USE_INTERACTIVE_INPUT = False
 
 # Import GA engine
 # pyrefly: ignore [missing-import]
-from ga_v1 import (
-    run_ga, display_solution, generate_meal_options, display_meal_options, 
-    display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
+from ga_dicky import (
+    run_ga_numpy as run_ga, display_solution, generate_meal_options, display_meal_options,
+    display_fitness_details, MEAL_INDICES, calculate_total_nutrition,
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
     local_search, display_nutrition_analysis_table, calculate_total_nutrition_from_portions
 )
@@ -1033,6 +1033,17 @@ def test_ga_with_nutrition_service():
         
         if len(selected_meal) == CHROMOSOME_SIZE:
             selected_df = pd.DataFrame(selected_meal).reset_index(drop=True)
+
+            # [FIX] ga_dicky's run_ga_numpy/local_search sudah nempelin kolom gram & final_*
+            # ke tiap row (pre-portioned). Tapi opsi alternatif dari food_df (dataset_items
+            # di generate_meal_options) TIDAK punya kolom itu. Kalau user pilih campuran
+            # GA-item & dataset-item, selected_df jadi punya gram/final_* yang sebagian NaN,
+            # dan calculate_total_nutrition() di ga_dicky akan salah hitung (treat NaN sbg 0).
+            # Drop dulu di sini, biar dihitung ulang bersih dari kolom mentah @100g,
+            # lalu calculate_portion_sizes_dynamic() di STEP 10 yang bikin gram/final_* final.
+            cols_to_drop = ['gram'] + [c for c in selected_df.columns if c.startswith('final_')]
+            selected_df = selected_df.drop(columns=cols_to_drop, errors='ignore')
+
             print(f"✓ {len(selected_df)} items dipilih dari {CHROMOSOME_SIZE} slots")
             
             # Calculate total nutrition dari selected meals
