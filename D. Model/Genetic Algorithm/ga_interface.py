@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 from meal_schema import MenuPlan, Meal, MealCourse, SnackMeal, FoodItem
-from ga_dicky import run_ga_numpy as run_ga, local_search, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES
+from ga_v3 import run_ga_numpy as run_ga, local_search, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES
 from ga_config import GA_PARAMS, LS_PARAMS
 
 class GeneticAlgorithmInterface:
@@ -232,21 +232,9 @@ class GeneticAlgorithmInterface:
             if best_solution is None or len(best_solution) < 10:
                 print("[ERROR] Genetic Algorithm failed to find a valid 10-item solution.")
                 return None
-            
-            # Local Search - Fine-tuning GA result
-            print("[INFO] Running Local Search for fine-tuning...")
-            best_solution = local_search(
-                solution=best_solution,
-                food_df=self.food_db,
-                guidelines=self.constraint_bag,
-                tdee=tdee,
-                **LS_PARAMS,
-                verbose=False
-            )
-            print("[OK] Local Search complete")
 
             # Calculate fitness score of best solution (after LS)
-            from ga_dicky import fitness as _calc_fitness
+            from ga_v3 import fitness as _calc_fitness
             best_fitness_score = _calc_fitness(best_solution, self.constraint_bag, tdee=tdee)
                 
             # Generate 3 options per slot (with cuisine preference filtering)

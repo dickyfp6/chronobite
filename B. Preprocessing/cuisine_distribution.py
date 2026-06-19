@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Sesuaikan path ini dengan lokasi file di komputermu
-FILE_PATH = r"c:\Users\Silfia\Documents\FILE TA\TugasAkhirDSS\A. Data\Data Processed\07_super_final.csv"
+FILE_PATH = r"c:\Users\Silfia\Documents\FILE TA\TugasAkhirDSS\A. Data\Data Processed\07_super_final_fixed.csv"
 
 df = pd.read_csv(FILE_PATH)
 

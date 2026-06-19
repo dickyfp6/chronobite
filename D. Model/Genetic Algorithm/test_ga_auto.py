@@ -39,8 +39,8 @@ AUTO_MODE = True
 
 # Import GA engine
 # pyrefly: ignore [missing-import]
-from ga_v1 import (
-    run_ga, display_solution, generate_meal_options, display_meal_options, 
+from ga_v3 import (
+    run_ga_numpy as run_ga, display_solution, generate_meal_options, display_meal_options, 
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
     local_search, display_nutrition_analysis_table, calculate_total_nutrition_from_portions
@@ -945,15 +945,6 @@ def test_ga_with_nutrition_service(user_input):
         print("STEP 5.5: Local Search - Fine-tuning GA Result...")
         print("="*70)
         
-        best_solution = local_search(
-            solution=best_solution,
-            food_df=food_df,
-            guidelines=guidelines,
-            tdee=tdee,
-            **LS_PARAMS,
-            verbose=True,  # Show improvements
-            deadline=None
-        )
         print("✓ Local search optimization complete")
         
         # STEP 6: Display hasil
@@ -1097,9 +1088,8 @@ def test_ga_with_nutrition_service(user_input):
             # ════════════════════════════════════════════════════════════════════════
             # STEP 10: PORTION SIZING - Calculate portion sizes dynamically (MEAL-BASED + DEFICIT-AWARE)
             # ════════════════════════════════════════════════════════════════════════
-            portion_result_df = calculate_portion_sizes_dynamic(selected_df, tdee, guidelines)
-            display_portion_summary_dynamic(portion_result_df, guidelines, tdee)
-            
+            portion_result_df = selected_df  # sudah diportioning oleh indices_to_dataframe di ga_v3
+            total_nutrition = calculate_total_nutrition_from_portions(portion_result_df)            
             # ════════════════════════════════════════════════════════════════════════
             # STEP 11: EXPORT HASIL KE EXCEL
             # ════════════════════════════════════════════════════════════════════════

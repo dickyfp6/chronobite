@@ -35,8 +35,8 @@ sys.path.insert(0, genetic_algorithm_path)
 
 # Import GA engine
 # pyrefly: ignore [missing-import]
-from ga_v1 import (
-    run_ga, generate_meal_options, calculate_total_nutrition, 
+from ga_v3 import (
+    run_ga_numpy as run_ga, generate_meal_options, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic,
     local_search, calculate_total_nutrition_from_portions
 )
@@ -46,6 +46,7 @@ from ga_config import GA_PARAMS, LS_PARAMS
 import importlib.util
 test_ga_path = os.path.join(genetic_algorithm_path, 'test_ga.py')
 spec = importlib.util.spec_from_file_location("test_ga", test_ga_path)
+assert spec is not None, f"Cannot load module spec from {test_ga_path}"
 test_ga = importlib.util.module_from_spec(spec)
 sys.modules["test_ga"] = test_ga
 spec.loader.exec_module(test_ga)
@@ -68,14 +69,22 @@ except ImportError as e:
 # ════════════════════════════════════════════════════════════════════════
 
 BATCH_PROFILES = [
-   # Normal & Single Disease — profil 1
+    # Normal & Single Disease — profil 1
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['normal'], 'food_preferences': []},
     {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['dm2'], 'food_preferences': []},
     {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['hypertension'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['cvd'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['cholesterol'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['ckd'], 'food_preferences': []},
     # Dual Disease — profil 2
     {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['dm2', 'hypertension'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['dm2', 'cholesterol'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['hypertension', 'cvd'], 'food_preferences': []},
     {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['ckd', 'hypertension'], 'food_preferences': []},
     # Triple Disease — profil 3
+    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['dm2', 'hypertension', 'cholesterol'], 'food_preferences': []},
     {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['ckd', 'dm2', 'hypertension'], 'food_preferences': []},
+    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['hypertension', 'cholesterol', 'cvd'], 'food_preferences': []},
 ]
 
 MAX_RUNS = 10        # Jalankan maksimal 10x per case
@@ -154,17 +163,6 @@ def run_single_ga(user_input, nutrition_service):
             deadline=None
         )
         
-        # STEP 4: Local Search - Fine-tuning
-        best_solution = local_search(
-            solution=best_solution,
-            food_df=food_df,
-            guidelines=guidelines,
-            tdee=tdee,
-            **LS_PARAMS,
-            verbose=False,
-            deadline=None
-        )
-        
         # STEP 5: Generate meal options dan auto-select opsi 1 semua slot
         top_solutions_with_best = [best_solution] + top_solutions
         slot_options = generate_meal_options(
@@ -189,8 +187,7 @@ def run_single_ga(user_input, nutrition_service):
         selected_df = pd.DataFrame(selected_meal).reset_index(drop=True)
         
         # STEP 6: Calculate portion sizes
-        portion_result_df = calculate_portion_sizes_dynamic(selected_df, tdee, guidelines)
-        
+        portion_result_df = selected_df  # sudah diportioning oleh indices_to_dataframe di ga_v3
         # Calculate total nutrition
         total_nutrition = calculate_total_nutrition_from_portions(portion_result_df)
 
