@@ -92,7 +92,7 @@ PROFILES = [
     {**_BASE_3, 'disease': ['hypertension', 'cholesterol', 'cvd']},   # CSR 100%
 ]
 
-N_TRIALS = 50  # ~6-7 jam di Kaggle. Naikkan ke 100 kalau ada waktu lebih.
+N_TRIALS = 250  # ~6-7 jam di Kaggle. Naikkan ke 100 kalau ada waktu lebih.
 
 
 # ─────────────────────────────────────────────────────────────────────────────
