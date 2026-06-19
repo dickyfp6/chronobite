@@ -2274,6 +2274,7 @@ def run_ga_numpy(
     pop_size: int = 110,
     elite_ratio: float = 0.10,
     mutation_rate: float = 0.25,
+    ls_iterations=30,
     verbose: bool = True,
     deadline: Optional[float] = None
 ) -> Tuple[pd.DataFrame, List[pd.DataFrame]]:
@@ -2470,7 +2471,7 @@ def run_ga_numpy(
         food_df=food_df,
         guidelines=guidelines,
         tdee=tdee,
-        iterations=30,
+        iterations=ls_iterations,
         verbose=verbose,
         deadline=deadline,
         food_matrix=food_matrix,
