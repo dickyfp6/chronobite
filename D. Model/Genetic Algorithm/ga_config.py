@@ -25,6 +25,15 @@ GA_PARAMS = {
 }
 LS_PARAMS = {"iterations": 60}
 
+#K Kaggle Tuning Silfi 224
+# GA_PARAMS = {
+#     "generations": 180,
+#     "pop_size": 190,
+#     "elite_ratio": 0.15,
+#     "mutation_rate": 0.4,
+# }
+# LS_PARAMS = {"iterations": 50}
+
 # Balanced parameters (Kaggle Tuning - Trial 59)
 # GA_PARAMS = {
 #     "generations": 150,
@@ -36,3 +45,4 @@ LS_PARAMS = {"iterations": 60}
 # LS_PARAMS = {
 #     "iterations": 35 
 # }
+

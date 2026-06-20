@@ -252,10 +252,10 @@ class GeneticAlgorithmInterface:
             # 3. Construct the MenuPlan
             # Calculate target calories per meal using ratios
             MEAL_RATIOS = {
-                'Breakfast': 0.2375,
-                'Lunch': 0.3375,
-                'Dinner': 0.2875,
-                'Snack': 0.1375
+                'Breakfast': 0.2875,   # 23.75%
+                'Lunch':     0.3375,   # 33.75%
+                'Dinner':    0.2375,   # 28.75%
+                'Snack':     0.1375    # 13.75%
             }
             breakfast_target = tdee * MEAL_RATIOS['Breakfast']
             lunch_target = tdee * MEAL_RATIOS['Lunch']

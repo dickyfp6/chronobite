@@ -98,7 +98,7 @@ def main():
             deviations_all_runs = []
             
             for run_idx in range(5):
-                print(f"  -> Run {run_idx+1}/3...")
+                print(f"  -> Run {run_idx+1}/5...")
                 menu_plan = ga_engine.generate_menu_plan(profile, tdee)
                 
                 if not menu_plan:

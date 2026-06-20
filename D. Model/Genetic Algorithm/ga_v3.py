@@ -1931,12 +1931,18 @@ def _compute_grams_numpy(
     food_energies = selected_nutrients[:, energy_idx]
     food_energies = np.where(food_energies <= 0, 1.0, food_energies)
 
+    # Breakfast: main 14.375%, side 8.625%, drink 5.75%   → total 28.75%
+    # Lunch:     main 16.875%, side 10.125%, drink 6.75%  → total 33.75%
+    # Dinner:    main 11.875%, side 7.125%, drink 4.75%   → total 23.75%
+    # Snack:     13.75%
+
     target_energy_ratios = np.array([
-        0.11875, 0.07125, 0.0475,
-        0.16875, 0.10125, 0.0675,
-        0.14375, 0.08625, 0.0575,
-        0.1375
+        0.14375, 0.08625, 0.0575,   # breakfast (naik)
+        0.16875, 0.10125, 0.0675,   # lunch (sama)
+        0.11875, 0.07125, 0.0475,   # dinner (turun)
+        0.1375                       # snack (sama)
     ], dtype=np.float64)
+
     target_energies = tdee * target_energy_ratios
 
     grams = (target_energies / food_energies) * 100.0
@@ -3437,9 +3443,9 @@ def calculate_portion_sizes_dynamic(
     # Meal distribution ratios
     meal_ratio = {
         'breakfast': 0.25,
-        'lunch': 0.35,
-        'dinner': 0.30,
-        'snack': 0.10
+        'lunch':     0.35,
+        'dinner':    0.30,
+        'snack':     0.10
     }
     
     # Mapping slot index ke meal type

@@ -319,7 +319,7 @@ class GuidelineLoader:
                 base_dir,
                 "A. Data",
                 "Data Processed",
-                "07_super_final.csv"
+                "07_super_final_fixed.csv"
             )
         
         try:
