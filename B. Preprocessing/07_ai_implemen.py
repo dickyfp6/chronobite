@@ -84,7 +84,7 @@ def main():
     
     # Map short name to cuisine and category
     df["cuisine"] = df["food_name"].apply(lambda x: cuisine_cache.get(str(x), "Generic"))
-    df["consumption_label"] = df["food_name"].apply(lambda x: category_cache.get(str(x), "Generic"))
+    # df["consumption_label"] = df["food_name"].apply(lambda x: category_cache.get(str(x), "Generic"))  # Removed to prevent overwriting rule-based classification
 
     # Save to 07_super_final.csv
     print(f"Saving super final dataset to: {OUTPUT_FILE}")

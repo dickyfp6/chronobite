@@ -11,9 +11,7 @@ import sys
 # - Deduplication and normalization
 
 # Import classifier
-ml_path = Path(__file__).parent / 'ML Klasifikasi'
-sys.path.insert(0, str(ml_path))
-from rule_based_classifier import RuleBasedFoodClassifier  # type: ignore
+from rule_based_classifier import RuleBasedFoodClassifier
 
 # ======================
 # LOAD DATA & RULE-BASED CLASSIFICATION
