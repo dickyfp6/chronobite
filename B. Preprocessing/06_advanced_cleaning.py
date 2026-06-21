@@ -550,7 +550,178 @@ def bersihkan_dataset(input_file, output_file):
         170686,  # Roasted Buckwheat Groats (cereal grains and pasta)
         170286,  # Buckwheat (cereal grains and pasta)
         169277,  # Raw Salsify (vegetables and vegetable products)
+    # ----------------------------------------------------------
+        # [10A] RAW VEGETABLES — Harus dimasak, tidak bisa dimakan
+        #        sebagai hidangan langsung
+        # ----------------------------------------------------------
+        168414,  # Raw Dishcloth Gourd - labu botol, harus dimasak
+        168419,  # Raw Jute Greens - tanaman rami, harus dimasak
+        168432,  # Raw Mountain Yam - umbi, tidak aman dimakan mentah
+        168448,  # Raw Pumpkin - labu mentah, harus dimasak
+        168454,  # Raw Rutabagas - umbi silang, harus dimasak
+        168464,  # Raw Summer Squash (crookneck) - harus dimasak
+        168472,  # Raw Acorn Squash - labu musim dingin, harus dimasak
+        168475,  # Raw Hubbard Squash - harus dimasak
+        168487,  # Raw Taro Leaves - harus dimasak (mengandung kalsium oksalat)
+        168489,  # Raw Taro Shoots - harus dimasak (mengandung kalsium oksalat)
+        168491,  # Raw Chrysanthemum Leaves - bahan masakan/teh, bukan hidangan
+        168538,  # Raw Sweet Corn (white) - tidak disajikan mentah sebagai hidangan
+        169145,  # Raw Beets - harus dimasak
+        169203,  # Raw Arrowhead - umbi air, harus dimasak
+        169210,  # Raw Bamboo Shoots - harus dimasak (mengandung sianida jika mentah)
+        169219,  # Raw Cornsalad - tidak umum sebagai hidangan mandiri
+        169220,  # Raw Blackeye Peas - kacang mentah, harus dimasak
+        169224,  # Raw Cowpea Tips - pucuk kacang, bahan masakan
+        169228,  # Raw Eggplant - harus dimasak
+        169232,  # Raw Calabash Gourd - labu putih, harus dimasak
+        169246,  # Raw Leeks - bumbu/bahan masakan, bukan hidangan
+        169250,  # Raw Lotus Root - harus dimasak
+        169260,  # Raw Okra - harus dimasak (sangat berlendir jika mentah)
+        169272,  # Raw Pumpkin Leaves - daun labu, harus dimasak
+        169289,  # Raw Summer Scallop Squash - harus dimasak
+        169295,  # Raw Butternut Squash - harus dimasak
+        169298,  # Raw Spaghetti Squash - harus dimasak
+        169300,  # Raw Succotash (corn & limas) - campuran kacang mentah, harus dimasak
+        169301,  # Raw Water Spinach (convolvulus) - harus dimasak
+        169320,  # Raw Yellow Snap Beans - biasanya dimasak sebagai hidangan
+        169395,  # Raw Serrano Peppers - kondimen/bahan masakan, bukan hidangan
+        169398,  # Raw Epazote - herba/bumbu, bukan hidangan
+        169401,  # Raw Yautia (tannier) - umbi tropis, harus dimasak
+        169961,  # Raw Green Snap Beans - biasanya dimasak
+        169974,  # Fresh Burdock Root - akar keras, harus dimasak
+        169981,  # Raw Cardoon - sayuran artichoke family, harus dimasak
+        169990,  # Raw Celtuce - tidak umum sebagai hidangan mandiri
+        169997,  # Fresh Cilantro - bumbu/kondimen, bukan hidangan
+        169998,  # Raw Sweet Corn (yellow) - tidak disajikan mentah sebagai hidangan
+        170005,  # Raw Spring Onions/Scallions - bumbu/kondimen
+        170007,  # Raw Welsh Onions - bumbu/kondimen
+        170008,  # Raw Sweet Onions - bumbu/kondimen
+        170010,  # Raw Edible Pod Peas - biasanya dimasak sebagai hidangan
+        170029,  # Raw Red Potatoes - harus dimasak
+        170066,  # Raw Water Chestnuts - harus dimasak
+        170073,  # Raw Yambean/Jicama - umbi, tidak umum dimakan mentah sebagai hidangan
+        170076,  # Raw Dock - herba liar, bukan hidangan
+        170375,  # Raw Beet Greens - daun bit, harus dimasak
+        170377,  # Raw Broad Beans - kacang mentah, harus dimasak
+        170383,  # Raw Brussels Sprouts - harus dimasak
+        170385,  # Raw Butterbur (fuki) - harus dimasak, mengandung alkaloid beracun mentah
+        170400,  # Raw Celeriac - akar seledri, harus dimasak
+        170417,  # Raw Parsnips - umbi, harus dimasak
+        170419,  # Raw Green Peas - biasanya dimasak sebagai hidangan
+        170465,  # Raw Turnips - harus dimasak
+        170487,  # Raw Summer Squash (all varieties) - harus dimasak
+        170489,  # Raw Winter Squash (all varieties) - harus dimasak
+        171714,  # Raw Breadfruit - sukun mentah, harus dimasak
+        174687,  # Raw Jackfruit - nangka muda mentah, harus dimasak
+    
+        # ----------------------------------------------------------
+        # [10B] RAW — Muncul sebagai data bahan bukan hidangan jadi
+        # ----------------------------------------------------------
+        169410,  # Tahini - sesame butter paste, kondimen/bahan masakan
+        173928,  # Boiled Apples (raw without skin cooked) - data nutrisi bahan, bukan hidangan
+        173929,  # Cooked Apples microwave (raw without skin) - data nutrisi bahan
+    
+        # ----------------------------------------------------------
+        # [10C] PIE FILLINGS — Bahan kue, bukan hidangan mandiri
+        # ----------------------------------------------------------
+        167738,  # Canned Blueberry Pie Filling
+        168822,  # Canned Apple Pie Filling
+        168824,  # Canned Cherry Pie Filling
+        169273,  # Canned Pumpkin Pie Mix
+    
+        # ----------------------------------------------------------
+        # [10D] TOMATO-BASED SAUCES — Kondimen/bahan masakan,
+        #        bukan hidangan yang bisa berdiri sendiri
+        # ----------------------------------------------------------
+        169074,  # No Salt Added Tomato Sauce
+        170054,  # Canned Tomato Sauce (plain)
+        170055,  # Tomato Sauce with Mushrooms
+        170056,  # Tomato Sauce with Onions
+        170057,  # Herbed Tomato Sauce with Cheese
+        170085,  # Spanish Style Tomato Sauce
+        170460,  # Canned Tomato Puree (no salt)
+        170462,  # Canned Tomato Sauce with Onions and Peppers
+        170463,  # Canned Tomato Sauce with tomato tidbits
+        170501,  # Crushed Tomatoes (canned)
+        170546,  # Canned Tomato Puree (with salt)
+    
+        # ----------------------------------------------------------
+        # [10E] KONDIMEN / SAUS / ACAR — Tidak bisa berdiri sendiri
+        #        sebagai hidangan
+        # ----------------------------------------------------------
+        170003,  # Canned Onions - kondimen
+        173961,  # Sweetened Cranberry Sauce - kondimen
+        172200,  # Cheese Sauce - kondimen
+        170171,  # Sweetened Coconut Cream (canned) - bahan kue
+        174686,  # Cooked Guava Sauce - saus, bukan hidangan
+        168559,  # Canned Pimento - kondimen/garnish
+        169096,  # Pickled Green Olives - sodium 1556mg, kondimen
+        169279,  # Canned Sauerkraut - acar, sodium 661mg
+        169397,  # Sweet Chowchow Pickles - acar
+        169766,  # Canned Hot Pickled Peppers - sodium 1430mg
+        169889,  # Pickled Radishes Hawaiian Style - sodium 789mg
+        169890,  # Pickled Japanese Cabbage - acar
+        169891,  # Salted Mustard Cabbage - sodium 717mg
+        169892,  # Pickled Eggplant - sodium 1674mg
+        170480,  # Pickled Beets (canned)
+        173410,  # Salted Butter - kondimen/bahan masakan
+    
+        # ----------------------------------------------------------
+        # [10F] CANNED PEPPERS — Fungsi sebagai kondimen/topping,
+        #        sodium sangat tinggi
+        # ----------------------------------------------------------
+        168546,  # Canned Red Bell Peppers - sodium 1369mg
+        168577,  # Canned Green Chili Peppers - sodium 397mg, kondimen
+        170080,  # Canned Jalapeno Peppers - sodium 1671mg
+        170107,  # Canned Red Chili Peppers - sodium 1173mg
+        170426,  # Canned Green Chili Peppers ver 2 - sodium 1173mg
+        170429,  # Canned Green Bell Peppers - sodium 1369mg
+    
+        # ----------------------------------------------------------
+        # [10G] PRODUK DAIRY INDUSTRIAL — Bahan masakan / produk
+        #        imitasi yang tidak natural
+        # ----------------------------------------------------------
+        167730,  # Non-Soy Imitation Milk - produk imitasi industrial
+        168089,  # Low Cholesterol Imitation Cheese - produk artificial
+        169901,  # Imitation Cheddar Cheese - sodium 1345mg + artificial
+        170869,  # Imitation Sour Cream - produk artificial
+        171272,  # Instant Nonfat Dry Milk (with vitamins) - bentuk powder, bahan
+        172196,  # Instant Nonfat Dry Milk (without vitamins) - bentuk powder
+        171275,  # Sweetened Condensed Milk - terlalu manis, bahan kue
+        171276,  # Evaporated Milk (with vitamin D) - bahan masakan
+        172194,  # Evaporated Milk (with vitamin A) - bahan masakan
+        170878,  # Evaporated Nonfat Milk - bahan masakan
+    
+        # ----------------------------------------------------------
+        # [10H] IMITATION SEAFOOD (SURIMI) — Produk sangat processed
+        # ----------------------------------------------------------
+        171973,  # Imitation Shrimp - made from surimi
+        174222,  # Imitation Scallops - made from surimi
+    
+        # ----------------------------------------------------------
+        # [10I] SODIUM > 1800mg — Berbahaya untuk semua profil
+        #        penyakit kronis dalam sistem
+        # ----------------------------------------------------------
+        171247,  # Grated Parmesan Cheese - sodium 1804mg
+        171250,  # Roquefort Cheese - sodium 1809mg
+        172222,  # Queso Seco Cheese - sodium 1808mg
+        172947,  # Oscar Mayer Hard Salami - sodium 1976mg
+    
+        # ----------------------------------------------------------
+        # [10J] SNACKS SODIUM SANGAT TINGGI
+        # ----------------------------------------------------------
+        168850,  # Smoked Beef Sticks - sodium 1531mg
+        168856,  # Salted Sesame Sticks - sodium 1488mg
+    
+        # ----------------------------------------------------------
+        # [10K] ENERGY DRINKS — Tidak cocok untuk penderita
+        #        penyakit kronis (DM2, hipertensi, kardiovaskular)
+        # ----------------------------------------------------------
+        171937,  # Rockstar Energy Drink
+        174171,  # AMP Energy Drink
+        174172,  # FULL THROTTLE Energy Drink
 
+        169062,  # Pie fillings, cherry, low calorie
     ]
     df_cleaned = df_cleaned[~df_cleaned['fdc_id'].isin(fdc_blacklist)]
     print(f"[FILTER 10] fdc_id blacklist: {before - len(df_cleaned)} items removed")
