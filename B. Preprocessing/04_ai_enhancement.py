@@ -21,8 +21,8 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 INPUT_FILE = os.path.normpath(os.path.join(CURRENT_DIR, "..", "A. Data", "Data Processed", "03_final_dataset.csv"))
 OUTPUT_FILE = os.path.normpath(os.path.join(CURRENT_DIR, "..", "A. Data", "Data Processed", "04_super_final.csv"))
 
-FOOD_NAME_CACHE = os.path.normpath(os.path.join(CURRENT_DIR, "..", "G. NameFood", "output", "food_name_cache.json"))
-CUISINE_CACHE = os.path.normpath(os.path.join(CURRENT_DIR, "..", "G. NameFood", "output", "cuisine_cache.json"))
+FOOD_NAME_CACHE = os.path.normpath(os.path.join(CURRENT_DIR, "AI_Labeling", "output", "food_name_cache.json"))
+CUISINE_CACHE = os.path.normpath(os.path.join(CURRENT_DIR, "AI_Labeling", "output", "cuisine_cache.json"))
 # Kategori cache tidak dipakai lagi karena kita pakai RuleBased
 
 def load_cache(path):
@@ -56,7 +56,7 @@ def main():
 
     # Build fallback mapping from food_name_ai.csv by fdc_id
     fallback_name_map = {}
-    FOOD_NAME_AI_CSV = os.path.normpath(os.path.join(CURRENT_DIR, "..", "G. NameFood", "output", "food_name_ai.csv"))
+    FOOD_NAME_AI_CSV = os.path.normpath(os.path.join(CURRENT_DIR, "AI_Labeling", "output", "food_name_ai.csv"))
     if os.path.exists(FOOD_NAME_AI_CSV):
         print(f"  Memuat fallback names dari: {FOOD_NAME_AI_CSV}")
         try:
