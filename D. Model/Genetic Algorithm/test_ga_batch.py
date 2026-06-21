@@ -40,7 +40,7 @@ from ga_v3 import (
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic,
     local_search, calculate_total_nutrition_from_portions
 )
-from ga_config import GA_PARAMS, LS_PARAMS
+from ga_parameter import GA_PARAMS, LS_PARAMS
 
 # Import dari test_ga.py - CSR calculation dan export
 import importlib.util
