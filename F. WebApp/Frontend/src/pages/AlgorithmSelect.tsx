@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * AlgorithmSelect.tsx - Pemilihan Algoritma AI
+ * ==============================================================================
+ * Halaman perantara bagi pengguna untuk memilih mesin kecerdasan buatan mana 
+ * yang akan dipakai untuk menyusun menu makanannya: Greedy Algorithm atau 
+ * Genetic Algorithm (jika tersedia).
+ * ==============================================================================
+ */
 import { Zap, Network } from 'lucide-react';
 import { motion } from 'motion/react';
 import { t } from '../utils/translations';

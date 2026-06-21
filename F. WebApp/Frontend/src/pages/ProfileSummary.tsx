@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * ProfileSummary.tsx - Rangkuman Profil dan Target Gizi (BMR & TDEE)
+ * ==============================================================================
+ * Menampilkan kembali (konfirmasi) data yang dimasukkan user, lalu memanggil 
+ * backend API `/api/analyze` untuk menghitung kebutuhan kalori harian (TDEE), 
+ * BMR, serta rentang makronutrisi yang direkomendasikan berdasarkan penyakit.
+ * ==============================================================================
+ */
 import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, ArrowLeft, HeartPulse, Scale, FileText, Loader2, ChevronDown } from 'lucide-react';

@@ -1,3 +1,11 @@
+/**
+ * ==============================================================================
+ * main.tsx - Entry Point React
+ * ==============================================================================
+ * Titik awal (entry point) tempat aplikasi React di-render (ditempelkan) ke 
+ * dalam elemen HTML DOM browser. Menginisialisasi CSS Tailwind dan App utama.
+ * ==============================================================================
+ */
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./styles/index.css";

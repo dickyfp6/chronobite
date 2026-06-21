@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * Report.tsx - Laporan Kepatuhan Gizi Akhir
+ * ==============================================================================
+ * Menyajikan tabel mendalam tentang persentase pemenuhan gizi makro dan mikro
+ * (seperti Kalium, Natrium, Vitamin) berdasarkan batas maksimal/minimal dari 
+ * panduan penyakit yang dimiliki pasien.
+ * ==============================================================================
+ */
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FileText, BarChart3, List, Lightbulb, User } from 'lucide-react';

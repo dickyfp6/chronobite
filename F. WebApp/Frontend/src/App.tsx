@@ -1,3 +1,13 @@
+/**
+ * ==============================================================================
+ * App.tsx - Rute dan State Global Aplikasi
+ * ==============================================================================
+ * File ini mengatur alur rute navigasi antar halaman (Landing -> InputWizard ->
+ * ProfileSummary -> AlgorithmSelect -> Results -> Report). 
+ * File ini juga menyimpan 'state' atau data global seperti profil pasien yang 
+ * di-input dan hasil rekomendasi gizi agar bisa diakses oleh setiap halaman.
+ * ==============================================================================
+ */
 import { useState, useEffect, useCallback } from 'react';
 
 import { t } from './utils/translations';

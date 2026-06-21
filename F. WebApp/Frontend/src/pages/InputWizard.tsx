@@ -1,3 +1,13 @@
+/**
+ * ==============================================================================
+ * InputWizard.tsx - Formulir Input Data Pasien
+ * ==============================================================================
+ * Komponen berbentuk "Wizard" (formulir bertahap) untuk mengambil data vital 
+ * pengguna seperti jenis kelamin, usia, berat badan, tinggi, tingkat aktivitas,
+ * preferensi makanan, dan riwayat penyakit bawaan (komorbid).
+ * Data yang diisi divalidasi sebelum dilanjutkan ke halaman berikutnya.
+ * ==============================================================================
+ */
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { User, Activity, Heart, UtensilsCrossed, ClipboardList, FileText, ChevronRight, ChevronLeft, Calendar, Scale, Ruler, Footprints, Flame, Leaf, Droplet, TrendingDown, Shield, Plus, Minus } from 'lucide-react';
