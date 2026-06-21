@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * Results.tsx - Hasil Rekomendasi Menu Interaktif
+ * ==============================================================================
+ * Layar paling kompleks yang menampilkan hasil menu sarapan, makan siang, 
+ * malam, dan snack. User dapat me-regenerate menu, mengganti kandidat makanan, 
+ * dan melihat keterpenuhan nutrisinya secara real-time.
+ * ==============================================================================
+ */
 import { useState, useEffect, useMemo } from 'react';
 import { ArrowRight, RotateCcw, Info, Flame, Wheat, Beef, Droplet } from 'lucide-react';
 import { t } from '../utils/translations';

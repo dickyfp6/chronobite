@@ -1,3 +1,11 @@
+/**
+ * ==============================================================================
+ * Landing.tsx - Halaman Selamat Datang
+ * ==============================================================================
+ * Halaman pertama yang dilihat user. Berisi tombol "Mulai Evaluasi" untuk 
+ * masuk ke dalam alur pengisian profil gizi.
+ * ==============================================================================
+ */
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Heart, Activity, Droplet, TrendingDown, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
