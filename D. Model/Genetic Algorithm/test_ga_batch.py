@@ -40,7 +40,7 @@ from ga_v3 import (
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic,
     local_search, calculate_total_nutrition_from_portions
 )
-from ga_config import GA_PARAMS, LS_PARAMS
+from ga_parameter import GA_PARAMS, LS_PARAMS
 
 # Import dari test_ga.py - CSR calculation dan export
 import importlib.util
@@ -76,12 +76,12 @@ BATCH_PROFILES = [
    # {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['cholesterol'], 'food_preferences': []},
    # {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['ckd'], 'food_preferences': []},
     # Dual Disease — profil 2
-    # {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['dm2', 'hypertension'], 'food_preferences': []},
+     {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['dm2', 'hypertension'], 'food_preferences': []},
     # {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['dm2', 'cholesterol'], 'food_preferences': []},
     # {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['hypertension', 'cvd'], 'food_preferences': []},
     # {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['ckd', 'hypertension'], 'food_preferences': []},
     # Triple Disease — profil 3
-     {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['dm2', 'hypertension', 'cholesterol'], 'food_preferences': []},
+    # {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['dm2', 'hypertension', 'cholesterol'], 'food_preferences': []},
     # {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['ckd', 'dm2', 'hypertension'], 'food_preferences': []},
     # {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['hypertension', 'cholesterol', 'cvd'], 'food_preferences': []},
 ]
