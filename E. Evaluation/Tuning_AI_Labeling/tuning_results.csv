@@ -1,0 +1,4 @@
+pop_size,generations,ls_iterations,avg_fitness,std_fitness,avg_time_sec,trials_run
+38,99,32,0.0,0.0,15.728575468063354,3
+44,53,43,0.0,0.0,9.870254198710123,3
+99,103,27,0.0,0.0,41.86791197458903,3

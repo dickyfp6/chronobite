@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(root_dir, 'C. System Flow'))
 sys.path.insert(0, os.path.join(root_dir, 'D. Model'))
 sys.path.insert(0, os.path.join(root_dir, 'D. Model', 'Greedy Algorithm'))
 
-from nutrition_service import NutritionService # type: ignore
+from b_nutrition_service import NutritionService # type: ignore
 from greedy_interface import GreedyAlgorithmInterface # type: ignore
 
 BASE = {'gender': 'M', 'age': 45, 'weight': 70, 'height': 175, 'activity_factor': 1.4}

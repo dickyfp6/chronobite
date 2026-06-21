@@ -49,7 +49,7 @@ from ga_config import GA_PARAMS, LS_PARAMS
 
 # Import NutritionService
 try:
-    from nutrition_service import NutritionService
+    from b_nutrition_service import NutritionService
     print("✓ NutritionService imported successfully")
 except ImportError as e:
     print(f"✗ Cannot import NutritionService: {e}")
@@ -57,7 +57,7 @@ except ImportError as e:
 
 # Import input handler
 try:
-    from modules.input_handler import get_user_input
+    from modules.c_input_handler import get_user_input
     print("✓ Input handler imported successfully")
 except ImportError as e:
     print(f"✗ Cannot import input handler: {e}")

@@ -31,7 +31,7 @@ if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
 import pandas as pd
-from data_loader import get_guideline_loader
+from a_data_loader import get_guideline_loader
 
 
 # ═════════════════════════════════════════════════════════════════════════════

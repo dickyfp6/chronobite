@@ -38,7 +38,7 @@ sys.path.insert(0, genetic_algorithm_path)
 # IMPORT
 # ─────────────────────────────────────────────────────────────────────────────
 from ga_v1 import run_ga, local_search, fitness, calculate_total_nutrition
-from nutrition_service import NutritionService
+from b_nutrition_service import NutritionService
 
 # ─────────────────────────────────────────────────────────────────────────────
 # KONFIGURASI TUNING

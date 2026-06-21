@@ -20,7 +20,7 @@ sys.path.append(model_dir)
 system_flow_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'C. System Flow'))
 sys.path.append(system_flow_dir)
 
-from nutrition_service import NutritionService
+from b_nutrition_service import NutritionService
 
 def print_menu_plan(menu_plan):
     """Utility to print the MenuPlan object clearly"""
