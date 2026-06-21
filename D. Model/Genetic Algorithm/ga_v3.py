@@ -965,9 +965,9 @@ def fitness(solution: pd.DataFrame, guidelines: Dict, tdee: Optional[float] = No
         max_tolerance = max_val
         
         if value < min_tolerance:
-            hard_penalty += (min_tolerance - value)
+            hard_penalty += (min_tolerance - value) / min_val if min_val > 0 else (min_tolerance - value)
         elif value > max_tolerance:
-            hard_penalty += (value - max_tolerance)
+            hard_penalty += (value - max_tolerance) / max_val if (max_val > 0 and max_val != float('inf')) else (value - max_tolerance)
     
     # ════════════════════════════════════════════════════════════════════════
     # CALCULATE SOFT CONSTRAINT PENALTY (quality, after feasibility)
@@ -1144,9 +1144,9 @@ def fitness_numpy(
         max_tolerance = max_val
         
         if value < min_tolerance:
-            hard_penalty += (min_tolerance - value)
+            hard_penalty += (min_tolerance - value) / min_val if min_val > 0 else (min_tolerance - value)
         elif value > max_tolerance:
-            hard_penalty += (value - max_tolerance)
+            hard_penalty += (value - max_tolerance) / max_val if (max_val > 0 and max_val != float('inf')) else (value - max_tolerance)
     
     # ════════════════════════════════════════════════════════════════════════
     # CALCULATE SOFT CONSTRAINT PENALTY (quality, after feasibility)

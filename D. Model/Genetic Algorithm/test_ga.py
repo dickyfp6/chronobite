@@ -198,8 +198,8 @@ def get_simple_user_input(interactive=False):
         weight = 70.0
         height = 170.0
         activity_factor = 1.55
-        disease = ["normal"]
-        food_preferences = ["Asian", "Western"]
+        disease = ["dm2", "hypertension"]
+        food_preferences = []  # Default preferences
     
     user_input = {
         'gender': gender,
