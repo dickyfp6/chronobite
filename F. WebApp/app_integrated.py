@@ -1,11 +1,13 @@
 """
-Nutrition DSS - Flask Web Application (Fully Integrated)
-Sistem Rekomendasi Nutrisi berbasis Algoritma Genetika dan Greedy
-
-Integration dengan:
-- C. System Flow (NutritionService for calculations)
-- D. Model (Greedy Algorithm for menu generation)
-- Frontend (React with Vite)
+================================================================================
+app_integrated.py - Nutrition DSS Flask Web API
+================================================================================
+File ini adalah 'jembatan' (Backend API) utama yang memproses:
+1. Menghubungkan Frontend (React/Vite) dengan Backend AI (Greedy & Genetic).
+2. Menerima request profil pasien dari user dan mengirimkannya ke `NutritionService` untuk dianalisis.
+3. Memulai proses *background task* (multithreading) untuk men-generate menu makanan menggunakan algoritma AI, sehingga Frontend tidak *freeze* saat AI sedang berpikir.
+4. Menyediakan endpoint untuk memeriksa status *generate* menu (`/api/job-status`).
+================================================================================
 """
 
 from flask import Flask, request, jsonify
@@ -136,10 +138,6 @@ init_services()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# LEGACY HELPER FUNCTIONS (For compatibility)
-# ═══════════════════════════════════════════════════════════════════════════════
-
-# ═══════════════════════════════════════════════════════════════════════════════
 # HELPER FUNCTIONS
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -156,50 +154,6 @@ def sanitize_infinity(obj):
             return None
         return obj
     return obj
-
-
-def calculate_bmi(weight, height):
-    h = height / 100
-    bmi = weight / (h ** 2)
-    if bmi < 18.5:
-        cat = "Underweight"
-        color = "blue"
-    elif bmi < 25:
-        cat = "Normal"
-        color = "green"
-    elif bmi < 30:
-        cat = "Overweight"
-        color = "yellow"
-    else:
-        cat = "Obesitas"
-        color = "red"
-    return round(bmi, 1), cat, color
-
-
-def calculate_bbi(height, gender):
-    base = height - 100
-    if gender == 'M':
-        if height < 160:
-            bbi = base
-        else:
-            bbi = base - (base * 0.10)
-    else:
-        if height < 150:
-            bbi = base
-        else:
-            bbi = base - (base * 0.15)
-    return round(bbi, 2)
-
-
-def calculate_bmr(weight, height, age, gender):
-    if gender == "M":
-        return round(88.362 + 13.397 * weight + 4.799 * height - 5.677 * age, 0)
-    return round(447.593 + 9.247 * weight + 3.098 * height - 4.330 * age, 0)
-
-
-def calculate_tdee(bmr, activity):
-    return round(bmr * float(activity), 0)
-
 
 def _course_to_all_candidates(course):
     """Return all 3 candidates for a course"""
