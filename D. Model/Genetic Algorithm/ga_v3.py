@@ -1712,10 +1712,9 @@ def crossover_numpy(parent1: np.ndarray, parent2: np.ndarray) -> np.ndarray:
     assert len(parent1) == CHROMOSOME_SIZE, f"Parent1 shape mismatch: {len(parent1)} vs {CHROMOSOME_SIZE}"
     assert len(parent2) == CHROMOSOME_SIZE, f"Parent2 shape mismatch: {len(parent2)} vs {CHROMOSOME_SIZE}"
     
-    # Random crossover point (1-9, not 0 or 10)
-    point = random.randint(1, CHROMOSOME_SIZE - 1)
-    
-    # Combine: take genes 0..point-1 from parent1, genes point..9 from parent2
+    # SESUDAH:
+    MEAL_BOUNDARY_POINTS = [3, 6, 9]  # batas breakfast/lunch/dinner/snack
+    point = random.choice(MEAL_BOUNDARY_POINTS)
     child = np.concatenate([parent1[:point], parent2[point:]])
     
     return child.astype(np.int64)
@@ -1931,16 +1930,17 @@ def _compute_grams_numpy(
     food_energies = selected_nutrients[:, energy_idx]
     food_energies = np.where(food_energies <= 0, 1.0, food_energies)
 
-    # Breakfast: main 14.375%, side 8.625%, drink 5.75%   → total 28.75%
-    # Lunch:     main 16.875%, side 10.125%, drink 6.75%  → total 33.75%
-    # Dinner:    main 11.875%, side 7.125%, drink 4.75%   → total 23.75%
+    # SESUDAH (benar):
+    # Breakfast: main 11.875%, side 7.125%, drink 4.75%  → total 23.75%
+    # Lunch:     main 16.875%, side 10.125%, drink 6.75% → total 33.75%
+    # Dinner:    main 14.375%, side 8.625%, drink 5.75%  → total 28.75%
     # Snack:     13.75%
 
     target_energy_ratios = np.array([
-        0.14375, 0.08625, 0.0575,   # breakfast (naik)
-        0.16875, 0.10125, 0.0675,   # lunch (sama)
-        0.11875, 0.07125, 0.0475,   # dinner (turun)
-        0.1375                       # snack (sama)
+        0.11875, 0.07125, 0.0475,   # breakfast: 23.75%
+        0.16875, 0.10125, 0.0675,   # lunch: 33.75%
+        0.14375, 0.08625, 0.0575,   # dinner: 28.75%
+        0.1375                       # snack: 13.75%
     ], dtype=np.float64)
 
     target_energies = tdee * target_energy_ratios
@@ -2272,6 +2272,15 @@ def indices_to_dataframe(
                 
     return cast(pd.DataFrame, result)
 
+def tournament_select(population: List[np.ndarray], scores: List[float], k: int = 3) -> np.ndarray:
+    """
+    Tournament selection: pilih k kandidat random, return yang fitness terbaik.
+    Lebih baik dari pure elite selection karena menjaga diversitas genetik.
+    """
+    candidates = random.sample(range(len(population)), min(k, len(population)))
+    best = min(candidates, key=lambda i: scores[i])
+    return population[best].copy()
+
 def run_ga_numpy(
     food_df: pd.DataFrame,
     guidelines: Dict,
@@ -2391,14 +2400,12 @@ def run_ga_numpy(
                 print(f"\n>>> RESTART triggered at generation {generation}")
                 print(f"    Best fitness still high ({best_gen_fitness:.1f}), regenerating population...\n")
             
-            population = []
-            for _ in range(num_guided):
-                guided_ind = guided_solution_numpy(food_df_reset, guidelines)
-                population.append(guided_ind)
-            for _ in range(num_random):
-                random_ind = random_solution_numpy(food_df_reset)
-                population.append(random_ind)
-            continue
+                population = [best_individual.copy()]  # pertahankan best yang sudah ditemukan
+                for _ in range(num_guided - 1):
+                    population.append(guided_solution_numpy(food_df_reset, guidelines))
+                for _ in range(num_random):
+                    population.append(random_solution_numpy(food_df_reset))
+                continue
         
         # ════════════════════════════════════════════════════════════════════
         # ELITE SELECTION & BREEDING
@@ -2417,9 +2424,8 @@ def run_ga_numpy(
             # Ini dapat menyebabkan premature convergence pada kasus disease combination
             # yang constraint-nya ketat. Pengembangan: tambahkan tournament selection
             # dari seluruh populasi untuk meningkatkan diversitas genetik.
-            parent1 = elite_population[random.randint(0, len(elite_population) - 1)].copy()
-            parent2 = elite_population[random.randint(0, len(elite_population) - 1)].copy()
-            
+            parent1 = tournament_select(sorted_population, sorted_scores, k=3)
+            parent2 = tournament_select(sorted_population, sorted_scores, k=3)            
             # Crossover
             child = crossover_numpy(parent1, parent2)
             
@@ -2447,13 +2453,12 @@ def run_ga_numpy(
             # Replace 3 worst + 2 random with new random/guided
             num_to_replace = min(5, len(population) // 3)
             
-            # Remove worst individuals
-            for _ in range(min(3, num_to_replace)):
+            num_inject = min(3, num_to_replace)
+            for _ in range(num_inject):
                 worst_idx = len(population) - 1
                 population.pop(worst_idx)
-            
-            # Add new random individuals
-            for _ in range(min(2, num_to_replace)):
+
+            for _ in range(num_inject):  # sama dengan yang dibuang
                 if random.random() < 0.5:
                     new_ind = guided_solution_numpy(food_df_reset, guidelines)
                 else:
