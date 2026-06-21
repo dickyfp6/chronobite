@@ -57,7 +57,7 @@ lookup_nutrition = test_ga.lookup_nutrition
 
 # Import NutritionService
 try:
-    from nutrition_service import NutritionService
+    from b_nutrition_service import NutritionService
     print("✓ NutritionService imported successfully")
 except ImportError as e:
     print(f"✗ Cannot import NutritionService: {e}")

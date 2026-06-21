@@ -1,15 +1,15 @@
 """
-Nutrition Calculation Service
-Consolidated file untuk orchestrate semua input, calculations, dan output
-Designed untuk easy integration dengan Genetic Algorithm dan Greedy Algorithm
+Modul: Nutrition Service (Layanan Pusat Nutrisi)
+Deskripsi: Ini adalah jantung dari sistem perhitungan nutrisi kita. 
+Modul ini menggabungkan semua fungsi (BMI, BMR, TDEE, panduan gizi) dan merangkumnya menjadi satu
+output terpadu. Algoritma Genetika nantinya hanya tinggal memanggil layanan ini untuk 
+mendapatkan batasan gizi (constraint) target pengguna.
 
 Usage:
-    from nutrition_service import NutritionService
+    from b_nutrition_service import NutritionService
     
     service = NutritionService()
     result = service.calculate_nutrition_needs(user_data)
-    # result['guidelines'] untuk constraint GA/Greedy
-    # result['food_df'] untuk candidate items
 """
 
 import sys
@@ -19,8 +19,8 @@ import pandas as pd
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from modules.calculations import NutritionCalculator
-from data_loader import GuidelineLoader
+from modules.a_calculations import NutritionCalculator
+from a_data_loader import GuidelineLoader
 
 
 class NutritionService:

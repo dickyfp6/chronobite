@@ -1,5 +1,8 @@
-﻿"""
-Module untuk menangani input dari user
+"""
+Modul: Input Handler (Penangan Input)
+Deskripsi: File ini berisi fungsi-fungsi untuk meminta dan menangkap input dari pengguna
+melalui antarmuka command-line (CLI). Ini memvalidasi agar pengguna memasukkan
+tipe data yang benar (misalnya umur harus angka, bukan huruf).
 """
 
 def get_user_input():

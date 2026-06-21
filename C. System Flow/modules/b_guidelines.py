@@ -1,5 +1,9 @@
 """
-Module untuk process dan convert guideline
+Modul: Guidelines (Pedoman Gizi)
+Deskripsi: File ini berisi fungsi-fungsi untuk memproses pedoman gizi berdasarkan penyakit pengguna.
+Fungsi utamanya adalah mengkonversi batas minimum (min) dan maksimum (max) nutrisi dari 
+file guideline.csv ke dalam nilai gram/kcal aktual, serta menggabungkan nilai-nilai tersebut
+jika pengguna memiliki kombinasi penyakit (multi-disease).
 """
 
 import sys
@@ -8,8 +12,8 @@ import os
 # Add parent directory to path untuk import data_loader
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data_loader import get_guideline_loader
-from modules.calculations import NutritionCalculator
+from a_data_loader import get_guideline_loader
+from modules.a_calculations import NutritionCalculator
 
 
 class GuidelineProcessor:

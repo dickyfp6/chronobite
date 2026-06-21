@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.join(project_root, 'C. System Flow'))
 sys.path.insert(0, os.path.join(project_root, 'D. Model', 'Genetic Algorithm'))
 
 from ga_dicky import run_ga_numpy as run_ga, local_search, calculate_total_nutrition_from_portions, fitness as ga_fitness
-from nutrition_service import NutritionService
+from b_nutrition_service import NutritionService
 
 # KONFIGURASI TUNING
 _BASE = {

@@ -19,7 +19,7 @@ sys.path.append(os.path.join(project_root, 'D. Model', 'Genetic Algorithm'))
 try:
     # Need to add C. System Flow to path to import nutrition_service
     sys.path.append(os.path.join(project_root, 'C. System Flow'))
-    from nutrition_service import NutritionService
+    from b_nutrition_service import NutritionService
     # pyrefly: ignore [missing-import]
     from ga_interface import GeneticAlgorithmInterface
     # pyrefly: ignore [missing-import]

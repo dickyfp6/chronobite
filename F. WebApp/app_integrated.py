@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Gr
 
 # Import system components
 try:
-    from nutrition_service import NutritionService  # pyright: ignore
+    from b_nutrition_service import NutritionService  # pyright: ignore
     from meal_schema import FoodItem  # type: ignore
     print("[OK] NutritionService and FoodItem imported successfully")
 except ImportError as e:

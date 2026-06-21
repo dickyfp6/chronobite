@@ -31,7 +31,7 @@ sys.path.insert(0, system_flow_path)
 sys.path.insert(0, genetic_algorithm_path)
 
 # Import dari system flow & GA dicky
-from nutrition_service import NutritionService
+from b_nutrition_service import NutritionService
 from ga_dicky import run_ga_numpy, local_search, fitness
 
 # ─────────────────────────────────────────────────────────────────────────────

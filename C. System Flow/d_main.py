@@ -1,6 +1,8 @@
-﻿"""
-Main application untuk System Flow perhitungan nutrisi
-Menggunakan consolidated NutritionService dengan DRI fallback integration
+"""
+Script Utama: Sistem Kalkulasi Nutrisi
+Deskripsi: File utama untuk menjalankan pengujian alur perhitungan gizi secara interaktif.
+Di sini kita akan ditanya profil pengguna (umur, berat badan, tinggi, penyakit)
+dan script ini akan mencetak hasil rekomendasi nutrisi secara rinci.
 """
 
 import sys
@@ -9,9 +11,9 @@ import os
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from modules.input_handler import get_user_input
-from modules.output_formatter import OutputFormatter
-from nutrition_service import NutritionService
+from modules.c_input_handler import get_user_input
+from modules.d_output_formatter import OutputFormatter
+from b_nutrition_service import NutritionService
 
 
 def main():

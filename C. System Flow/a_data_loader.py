@@ -1,5 +1,8 @@
 """
-Module untuk load guideline dari CSV
+Modul: Data Loader
+Deskripsi: File ini bertanggung jawab khusus untuk memuat dan mengambil data dari file CSV mentah, 
+seperti data makanan (04_super_final.csv), pedoman gizi (guideline.csv), dan asupan gizi harian (dri_micro.csv).
+Fungsi-fungsinya dipanggil oleh modul lain untuk mendapatkan referensi gizi.
 """
 
 import pandas as pd
@@ -156,7 +159,7 @@ class GuidelineLoader:
         Returns:
             dict: merged nutrients (nilai sudah dalam unit aktual)
         """
-        from modules.calculations import NutritionCalculator
+        from modules.a_calculations import NutritionCalculator
         calculator = NutritionCalculator()
         
         if user_params is None:
@@ -319,7 +322,7 @@ class GuidelineLoader:
                 base_dir,
                 "A. Data",
                 "Data Processed",
-                "07_super_final_fixed.csv"
+                "04_super_final.csv"
             )
         
         try:

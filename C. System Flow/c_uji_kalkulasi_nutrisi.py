@@ -1,13 +1,8 @@
 """
-Debug script: cek hasil merge_disease_guidelines() untuk 13 case profile,
-khususnya untuk lihat nutrient mana yang kena "Conflict" / "Expanding narrow range",
-dan seberapa jauh range hasil merge dari kemampuan dataset makanan.
-
-Cara pakai:
-    Letakkan file ini di root project (sejajar folder "D. Model", "A. Data", dst)
-    atau sesuaikan sys.path di bawah.
-
-    python debug_guidelines.py
+File Analisis: Uji Coba Kalkulasi Multi-Penyakit
+Deskripsi: Script ini digunakan khusus untuk melakukan pengecekan bagaimana sistem 
+merespons jika seorang pengguna memiliki kombinasi berbagai penyakit sekaligus 
+(misalnya komplikasi CKD + Hipertensi + Diabetes).
 """
 
 import sys
@@ -18,7 +13,7 @@ import os
 #   <root>/D. Model/Genetic Algorithm/...
 #   <root>/C. System Flow/...
 #   <root>/A. Data/Data Raw/guideline.csv
-#   <root>/A. Data/Data Processed/07_super_final.csv
+#   <root>/A. Data/Data Processed/04_super_final.csv
 #
 # Jalankan script ini dari <root>, atau edit ROOT_DIR di bawah.
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -30,8 +25,8 @@ for sub in ["C. System Flow", "D. Model", os.path.join("D. Model", "Genetic Algo
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-import pandas as pd
-from data_loader import get_guideline_loader
+from b_nutrition_service import NutritionService
+from a_data_loader import get_guideline_loader
 
 
 # ═════════════════════════════════════════════════════════════════════════════

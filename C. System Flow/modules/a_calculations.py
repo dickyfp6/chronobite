@@ -1,5 +1,8 @@
 """
-Module untuk perhitungan BMI, BBI, TDEE, dan konversi guideline
+Modul: Calculations (Perhitungan)
+Deskripsi: Kumpulan fungsi matematika untuk menghitung indeks tubuh dan kebutuhan kalori.
+Mencakup perhitungan BMI (Body Mass Index), BBI (Berat Badan Ideal), BMR (Basal Metabolic Rate), 
+TDEE (Total Daily Energy Expenditure), dan klasifikasi kelompok usia berdasarkan WHO.
 """
 
 import math

@@ -1,5 +1,8 @@
-﻿"""
-Module untuk format dan display output hasil perhitungan
+"""
+Modul: Output Formatter (Pencetak Tampilan)
+Deskripsi: File ini berisi fungsi-fungsi pendukung untuk mempercantik dan merapikan 
+tampilan (print/output) di terminal ketika script main.py atau uji_kalkulasi dijalankan.
+Tujuannya agar hasil perhitungan lebih mudah dibaca oleh manusia.
 """
 
 

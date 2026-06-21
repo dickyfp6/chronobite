@@ -45,7 +45,7 @@ sys.path.insert(0, system_flow_path)
 sys.path.insert(0, genetic_algorithm_path)
 
 # Import dari ga_v3 (bukan ga_dicky)
-from nutrition_service import NutritionService
+from b_nutrition_service import NutritionService
 from ga_v3 import run_ga_numpy, fitness
 # Catatan: local_search TIDAK diimport karena sudah dipanggil
 # di dalam run_ga_numpy di ga_v3
