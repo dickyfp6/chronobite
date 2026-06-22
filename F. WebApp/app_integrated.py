@@ -226,17 +226,19 @@ def _menu_plan_to_frontend(menu_plan):
 
 
 def classify_age_group(age):
-    """Klasifikasi usia berdasarkan WHO guidelines"""
-    if age <= 17:
-        return {"group": "minors", "label": "Minors", "range": "0-17 years"}
-    elif age <= 65:
-        return {"group": "young_people", "label": "Young People", "range": "18-65 years"}
-    elif age <= 79:
-        return {"group": "middle_aged", "label": "Middle-Aged", "range": "66-79 years"}
-    elif age <= 99:
-        return {"group": "elderly", "label": "Elderly People", "range": "80-99 years"}
+    """Klasifikasi usia berdasarkan Dyussenbayev (2017)"""
+    if age < 25:
+        return {"group": "youth", "label": "Youth", "range": "18-24 years"}
+    elif age <= 44:
+        return {"group": "young", "label": "Young Age", "range": "25-44 years"}
+    elif age <= 60:
+        return {"group": "middle_age", "label": "Middle Age", "range": "45-60 years"}
+    elif age <= 75:
+        return {"group": "elderly", "label": "Elderly Age", "range": "61-75 years"}
+    elif age <= 90:
+        return {"group": "senile", "label": "Senile Age", "range": "76-90 years"}
     else:
-        return {"group": "very_elderly", "label": "Very Elderly", "range": "100+ years"}
+        return {"group": "long_livers", "label": "Long-livers", "range": "90+ years"}
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

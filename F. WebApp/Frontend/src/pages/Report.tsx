@@ -667,8 +667,13 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 py-2 font-sans">
   <div className="space-y-1">
   <span className="text-[10px] sm:text-xs font-bold text-primary uppercase tracking-wider">Gender & Age</span>
-  <p className="text-sm sm:text-base font-bold text-gray-900 capitalize font-serif">
-  {userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs
+  <p className="text-sm sm:text-base font-bold text-gray-900 capitalize font-serif flex items-center gap-2">
+  <span>{userData.gender === 'male' ? 'Male' : 'Female'}, {userData.age} yrs</span>
+  {analysisResult?.anthropometrics?.age_label && (
+    <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-sans font-bold shadow-sm">
+      {analysisResult.anthropometrics.age_label}
+    </span>
+  )}
   </p>
   </div>
   <div className="space-y-1 border-l border-border pl-4 sm:pl-6">

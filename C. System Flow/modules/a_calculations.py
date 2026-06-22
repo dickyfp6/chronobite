@@ -155,7 +155,7 @@ class NutritionCalculator:
     @staticmethod
     def classify_age_group(age):
         """
-        Klasifikasi usia berdasarkan WHO (World Health Organization) guidelines
+        Klasifikasi usia berdasarkan Dyussenbayev (2017)
         
         Args:
             age: int (usia dalam tahun)
@@ -163,16 +163,18 @@ class NutritionCalculator:
         Returns:
             dict dengan keys: 'group', 'label', 'age_range'
         """
-        if age < 17 or age > 100:
-            return {'group': 'invalid',      'label': 'Invalid Age',    'age_range': 'N/A'}
-        elif age <= 65:
-            return {'group': 'young_people', 'label': 'Young People',   'age_range': '18-65 years old'}
-        elif age <= 79:
-            return {'group': 'middle_aged',  'label': 'Middle-Aged',    'age_range': '66-79 years old'}
-        elif age <= 99:
-            return {'group': 'elderly',      'label': 'Elderly People', 'age_range': '80-99 years old'}
+        if age < 25:
+            return {'group': 'youth', 'label': 'Youth', 'age_range': '18-24 years old'}
+        elif age <= 44:
+            return {'group': 'young', 'label': 'Young Age', 'age_range': '25-44 years old'}
+        elif age <= 60:
+            return {'group': 'middle_age', 'label': 'Middle Age', 'age_range': '45-60 years old'}
+        elif age <= 75:
+            return {'group': 'elderly', 'label': 'Elderly Age', 'age_range': '61-75 years old'}
+        elif age <= 90:
+            return {'group': 'senile', 'label': 'Senile Age', 'age_range': '76-90 years old'}
         else:
-            return {'group': 'very_elderly', 'label': 'Very Elderly',   'age_range': '100+ years old'}
+            return {'group': 'long_livers', 'label': 'Long-livers', 'age_range': '90+ years old'}
     
     @staticmethod
     def _get_tdee_divisor(nutrient_name):
