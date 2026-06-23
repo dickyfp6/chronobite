@@ -45,9 +45,9 @@ CASES = [
 ]
 
 ACTIVITY_MAP = {
-    'moderate': 1.845,
-    'light':    1.545,
-    'vigorous': 2.2,
+    'moderate': 1.7,
+    'light':    1.4,
+    'vigorous': 2.0,
 }
 
 NUTRIENT_DISPLAY = {
