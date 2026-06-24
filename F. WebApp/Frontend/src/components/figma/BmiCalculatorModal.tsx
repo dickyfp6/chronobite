@@ -68,9 +68,9 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
 
   // 4. TDEE Calculations
   const activityMultipliers = {
-    light: 1.545,
-    moderate: 1.845,
-    heavy: 2.2,
+    light: 1.4,
+    moderate: 1.7,
+    heavy: 2.0,
   };
   const multiplier = activityMultipliers[activity];
   const tdee = selectedBmr * multiplier;
@@ -210,9 +210,9 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
                 onChange={(e: any) => setActivity(e.target.value as any)}
                 className="w-full px-4 py-2.5 rounded-2xl border border-border text-sm font-medium focus:outline-primary bg-secondary/35 cursor-pointer"
               >
-                <option value="light">Light / Sedentary (1.545)</option>
-                <option value="moderate">Moderate / Active (1.845)</option>
-                <option value="heavy">Heavy / Vigorous (2.20)</option>
+                <option value="light">Light / Sedentary (1.4)</option>
+                <option value="moderate">Moderate / Active (1.7)</option>
+                <option value="heavy">Heavy / Vigorous (2.00)</option>
               </select>
             </div>
           </div>

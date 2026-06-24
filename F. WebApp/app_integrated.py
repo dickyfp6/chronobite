@@ -264,23 +264,23 @@ DISEASE_LABELS = {
 }
 
 ACTIVITY_LABELS = {
-    "1.545": "Sedentary or Light Activity",
-    "1.845": "Active or Moderately Active",
-    "2.2":   "Vigorous or Vigorously Active",
+    "1.4": "Sedentary or Light Activity",
+    "1.7": "Active or Moderately Active",
+    "2.0":   "Vigorous or Vigorously Active",
 }
 
 # Map activity labels (from Frontend) to numeric factors
 ACTIVITY_MAP = {
-    "sedentary": 1.545,
-    "light": 1.545,
-    "moderate": 1.845,
-    "active": 1.845,
-    "vigorous": 2.2,
-    "very_active": 2.2,
+    "sedentary": 1.4,
+    "light": 1.4,
+    "moderate": 1.7,
+    "active": 1.7,
+    "vigorous": 2.0,
+    "very_active": 2.0,
     # Also accept numeric strings directly
-    "1.545": 1.545,
-    "1.845": 1.845,
-    "2.2": 2.2,
+    "1.4": 1.4,
+    "1.7": 1.7,
+    "2.0": 2.0,
 }
 
 FOOD_PREFERENCES_LABELS = {
@@ -326,10 +326,10 @@ def analyze():
         data = request.get_json()
         
         # Parse activity level (map label to numeric if needed)
-        activity_input = data.get('activity', '1.845')
+        activity_input = data.get('activity', '1.7')
         if isinstance(activity_input, str):
             activity_input = activity_input.lower()
-            activity_factor = ACTIVITY_MAP.get(activity_input, 1.845)
+            activity_factor = ACTIVITY_MAP.get(activity_input, 1.7)
         else:
             activity_factor = float(activity_input)
         

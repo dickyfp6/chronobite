@@ -35,12 +35,12 @@ USE_INTERACTIVE_INPUT = False
 # Import GA engine
 # pyrefly: ignore [missing-import]
 from ga_v3 import (
-    run_ga_numpy as run_ga, display_solution, generate_meal_options, display_meal_options,
-    display_fitness_details, MEAL_INDICES, calculate_total_nutrition,
+    run_ga_numpy as run_ga, display_solution, generate_meal_options, display_meal_options, 
+    display_fitness_details, MEAL_INDICES, calculate_total_nutrition, 
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
     local_search, display_nutrition_analysis_table, calculate_total_nutrition_from_portions
 )
-from ga_parameter import GA_PARAMS, LS_PARAMS
+from a_ga_parameter import GA_PARAMS, LS_PARAMS
 
 # Import NutritionService
 try:
@@ -57,6 +57,30 @@ try:
 except ImportError as e:
     print(f"[ERROR] Cannot import input handler: {e}")
     sys.exit(1)
+
+
+# ════════════════════════════════════════════════════════════════════════
+# AUTO PROFILES - 13 Test Cases
+# ════════════════════════════════════════════════════════════════════════
+
+AUTO_PROFILES = [
+    # Normal & Single Disease — profil 1
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['normal'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['dm2'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['hypertension'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['cvd'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['cholesterol'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['ckd'], 'food_preferences': []},
+    # Dual Disease — profil 2
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.4, 'disease': ['dm2', 'hypertension'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.4, 'disease': ['dm2', 'cholesterol'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.4, 'disease': ['hypertension', 'cvd'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.4, 'disease': ['ckd', 'hypertension'], 'food_preferences': []},
+    # Triple Disease — profil 3
+    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.0, 'disease': ['dm2', 'hypertension', 'cholesterol'], 'food_preferences': []},
+    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.0, 'disease': ['ckd', 'dm2', 'hypertension'], 'food_preferences': []},
+    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.0, 'disease': ['hypertension', 'cholesterol', 'cvd'], 'food_preferences': []},
+]
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -178,7 +202,7 @@ def get_simple_user_input(interactive=False):
         age = int(input("Age (18-100) [25]: ").strip() or "25")
         weight = float(input("Weight (kg) [70]: ").strip() or "70")
         height = float(input("Height (cm) [170]: ").strip() or "170")
-        activity = input("Activity Factor (1.4-2.2) [1.55]: ").strip() or "1.55"
+        activity = input("Activity Factor (1.4-2.0) [1.55]: ").strip() or "1.55"
         activity_factor = float(activity)
         
         print("\nHealth Conditions (comma-separated):")

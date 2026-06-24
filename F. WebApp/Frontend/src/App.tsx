@@ -222,7 +222,7 @@ export default function App() {
  age: userData.age,
  weight: userData.weight,
  height: userData.height,
- activity: userData.activity || '1.845',
+ activity: userData.activity || '1.7',
  diseases: userData.healthConditions.length > 0 ? userData.healthConditions : ['normal'],
  food_preferences: userData.foodPreferences,
  algorithm: algorithm || 'greedy',

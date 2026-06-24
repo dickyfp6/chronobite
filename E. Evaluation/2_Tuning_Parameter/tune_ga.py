@@ -32,7 +32,7 @@ def create_dummy_guidelines(ns: NutritionService):
         'age': 22,
         'weight': 65,
         'height': 170,
-        'activity_factor': 1.845,
+        'activity_factor': 1.7,
         'disease': 'normal',
         'food_preferences': []
     }

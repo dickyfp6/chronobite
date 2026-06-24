@@ -15,7 +15,7 @@ def get_user_input():
             - age: int (tahun)
             - weight: float (kg)
             - height: float (cm)
-            - activity_factor: float (1.4-2.2)
+            - activity_factor: float (1.4-2.0)
             - disease: str (kondisi kesehatan)
             - food_preferences: list (preferensi makanan)
     """
@@ -59,14 +59,14 @@ def get_user_input():
     
     # Activity Factor (Updated based on FAO/WHO/UNU Guidelines)
     print("\nPilihan Aktivitas (Berdasarkan Gaya Hidup):")
-    print("1. Sedentary or Light Activity (Contoh: Pekerja kantoran, jarang olahraga) [PAL: 1.545]")
-    print("2. Active or Moderately Active (Contoh: Konstruksi, guru, rutin jogging) [PAL: 1.845]")
-    print("3. Vigorous or Vigorously Active (Contoh: Atlet, kuli panggul, olahraga intens) [PAL: 2.2]")
+    print("1. Sedentary or Light Activity (Contoh: Pekerja kantoran, jarang olahraga) [PAL: 1.4]")
+    print("2. Active or Moderately Active (Contoh: Konstruksi, guru, rutin jogging) [PAL: 1.7]")
+    print("3. Vigorous or Vigorously Active (Contoh: Atlet, kuli panggul, olahraga intens) [PAL: 2.0]")
     
     activity_mapping = {
-        '1': 1.545,  # Batas bawah kategori Sedentary/Light
-        '2': 1.845,  # Batas bawah kategori Active/Moderate
-        '3': 2.2   # Batas bawah kategori Vigorous
+        '1': 1.4,  # Batas bawah kategori Sedentary/Light
+        '2': 1.7,  # Batas bawah kategori Active/Moderate
+        '3': 2.0   # Batas bawah kategori Vigorous
     }
 
     while True:
