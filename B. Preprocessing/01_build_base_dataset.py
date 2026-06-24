@@ -59,14 +59,13 @@ def main():
 
     # Filter HC + SC Nutrients
     nutrient_ids = [
-        # HC
+        # Hard Constraints
         1008, 1005, 1003, 1004, # Makro Nutrien
         1079, 1051, 1106, 1253, # Fiber, Water, Vit A, Cholesterol
         1258, 1257, 1091, 1092, # Saturated Fat, Trans fat, Phosphorus, Potassium
         1093, 1095, 1087, 1089, # Sodium, Zinc, Calcium, Iron
         1090, 1178, 1175, 1162, # Magnesium, Vit B12, Vit B6, Vit C
-
-        # SC
+        # Soft Constraints
         1099, 1180, 1190, # Fluoride, Choline, Folate DFE
         1101, 1103, 1098, # Manganese, Selenium, Copper
         1165, 1166, 1167, 1170, # Thiamin, Riboflavin, Niacin, Pantothenic acid
