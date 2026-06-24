@@ -32,7 +32,7 @@ sys.path.insert(0, genetic_algorithm_path)
 
 # Import dari system flow & GA dicky
 from b_nutrition_service import NutritionService
-from ga_dicky import run_ga_numpy, local_search, fitness
+from b_genetic_algorithm import run_ga_numpy, local_search, fitness
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 2. KONFIGURASI PROFIL PENYAKIT (5 KASUS)

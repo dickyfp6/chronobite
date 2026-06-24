@@ -520,7 +520,7 @@ def example_usage():
         'age': 25,
         'weight': 70,
         'height': 175,
-        'activity_factor': 1.55,
+        'activity_factor': 1.4,
         'disease': 'normal',
         'food_preferences': ['Western', 'Asian']
     }
