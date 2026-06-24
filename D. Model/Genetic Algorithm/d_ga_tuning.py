@@ -1,5 +1,5 @@
 """
-TUNE GA - Optuna Hyperparameter Tuning untuk GA + Local Search
+TUNE GA DICKY - Optuna Hyperparameter Tuning untuk ga_dicky + Local Search
 ========================================================================
 
 Strategi:
@@ -7,7 +7,7 @@ Strategi:
   mutation_rate, ls_iterations) melintasi 5 skenario profil penyakit sekaligus.
 
 Cara pakai di Kaggle (setelah clone repo):
-  python "D. Model/Genetic Algorithm/d_ga_tuning.py"
+  python "D. Model/Genetic Algorithm/tune_ga_dicky.py"
 """
 
 import sys
@@ -30,9 +30,9 @@ genetic_algorithm_path = file_dir
 sys.path.insert(0, system_flow_path)
 sys.path.insert(0, genetic_algorithm_path)
 
-# Import dari system flow & GA
+# Import dari system flow & GA dicky
 from b_nutrition_service import NutritionService
-from b_genetic_algorithm import run_ga_numpy, local_search, fitness
+from ga_dicky import run_ga_numpy, local_search, fitness
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 2. KONFIGURASI PROFIL PENYAKIT (5 KASUS)
@@ -105,7 +105,7 @@ def make_objective(all_case_data):
         
         for case_idx, (food_df, guidelines, tdee) in enumerate(all_case_data):
             try:
-                # 1. Run GA 
+                # 1. Run GA Dicky
                 best_solution, _ = run_ga_numpy(
                     food_df=food_df,
                     guidelines=guidelines,
@@ -176,13 +176,13 @@ def main():
     print(f"BEST FITNESS SCORE: {study.best_value:.2f}")
 
     # Simpan ke CSV
-    output_csv = os.path.join(genetic_algorithm_path, 'tuning_1000_trials.csv')
+    output_csv = os.path.join(genetic_algorithm_path, 'tuning_1000_trials_dicky.csv')
     df_results = study.trials_dataframe()
     df_results.to_csv(output_csv, index=False)
     print(f"Hasil disimpan ke {output_csv}")
 
     # Simpan best params ke JSON
-    output_json = os.path.join(genetic_algorithm_path, 'best_parameter.json')
+    output_json = os.path.join(genetic_algorithm_path, 'best_params_dicky.json')
     with open(output_json, 'w') as f:
         json.dump(study.best_params, f, indent=2)
     print(f"Best parameters disimpan ke {output_json}")

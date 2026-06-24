@@ -34,13 +34,13 @@ USE_INTERACTIVE_INPUT = False
 
 # Import GA engine
 # pyrefly: ignore [missing-import]
-from ga_v3 import (
+from b_genetic_algorithm import (
     run_ga_numpy as run_ga, display_solution, generate_meal_options, display_meal_options,
     display_fitness_details, MEAL_INDICES, calculate_total_nutrition,
     SLOT_NAMES, CHROMOSOME_SIZE, calculate_portion_sizes_dynamic, display_portion_summary_dynamic,
     local_search, display_nutrition_analysis_table, calculate_total_nutrition_from_portions
 )
-from ga_parameter import GA_PARAMS, LS_PARAMS
+from a_ga_parameter import GA_PARAMS, LS_PARAMS
 
 # Import NutritionService
 try:

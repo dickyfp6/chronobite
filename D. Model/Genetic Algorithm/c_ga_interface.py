@@ -12,8 +12,8 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 from meal_schema import MenuPlan, Meal, MealCourse, SnackMeal, FoodItem
-from ga_v3 import run_ga_numpy as run_ga, local_search, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES
-from ga_parameter import GA_PARAMS, LS_PARAMS
+from b_genetic_algorithm import run_ga_numpy as run_ga, local_search, calculate_portion_sizes_dynamic, validate_final_solution, generate_meal_options, SLOT_NAMES
+from a_ga_parameter import GA_PARAMS, LS_PARAMS
 
 class GeneticAlgorithmInterface:
     def __init__(self, food_database: pd.DataFrame, constraint_bag: Dict):
@@ -234,7 +234,7 @@ class GeneticAlgorithmInterface:
                 return None
 
             # Calculate fitness score of best solution (after LS)
-            from ga_v3 import fitness as _calc_fitness
+            from b_genetic_algorithm import fitness as _calc_fitness
             best_fitness_score = _calc_fitness(best_solution, self.constraint_bag, tdee=tdee)
                 
             # Generate 3 options per slot (with cuisine preference filtering)

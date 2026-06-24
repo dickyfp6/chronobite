@@ -19,9 +19,9 @@ try:
     sys.path.append(os.path.join(project_root, 'C. System Flow'))
     from b_nutrition_service import NutritionService
     # pyrefly: ignore [missing-import]
-    from ga_interface import GeneticAlgorithmInterface
+    from c_ga_interface import GeneticAlgorithmInterface
     # pyrefly: ignore [missing-import]
-    from ga_v1 import run_ga, fitness, calculate_portion_sizes_dynamic, local_search
+    from b_genetic_algorithm import run_ga, fitness, calculate_portion_sizes_dynamic, local_search
 except ImportError as e:
     print(f"Failed to import required modules: {e}")
     sys.exit(1)

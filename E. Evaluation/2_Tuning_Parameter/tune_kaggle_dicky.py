@@ -22,7 +22,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_
 sys.path.insert(0, os.path.join(project_root, 'C. System Flow'))
 sys.path.insert(0, os.path.join(project_root, 'D. Model', 'Genetic Algorithm'))
 
-from ga_dicky import run_ga_numpy as run_ga, local_search, calculate_total_nutrition_from_portions, fitness as ga_fitness
+from b_genetic_algorithm import run_ga_numpy as run_ga, local_search, calculate_total_nutrition_from_portions, fitness as ga_fitness
 from b_nutrition_service import NutritionService
 
 # KONFIGURASI TUNING
@@ -321,7 +321,7 @@ def main():
     objective = make_objective(all_case_data)
     
     # Masukkan config yg dipakai sekarang sebagai start
-    from ga_config import GA_PARAMS, LS_PARAMS
+    from a_ga_parameter import GA_PARAMS, LS_PARAMS
     EXISTING_PARAMS = {
         'pop_size': GA_PARAMS.get('pop_size', 110),
         'generations': GA_PARAMS.get('generations', 70),
