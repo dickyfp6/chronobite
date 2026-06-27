@@ -57,7 +57,7 @@ except Exception as e:
 # Special handling for Genetic Algorithm
 GeneticAlgorithmInterface = None
 try:
-    ga_path = os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Genetic Algorithm', 'ga_interface.py')
+    ga_path = os.path.join(os.path.dirname(__file__), '..', 'D. Model', 'Genetic Algorithm', 'c_ga_interface.py')
     spec = importlib.util.spec_from_file_location("ga_interface", ga_path)
     if spec is not None and spec.loader is not None:
         ga_module = importlib.util.module_from_spec(spec)
