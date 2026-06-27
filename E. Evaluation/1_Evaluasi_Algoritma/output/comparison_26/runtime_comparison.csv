@@ -1,0 +1,27 @@
+Profile,Greedy Runtime (s),GA Runtime (s)
+Normal,0.8873,78.2362
+Diabetes Melitus Tipe 2,2.6978,76.5144
+Hipertensi,2.4915,96.4181
+Penyakit Kardiovaskular,1.1414,63.4989
+Hiperkolesterolemia,1.6021,76.7074
+Penyakit Ginjal Kronis,2.438,73.2106
+DM2 + Hipertensi,3.6935,86.5993
+DM2 + CVD,3.0119,98.7813
+DM2 + Hiperkolesterolemia,2.7034,81.287
+DM2 + CKD,2.797,70.1117
+Hipertensi + CVD,2.2488,79.7789
+Hipertensi + Hiperkolesterolemia,2.5807,72.2624
+Hipertensi + CKD,2.6916,70.8099
+CVD + Hiperkolesterolemia,1.6103,53.8988
+CVD + CKD,1.506,45.0593
+Hiperkolesterolemia + CKD,1.5123,73.6402
+DM2 + Hipertensi + CVD,2.3511,57.7515
+DM2 + Hipertensi + Hiperkolesterolemia,2.7076,74.8442
+DM2 + Hipertensi + CKD,2.1647,49.4656
+DM2 + CVD + Hiperkolesterolemia,3.0243,41.5961
+DM2 + CVD + CKD,1.8713,44.5224
+DM2 + Hiperkolesterolemia + CKD,2.0911,59.3138
+Hipertensi + CVD + Hiperkolesterolemia,1.3944,70.2172
+Hipertensi + CVD + CKD,1.7827,66.2612
+Hipertensi + Hiperkolesterolemia + CKD,1.092,36.347
+CVD + Hiperkolesterolemia + CKD,1.1768,43.6206
