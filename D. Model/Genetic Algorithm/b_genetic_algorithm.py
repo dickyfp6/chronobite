@@ -231,7 +231,7 @@ NUTRIENT_WEIGHTS = {
 }
 
 # Duplicate penalty weight
-DUPLICATE_PENALTY_WEIGHT = 50.0  # Penalty for each duplicate food item
+DUPLICATE_PENALTY_WEIGHT = 5000.0  # Penalty for each duplicate food item
 
 # Nutrients excluded from soft penalty: conceptually wrong or data too sparse to be meaningful
 SKIP_SOFT_NUTRIENTS = {'water_g', 'fluoride_mg'}
@@ -1909,8 +1909,7 @@ def build_food_matrix(food_df: pd.DataFrame) -> Tuple[np.ndarray, List[str], pd.
     nutrient_cols = food_df.select_dtypes(include=[np.number]).columns.tolist()
     
     # Build matrix: shape (n_foods, n_nutrients)
-    food_matrix = food_df[nutrient_cols].values.astype(np.float64)
-    
+    food_matrix = food_df[nutrient_cols].fillna(0).values.astype(np.float64)    
     # Reset index for consistent indexing
     food_df_reset = food_df.reset_index(drop=True)
     
@@ -1928,7 +1927,7 @@ def _compute_grams_numpy(
     """
     energy_idx = nutrient_cols.index('energy_kcal')
     food_energies = selected_nutrients[:, energy_idx]
-    food_energies = np.where(food_energies <= 0, 1.0, food_energies)
+    food_energies = np.where((food_energies <= 0) | ~np.isfinite(food_energies), 1.0, food_energies)
 
     # Breakfast: main 14.375%, side 8.625%, drink 5.75%   → total 28.75%
     # Lunch:     main 16.875%, side 10.125%, drink 6.75%  → total 33.75%
@@ -1947,9 +1946,9 @@ def _compute_grams_numpy(
     grams = (target_energies / food_energies) * 100.0
 
     tdee_scale = min(tdee / 2000.0, 2.5)
-    main_min, main_max = 100.0, 350.0 * tdee_scale
-    side_min, side_max = 100.0, 200.0 * tdee_scale
-    drink_min, drink_max = 100.0, min(250.0 * tdee_scale, side_max)
+    main_min, main_max = 120.0, 350.0 * tdee_scale
+    side_min, side_max =  80.0, 200.0 * tdee_scale
+    drink_min, drink_max = 50.0, 150.0
     snack_min, snack_max = 30.0, 200.0 * tdee_scale
 
     min_grams = np.array([
@@ -1969,27 +1968,81 @@ def _compute_grams_numpy(
     if 'protein_g' in nutrient_cols:
         protein_idx = nutrient_cols.index('protein_g')
         protein_per_100g = selected_nutrients[:, protein_idx]
-        protein_limit = np.where(protein_per_100g > 20.0, 150.0,
-                                 np.where(protein_per_100g > 10.0, 200.0, float('inf')))
-        max_grams = np.minimum(max_grams, protein_limit)
+        # Protein limit hanya berlaku untuk slot main course (0, 3, 6)
+        # Side dish dan drink tidak dibatasi protein_limit
+        protein_limit = np.where(protein_per_100g > 20.0, 200.0,
+                                 np.where(protein_per_100g > 10.0, 250.0, float('inf')))
+        # Hanya apply ke slot main (index 0, 3, 6)
+        main_slots = np.array([True, False, False, True, False, False, True, False, False, False])
+        protein_limit_applied = np.where(main_slots, protein_limit, float('inf'))
+        max_grams = np.minimum(max_grams, protein_limit_applied)
 
-    clamped_grams = np.clip(grams, min_grams, max_grams)
-    clamped_grams = np.round(clamped_grams)
+    final_grams = np.zeros(10, dtype=np.float64)
 
-    # Hierarchy enforcement
-    clamped_grams = clamped_grams[np.newaxis, :]
-    epsilon = 1.0
+    # Snack: tidak ada hierarchy, clamp biasa
+    final_grams[9] = float(np.clip(round(grams[9]), snack_min, snack_max))
+
+    # Untuk setiap meal (breakfast=0,1,2 | lunch=3,4,5 | dinner=6,7,8)
     for m, s, d in [(0, 1, 2), (3, 4, 5), (6, 7, 8)]:
-        violation_side = clamped_grams[:, s] >= clamped_grams[:, m]
-        clamped_grams[violation_side, s] = np.maximum(min_grams[s], clamped_grams[violation_side, m] - epsilon)
-        violation_drink = clamped_grams[:, d] >= clamped_grams[:, m]
-        clamped_grams[violation_drink, d] = np.maximum(min_grams[d], clamped_grams[violation_drink, m] - epsilon)
-        max_non_main = np.maximum(clamped_grams[:, s], clamped_grams[:, d])
-        violation_main = clamped_grams[:, m] <= max_non_main
-        clamped_grams[violation_main, m] = np.minimum(max_grams[m], max_non_main[violation_main] + epsilon)
-    clamped_grams = clamped_grams[0]
+        energy_m = food_energies[m]
+        energy_s = food_energies[s]
+        energy_d = food_energies[d]
 
-    return clamped_grams
+        target_cal = target_energies[m] + target_energies[s] + target_energies[d]
+        target_mid = target_cal
+
+        best_error = float('inf')
+        m_max = min(main_max, max_grams[m])
+        s_max = min(side_max, max_grams[s])
+        d_max = min(drink_max, max_grams[d])
+        ideal_m = float(round(np.clip(grams[m], main_min, m_max)))
+        ideal_s = float(round(np.clip(min(grams[s], ideal_m - 1.0), side_min, side_max)))
+        ideal_d = float(round(np.clip(min(grams[d], ideal_s - 1.0), drink_min, drink_max)))
+        best = (ideal_m, ideal_s, ideal_d)
+
+        # Grid search atas main (step 5g supaya tidak terlalu lambat)
+        for mg in range(int(main_min), int(m_max) + 1, 5):
+            # side maksimal = main - 10, minimal side_min
+            s_upper = min(s_max, mg - 10.0)
+            if s_upper < side_min:
+                continue
+
+            # Hitung side ideal dari sisa target setelah main
+            cal_m = (mg * energy_m) / 100.0
+            remaining = target_mid - cal_m
+            if energy_s > 0:
+                ideal_s = (remaining * 0.60 / energy_s) * 100.0  # side dapat 60% dari sisa
+            else:
+                ideal_s = side_min
+            sg = float(round(max(side_min, min(s_upper, ideal_s))))
+
+            # drink maksimal = side - 10, minimal drink_min
+            d_upper = min(d_max, sg - 10.0)
+            if d_upper < drink_min:
+                continue
+
+            # Hitung drink ideal dari sisa kalori
+            cal_s = (sg * energy_s) / 100.0
+            remaining_d = target_mid - cal_m - cal_s
+            if energy_d > 0:
+                ideal_d = (remaining_d / energy_d) * 100.0
+            else:
+                ideal_d = drink_min
+            dg = float(round(max(drink_min, min(d_upper, ideal_d))))
+
+            # Hitung error dari target kalori
+            total_cal = cal_m + cal_s + (dg * energy_d / 100.0)
+            error = abs(total_cal - target_mid)
+
+            if error < best_error:
+                best_error = error
+                best = (float(mg), float(sg), float(dg))
+
+        final_grams[m] = best[0]
+        final_grams[s] = best[1]
+        final_grams[d] = best[2]
+
+    return final_grams
 
 def calculate_total_nutrition_numpy(
     indices: np.ndarray,
@@ -2260,8 +2313,9 @@ def indices_to_dataframe(
         clamped_grams = _compute_grams_numpy(selected_nutrients, nutrient_cols, tdee)
         result['gram'] = clamped_grams
         for idx, col in enumerate(nutrient_cols):
-            result[f'final_{col}'] = np.round(result[col].values * clamped_grams / 100.0, 2)
-                
+            result[f'final_{col}'] = np.round(
+                result[col].fillna(0).values * clamped_grams / 100.0, 2
+            )                
     else:
         result['gram'] = 100.0
         # Check nutrient columns in result and create final_* columns for consistency
@@ -3072,7 +3126,10 @@ def generate_meal_options(
         
         # Gabungkan candidates + dataset items (convert to Series list)
         for idx, row in dataset_items.iterrows():
-            candidates.append(row)  # row is already a pd.Series
+            if 'gram' not in row or pd.isna(row.get('gram')):
+                row = row.copy()
+                row['gram'] = 100.0
+            candidates.append(row)
         
         # ────────────────────────────────────────────────────────────────────
         # STEP 3: Hilangkan duplikat per slot (by food_name)

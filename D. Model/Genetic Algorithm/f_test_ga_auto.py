@@ -29,7 +29,12 @@ sys.path.insert(0, genetic_algorithm_path)
 # ============ MODE SWITCH ============
 # Set to True to use interactive input via CLI
 # Set to False to use hardcoded default values
-USE_INTERACTIVE_INPUT = False
+USE_INTERACTIVE_INPUT = True
+# ====================================
+
+# ============ AUTO MODE ============
+# Set True untuk auto-select semua opsi 1 tanpa interaksi
+AUTO_MODE = True
 # ====================================
 
 # Import GA engine
@@ -45,17 +50,17 @@ from a_ga_parameter import GA_PARAMS, LS_PARAMS
 # Import NutritionService
 try:
     from b_nutrition_service import NutritionService
-    print("[OK] NutritionService imported successfully")
+    print("✓ NutritionService imported successfully")
 except ImportError as e:
-    print(f"[ERROR] Cannot import NutritionService: {e}")
+    print(f"✗ Cannot import NutritionService: {e}")
     sys.exit(1)
 
 # Import input handler
 try:
     from modules.c_input_handler import get_user_input
-    print("[OK] Input handler imported successfully")
+    print("✓ Input handler imported successfully")
 except ImportError as e:
-    print(f"[ERROR] Cannot import input handler: {e}")
+    print(f"✗ Cannot import input handler: {e}")
     sys.exit(1)
 
 
@@ -65,21 +70,21 @@ except ImportError as e:
 
 AUTO_PROFILES = [
     # Normal & Single Disease — profil 1
-    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['normal'], 'food_preferences': []},
-    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['dm2'], 'food_preferences': []},
-    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['hypertension'], 'food_preferences': []},
-    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['cvd'], 'food_preferences': []},
-    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['cholesterol'], 'food_preferences': []},
-    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.7, 'disease': ['ckd'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['normal'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['dm2'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['hypertension'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['cvd'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['cholesterol'], 'food_preferences': []},
+    {'gender': 'M', 'age': 28, 'weight': 68.0, 'height': 178.0, 'activity_factor': 1.845, 'disease': ['ckd'], 'food_preferences': []},
     # Dual Disease — profil 2
-    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.4, 'disease': ['dm2', 'hypertension'], 'food_preferences': []},
-    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.4, 'disease': ['dm2', 'cholesterol'], 'food_preferences': []},
-    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.4, 'disease': ['hypertension', 'cvd'], 'food_preferences': []},
-    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.4, 'disease': ['ckd', 'hypertension'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['dm2', 'hypertension'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['dm2', 'cholesterol'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['hypertension', 'cvd'], 'food_preferences': []},
+    {'gender': 'F', 'age': 55, 'weight': 83.0, 'height': 162.0, 'activity_factor': 1.545, 'disease': ['ckd', 'hypertension'], 'food_preferences': []},
     # Triple Disease — profil 3
-    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.0, 'disease': ['dm2', 'hypertension', 'cholesterol'], 'food_preferences': []},
-    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.0, 'disease': ['ckd', 'dm2', 'hypertension'], 'food_preferences': []},
-    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.0, 'disease': ['hypertension', 'cholesterol', 'cvd'], 'food_preferences': []},
+    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['dm2', 'hypertension', 'cholesterol'], 'food_preferences': []},
+    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['ckd', 'dm2', 'hypertension'], 'food_preferences': []},
+    {'gender': 'M', 'age': 34, 'weight': 51.0, 'height': 178.0, 'activity_factor': 2.2, 'disease': ['hypertension', 'cholesterol', 'cvd'], 'food_preferences': []},
 ]
 
 
@@ -113,7 +118,7 @@ def calculate_fulfillment_percentage(value, min_val, max_val):
         percent = (value / min_val * 100) if min_val > 0 else 0
     elif value > max_val:
         # Above maximum - calculate excess percentage
-        percent = (value / max_val * 100) if value > 0 else 0
+        percent = (max_val / value * 100) if value > 0 else 0
     else:
         # Within range - 100%
         percent = 100.0
@@ -202,7 +207,7 @@ def get_simple_user_input(interactive=False):
         age = int(input("Age (18-100) [25]: ").strip() or "25")
         weight = float(input("Weight (kg) [70]: ").strip() or "70")
         height = float(input("Height (cm) [170]: ").strip() or "170")
-        activity = input("Activity Factor (1.4-2.0) [1.55]: ").strip() or "1.55"
+        activity = input("Activity Factor (1.4-2.2) [1.55]: ").strip() or "1.55"
         activity_factor = float(activity)
         
         print("\nHealth Conditions (comma-separated):")
@@ -222,8 +227,8 @@ def get_simple_user_input(interactive=False):
         weight = 70.0
         height = 170.0
         activity_factor = 1.55
-        disease = ["dm2", "hypertension", "cvd"]
-        food_preferences = []  # Default preferences
+        disease = ["normal"]
+        food_preferences = ["Asian", "Western"]
     
     user_input = {
         'gender': gender,
@@ -656,8 +661,8 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         for nutrient_key, constraint in sorted(guidelines['hard'].items()):
             min_val = constraint.get('min', 0)
             max_val = constraint.get('max', float('inf'))
-            max_str = "∞" if max_val == float('inf') else f"{max_val:.5f}"
-            range_str = f"{min_val:.5f} – {max_str}"
+            max_str = "∞" if max_val == float('inf') else f"{max_val:.1f}"
+            range_str = f"{min_val:.1f} – {max_str}"
             
             # Lookup aktual dari total_nutrition
             actual = lookup_nutrition(total_nutrition, nutrient_key, HARD_NUTRIENT_KEY_MAP)
@@ -665,7 +670,7 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
             if actual is not None:
                 pct = calculate_fulfillment_percentage(actual, min_val, max_val)
                 pct_str = f"{pct:.1f}%"
-                actual_str = f"{actual:.5f}"
+                actual_str = f"{actual:.1f}"
                 
                 # Determine status: OVER LIMIT, BELOW MIN, or OK
                 if actual > max_val:
@@ -725,8 +730,8 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         for nutrient_key, constraint in sorted(guidelines['soft'].items()):
             min_val = constraint.get('min', 0)
             max_val = constraint.get('max', float('inf'))
-            max_str = "∞" if max_val == float('inf') else f"{max_val:.5f}"
-            target_str = f"{min_val:.5f} – {max_str}"
+            max_str = "∞" if max_val == float('inf') else f"{max_val:.1f}"
+            target_str = f"{min_val:.1f} – {max_str}"
             
             actual = lookup_nutrition(total_nutrition, nutrient_key, SOFT_NUTRIENT_KEY_MAP)
             
@@ -735,10 +740,10 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
                 status_text, _, _ = get_status_category(pct)
                 # Fix: jika actual sangat kecil (< 0.01 dan != 0), gunakan 4 desimal
                 if actual != 0 and actual < 0.01:
-                    actual_str = f"{actual:.5f}"
+                    actual_str = f"{actual:.4f}"
                 else:
-                    actual_str = f"{actual:.5f}"
-                pct_str = f"{pct:.5f}%"
+                    actual_str = f"{actual:.2f}"
+                pct_str = f"{pct:.1f}%"
             else:
                 status_text = "—"
                 actual_str = "N/A"
@@ -797,7 +802,7 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
             ('Best Fitness Score (GA Penalty)', fitness_str),
             ('Keterangan Fitness', 'Lower = Better (Scale: macro×5000 + hard×10000 + soft×100)'),
             ('Hard Constraints Terpenuhi', f"{hard_constraints_passed} / {total_hard_constraints}"),
-            ('Constraint Satisfaction Rate (CSR)', f"{csr:.5f}%"),
+            ('Constraint Satisfaction Rate (CSR)', f"{csr:.1f}%"),
         ]
         
         for label, value in performance_data:
@@ -829,7 +834,7 @@ def export_to_excel(filename, user_input, nutrition_result, guidelines_all,
         return False
 
 
-def test_ga_with_nutrition_service():
+def test_ga_with_nutrition_service(user_input):
     """
     Main flow: User input → NutritionService → GA → Output
     
@@ -839,18 +844,14 @@ def test_ga_with_nutrition_service():
         3. Extract food_df dan guidelines
         4. Run GA
         5. Display hasil
+    
+    Args:
+        user_input: Dict dengan user profile (untuk auto mode)
     """
     
     try:
         # STEP 1: Get user input
         print("\nSTEP 1: Get user input...")
-        
-        if USE_INTERACTIVE_INPUT:
-            # Use interactive input handler from modules
-            user_input = get_user_input()
-        else:
-            # Use default values (fallback)
-            user_input = get_simple_user_input(interactive=False)
         
         print("\n✓ User input received")
         print(f"  Gender: {user_input['gender']}")
@@ -944,15 +945,6 @@ def test_ga_with_nutrition_service():
         print("STEP 5.5: Local Search - Fine-tuning GA Result...")
         print("="*70)
         
-        best_solution = local_search(
-            solution=best_solution,
-            food_df=food_df,
-            guidelines=guidelines,
-            tdee=tdee,
-            **LS_PARAMS,
-            verbose=True,  # Show improvements
-            deadline=None
-        )
         print("✓ Local search optimization complete")
         
         # STEP 6: Display hasil
@@ -1030,25 +1022,31 @@ def test_ga_with_nutrition_service():
                 print(f"{i}. {food_name:30} | Energy: {energy:6.1f} kcal | Protein: {protein:5.1f}g")
             
             # Get user choice
-            while True:
-                try:
-                    choice_str = input(f"\nPilih opsi (1-{len(options)}) [default=1]: ").strip()
-                    
-                    # Default to 1 jika user tekan Enter
-                    if choice_str == "":
-                        choice = 0
-                    else:
-                        choice = int(choice_str) - 1
-                    
-                    if 0 <= choice < len(options):
-                        selected_item = options[choice].copy()
-                        selected_meal.append(selected_item)
-                        print(f"✓ {options[choice].get('food_name', 'Unknown')} dipilih")
-                        break
-                    else:
-                        print(f"✗ Pilih antara 1-{len(options)}")
-                except ValueError:
-                    print("✗ Input harus berupa angka")
+            if AUTO_MODE:
+                choice = 0  # Auto pilih opsi 1
+                selected_item = options[0].copy()
+                selected_meal.append(selected_item)
+                print(f"[AUTO] {options[0].get('food_name', 'Unknown')} dipilih")
+            else:
+                while True:
+                    try:
+                        choice_str = input(f"\nPilih opsi (1-{len(options)}) [default=1]: ").strip()
+                        
+                        # Default to 1 jika user tekan Enter
+                        if choice_str == "":
+                            choice = 0
+                        else:
+                            choice = int(choice_str) - 1
+                        
+                        if 0 <= choice < len(options):
+                            selected_item = options[choice].copy()
+                            selected_meal.append(selected_item)
+                            print(f"✓ {options[choice].get('food_name', 'Unknown')} dipilih")
+                            break
+                        else:
+                            print(f"✗ Pilih antara 1-{len(options)}")
+                    except ValueError:
+                        print("✗ Input harus berupa angka")
         
         # Convert selected meals ke DataFrame
         print("\n" + "="*70)
@@ -1057,17 +1055,6 @@ def test_ga_with_nutrition_service():
         
         if len(selected_meal) == CHROMOSOME_SIZE:
             selected_df = pd.DataFrame(selected_meal).reset_index(drop=True)
-
-            # [FIX] ga_dicky's run_ga_numpy/local_search sudah nempelin kolom gram & final_*
-            # ke tiap row (pre-portioned). Tapi opsi alternatif dari food_df (dataset_items
-            # di generate_meal_options) TIDAK punya kolom itu. Kalau user pilih campuran
-            # GA-item & dataset-item, selected_df jadi punya gram/final_* yang sebagian NaN,
-            # dan calculate_total_nutrition() di ga_dicky akan salah hitung (treat NaN sbg 0).
-            # Drop dulu di sini, biar dihitung ulang bersih dari kolom mentah @100g,
-            # lalu calculate_portion_sizes_dynamic() di STEP 10 yang bikin gram/final_* final.
-            cols_to_drop = ['gram'] + [c for c in selected_df.columns if c.startswith('final_')]
-            selected_df = selected_df.drop(columns=cols_to_drop, errors='ignore')
-
             print(f"✓ {len(selected_df)} items dipilih dari {CHROMOSOME_SIZE} slots")
             
             # Calculate total nutrition dari selected meals
@@ -1101,16 +1088,19 @@ def test_ga_with_nutrition_service():
             # ════════════════════════════════════════════════════════════════════════
             # STEP 10: PORTION SIZING - Calculate portion sizes dynamically (MEAL-BASED + DEFICIT-AWARE)
             # ════════════════════════════════════════════════════════════════════════
-            portion_result_df = calculate_portion_sizes_dynamic(selected_df, tdee, guidelines)
-            display_portion_summary_dynamic(portion_result_df, guidelines, tdee)
-            
+            portion_result_df = selected_df  # sudah diportioning oleh indices_to_dataframe di ga_v3
+            total_nutrition = calculate_total_nutrition_from_portions(portion_result_df)            
             # ════════════════════════════════════════════════════════════════════════
             # STEP 11: EXPORT HASIL KE EXCEL
             # ════════════════════════════════════════════════════════════════════════
-            excel_filename = input("\nMasukkan nama file Excel output (tanpa .xlsx): ").strip()
-            if not excel_filename:
-                excel_filename = "hasil_meal_plan"
-            excel_filename += ".xlsx"
+            if AUTO_MODE:
+                disease_str = "_".join(user_input['disease'])
+                excel_filename = f"auto_{disease_str}.xlsx"
+            else:
+                excel_filename = input("\nMasukkan nama file Excel output (tanpa .xlsx): ").strip()
+                if not excel_filename:
+                    excel_filename = "hasil_meal_plan"
+                excel_filename += ".xlsx"
             
             # Set output path to current directory (D. Model/Genetic Algorithm)
             output_dir = os.path.dirname(os.path.abspath(__file__))
@@ -1153,4 +1143,22 @@ def test_ga_with_nutrition_service():
 
 
 if __name__ == "__main__":
-    test_ga_with_nutrition_service()
+    print("\n" + "="*70)
+    print("AUTO MODE: Running 13 predefined profiles")
+    print("="*70)
+    
+    for profile_idx, profile in enumerate(AUTO_PROFILES, 1):
+        print(f"\n{'█'*70}")
+        print(f"PROFILE {profile_idx} / {len(AUTO_PROFILES)}")
+        print(f"Disease: {profile['disease']}")
+        print(f"{'█'*70}")
+        
+        test_ga_with_nutrition_service(profile)
+        
+        print(f"\n{'─'*70}")
+        print(f"Profile {profile_idx} selesai. Melanjutkan ke profile berikutnya...")
+        print(f"{'─'*70}")
+    
+    print("\n" + "="*70)
+    print("✓ SEMUA 13 PROFIL TELAH DIPROSES DENGAN SUKSES")
+    print("="*70)
