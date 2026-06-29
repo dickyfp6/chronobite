@@ -2091,7 +2091,7 @@ def run_ga(
     mutation_rate: float = 0.3,
     verbose: bool = True,
     deadline: Optional[float] = None
-) -> Tuple[pd.DataFrame, List[pd.DataFrame]]:
+) -> Tuple[pd.DataFrame, List[pd.DataFrame], List[float]]:
     """
     Jalankan Genetic Algorithm untuk mencari optimal meal plan
     
@@ -2162,7 +2162,7 @@ def run_ga(
     # Track best solution ever found
     best_solution = population[0].copy()
     best_fitness = fitness(best_solution, guidelines, tdee=tdee)
-    
+    fitness_history = []
     
     # ════════════════════════════════════════════════════════════════════════
     # STEP 2 - MAIN GA LOOP
@@ -2193,6 +2193,7 @@ def run_ga(
         
         # 2c. Track best solution
         if fitness_scores[0] < best_fitness:
+            fitness_history.append(fitness_scores[0])
             best_fitness = fitness_scores[0]
             best_solution = population[0].copy()
         
@@ -2278,8 +2279,7 @@ def run_ga(
         print(f"Top {num_top_solutions} solutions selected for options")
         print(f"{'='*50}\n")
     
-    return best_solution, top_solutions
-
+    return best_solution, top_solutions, fitness_history
 
 # ═════════════════════════════════════════════════════════════════════════════
 # 6.1 RUN_GA_NUMPY - Optimized GA using numpy arrays (PERFORMANCE VERSION)
@@ -2345,7 +2345,7 @@ def run_ga_numpy(
     ls_iterations=30,
     verbose: bool = True,
     deadline: Optional[float] = None
-) -> Tuple[pd.DataFrame, List[pd.DataFrame]]:
+) -> Tuple[pd.DataFrame, List[pd.DataFrame], List[float]]:
     """
     Optimized GA using numpy arrays for fast evaluation (PERFORMANCE VERSION)
     
@@ -2561,7 +2561,7 @@ def run_ga_numpy(
     if verbose:
         print(f"Top {num_top_solutions} solutions selected for options\n")
     
-    return best_solution, top_solutions_df
+    return best_solution, top_solutions_df, fitness_history
 
 
 # ═════════════════════════════════════════════════════════════════════════════

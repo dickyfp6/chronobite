@@ -220,7 +220,7 @@ class GeneticAlgorithmInterface:
         print(f"   TDEE Target: {tdee:.0f} kcal")
         
         try:
-            best_solution, top_solutions = run_ga(
+            best_solution, top_solutions, _ = run_ga(
                 food_df=self.food_db,
                 guidelines=self.constraint_bag,
                 tdee=tdee,

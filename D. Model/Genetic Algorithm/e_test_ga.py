@@ -929,7 +929,7 @@ def test_ga_with_nutrition_service():
         print("STEP 5: Run Genetic Algorithm...")
         print("="*70)
         
-        best_solution, top_solutions = run_ga(
+        best_solution, top_solutions, _ = run_ga(
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
