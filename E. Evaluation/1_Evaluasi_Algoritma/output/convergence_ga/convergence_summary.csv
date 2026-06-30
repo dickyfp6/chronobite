@@ -1,0 +1,3901 @@
+Profile,Group,Generation,Mean Fitness,Std Fitness
+Normal,Normal,1,41353.26,3109.91
+Normal,Normal,2,40428.83,2786.93
+Normal,Normal,3,31636.97,5388.15
+Normal,Normal,4,26173.68,5877.29
+Normal,Normal,5,20773.52,4836.17
+Normal,Normal,6,18988.21,3306.65
+Normal,Normal,7,13227.58,2860.66
+Normal,Normal,8,10945.66,2546.82
+Normal,Normal,9,10596.0,2605.77
+Normal,Normal,10,9566.18,1480.37
+Normal,Normal,11,8556.07,943.15
+Normal,Normal,12,7501.99,1944.5
+Normal,Normal,13,7380.28,1942.22
+Normal,Normal,14,6775.67,1410.7
+Normal,Normal,15,6733.93,1426.2
+Normal,Normal,16,6313.84,1476.49
+Normal,Normal,17,6207.1,1584.16
+Normal,Normal,18,6207.1,1584.16
+Normal,Normal,19,6018.6,1332.24
+Normal,Normal,20,5792.36,1462.8
+Normal,Normal,21,5738.4,1389.68
+Normal,Normal,22,5646.03,1265.4
+Normal,Normal,23,4876.37,629.33
+Normal,Normal,24,4295.37,743.82
+Normal,Normal,25,4295.37,743.82
+Normal,Normal,26,4200.5,659.96
+Normal,Normal,27,3750.5,286.62
+Normal,Normal,28,3367.08,788.02
+Normal,Normal,29,2963.21,913.25
+Normal,Normal,30,2480.33,797.87
+Normal,Normal,31,2213.98,1121.36
+Normal,Normal,32,2200.29,1138.87
+Normal,Normal,33,2147.21,1207.3
+Normal,Normal,34,2145.6,1209.4
+Normal,Normal,35,2018.96,1340.6
+Normal,Normal,36,2018.96,1340.6
+Normal,Normal,37,1984.57,1385.69
+Normal,Normal,38,1984.57,1385.69
+Normal,Normal,39,1833.74,1370.86
+Normal,Normal,40,1770.9,1374.43
+Normal,Normal,41,1770.9,1374.43
+Normal,Normal,42,1758.0,1375.88
+Normal,Normal,43,1758.0,1375.88
+Normal,Normal,44,1758.0,1375.88
+Normal,Normal,45,1758.0,1375.88
+Normal,Normal,46,1758.0,1375.88
+Normal,Normal,47,1635.98,1401.25
+Normal,Normal,48,1635.98,1401.25
+Normal,Normal,49,1635.98,1401.25
+Normal,Normal,50,1635.98,1401.25
+Normal,Normal,51,1635.98,1401.25
+Normal,Normal,52,1475.43,1465.25
+Normal,Normal,53,1475.43,1465.25
+Normal,Normal,54,1475.43,1465.25
+Normal,Normal,55,1475.43,1465.25
+Normal,Normal,56,1475.43,1465.25
+Normal,Normal,57,1458.2,1480.81
+Normal,Normal,58,1458.2,1480.81
+Normal,Normal,59,1458.2,1480.81
+Normal,Normal,60,1458.2,1480.81
+Normal,Normal,61,1458.2,1480.81
+Normal,Normal,62,1458.2,1480.81
+Normal,Normal,63,1458.2,1480.81
+Normal,Normal,64,1458.2,1480.81
+Normal,Normal,65,1452.1,1486.38
+Normal,Normal,66,882.34,708.41
+Normal,Normal,67,875.97,715.53
+Normal,Normal,68,875.97,715.53
+Normal,Normal,69,875.97,715.53
+Normal,Normal,70,856.34,737.74
+Normal,Normal,71,856.34,737.74
+Normal,Normal,72,856.34,737.74
+Normal,Normal,73,854.32,740.04
+Normal,Normal,74,854.32,740.04
+Normal,Normal,75,854.32,740.04
+Normal,Normal,76,854.32,740.04
+Normal,Normal,77,854.32,740.04
+Normal,Normal,78,854.32,740.04
+Normal,Normal,79,788.12,655.56
+Normal,Normal,80,788.12,655.56
+Normal,Normal,81,788.12,655.56
+Normal,Normal,82,734.98,663.43
+Normal,Normal,83,713.24,634.78
+Normal,Normal,84,713.24,634.78
+Normal,Normal,85,713.24,634.78
+Normal,Normal,86,713.24,634.78
+Normal,Normal,87,713.24,634.78
+Normal,Normal,88,713.24,634.78
+Normal,Normal,89,713.24,634.78
+Normal,Normal,90,713.24,634.78
+Normal,Normal,91,713.24,634.78
+Normal,Normal,92,713.07,634.97
+Normal,Normal,93,713.07,634.97
+Normal,Normal,94,713.07,634.97
+Normal,Normal,95,713.07,634.97
+Normal,Normal,96,633.52,660.57
+Normal,Normal,97,633.52,660.57
+Normal,Normal,98,633.52,660.57
+Normal,Normal,99,633.52,660.57
+Normal,Normal,100,600.22,676.58
+Normal,Normal,101,600.22,676.58
+Normal,Normal,102,600.22,676.58
+Normal,Normal,103,600.22,676.58
+Normal,Normal,104,600.22,676.58
+Normal,Normal,105,600.14,676.64
+Normal,Normal,106,600.14,676.64
+Normal,Normal,107,600.14,676.64
+Normal,Normal,108,600.14,676.64
+Normal,Normal,109,600.14,676.64
+Normal,Normal,110,600.14,676.64
+Normal,Normal,111,600.14,676.64
+Normal,Normal,112,600.14,676.64
+Normal,Normal,113,600.14,676.64
+Normal,Normal,114,600.14,676.64
+Normal,Normal,115,600.14,676.64
+Normal,Normal,116,566.67,695.58
+Normal,Normal,117,566.67,695.58
+Normal,Normal,118,566.67,695.58
+Normal,Normal,119,566.67,695.58
+Normal,Normal,120,566.67,695.58
+Normal,Normal,121,566.67,695.58
+Normal,Normal,122,566.67,695.58
+Normal,Normal,123,566.67,695.58
+Normal,Normal,124,566.67,695.58
+Normal,Normal,125,566.67,695.58
+Normal,Normal,126,565.55,696.48
+Normal,Normal,127,565.55,696.48
+Normal,Normal,128,565.55,696.48
+Normal,Normal,129,565.55,696.48
+Normal,Normal,130,565.55,696.48
+Normal,Normal,131,565.55,696.48
+Normal,Normal,132,565.55,696.48
+Normal,Normal,133,565.55,696.48
+Normal,Normal,134,565.55,696.48
+Normal,Normal,135,565.55,696.48
+Normal,Normal,136,565.55,696.48
+Normal,Normal,137,565.55,696.48
+Normal,Normal,138,565.55,696.48
+Normal,Normal,139,565.55,696.48
+Normal,Normal,140,565.55,696.48
+Normal,Normal,141,565.55,696.48
+Normal,Normal,142,565.55,696.48
+Normal,Normal,143,565.52,696.5
+Normal,Normal,144,565.52,696.5
+Normal,Normal,145,565.52,696.5
+Normal,Normal,146,565.52,696.5
+Normal,Normal,147,565.52,696.5
+Normal,Normal,148,565.52,696.5
+Normal,Normal,149,565.52,696.5
+Normal,Normal,150,565.52,696.5
+Diabetes Melitus Tipe 2,Single,1,61267.74,5364.6
+Diabetes Melitus Tipe 2,Single,2,46272.93,11789.56
+Diabetes Melitus Tipe 2,Single,3,36655.03,4983.3
+Diabetes Melitus Tipe 2,Single,4,36655.03,4983.3
+Diabetes Melitus Tipe 2,Single,5,35630.28,4467.06
+Diabetes Melitus Tipe 2,Single,6,29420.73,2325.93
+Diabetes Melitus Tipe 2,Single,7,26706.84,2218.16
+Diabetes Melitus Tipe 2,Single,8,24628.6,1192.07
+Diabetes Melitus Tipe 2,Single,9,22401.83,1958.22
+Diabetes Melitus Tipe 2,Single,10,20327.25,2628.47
+Diabetes Melitus Tipe 2,Single,11,19054.21,1203.33
+Diabetes Melitus Tipe 2,Single,12,18232.87,998.06
+Diabetes Melitus Tipe 2,Single,13,17985.38,1178.56
+Diabetes Melitus Tipe 2,Single,14,15492.0,1341.88
+Diabetes Melitus Tipe 2,Single,15,15346.95,1136.9
+Diabetes Melitus Tipe 2,Single,16,15346.95,1136.9
+Diabetes Melitus Tipe 2,Single,17,14645.93,349.6
+Diabetes Melitus Tipe 2,Single,18,13984.48,1237.69
+Diabetes Melitus Tipe 2,Single,19,13984.48,1237.69
+Diabetes Melitus Tipe 2,Single,20,13795.26,1502.34
+Diabetes Melitus Tipe 2,Single,21,13731.39,1591.9
+Diabetes Melitus Tipe 2,Single,22,12479.44,744.19
+Diabetes Melitus Tipe 2,Single,23,12479.44,744.19
+Diabetes Melitus Tipe 2,Single,24,12384.85,746.69
+Diabetes Melitus Tipe 2,Single,25,12022.06,1247.94
+Diabetes Melitus Tipe 2,Single,26,11656.29,991.47
+Diabetes Melitus Tipe 2,Single,27,11545.87,896.11
+Diabetes Melitus Tipe 2,Single,28,11389.24,812.1
+Diabetes Melitus Tipe 2,Single,29,11389.24,812.1
+Diabetes Melitus Tipe 2,Single,30,11375.05,797.96
+Diabetes Melitus Tipe 2,Single,31,11188.51,769.5
+Diabetes Melitus Tipe 2,Single,32,11119.91,852.06
+Diabetes Melitus Tipe 2,Single,33,11064.93,855.49
+Diabetes Melitus Tipe 2,Single,34,11064.93,855.49
+Diabetes Melitus Tipe 2,Single,35,11053.94,841.42
+Diabetes Melitus Tipe 2,Single,36,11053.94,841.42
+Diabetes Melitus Tipe 2,Single,37,11053.94,841.42
+Diabetes Melitus Tipe 2,Single,38,11053.94,841.42
+Diabetes Melitus Tipe 2,Single,39,11053.94,841.42
+Diabetes Melitus Tipe 2,Single,40,11053.94,841.42
+Diabetes Melitus Tipe 2,Single,41,11053.94,841.42
+Diabetes Melitus Tipe 2,Single,42,10986.43,854.54
+Diabetes Melitus Tipe 2,Single,43,10760.01,1115.92
+Diabetes Melitus Tipe 2,Single,44,10760.01,1115.92
+Diabetes Melitus Tipe 2,Single,45,10760.01,1115.92
+Diabetes Melitus Tipe 2,Single,46,10760.01,1115.92
+Diabetes Melitus Tipe 2,Single,47,10760.01,1115.92
+Diabetes Melitus Tipe 2,Single,48,10752.75,1107.01
+Diabetes Melitus Tipe 2,Single,49,10682.56,1111.37
+Diabetes Melitus Tipe 2,Single,50,10623.09,1121.94
+Diabetes Melitus Tipe 2,Single,51,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,52,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,53,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,54,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,55,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,56,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,57,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,58,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,59,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,60,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,61,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,62,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,63,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,64,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,65,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,66,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,67,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,68,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,69,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,70,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,71,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,72,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,73,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,74,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,75,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,76,10497.38,957.62
+Diabetes Melitus Tipe 2,Single,77,10455.9,1005.89
+Diabetes Melitus Tipe 2,Single,78,10455.9,1005.89
+Diabetes Melitus Tipe 2,Single,79,10455.9,1005.89
+Diabetes Melitus Tipe 2,Single,80,10296.55,1199.99
+Diabetes Melitus Tipe 2,Single,81,10296.55,1199.99
+Diabetes Melitus Tipe 2,Single,82,10296.55,1199.99
+Diabetes Melitus Tipe 2,Single,83,10296.55,1199.99
+Diabetes Melitus Tipe 2,Single,84,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,85,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,86,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,87,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,88,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,89,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,90,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,91,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,92,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,93,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,94,10272.11,1199.09
+Diabetes Melitus Tipe 2,Single,95,10122.14,1022.4
+Diabetes Melitus Tipe 2,Single,96,10122.14,1022.4
+Diabetes Melitus Tipe 2,Single,97,10122.14,1022.4
+Diabetes Melitus Tipe 2,Single,98,10122.14,1022.4
+Diabetes Melitus Tipe 2,Single,99,10122.14,1022.4
+Diabetes Melitus Tipe 2,Single,100,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,101,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,102,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,103,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,104,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,105,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,106,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,107,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,108,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,109,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,110,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,111,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,112,9689.16,645.65
+Diabetes Melitus Tipe 2,Single,113,9536.28,567.51
+Diabetes Melitus Tipe 2,Single,114,9536.28,567.51
+Diabetes Melitus Tipe 2,Single,115,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,116,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,117,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,118,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,119,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,120,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,121,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,122,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,123,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,124,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,125,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,126,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,127,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,128,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,129,9476.34,562.47
+Diabetes Melitus Tipe 2,Single,130,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,131,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,132,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,133,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,134,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,135,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,136,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,137,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,138,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,139,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,140,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,141,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,142,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,143,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,144,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,145,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,146,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,147,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,148,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,149,9470.55,562.66
+Diabetes Melitus Tipe 2,Single,150,9470.55,562.66
+Hipertensi,Single,1,47957.44,3907.44
+Hipertensi,Single,2,37491.13,4894.01
+Hipertensi,Single,3,33933.53,3302.67
+Hipertensi,Single,4,30890.18,1754.88
+Hipertensi,Single,5,26268.7,3115.56
+Hipertensi,Single,6,21182.94,5315.67
+Hipertensi,Single,7,20112.93,3850.25
+Hipertensi,Single,8,19307.72,2781.45
+Hipertensi,Single,9,17522.54,2739.07
+Hipertensi,Single,10,15948.08,1324.85
+Hipertensi,Single,11,15948.08,1324.85
+Hipertensi,Single,12,15101.43,2200.62
+Hipertensi,Single,13,12077.47,3206.71
+Hipertensi,Single,14,11070.07,2435.87
+Hipertensi,Single,15,10972.49,2377.92
+Hipertensi,Single,16,10627.66,2122.57
+Hipertensi,Single,17,10045.89,2653.63
+Hipertensi,Single,18,10045.89,2653.63
+Hipertensi,Single,19,9312.07,2220.78
+Hipertensi,Single,20,9021.24,1936.56
+Hipertensi,Single,21,9021.24,1936.56
+Hipertensi,Single,22,8236.78,1363.62
+Hipertensi,Single,23,7750.8,1106.12
+Hipertensi,Single,24,7495.55,1283.64
+Hipertensi,Single,25,7232.23,1250.33
+Hipertensi,Single,26,6827.14,781.81
+Hipertensi,Single,27,6683.95,657.03
+Hipertensi,Single,28,6237.23,738.27
+Hipertensi,Single,29,5877.0,366.39
+Hipertensi,Single,30,5877.0,366.39
+Hipertensi,Single,31,5497.4,397.58
+Hipertensi,Single,32,5497.4,397.58
+Hipertensi,Single,33,5470.17,360.72
+Hipertensi,Single,34,5193.54,119.75
+Hipertensi,Single,35,5193.54,119.75
+Hipertensi,Single,36,5193.54,119.75
+Hipertensi,Single,37,5193.54,119.75
+Hipertensi,Single,38,5193.54,119.75
+Hipertensi,Single,39,5193.54,119.75
+Hipertensi,Single,40,5193.54,119.75
+Hipertensi,Single,41,5193.54,119.75
+Hipertensi,Single,42,5193.54,119.75
+Hipertensi,Single,43,4778.91,643.46
+Hipertensi,Single,44,4778.91,643.46
+Hipertensi,Single,45,4778.91,643.46
+Hipertensi,Single,46,4778.91,643.46
+Hipertensi,Single,47,4778.91,643.46
+Hipertensi,Single,48,4778.91,643.46
+Hipertensi,Single,49,4778.91,643.46
+Hipertensi,Single,50,4778.91,643.46
+Hipertensi,Single,51,4778.91,643.46
+Hipertensi,Single,52,4778.91,643.46
+Hipertensi,Single,53,4778.91,643.46
+Hipertensi,Single,54,4739.58,698.33
+Hipertensi,Single,55,4739.58,698.33
+Hipertensi,Single,56,4540.43,564.94
+Hipertensi,Single,57,4540.43,564.94
+Hipertensi,Single,58,4540.43,564.94
+Hipertensi,Single,59,4540.43,564.94
+Hipertensi,Single,60,4540.43,564.94
+Hipertensi,Single,61,4540.43,564.94
+Hipertensi,Single,62,4540.43,564.94
+Hipertensi,Single,63,4540.43,564.94
+Hipertensi,Single,64,4540.43,564.94
+Hipertensi,Single,65,4540.43,564.94
+Hipertensi,Single,66,4540.43,564.94
+Hipertensi,Single,67,4540.43,564.94
+Hipertensi,Single,68,4540.43,564.94
+Hipertensi,Single,69,4272.14,408.41
+Hipertensi,Single,70,4222.8,412.46
+Hipertensi,Single,71,4222.8,412.46
+Hipertensi,Single,72,4190.99,448.67
+Hipertensi,Single,73,4190.99,448.67
+Hipertensi,Single,74,4190.99,448.67
+Hipertensi,Single,75,4190.99,448.67
+Hipertensi,Single,76,4190.99,448.67
+Hipertensi,Single,77,4190.99,448.67
+Hipertensi,Single,78,4190.99,448.67
+Hipertensi,Single,79,4190.99,448.67
+Hipertensi,Single,80,3797.96,959.51
+Hipertensi,Single,81,3797.96,959.51
+Hipertensi,Single,82,3797.96,959.51
+Hipertensi,Single,83,3797.96,959.51
+Hipertensi,Single,84,3797.96,959.51
+Hipertensi,Single,85,3797.96,959.51
+Hipertensi,Single,86,3797.96,959.51
+Hipertensi,Single,87,3797.96,959.51
+Hipertensi,Single,88,3797.96,959.51
+Hipertensi,Single,89,3797.96,959.51
+Hipertensi,Single,90,3624.62,1197.61
+Hipertensi,Single,91,3624.62,1197.61
+Hipertensi,Single,92,3624.62,1197.61
+Hipertensi,Single,93,3624.62,1197.61
+Hipertensi,Single,94,3544.91,1307.97
+Hipertensi,Single,95,3544.91,1307.97
+Hipertensi,Single,96,3544.91,1307.97
+Hipertensi,Single,97,3544.91,1307.97
+Hipertensi,Single,98,3544.91,1307.97
+Hipertensi,Single,99,3544.91,1307.97
+Hipertensi,Single,100,3544.91,1307.97
+Hipertensi,Single,101,3544.91,1307.97
+Hipertensi,Single,102,3463.4,1235.02
+Hipertensi,Single,103,3252.17,1531.85
+Hipertensi,Single,104,3252.17,1531.85
+Hipertensi,Single,105,3252.17,1531.85
+Hipertensi,Single,106,3252.17,1531.85
+Hipertensi,Single,107,3252.17,1531.85
+Hipertensi,Single,108,3252.17,1531.85
+Hipertensi,Single,109,3252.17,1531.85
+Hipertensi,Single,110,3252.17,1531.85
+Hipertensi,Single,111,3252.17,1531.85
+Hipertensi,Single,112,3252.17,1531.85
+Hipertensi,Single,113,3252.17,1531.85
+Hipertensi,Single,114,3252.17,1531.85
+Hipertensi,Single,115,3252.17,1531.85
+Hipertensi,Single,116,3252.17,1531.85
+Hipertensi,Single,117,3252.17,1531.85
+Hipertensi,Single,118,3252.17,1531.85
+Hipertensi,Single,119,3252.17,1531.85
+Hipertensi,Single,120,3252.17,1531.85
+Hipertensi,Single,121,3252.17,1531.85
+Hipertensi,Single,122,3252.17,1531.85
+Hipertensi,Single,123,3252.17,1531.85
+Hipertensi,Single,124,3252.17,1531.85
+Hipertensi,Single,125,3252.17,1531.85
+Hipertensi,Single,126,3252.17,1531.85
+Hipertensi,Single,127,3252.17,1531.85
+Hipertensi,Single,128,3252.17,1531.85
+Hipertensi,Single,129,3252.17,1531.85
+Hipertensi,Single,130,3252.17,1531.85
+Hipertensi,Single,131,3252.17,1531.85
+Hipertensi,Single,132,3252.17,1531.85
+Hipertensi,Single,133,3252.17,1531.85
+Hipertensi,Single,134,3252.17,1531.85
+Hipertensi,Single,135,3252.17,1531.85
+Hipertensi,Single,136,3252.17,1531.85
+Hipertensi,Single,137,3252.17,1531.85
+Hipertensi,Single,138,3252.17,1531.85
+Hipertensi,Single,139,3252.17,1531.85
+Hipertensi,Single,140,3252.17,1531.85
+Hipertensi,Single,141,3252.17,1531.85
+Hipertensi,Single,142,3252.17,1531.85
+Hipertensi,Single,143,3252.17,1531.85
+Hipertensi,Single,144,3252.17,1531.85
+Hipertensi,Single,145,3252.17,1531.85
+Hipertensi,Single,146,3252.17,1531.85
+Hipertensi,Single,147,3252.17,1531.85
+Hipertensi,Single,148,3252.17,1531.85
+Hipertensi,Single,149,3252.17,1531.85
+Hipertensi,Single,150,3252.17,1531.85
+Penyakit Kardiovaskular,Single,1,32624.19,10951.99
+Penyakit Kardiovaskular,Single,2,28829.95,8072.14
+Penyakit Kardiovaskular,Single,3,20867.67,3130.01
+Penyakit Kardiovaskular,Single,4,16468.83,1389.92
+Penyakit Kardiovaskular,Single,5,13934.37,1434.57
+Penyakit Kardiovaskular,Single,6,11717.5,909.75
+Penyakit Kardiovaskular,Single,7,6923.03,1545.09
+Penyakit Kardiovaskular,Single,8,6558.33,1797.21
+Penyakit Kardiovaskular,Single,9,6341.01,1492.43
+Penyakit Kardiovaskular,Single,10,6341.01,1492.43
+Penyakit Kardiovaskular,Single,11,5765.04,978.77
+Penyakit Kardiovaskular,Single,12,5577.81,1109.43
+Penyakit Kardiovaskular,Single,13,4220.71,987.01
+Penyakit Kardiovaskular,Single,14,4173.92,956.36
+Penyakit Kardiovaskular,Single,15,3227.78,1495.6
+Penyakit Kardiovaskular,Single,16,1978.51,1079.4
+Penyakit Kardiovaskular,Single,17,1911.26,1147.72
+Penyakit Kardiovaskular,Single,18,1177.66,401.4
+Penyakit Kardiovaskular,Single,19,1175.98,403.72
+Penyakit Kardiovaskular,Single,20,1112.73,489.3
+Penyakit Kardiovaskular,Single,21,879.87,317.02
+Penyakit Kardiovaskular,Single,22,879.87,317.02
+Penyakit Kardiovaskular,Single,23,655.22,329.03
+Penyakit Kardiovaskular,Single,24,537.78,417.84
+Penyakit Kardiovaskular,Single,25,377.1,222.51
+Penyakit Kardiovaskular,Single,26,345.08,237.31
+Penyakit Kardiovaskular,Single,27,281.73,282.43
+Penyakit Kardiovaskular,Single,28,279.69,284.23
+Penyakit Kardiovaskular,Single,29,232.39,218.39
+Penyakit Kardiovaskular,Single,30,181.87,149.1
+Penyakit Kardiovaskular,Single,31,181.87,149.1
+Penyakit Kardiovaskular,Single,32,175.43,140.43
+Penyakit Kardiovaskular,Single,33,175.43,140.43
+Penyakit Kardiovaskular,Single,34,169.94,146.31
+Penyakit Kardiovaskular,Single,35,94.93,59.56
+Penyakit Kardiovaskular,Single,36,55.56,59.04
+Penyakit Kardiovaskular,Single,37,55.56,59.04
+Penyakit Kardiovaskular,Single,38,55.56,59.04
+Penyakit Kardiovaskular,Single,39,55.56,59.04
+Penyakit Kardiovaskular,Single,40,52.85,61.19
+Penyakit Kardiovaskular,Single,41,52.85,61.19
+Penyakit Kardiovaskular,Single,42,52.85,61.19
+Penyakit Kardiovaskular,Single,43,52.85,61.19
+Penyakit Kardiovaskular,Single,44,52.85,61.19
+Penyakit Kardiovaskular,Single,45,52.85,61.19
+Penyakit Kardiovaskular,Single,46,52.17,61.7
+Penyakit Kardiovaskular,Single,47,52.17,61.7
+Penyakit Kardiovaskular,Single,48,11.46,7.26
+Penyakit Kardiovaskular,Single,49,6.27,7.12
+Penyakit Kardiovaskular,Single,50,6.27,7.12
+Penyakit Kardiovaskular,Single,51,6.27,7.12
+Penyakit Kardiovaskular,Single,52,6.27,7.12
+Penyakit Kardiovaskular,Single,53,6.22,7.15
+Penyakit Kardiovaskular,Single,54,6.22,7.15
+Penyakit Kardiovaskular,Single,55,6.18,7.18
+Penyakit Kardiovaskular,Single,56,6.18,7.18
+Penyakit Kardiovaskular,Single,57,6.18,7.18
+Penyakit Kardiovaskular,Single,58,6.18,7.18
+Penyakit Kardiovaskular,Single,59,6.18,7.18
+Penyakit Kardiovaskular,Single,60,6.18,7.18
+Penyakit Kardiovaskular,Single,61,6.18,7.18
+Penyakit Kardiovaskular,Single,62,6.18,7.18
+Penyakit Kardiovaskular,Single,63,6.18,7.18
+Penyakit Kardiovaskular,Single,64,6.16,7.19
+Penyakit Kardiovaskular,Single,65,6.16,7.19
+Penyakit Kardiovaskular,Single,66,6.16,7.19
+Penyakit Kardiovaskular,Single,67,6.16,7.19
+Penyakit Kardiovaskular,Single,68,6.13,7.22
+Penyakit Kardiovaskular,Single,69,6.13,7.22
+Penyakit Kardiovaskular,Single,70,6.13,7.22
+Penyakit Kardiovaskular,Single,71,6.13,7.22
+Penyakit Kardiovaskular,Single,72,6.13,7.22
+Penyakit Kardiovaskular,Single,73,6.13,7.22
+Penyakit Kardiovaskular,Single,74,6.13,7.22
+Penyakit Kardiovaskular,Single,75,6.13,7.22
+Penyakit Kardiovaskular,Single,76,6.13,7.22
+Penyakit Kardiovaskular,Single,77,6.13,7.22
+Penyakit Kardiovaskular,Single,78,6.13,7.22
+Penyakit Kardiovaskular,Single,79,6.13,7.22
+Penyakit Kardiovaskular,Single,80,6.13,7.22
+Penyakit Kardiovaskular,Single,81,6.13,7.22
+Penyakit Kardiovaskular,Single,82,6.13,7.22
+Penyakit Kardiovaskular,Single,83,6.13,7.22
+Penyakit Kardiovaskular,Single,84,6.12,7.22
+Penyakit Kardiovaskular,Single,85,6.12,7.22
+Penyakit Kardiovaskular,Single,86,6.12,7.22
+Penyakit Kardiovaskular,Single,87,6.12,7.22
+Penyakit Kardiovaskular,Single,88,6.12,7.22
+Penyakit Kardiovaskular,Single,89,6.12,7.22
+Penyakit Kardiovaskular,Single,90,6.12,7.22
+Penyakit Kardiovaskular,Single,91,6.12,7.22
+Penyakit Kardiovaskular,Single,92,6.12,7.22
+Penyakit Kardiovaskular,Single,93,6.12,7.22
+Penyakit Kardiovaskular,Single,94,6.12,7.22
+Penyakit Kardiovaskular,Single,95,6.12,7.22
+Penyakit Kardiovaskular,Single,96,6.12,7.22
+Penyakit Kardiovaskular,Single,97,6.12,7.22
+Penyakit Kardiovaskular,Single,98,6.12,7.22
+Penyakit Kardiovaskular,Single,99,6.12,7.22
+Penyakit Kardiovaskular,Single,100,6.12,7.22
+Penyakit Kardiovaskular,Single,101,6.12,7.22
+Penyakit Kardiovaskular,Single,102,6.12,7.22
+Penyakit Kardiovaskular,Single,103,6.12,7.22
+Penyakit Kardiovaskular,Single,104,6.12,7.22
+Penyakit Kardiovaskular,Single,105,6.12,7.22
+Penyakit Kardiovaskular,Single,106,6.12,7.22
+Penyakit Kardiovaskular,Single,107,6.12,7.22
+Penyakit Kardiovaskular,Single,108,6.12,7.22
+Penyakit Kardiovaskular,Single,109,6.12,7.22
+Penyakit Kardiovaskular,Single,110,6.12,7.22
+Penyakit Kardiovaskular,Single,111,6.12,7.22
+Penyakit Kardiovaskular,Single,112,6.12,7.22
+Penyakit Kardiovaskular,Single,113,6.12,7.22
+Penyakit Kardiovaskular,Single,114,6.12,7.22
+Penyakit Kardiovaskular,Single,115,6.12,7.22
+Penyakit Kardiovaskular,Single,116,6.12,7.22
+Penyakit Kardiovaskular,Single,117,6.12,7.22
+Penyakit Kardiovaskular,Single,118,6.12,7.22
+Penyakit Kardiovaskular,Single,119,6.12,7.22
+Penyakit Kardiovaskular,Single,120,6.12,7.22
+Penyakit Kardiovaskular,Single,121,6.12,7.22
+Penyakit Kardiovaskular,Single,122,6.12,7.22
+Penyakit Kardiovaskular,Single,123,6.12,7.22
+Penyakit Kardiovaskular,Single,124,6.12,7.22
+Penyakit Kardiovaskular,Single,125,6.12,7.22
+Penyakit Kardiovaskular,Single,126,6.12,7.22
+Penyakit Kardiovaskular,Single,127,5.19,5.91
+Penyakit Kardiovaskular,Single,128,5.19,5.91
+Penyakit Kardiovaskular,Single,129,5.19,5.91
+Penyakit Kardiovaskular,Single,130,5.19,5.91
+Penyakit Kardiovaskular,Single,131,5.19,5.91
+Penyakit Kardiovaskular,Single,132,5.19,5.91
+Penyakit Kardiovaskular,Single,133,5.19,5.91
+Penyakit Kardiovaskular,Single,134,4.4,4.78
+Penyakit Kardiovaskular,Single,135,4.4,4.78
+Penyakit Kardiovaskular,Single,136,4.4,4.78
+Penyakit Kardiovaskular,Single,137,4.4,4.78
+Penyakit Kardiovaskular,Single,138,4.39,4.78
+Penyakit Kardiovaskular,Single,139,4.39,4.78
+Penyakit Kardiovaskular,Single,140,4.39,4.78
+Penyakit Kardiovaskular,Single,141,4.39,4.78
+Penyakit Kardiovaskular,Single,142,4.39,4.78
+Penyakit Kardiovaskular,Single,143,4.39,4.78
+Penyakit Kardiovaskular,Single,144,4.39,4.78
+Penyakit Kardiovaskular,Single,145,4.39,4.78
+Penyakit Kardiovaskular,Single,146,4.39,4.78
+Penyakit Kardiovaskular,Single,147,4.39,4.78
+Penyakit Kardiovaskular,Single,148,4.39,4.78
+Penyakit Kardiovaskular,Single,149,4.39,4.78
+Penyakit Kardiovaskular,Single,150,4.39,4.78
+Hiperkolesterolemia,Single,1,46617.63,6860.15
+Hiperkolesterolemia,Single,2,37482.58,4228.18
+Hiperkolesterolemia,Single,3,36580.91,4506.17
+Hiperkolesterolemia,Single,4,31217.46,4462.79
+Hiperkolesterolemia,Single,5,24327.1,4104.85
+Hiperkolesterolemia,Single,6,20706.92,5422.35
+Hiperkolesterolemia,Single,7,19420.64,3804.76
+Hiperkolesterolemia,Single,8,15956.57,6244.38
+Hiperkolesterolemia,Single,9,15168.82,5928.83
+Hiperkolesterolemia,Single,10,15101.39,5934.61
+Hiperkolesterolemia,Single,11,14488.4,5185.03
+Hiperkolesterolemia,Single,12,13532.06,6392.98
+Hiperkolesterolemia,Single,13,12729.07,6372.34
+Hiperkolesterolemia,Single,14,10314.58,3904.64
+Hiperkolesterolemia,Single,15,8882.69,4910.67
+Hiperkolesterolemia,Single,16,8882.69,4910.67
+Hiperkolesterolemia,Single,17,8783.83,4906.35
+Hiperkolesterolemia,Single,18,7853.16,5058.55
+Hiperkolesterolemia,Single,19,7853.16,5058.55
+Hiperkolesterolemia,Single,20,7789.22,5123.85
+Hiperkolesterolemia,Single,21,6883.03,3912.73
+Hiperkolesterolemia,Single,22,6812.78,3991.43
+Hiperkolesterolemia,Single,23,6766.89,4043.33
+Hiperkolesterolemia,Single,24,6728.58,4086.94
+Hiperkolesterolemia,Single,25,6625.31,4205.73
+Hiperkolesterolemia,Single,26,6517.09,4332.0
+Hiperkolesterolemia,Single,27,6116.61,4047.34
+Hiperkolesterolemia,Single,28,5871.07,4259.3
+Hiperkolesterolemia,Single,29,5738.67,4094.87
+Hiperkolesterolemia,Single,30,5738.67,4094.87
+Hiperkolesterolemia,Single,31,5350.05,4225.5
+Hiperkolesterolemia,Single,32,4649.53,3570.74
+Hiperkolesterolemia,Single,33,4649.53,3570.74
+Hiperkolesterolemia,Single,34,3069.55,2076.22
+Hiperkolesterolemia,Single,35,3069.55,2076.22
+Hiperkolesterolemia,Single,36,3069.55,2076.22
+Hiperkolesterolemia,Single,37,3034.8,2123.94
+Hiperkolesterolemia,Single,38,2753.55,2048.27
+Hiperkolesterolemia,Single,39,2753.55,2048.27
+Hiperkolesterolemia,Single,40,2753.55,2048.27
+Hiperkolesterolemia,Single,41,2514.28,2043.5
+Hiperkolesterolemia,Single,42,2514.28,2043.5
+Hiperkolesterolemia,Single,43,2514.28,2043.5
+Hiperkolesterolemia,Single,44,2450.67,1963.09
+Hiperkolesterolemia,Single,45,2113.28,1554.16
+Hiperkolesterolemia,Single,46,2113.28,1554.16
+Hiperkolesterolemia,Single,47,2106.29,1546.1
+Hiperkolesterolemia,Single,48,2106.29,1546.1
+Hiperkolesterolemia,Single,49,2106.29,1546.1
+Hiperkolesterolemia,Single,50,2106.29,1546.1
+Hiperkolesterolemia,Single,51,2106.29,1546.1
+Hiperkolesterolemia,Single,52,2106.29,1546.1
+Hiperkolesterolemia,Single,53,2041.65,1472.63
+Hiperkolesterolemia,Single,54,2041.65,1472.63
+Hiperkolesterolemia,Single,55,2041.65,1472.63
+Hiperkolesterolemia,Single,56,2021.52,1498.99
+Hiperkolesterolemia,Single,57,2021.52,1498.99
+Hiperkolesterolemia,Single,58,2021.52,1498.99
+Hiperkolesterolemia,Single,59,2021.52,1498.99
+Hiperkolesterolemia,Single,60,2021.52,1498.99
+Hiperkolesterolemia,Single,61,2021.52,1498.99
+Hiperkolesterolemia,Single,62,2021.52,1498.99
+Hiperkolesterolemia,Single,63,2021.52,1498.99
+Hiperkolesterolemia,Single,64,2021.52,1498.99
+Hiperkolesterolemia,Single,65,2021.52,1498.99
+Hiperkolesterolemia,Single,66,2021.52,1498.99
+Hiperkolesterolemia,Single,67,2021.52,1498.99
+Hiperkolesterolemia,Single,68,2021.52,1498.99
+Hiperkolesterolemia,Single,69,2021.52,1498.99
+Hiperkolesterolemia,Single,70,2021.52,1498.99
+Hiperkolesterolemia,Single,71,2021.52,1498.99
+Hiperkolesterolemia,Single,72,2021.52,1498.99
+Hiperkolesterolemia,Single,73,2021.52,1498.99
+Hiperkolesterolemia,Single,74,2021.52,1498.99
+Hiperkolesterolemia,Single,75,2021.52,1498.99
+Hiperkolesterolemia,Single,76,2021.52,1498.99
+Hiperkolesterolemia,Single,77,2021.52,1498.99
+Hiperkolesterolemia,Single,78,2021.52,1498.99
+Hiperkolesterolemia,Single,79,2021.52,1498.99
+Hiperkolesterolemia,Single,80,2021.52,1498.99
+Hiperkolesterolemia,Single,81,2021.52,1498.99
+Hiperkolesterolemia,Single,82,2021.52,1498.99
+Hiperkolesterolemia,Single,83,2021.52,1498.99
+Hiperkolesterolemia,Single,84,2021.52,1498.99
+Hiperkolesterolemia,Single,85,2021.52,1498.99
+Hiperkolesterolemia,Single,86,2021.52,1498.99
+Hiperkolesterolemia,Single,87,2021.52,1498.99
+Hiperkolesterolemia,Single,88,2021.52,1498.99
+Hiperkolesterolemia,Single,89,2021.52,1498.99
+Hiperkolesterolemia,Single,90,2021.52,1498.99
+Hiperkolesterolemia,Single,91,2021.52,1498.99
+Hiperkolesterolemia,Single,92,2021.52,1498.99
+Hiperkolesterolemia,Single,93,2021.52,1498.99
+Hiperkolesterolemia,Single,94,2021.52,1498.99
+Hiperkolesterolemia,Single,95,1949.08,1419.64
+Hiperkolesterolemia,Single,96,1949.08,1419.64
+Hiperkolesterolemia,Single,97,1949.08,1419.64
+Hiperkolesterolemia,Single,98,1949.08,1419.64
+Hiperkolesterolemia,Single,99,1949.08,1419.64
+Hiperkolesterolemia,Single,100,1933.12,1415.69
+Hiperkolesterolemia,Single,101,1933.12,1415.69
+Hiperkolesterolemia,Single,102,1933.12,1415.69
+Hiperkolesterolemia,Single,103,1809.19,1325.94
+Hiperkolesterolemia,Single,104,1809.19,1325.94
+Hiperkolesterolemia,Single,105,1809.19,1325.94
+Hiperkolesterolemia,Single,106,1809.19,1325.94
+Hiperkolesterolemia,Single,107,1809.19,1325.94
+Hiperkolesterolemia,Single,108,1809.19,1325.94
+Hiperkolesterolemia,Single,109,1809.19,1325.94
+Hiperkolesterolemia,Single,110,1554.29,1096.47
+Hiperkolesterolemia,Single,111,1275.75,979.73
+Hiperkolesterolemia,Single,112,1275.75,979.73
+Hiperkolesterolemia,Single,113,1275.75,979.73
+Hiperkolesterolemia,Single,114,1275.75,979.73
+Hiperkolesterolemia,Single,115,1275.75,979.73
+Hiperkolesterolemia,Single,116,1275.75,979.73
+Hiperkolesterolemia,Single,117,1275.75,979.73
+Hiperkolesterolemia,Single,118,1275.75,979.73
+Hiperkolesterolemia,Single,119,1275.75,979.73
+Hiperkolesterolemia,Single,120,1275.75,979.73
+Hiperkolesterolemia,Single,121,1275.75,979.73
+Hiperkolesterolemia,Single,122,1275.75,979.73
+Hiperkolesterolemia,Single,123,1204.71,973.52
+Hiperkolesterolemia,Single,124,1204.71,973.52
+Hiperkolesterolemia,Single,125,1171.18,974.17
+Hiperkolesterolemia,Single,126,1171.18,974.17
+Hiperkolesterolemia,Single,127,1171.18,974.17
+Hiperkolesterolemia,Single,128,1171.18,974.17
+Hiperkolesterolemia,Single,129,1171.18,974.17
+Hiperkolesterolemia,Single,130,1171.18,974.17
+Hiperkolesterolemia,Single,131,1171.18,974.17
+Hiperkolesterolemia,Single,132,1171.18,974.17
+Hiperkolesterolemia,Single,133,1171.18,974.17
+Hiperkolesterolemia,Single,134,1171.18,974.17
+Hiperkolesterolemia,Single,135,1171.18,974.17
+Hiperkolesterolemia,Single,136,1171.18,974.17
+Hiperkolesterolemia,Single,137,1171.18,974.17
+Hiperkolesterolemia,Single,138,1171.18,974.17
+Hiperkolesterolemia,Single,139,1171.18,974.17
+Hiperkolesterolemia,Single,140,1171.18,974.17
+Hiperkolesterolemia,Single,141,1171.18,974.17
+Hiperkolesterolemia,Single,142,1171.18,974.17
+Hiperkolesterolemia,Single,143,1170.72,974.2
+Hiperkolesterolemia,Single,144,1170.72,974.2
+Hiperkolesterolemia,Single,145,1170.72,974.2
+Hiperkolesterolemia,Single,146,1170.72,974.2
+Hiperkolesterolemia,Single,147,1170.72,974.2
+Hiperkolesterolemia,Single,148,1170.72,974.2
+Hiperkolesterolemia,Single,149,1170.72,974.2
+Hiperkolesterolemia,Single,150,1170.72,974.2
+Penyakit Ginjal Kronis,Single,1,73824.36,5169.72
+Penyakit Ginjal Kronis,Single,2,61529.77,4754.11
+Penyakit Ginjal Kronis,Single,3,60442.64,3660.9
+Penyakit Ginjal Kronis,Single,4,51734.76,4937.02
+Penyakit Ginjal Kronis,Single,5,44116.29,5012.04
+Penyakit Ginjal Kronis,Single,6,43662.42,5189.51
+Penyakit Ginjal Kronis,Single,7,41019.78,3973.76
+Penyakit Ginjal Kronis,Single,8,38310.13,5529.79
+Penyakit Ginjal Kronis,Single,9,33758.69,3422.1
+Penyakit Ginjal Kronis,Single,10,30388.03,5118.39
+Penyakit Ginjal Kronis,Single,11,29283.43,5709.41
+Penyakit Ginjal Kronis,Single,12,28191.26,6312.03
+Penyakit Ginjal Kronis,Single,13,26681.39,4749.23
+Penyakit Ginjal Kronis,Single,14,23816.07,2891.88
+Penyakit Ginjal Kronis,Single,15,23519.44,3051.09
+Penyakit Ginjal Kronis,Single,16,22381.16,1751.97
+Penyakit Ginjal Kronis,Single,17,21890.28,2092.57
+Penyakit Ginjal Kronis,Single,18,21443.45,2501.86
+Penyakit Ginjal Kronis,Single,19,20592.54,3381.19
+Penyakit Ginjal Kronis,Single,20,20503.49,3389.49
+Penyakit Ginjal Kronis,Single,21,20299.61,3425.89
+Penyakit Ginjal Kronis,Single,22,20199.36,3536.21
+Penyakit Ginjal Kronis,Single,23,19157.78,4476.33
+Penyakit Ginjal Kronis,Single,24,18885.95,4518.71
+Penyakit Ginjal Kronis,Single,25,18266.26,3715.47
+Penyakit Ginjal Kronis,Single,26,18266.26,3715.47
+Penyakit Ginjal Kronis,Single,27,18266.26,3715.47
+Penyakit Ginjal Kronis,Single,28,18081.67,3742.09
+Penyakit Ginjal Kronis,Single,29,17958.19,3646.77
+Penyakit Ginjal Kronis,Single,30,17958.19,3646.77
+Penyakit Ginjal Kronis,Single,31,17958.19,3646.77
+Penyakit Ginjal Kronis,Single,32,17612.96,3198.75
+Penyakit Ginjal Kronis,Single,33,17612.96,3198.75
+Penyakit Ginjal Kronis,Single,34,17612.96,3198.75
+Penyakit Ginjal Kronis,Single,35,17612.96,3198.75
+Penyakit Ginjal Kronis,Single,36,17612.96,3198.75
+Penyakit Ginjal Kronis,Single,37,17612.96,3198.75
+Penyakit Ginjal Kronis,Single,38,17612.96,3198.75
+Penyakit Ginjal Kronis,Single,39,17353.27,2927.15
+Penyakit Ginjal Kronis,Single,40,17082.4,3085.14
+Penyakit Ginjal Kronis,Single,41,17082.4,3085.14
+Penyakit Ginjal Kronis,Single,42,17082.4,3085.14
+Penyakit Ginjal Kronis,Single,43,16936.27,2901.01
+Penyakit Ginjal Kronis,Single,44,16905.5,2902.92
+Penyakit Ginjal Kronis,Single,45,16905.5,2902.92
+Penyakit Ginjal Kronis,Single,46,16905.5,2902.92
+Penyakit Ginjal Kronis,Single,47,16749.99,2708.91
+Penyakit Ginjal Kronis,Single,48,16749.99,2708.91
+Penyakit Ginjal Kronis,Single,49,16749.99,2708.91
+Penyakit Ginjal Kronis,Single,50,16749.99,2708.91
+Penyakit Ginjal Kronis,Single,51,16747.67,2706.05
+Penyakit Ginjal Kronis,Single,52,16619.88,2549.84
+Penyakit Ginjal Kronis,Single,53,16619.88,2549.84
+Penyakit Ginjal Kronis,Single,54,16619.88,2549.84
+Penyakit Ginjal Kronis,Single,55,16619.88,2549.84
+Penyakit Ginjal Kronis,Single,56,16479.81,2382.59
+Penyakit Ginjal Kronis,Single,57,16479.81,2382.59
+Penyakit Ginjal Kronis,Single,58,16479.81,2382.59
+Penyakit Ginjal Kronis,Single,59,15722.67,1996.51
+Penyakit Ginjal Kronis,Single,60,15722.67,1996.51
+Penyakit Ginjal Kronis,Single,61,15648.04,1962.67
+Penyakit Ginjal Kronis,Single,62,15648.04,1962.67
+Penyakit Ginjal Kronis,Single,63,15648.04,1962.67
+Penyakit Ginjal Kronis,Single,64,15648.04,1962.67
+Penyakit Ginjal Kronis,Single,65,15648.04,1962.67
+Penyakit Ginjal Kronis,Single,66,15648.04,1962.67
+Penyakit Ginjal Kronis,Single,67,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,68,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,69,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,70,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,71,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,72,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,73,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,74,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,75,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,76,14823.51,2742.23
+Penyakit Ginjal Kronis,Single,77,14621.23,3027.38
+Penyakit Ginjal Kronis,Single,78,14621.23,3027.38
+Penyakit Ginjal Kronis,Single,79,14621.23,3027.38
+Penyakit Ginjal Kronis,Single,80,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,81,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,82,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,83,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,84,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,85,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,86,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,87,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,88,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,89,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,90,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,91,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,92,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,93,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,94,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,95,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,96,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,97,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,98,14547.72,2969.89
+Penyakit Ginjal Kronis,Single,99,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,100,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,101,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,102,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,103,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,104,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,105,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,106,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,107,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,108,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,109,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,110,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,111,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,112,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,113,14525.28,3001.59
+Penyakit Ginjal Kronis,Single,114,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,115,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,116,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,117,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,118,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,119,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,120,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,121,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,122,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,123,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,124,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,125,13775.76,2686.34
+Penyakit Ginjal Kronis,Single,126,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,127,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,128,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,129,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,130,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,131,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,132,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,133,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,134,13650.82,2671.34
+Penyakit Ginjal Kronis,Single,135,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,136,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,137,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,138,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,139,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,140,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,141,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,142,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,143,13594.64,2668.38
+Penyakit Ginjal Kronis,Single,144,13277.52,2296.94
+Penyakit Ginjal Kronis,Single,145,13277.52,2296.94
+Penyakit Ginjal Kronis,Single,146,13277.52,2296.94
+Penyakit Ginjal Kronis,Single,147,13214.85,2378.83
+Penyakit Ginjal Kronis,Single,148,13214.85,2378.83
+Penyakit Ginjal Kronis,Single,149,13096.12,2361.53
+Penyakit Ginjal Kronis,Single,150,13065.89,2326.16
+DM2 + Hipertensi,Dual,1,59128.82,12260.97
+DM2 + Hipertensi,Dual,2,55193.25,9484.82
+DM2 + Hipertensi,Dual,3,49363.48,5379.55
+DM2 + Hipertensi,Dual,4,47299.32,4354.93
+DM2 + Hipertensi,Dual,5,42962.0,3453.15
+DM2 + Hipertensi,Dual,6,40216.65,1118.51
+DM2 + Hipertensi,Dual,7,38216.38,1710.36
+DM2 + Hipertensi,Dual,8,37406.16,1515.15
+DM2 + Hipertensi,Dual,9,33780.86,2379.9
+DM2 + Hipertensi,Dual,10,32029.02,1743.95
+DM2 + Hipertensi,Dual,11,29893.02,2457.98
+DM2 + Hipertensi,Dual,12,27654.46,3826.55
+DM2 + Hipertensi,Dual,13,26459.87,2875.47
+DM2 + Hipertensi,Dual,14,26135.86,2629.35
+DM2 + Hipertensi,Dual,15,24741.17,2099.83
+DM2 + Hipertensi,Dual,16,21175.86,2004.03
+DM2 + Hipertensi,Dual,17,18648.37,4054.33
+DM2 + Hipertensi,Dual,18,18040.35,4272.21
+DM2 + Hipertensi,Dual,19,18040.35,4272.21
+DM2 + Hipertensi,Dual,20,17821.3,4405.59
+DM2 + Hipertensi,Dual,21,16079.92,3874.58
+DM2 + Hipertensi,Dual,22,14579.69,3398.44
+DM2 + Hipertensi,Dual,23,14053.38,3892.97
+DM2 + Hipertensi,Dual,24,13692.56,4047.87
+DM2 + Hipertensi,Dual,25,12885.18,2924.95
+DM2 + Hipertensi,Dual,26,12504.15,2401.18
+DM2 + Hipertensi,Dual,27,12235.27,2036.33
+DM2 + Hipertensi,Dual,28,12235.27,2036.33
+DM2 + Hipertensi,Dual,29,12235.27,2036.33
+DM2 + Hipertensi,Dual,30,11694.32,1328.76
+DM2 + Hipertensi,Dual,31,11694.32,1328.76
+DM2 + Hipertensi,Dual,32,11694.32,1328.76
+DM2 + Hipertensi,Dual,33,11694.32,1328.76
+DM2 + Hipertensi,Dual,34,11652.89,1332.14
+DM2 + Hipertensi,Dual,35,11652.89,1332.14
+DM2 + Hipertensi,Dual,36,11652.89,1332.14
+DM2 + Hipertensi,Dual,37,11652.89,1332.14
+DM2 + Hipertensi,Dual,38,11652.89,1332.14
+DM2 + Hipertensi,Dual,39,11652.89,1332.14
+DM2 + Hipertensi,Dual,40,11652.89,1332.14
+DM2 + Hipertensi,Dual,41,11652.89,1332.14
+DM2 + Hipertensi,Dual,42,11652.89,1332.14
+DM2 + Hipertensi,Dual,43,11427.11,1394.37
+DM2 + Hipertensi,Dual,44,11427.11,1394.37
+DM2 + Hipertensi,Dual,45,11427.11,1394.37
+DM2 + Hipertensi,Dual,46,11427.11,1394.37
+DM2 + Hipertensi,Dual,47,11427.11,1394.37
+DM2 + Hipertensi,Dual,48,11427.11,1394.37
+DM2 + Hipertensi,Dual,49,11298.41,1217.11
+DM2 + Hipertensi,Dual,50,11298.41,1217.11
+DM2 + Hipertensi,Dual,51,11067.54,903.87
+DM2 + Hipertensi,Dual,52,10558.73,1522.42
+DM2 + Hipertensi,Dual,53,10558.73,1522.42
+DM2 + Hipertensi,Dual,54,10558.73,1522.42
+DM2 + Hipertensi,Dual,55,10435.72,1387.69
+DM2 + Hipertensi,Dual,56,9709.9,838.86
+DM2 + Hipertensi,Dual,57,9709.9,838.86
+DM2 + Hipertensi,Dual,58,9595.09,728.69
+DM2 + Hipertensi,Dual,59,9098.11,1427.86
+DM2 + Hipertensi,Dual,60,8874.33,1321.07
+DM2 + Hipertensi,Dual,61,8227.5,908.36
+DM2 + Hipertensi,Dual,62,8227.5,908.36
+DM2 + Hipertensi,Dual,63,8227.5,908.36
+DM2 + Hipertensi,Dual,64,8227.5,908.36
+DM2 + Hipertensi,Dual,65,8153.78,909.11
+DM2 + Hipertensi,Dual,66,8153.78,909.11
+DM2 + Hipertensi,Dual,67,8153.78,909.11
+DM2 + Hipertensi,Dual,68,7972.81,1130.98
+DM2 + Hipertensi,Dual,69,7458.1,1476.11
+DM2 + Hipertensi,Dual,70,7458.1,1476.11
+DM2 + Hipertensi,Dual,71,7293.64,1328.64
+DM2 + Hipertensi,Dual,72,7293.64,1328.64
+DM2 + Hipertensi,Dual,73,7293.64,1328.64
+DM2 + Hipertensi,Dual,74,7293.64,1328.64
+DM2 + Hipertensi,Dual,75,7220.3,1271.12
+DM2 + Hipertensi,Dual,76,7088.03,1183.38
+DM2 + Hipertensi,Dual,77,7088.03,1183.38
+DM2 + Hipertensi,Dual,78,7088.03,1183.38
+DM2 + Hipertensi,Dual,79,7088.03,1183.38
+DM2 + Hipertensi,Dual,80,7088.03,1183.38
+DM2 + Hipertensi,Dual,81,7061.21,1161.52
+DM2 + Hipertensi,Dual,82,7061.21,1161.52
+DM2 + Hipertensi,Dual,83,7061.21,1161.52
+DM2 + Hipertensi,Dual,84,7061.21,1161.52
+DM2 + Hipertensi,Dual,85,7061.21,1161.52
+DM2 + Hipertensi,Dual,86,7061.21,1161.52
+DM2 + Hipertensi,Dual,87,7045.13,1148.8
+DM2 + Hipertensi,Dual,88,7019.31,1129.06
+DM2 + Hipertensi,Dual,89,6934.53,1248.9
+DM2 + Hipertensi,Dual,90,6934.53,1248.9
+DM2 + Hipertensi,Dual,91,6934.53,1248.9
+DM2 + Hipertensi,Dual,92,6934.53,1248.9
+DM2 + Hipertensi,Dual,93,6934.53,1248.9
+DM2 + Hipertensi,Dual,94,6934.53,1248.9
+DM2 + Hipertensi,Dual,95,6934.53,1248.9
+DM2 + Hipertensi,Dual,96,6934.53,1248.9
+DM2 + Hipertensi,Dual,97,6934.53,1248.9
+DM2 + Hipertensi,Dual,98,6820.89,1181.42
+DM2 + Hipertensi,Dual,99,6820.89,1181.42
+DM2 + Hipertensi,Dual,100,6803.24,1172.57
+DM2 + Hipertensi,Dual,101,5761.68,1154.81
+DM2 + Hipertensi,Dual,102,5761.68,1154.81
+DM2 + Hipertensi,Dual,103,5582.39,905.02
+DM2 + Hipertensi,Dual,104,5182.72,367.17
+DM2 + Hipertensi,Dual,105,5182.72,367.17
+DM2 + Hipertensi,Dual,106,5182.72,367.17
+DM2 + Hipertensi,Dual,107,5182.72,367.17
+DM2 + Hipertensi,Dual,108,5182.72,367.17
+DM2 + Hipertensi,Dual,109,5156.58,335.16
+DM2 + Hipertensi,Dual,110,5156.58,335.16
+DM2 + Hipertensi,Dual,111,5156.58,335.16
+DM2 + Hipertensi,Dual,112,5156.58,335.16
+DM2 + Hipertensi,Dual,113,5156.58,335.16
+DM2 + Hipertensi,Dual,114,5156.58,335.16
+DM2 + Hipertensi,Dual,115,5156.58,335.16
+DM2 + Hipertensi,Dual,116,5156.58,335.16
+DM2 + Hipertensi,Dual,117,5156.58,335.16
+DM2 + Hipertensi,Dual,118,5023.86,200.77
+DM2 + Hipertensi,Dual,119,5023.86,200.77
+DM2 + Hipertensi,Dual,120,4933.45,177.75
+DM2 + Hipertensi,Dual,121,4933.45,177.75
+DM2 + Hipertensi,Dual,122,4933.45,177.75
+DM2 + Hipertensi,Dual,123,4933.45,177.75
+DM2 + Hipertensi,Dual,124,4933.45,177.75
+DM2 + Hipertensi,Dual,125,4890.62,197.18
+DM2 + Hipertensi,Dual,126,4890.62,197.18
+DM2 + Hipertensi,Dual,127,4890.62,197.18
+DM2 + Hipertensi,Dual,128,4890.62,197.18
+DM2 + Hipertensi,Dual,129,4890.62,197.18
+DM2 + Hipertensi,Dual,130,4890.62,197.18
+DM2 + Hipertensi,Dual,131,4890.62,197.18
+DM2 + Hipertensi,Dual,132,4890.62,197.18
+DM2 + Hipertensi,Dual,133,4890.62,197.18
+DM2 + Hipertensi,Dual,134,4890.62,197.18
+DM2 + Hipertensi,Dual,135,4890.62,197.18
+DM2 + Hipertensi,Dual,136,4890.62,197.18
+DM2 + Hipertensi,Dual,137,4890.62,197.18
+DM2 + Hipertensi,Dual,138,4890.62,197.18
+DM2 + Hipertensi,Dual,139,4890.62,197.18
+DM2 + Hipertensi,Dual,140,4890.62,197.18
+DM2 + Hipertensi,Dual,141,4890.62,197.18
+DM2 + Hipertensi,Dual,142,4890.62,197.18
+DM2 + Hipertensi,Dual,143,4890.62,197.18
+DM2 + Hipertensi,Dual,144,4889.79,197.72
+DM2 + Hipertensi,Dual,145,4889.79,197.72
+DM2 + Hipertensi,Dual,146,4889.79,197.72
+DM2 + Hipertensi,Dual,147,4889.79,197.72
+DM2 + Hipertensi,Dual,148,4889.79,197.72
+DM2 + Hipertensi,Dual,149,4889.79,197.72
+DM2 + Hipertensi,Dual,150,4889.79,197.72
+DM2 + CVD,Dual,1,52062.09,7107.12
+DM2 + CVD,Dual,2,41587.91,8307.55
+DM2 + CVD,Dual,3,39435.34,7140.48
+DM2 + CVD,Dual,4,36020.93,7519.08
+DM2 + CVD,Dual,5,33215.69,9016.12
+DM2 + CVD,Dual,6,27786.12,1496.05
+DM2 + CVD,Dual,7,27786.12,1496.05
+DM2 + CVD,Dual,8,23802.05,4347.94
+DM2 + CVD,Dual,9,23802.05,4347.94
+DM2 + CVD,Dual,10,23802.05,4347.94
+DM2 + CVD,Dual,11,23802.05,4347.94
+DM2 + CVD,Dual,12,23760.91,4391.63
+DM2 + CVD,Dual,13,22223.2,4016.2
+DM2 + CVD,Dual,14,21793.83,4439.53
+DM2 + CVD,Dual,15,21079.83,4023.71
+DM2 + CVD,Dual,16,20127.22,4399.44
+DM2 + CVD,Dual,17,19814.34,4148.6
+DM2 + CVD,Dual,18,19684.31,4195.84
+DM2 + CVD,Dual,19,19550.49,4007.79
+DM2 + CVD,Dual,20,18792.05,2944.86
+DM2 + CVD,Dual,21,18223.61,3319.03
+DM2 + CVD,Dual,22,17136.31,4168.62
+DM2 + CVD,Dual,23,16628.88,3770.41
+DM2 + CVD,Dual,24,16623.04,3775.72
+DM2 + CVD,Dual,25,16623.04,3775.72
+DM2 + CVD,Dual,26,16555.35,3838.07
+DM2 + CVD,Dual,27,16257.85,3908.46
+DM2 + CVD,Dual,28,16257.85,3908.46
+DM2 + CVD,Dual,29,15943.36,4070.23
+DM2 + CVD,Dual,30,15687.87,4291.23
+DM2 + CVD,Dual,31,15687.87,4291.23
+DM2 + CVD,Dual,32,15687.87,4291.23
+DM2 + CVD,Dual,33,15687.87,4291.23
+DM2 + CVD,Dual,34,15687.87,4291.23
+DM2 + CVD,Dual,35,15540.99,4426.65
+DM2 + CVD,Dual,36,15540.99,4426.65
+DM2 + CVD,Dual,37,15372.36,4193.42
+DM2 + CVD,Dual,38,15372.36,4193.42
+DM2 + CVD,Dual,39,15372.36,4193.42
+DM2 + CVD,Dual,40,15372.36,4193.42
+DM2 + CVD,Dual,41,15372.36,4193.42
+DM2 + CVD,Dual,42,15372.36,4193.42
+DM2 + CVD,Dual,43,15372.36,4193.42
+DM2 + CVD,Dual,44,15267.18,4048.25
+DM2 + CVD,Dual,45,15267.18,4048.25
+DM2 + CVD,Dual,46,15240.76,4073.75
+DM2 + CVD,Dual,47,15173.72,4102.14
+DM2 + CVD,Dual,48,14864.37,4258.1
+DM2 + CVD,Dual,49,14864.37,4258.1
+DM2 + CVD,Dual,50,14864.37,4258.1
+DM2 + CVD,Dual,51,13942.74,3498.38
+DM2 + CVD,Dual,52,13942.74,3498.38
+DM2 + CVD,Dual,53,13942.74,3498.38
+DM2 + CVD,Dual,54,13942.74,3498.38
+DM2 + CVD,Dual,55,13942.74,3498.38
+DM2 + CVD,Dual,56,13942.74,3498.38
+DM2 + CVD,Dual,57,13942.74,3498.38
+DM2 + CVD,Dual,58,13942.74,3498.38
+DM2 + CVD,Dual,59,13942.74,3498.38
+DM2 + CVD,Dual,60,13942.74,3498.38
+DM2 + CVD,Dual,61,13942.74,3498.38
+DM2 + CVD,Dual,62,13942.74,3498.38
+DM2 + CVD,Dual,63,13935.58,3503.81
+DM2 + CVD,Dual,64,13935.58,3503.81
+DM2 + CVD,Dual,65,13935.58,3503.81
+DM2 + CVD,Dual,66,13029.03,2223.65
+DM2 + CVD,Dual,67,13029.03,2223.65
+DM2 + CVD,Dual,68,13029.03,2223.65
+DM2 + CVD,Dual,69,12760.48,1844.93
+DM2 + CVD,Dual,70,12491.43,1466.06
+DM2 + CVD,Dual,71,12491.43,1466.06
+DM2 + CVD,Dual,72,12491.43,1466.06
+DM2 + CVD,Dual,73,12439.97,1393.69
+DM2 + CVD,Dual,74,12384.27,1315.42
+DM2 + CVD,Dual,75,12384.27,1315.42
+DM2 + CVD,Dual,76,12384.27,1315.42
+DM2 + CVD,Dual,77,12384.27,1315.42
+DM2 + CVD,Dual,78,12384.27,1315.42
+DM2 + CVD,Dual,79,12384.27,1315.42
+DM2 + CVD,Dual,80,11977.53,893.12
+DM2 + CVD,Dual,81,11963.38,907.33
+DM2 + CVD,Dual,82,11963.38,907.33
+DM2 + CVD,Dual,83,11868.93,779.57
+DM2 + CVD,Dual,84,11868.93,779.57
+DM2 + CVD,Dual,85,11706.96,962.79
+DM2 + CVD,Dual,86,11282.7,511.41
+DM2 + CVD,Dual,87,11271.55,527.19
+DM2 + CVD,Dual,88,11271.55,527.19
+DM2 + CVD,Dual,89,11271.55,527.19
+DM2 + CVD,Dual,90,11271.55,527.19
+DM2 + CVD,Dual,91,11259.24,544.6
+DM2 + CVD,Dual,92,11259.24,544.6
+DM2 + CVD,Dual,93,11259.24,544.6
+DM2 + CVD,Dual,94,11259.24,544.6
+DM2 + CVD,Dual,95,11259.24,544.6
+DM2 + CVD,Dual,96,11259.24,544.6
+DM2 + CVD,Dual,97,11259.24,544.6
+DM2 + CVD,Dual,98,11219.52,518.67
+DM2 + CVD,Dual,99,11219.52,518.67
+DM2 + CVD,Dual,100,11219.52,518.67
+DM2 + CVD,Dual,101,11219.52,518.67
+DM2 + CVD,Dual,102,11219.52,518.67
+DM2 + CVD,Dual,103,11219.52,518.67
+DM2 + CVD,Dual,104,11219.52,518.67
+DM2 + CVD,Dual,105,11219.52,518.67
+DM2 + CVD,Dual,106,11219.52,518.67
+DM2 + CVD,Dual,107,11219.52,518.67
+DM2 + CVD,Dual,108,11219.52,518.67
+DM2 + CVD,Dual,109,11219.52,518.67
+DM2 + CVD,Dual,110,11219.52,518.67
+DM2 + CVD,Dual,111,11180.93,573.04
+DM2 + CVD,Dual,112,11180.93,573.04
+DM2 + CVD,Dual,113,11180.93,573.04
+DM2 + CVD,Dual,114,11180.93,573.04
+DM2 + CVD,Dual,115,11180.93,573.04
+DM2 + CVD,Dual,116,11180.93,573.04
+DM2 + CVD,Dual,117,11180.93,573.04
+DM2 + CVD,Dual,118,11164.14,596.71
+DM2 + CVD,Dual,119,11164.14,596.71
+DM2 + CVD,Dual,120,11164.14,596.71
+DM2 + CVD,Dual,121,11164.14,596.71
+DM2 + CVD,Dual,122,11164.14,596.71
+DM2 + CVD,Dual,123,11164.14,596.71
+DM2 + CVD,Dual,124,11164.14,596.71
+DM2 + CVD,Dual,125,11164.14,596.71
+DM2 + CVD,Dual,126,11164.14,596.71
+DM2 + CVD,Dual,127,11164.14,596.71
+DM2 + CVD,Dual,128,11164.14,596.71
+DM2 + CVD,Dual,129,11164.14,596.71
+DM2 + CVD,Dual,130,11164.14,596.71
+DM2 + CVD,Dual,131,11164.14,596.71
+DM2 + CVD,Dual,132,11164.14,596.71
+DM2 + CVD,Dual,133,11164.14,596.71
+DM2 + CVD,Dual,134,11164.14,596.71
+DM2 + CVD,Dual,135,11164.14,596.71
+DM2 + CVD,Dual,136,11164.14,596.71
+DM2 + CVD,Dual,137,11164.14,596.71
+DM2 + CVD,Dual,138,11164.14,596.71
+DM2 + CVD,Dual,139,11135.52,637.07
+DM2 + CVD,Dual,140,11135.52,637.07
+DM2 + CVD,Dual,141,11135.52,637.07
+DM2 + CVD,Dual,142,11130.01,632.71
+DM2 + CVD,Dual,143,11130.01,632.71
+DM2 + CVD,Dual,144,11130.01,632.71
+DM2 + CVD,Dual,145,11130.01,632.71
+DM2 + CVD,Dual,146,11130.01,632.71
+DM2 + CVD,Dual,147,11130.01,632.71
+DM2 + CVD,Dual,148,11130.01,632.71
+DM2 + CVD,Dual,149,11130.01,632.71
+DM2 + CVD,Dual,150,11130.01,632.71
+DM2 + Hiperkolesterolemia,Dual,1,61709.42,6939.42
+DM2 + Hiperkolesterolemia,Dual,2,53470.04,6170.04
+DM2 + Hiperkolesterolemia,Dual,3,51129.63,6455.41
+DM2 + Hiperkolesterolemia,Dual,4,44122.14,7351.86
+DM2 + Hiperkolesterolemia,Dual,5,41762.76,7466.26
+DM2 + Hiperkolesterolemia,Dual,6,37260.28,3475.15
+DM2 + Hiperkolesterolemia,Dual,7,30763.31,5227.86
+DM2 + Hiperkolesterolemia,Dual,8,30536.67,5168.17
+DM2 + Hiperkolesterolemia,Dual,9,28492.41,4453.07
+DM2 + Hiperkolesterolemia,Dual,10,24748.17,4959.09
+DM2 + Hiperkolesterolemia,Dual,11,24233.18,4862.55
+DM2 + Hiperkolesterolemia,Dual,12,23014.71,4388.35
+DM2 + Hiperkolesterolemia,Dual,13,22138.01,3729.06
+DM2 + Hiperkolesterolemia,Dual,14,19626.71,4709.57
+DM2 + Hiperkolesterolemia,Dual,15,18934.15,4194.9
+DM2 + Hiperkolesterolemia,Dual,16,18025.9,3593.9
+DM2 + Hiperkolesterolemia,Dual,17,18025.9,3593.9
+DM2 + Hiperkolesterolemia,Dual,18,18021.93,3599.44
+DM2 + Hiperkolesterolemia,Dual,19,17207.88,2979.59
+DM2 + Hiperkolesterolemia,Dual,20,17133.59,2922.8
+DM2 + Hiperkolesterolemia,Dual,21,16630.02,3634.6
+DM2 + Hiperkolesterolemia,Dual,22,16426.0,3492.06
+DM2 + Hiperkolesterolemia,Dual,23,16092.68,3963.07
+DM2 + Hiperkolesterolemia,Dual,24,15429.16,3904.29
+DM2 + Hiperkolesterolemia,Dual,25,15215.52,3732.81
+DM2 + Hiperkolesterolemia,Dual,26,15188.56,3770.89
+DM2 + Hiperkolesterolemia,Dual,27,15188.47,3771.03
+DM2 + Hiperkolesterolemia,Dual,28,15188.47,3771.03
+DM2 + Hiperkolesterolemia,Dual,29,15188.47,3771.03
+DM2 + Hiperkolesterolemia,Dual,30,15182.72,3767.31
+DM2 + Hiperkolesterolemia,Dual,31,14662.86,4010.27
+DM2 + Hiperkolesterolemia,Dual,32,14534.51,4089.71
+DM2 + Hiperkolesterolemia,Dual,33,14168.71,3922.66
+DM2 + Hiperkolesterolemia,Dual,34,14168.71,3922.66
+DM2 + Hiperkolesterolemia,Dual,35,13797.03,4401.0
+DM2 + Hiperkolesterolemia,Dual,36,13611.57,4225.2
+DM2 + Hiperkolesterolemia,Dual,37,13046.43,3752.3
+DM2 + Hiperkolesterolemia,Dual,38,12900.68,3958.35
+DM2 + Hiperkolesterolemia,Dual,39,12900.68,3958.35
+DM2 + Hiperkolesterolemia,Dual,40,12900.68,3958.35
+DM2 + Hiperkolesterolemia,Dual,41,12804.7,3895.24
+DM2 + Hiperkolesterolemia,Dual,42,12804.7,3895.24
+DM2 + Hiperkolesterolemia,Dual,43,12804.7,3895.24
+DM2 + Hiperkolesterolemia,Dual,44,12804.7,3895.24
+DM2 + Hiperkolesterolemia,Dual,45,12804.7,3895.24
+DM2 + Hiperkolesterolemia,Dual,46,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,47,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,48,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,49,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,50,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,51,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,52,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,53,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,54,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,55,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,56,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,57,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,58,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,59,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,60,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,61,12734.91,3842.12
+DM2 + Hiperkolesterolemia,Dual,62,12702.07,3817.75
+DM2 + Hiperkolesterolemia,Dual,63,12702.07,3817.75
+DM2 + Hiperkolesterolemia,Dual,64,12574.61,3734.68
+DM2 + Hiperkolesterolemia,Dual,65,12574.61,3734.68
+DM2 + Hiperkolesterolemia,Dual,66,12574.61,3734.68
+DM2 + Hiperkolesterolemia,Dual,67,12574.61,3734.68
+DM2 + Hiperkolesterolemia,Dual,68,12574.61,3734.68
+DM2 + Hiperkolesterolemia,Dual,69,12568.76,3730.09
+DM2 + Hiperkolesterolemia,Dual,70,12568.76,3730.09
+DM2 + Hiperkolesterolemia,Dual,71,12568.76,3730.09
+DM2 + Hiperkolesterolemia,Dual,72,12464.67,3650.52
+DM2 + Hiperkolesterolemia,Dual,73,12464.67,3650.52
+DM2 + Hiperkolesterolemia,Dual,74,12464.67,3650.52
+DM2 + Hiperkolesterolemia,Dual,75,12464.67,3650.52
+DM2 + Hiperkolesterolemia,Dual,76,12464.67,3650.52
+DM2 + Hiperkolesterolemia,Dual,77,12464.67,3650.52
+DM2 + Hiperkolesterolemia,Dual,78,12464.67,3650.52
+DM2 + Hiperkolesterolemia,Dual,79,12464.67,3650.52
+DM2 + Hiperkolesterolemia,Dual,80,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,81,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,82,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,83,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,84,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,85,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,86,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,87,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,88,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,89,12456.7,3645.2
+DM2 + Hiperkolesterolemia,Dual,90,12337.42,3568.87
+DM2 + Hiperkolesterolemia,Dual,91,12337.42,3568.87
+DM2 + Hiperkolesterolemia,Dual,92,12337.42,3568.87
+DM2 + Hiperkolesterolemia,Dual,93,12337.42,3568.87
+DM2 + Hiperkolesterolemia,Dual,94,12181.47,3449.42
+DM2 + Hiperkolesterolemia,Dual,95,12181.47,3449.42
+DM2 + Hiperkolesterolemia,Dual,96,10977.96,2949.71
+DM2 + Hiperkolesterolemia,Dual,97,10977.96,2949.71
+DM2 + Hiperkolesterolemia,Dual,98,10977.96,2949.71
+DM2 + Hiperkolesterolemia,Dual,99,10977.96,2949.71
+DM2 + Hiperkolesterolemia,Dual,100,10977.96,2949.71
+DM2 + Hiperkolesterolemia,Dual,101,10977.96,2949.71
+DM2 + Hiperkolesterolemia,Dual,102,10977.96,2949.71
+DM2 + Hiperkolesterolemia,Dual,103,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,104,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,105,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,106,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,107,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,108,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,109,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,110,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,111,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,112,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,113,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,114,10616.07,2528.7
+DM2 + Hiperkolesterolemia,Dual,115,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,116,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,117,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,118,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,119,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,120,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,121,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,122,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,123,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,124,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,125,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,126,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,127,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,128,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,129,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,130,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,131,10597.3,2507.8
+DM2 + Hiperkolesterolemia,Dual,132,10535.04,2496.76
+DM2 + Hiperkolesterolemia,Dual,133,10535.04,2496.76
+DM2 + Hiperkolesterolemia,Dual,134,10535.04,2496.76
+DM2 + Hiperkolesterolemia,Dual,135,10535.04,2496.76
+DM2 + Hiperkolesterolemia,Dual,136,10535.04,2496.76
+DM2 + Hiperkolesterolemia,Dual,137,10535.04,2496.76
+DM2 + Hiperkolesterolemia,Dual,138,10535.04,2496.76
+DM2 + Hiperkolesterolemia,Dual,139,10535.04,2496.76
+DM2 + Hiperkolesterolemia,Dual,140,10135.97,2068.35
+DM2 + Hiperkolesterolemia,Dual,141,10135.97,2068.35
+DM2 + Hiperkolesterolemia,Dual,142,10135.97,2068.35
+DM2 + Hiperkolesterolemia,Dual,143,10135.97,2068.35
+DM2 + Hiperkolesterolemia,Dual,144,10135.97,2068.35
+DM2 + Hiperkolesterolemia,Dual,145,10135.97,2068.35
+DM2 + Hiperkolesterolemia,Dual,146,10090.06,2131.27
+DM2 + Hiperkolesterolemia,Dual,147,10090.06,2131.27
+DM2 + Hiperkolesterolemia,Dual,148,10090.06,2131.27
+DM2 + Hiperkolesterolemia,Dual,149,10090.06,2131.27
+DM2 + Hiperkolesterolemia,Dual,150,10090.06,2131.27
+DM2 + CKD,Dual,1,80629.85,3553.52
+DM2 + CKD,Dual,2,69276.33,4971.89
+DM2 + CKD,Dual,3,61691.27,2429.71
+DM2 + CKD,Dual,4,54017.92,5321.33
+DM2 + CKD,Dual,5,49782.02,5285.55
+DM2 + CKD,Dual,6,40337.21,10649.15
+DM2 + CKD,Dual,7,33875.19,4781.67
+DM2 + CKD,Dual,8,33296.5,4330.8
+DM2 + CKD,Dual,9,31151.76,2819.63
+DM2 + CKD,Dual,10,28567.06,1685.89
+DM2 + CKD,Dual,11,28567.06,1685.89
+DM2 + CKD,Dual,12,27183.1,327.56
+DM2 + CKD,Dual,13,26095.45,764.92
+DM2 + CKD,Dual,14,23936.74,964.06
+DM2 + CKD,Dual,15,23022.48,650.27
+DM2 + CKD,Dual,16,21289.72,852.45
+DM2 + CKD,Dual,17,20988.64,1131.06
+DM2 + CKD,Dual,18,19985.49,994.93
+DM2 + CKD,Dual,19,19878.25,929.82
+DM2 + CKD,Dual,20,19688.07,789.93
+DM2 + CKD,Dual,21,19243.07,791.43
+DM2 + CKD,Dual,22,19095.61,930.5
+DM2 + CKD,Dual,23,19081.91,911.97
+DM2 + CKD,Dual,24,18659.83,1195.77
+DM2 + CKD,Dual,25,17963.56,309.33
+DM2 + CKD,Dual,26,17847.56,248.7
+DM2 + CKD,Dual,27,17847.56,248.7
+DM2 + CKD,Dual,28,17687.35,143.94
+DM2 + CKD,Dual,29,17502.43,65.05
+DM2 + CKD,Dual,30,17502.43,65.05
+DM2 + CKD,Dual,31,17502.43,65.05
+DM2 + CKD,Dual,32,17502.43,65.05
+DM2 + CKD,Dual,33,17403.8,106.23
+DM2 + CKD,Dual,34,17117.73,412.05
+DM2 + CKD,Dual,35,16792.93,336.93
+DM2 + CKD,Dual,36,16338.22,862.41
+DM2 + CKD,Dual,37,16083.38,792.64
+DM2 + CKD,Dual,38,16083.38,792.64
+DM2 + CKD,Dual,39,16083.38,792.64
+DM2 + CKD,Dual,40,15768.48,419.26
+DM2 + CKD,Dual,41,15768.48,419.26
+DM2 + CKD,Dual,42,15256.48,1136.62
+DM2 + CKD,Dual,43,15256.48,1136.62
+DM2 + CKD,Dual,44,15256.48,1136.62
+DM2 + CKD,Dual,45,15256.48,1136.62
+DM2 + CKD,Dual,46,15256.48,1136.62
+DM2 + CKD,Dual,47,15256.48,1136.62
+DM2 + CKD,Dual,48,15152.02,1081.82
+DM2 + CKD,Dual,49,15152.02,1081.82
+DM2 + CKD,Dual,50,15152.02,1081.82
+DM2 + CKD,Dual,51,15152.02,1081.82
+DM2 + CKD,Dual,52,15152.02,1081.82
+DM2 + CKD,Dual,53,15152.02,1081.82
+DM2 + CKD,Dual,54,15152.02,1081.82
+DM2 + CKD,Dual,55,15152.02,1081.82
+DM2 + CKD,Dual,56,15152.02,1081.82
+DM2 + CKD,Dual,57,15152.02,1081.82
+DM2 + CKD,Dual,58,15152.02,1081.82
+DM2 + CKD,Dual,59,15152.02,1081.82
+DM2 + CKD,Dual,60,15152.02,1081.82
+DM2 + CKD,Dual,61,15093.32,1028.33
+DM2 + CKD,Dual,62,15093.32,1028.33
+DM2 + CKD,Dual,63,15093.32,1028.33
+DM2 + CKD,Dual,64,15093.32,1028.33
+DM2 + CKD,Dual,65,15093.32,1028.33
+DM2 + CKD,Dual,66,15093.32,1028.33
+DM2 + CKD,Dual,67,15093.32,1028.33
+DM2 + CKD,Dual,68,15093.32,1028.33
+DM2 + CKD,Dual,69,15093.32,1028.33
+DM2 + CKD,Dual,70,15093.32,1028.33
+DM2 + CKD,Dual,71,15093.32,1028.33
+DM2 + CKD,Dual,72,15093.32,1028.33
+DM2 + CKD,Dual,73,15093.32,1028.33
+DM2 + CKD,Dual,74,15091.06,1031.48
+DM2 + CKD,Dual,75,15091.06,1031.48
+DM2 + CKD,Dual,76,15091.06,1031.48
+DM2 + CKD,Dual,77,15013.74,967.46
+DM2 + CKD,Dual,78,15013.74,967.46
+DM2 + CKD,Dual,79,14971.48,936.02
+DM2 + CKD,Dual,80,14971.48,936.02
+DM2 + CKD,Dual,81,14971.48,936.02
+DM2 + CKD,Dual,82,14971.48,936.02
+DM2 + CKD,Dual,83,14971.48,936.02
+DM2 + CKD,Dual,84,14971.48,936.02
+DM2 + CKD,Dual,85,14971.48,936.02
+DM2 + CKD,Dual,86,14971.48,936.02
+DM2 + CKD,Dual,87,14971.48,936.02
+DM2 + CKD,Dual,88,14971.48,936.02
+DM2 + CKD,Dual,89,14971.48,936.02
+DM2 + CKD,Dual,90,14971.48,936.02
+DM2 + CKD,Dual,91,14971.48,936.02
+DM2 + CKD,Dual,92,14971.48,936.02
+DM2 + CKD,Dual,93,14971.48,936.02
+DM2 + CKD,Dual,94,14971.48,936.02
+DM2 + CKD,Dual,95,14947.82,919.65
+DM2 + CKD,Dual,96,14947.82,919.65
+DM2 + CKD,Dual,97,14947.82,919.65
+DM2 + CKD,Dual,98,14947.82,919.65
+DM2 + CKD,Dual,99,14897.63,885.2
+DM2 + CKD,Dual,100,14897.63,885.2
+DM2 + CKD,Dual,101,14897.63,885.2
+DM2 + CKD,Dual,102,14897.63,885.2
+DM2 + CKD,Dual,103,14897.63,885.2
+DM2 + CKD,Dual,104,14897.63,885.2
+DM2 + CKD,Dual,105,14897.63,885.2
+DM2 + CKD,Dual,106,14897.63,885.2
+DM2 + CKD,Dual,107,14897.63,885.2
+DM2 + CKD,Dual,108,14897.63,885.2
+DM2 + CKD,Dual,109,14897.63,885.2
+DM2 + CKD,Dual,110,14897.63,885.2
+DM2 + CKD,Dual,111,14897.63,885.2
+DM2 + CKD,Dual,112,14897.63,885.2
+DM2 + CKD,Dual,113,14897.63,885.2
+DM2 + CKD,Dual,114,14897.63,885.2
+DM2 + CKD,Dual,115,14897.63,885.2
+DM2 + CKD,Dual,116,14897.63,885.2
+DM2 + CKD,Dual,117,14897.63,885.2
+DM2 + CKD,Dual,118,14897.63,885.2
+DM2 + CKD,Dual,119,14897.63,885.2
+DM2 + CKD,Dual,120,14897.63,885.2
+DM2 + CKD,Dual,121,14897.63,885.2
+DM2 + CKD,Dual,122,14897.63,885.2
+DM2 + CKD,Dual,123,14877.62,872.81
+DM2 + CKD,Dual,124,14877.62,872.81
+DM2 + CKD,Dual,125,14877.62,872.81
+DM2 + CKD,Dual,126,14877.62,872.81
+DM2 + CKD,Dual,127,14859.39,862.18
+DM2 + CKD,Dual,128,14859.39,862.18
+DM2 + CKD,Dual,129,14859.39,862.18
+DM2 + CKD,Dual,130,14648.85,791.65
+DM2 + CKD,Dual,131,14648.85,791.65
+DM2 + CKD,Dual,132,14620.39,827.85
+DM2 + CKD,Dual,133,14557.06,825.42
+DM2 + CKD,Dual,134,14557.06,825.42
+DM2 + CKD,Dual,135,14557.06,825.42
+DM2 + CKD,Dual,136,14557.06,825.42
+DM2 + CKD,Dual,137,14557.06,825.42
+DM2 + CKD,Dual,138,14557.06,825.42
+DM2 + CKD,Dual,139,14557.06,825.42
+DM2 + CKD,Dual,140,14557.06,825.42
+DM2 + CKD,Dual,141,14557.06,825.42
+DM2 + CKD,Dual,142,14557.06,825.42
+DM2 + CKD,Dual,143,14557.06,825.42
+DM2 + CKD,Dual,144,14557.06,825.42
+DM2 + CKD,Dual,145,14557.06,825.42
+DM2 + CKD,Dual,146,14557.06,825.42
+DM2 + CKD,Dual,147,14557.06,825.42
+DM2 + CKD,Dual,148,14557.06,825.42
+DM2 + CKD,Dual,149,14557.06,825.42
+DM2 + CKD,Dual,150,14557.06,825.42
+Hipertensi + CVD,Dual,1,41119.41,2599.53
+Hipertensi + CVD,Dual,2,37185.2,2044.95
+Hipertensi + CVD,Dual,3,34925.78,3926.13
+Hipertensi + CVD,Dual,4,25338.61,3906.22
+Hipertensi + CVD,Dual,5,20888.53,4386.1
+Hipertensi + CVD,Dual,6,15980.94,1630.19
+Hipertensi + CVD,Dual,7,15980.94,1630.19
+Hipertensi + CVD,Dual,8,15330.77,1008.3
+Hipertensi + CVD,Dual,9,13487.54,1474.56
+Hipertensi + CVD,Dual,10,10678.22,2358.54
+Hipertensi + CVD,Dual,11,9841.52,1506.46
+Hipertensi + CVD,Dual,12,9109.81,1625.2
+Hipertensi + CVD,Dual,13,9109.81,1625.2
+Hipertensi + CVD,Dual,14,8268.59,2234.88
+Hipertensi + CVD,Dual,15,7663.08,2642.97
+Hipertensi + CVD,Dual,16,7115.38,3079.41
+Hipertensi + CVD,Dual,17,6343.84,2726.53
+Hipertensi + CVD,Dual,18,5830.58,3144.5
+Hipertensi + CVD,Dual,19,5794.31,3094.23
+Hipertensi + CVD,Dual,20,4598.09,1648.65
+Hipertensi + CVD,Dual,21,4334.59,1768.95
+Hipertensi + CVD,Dual,22,4334.59,1768.95
+Hipertensi + CVD,Dual,23,4180.52,1552.15
+Hipertensi + CVD,Dual,24,4180.52,1552.15
+Hipertensi + CVD,Dual,25,4180.52,1552.15
+Hipertensi + CVD,Dual,26,3362.22,610.67
+Hipertensi + CVD,Dual,27,3216.51,433.34
+Hipertensi + CVD,Dual,28,2729.69,177.63
+Hipertensi + CVD,Dual,29,2729.69,177.63
+Hipertensi + CVD,Dual,30,2729.69,177.63
+Hipertensi + CVD,Dual,31,2729.69,177.63
+Hipertensi + CVD,Dual,32,2729.69,177.63
+Hipertensi + CVD,Dual,33,2729.69,177.63
+Hipertensi + CVD,Dual,34,2729.69,177.63
+Hipertensi + CVD,Dual,35,2357.85,579.63
+Hipertensi + CVD,Dual,36,2226.2,465.13
+Hipertensi + CVD,Dual,37,2226.2,465.13
+Hipertensi + CVD,Dual,38,2226.2,465.13
+Hipertensi + CVD,Dual,39,2226.2,465.13
+Hipertensi + CVD,Dual,40,2226.2,465.13
+Hipertensi + CVD,Dual,41,2226.2,465.13
+Hipertensi + CVD,Dual,42,2226.2,465.13
+Hipertensi + CVD,Dual,43,2116.03,528.86
+Hipertensi + CVD,Dual,44,2116.03,528.86
+Hipertensi + CVD,Dual,45,2116.03,528.86
+Hipertensi + CVD,Dual,46,2116.03,528.86
+Hipertensi + CVD,Dual,47,2116.03,528.86
+Hipertensi + CVD,Dual,48,2076.83,509.33
+Hipertensi + CVD,Dual,49,2076.83,509.33
+Hipertensi + CVD,Dual,50,2076.83,509.33
+Hipertensi + CVD,Dual,51,2076.83,509.33
+Hipertensi + CVD,Dual,52,2076.83,509.33
+Hipertensi + CVD,Dual,53,2076.83,509.33
+Hipertensi + CVD,Dual,54,1878.23,501.14
+Hipertensi + CVD,Dual,55,1878.23,501.14
+Hipertensi + CVD,Dual,56,1878.23,501.14
+Hipertensi + CVD,Dual,57,1878.23,501.14
+Hipertensi + CVD,Dual,58,1836.51,519.09
+Hipertensi + CVD,Dual,59,1829.72,522.59
+Hipertensi + CVD,Dual,60,1573.92,737.93
+Hipertensi + CVD,Dual,61,1573.92,737.93
+Hipertensi + CVD,Dual,62,1573.92,737.93
+Hipertensi + CVD,Dual,63,1573.92,737.93
+Hipertensi + CVD,Dual,64,1573.92,737.93
+Hipertensi + CVD,Dual,65,1573.92,737.93
+Hipertensi + CVD,Dual,66,1573.92,737.93
+Hipertensi + CVD,Dual,67,1406.11,817.5
+Hipertensi + CVD,Dual,68,1406.11,817.5
+Hipertensi + CVD,Dual,69,1406.11,817.5
+Hipertensi + CVD,Dual,70,1406.11,817.5
+Hipertensi + CVD,Dual,71,1402.67,812.65
+Hipertensi + CVD,Dual,72,1402.67,812.65
+Hipertensi + CVD,Dual,73,1402.67,812.65
+Hipertensi + CVD,Dual,74,1378.71,778.79
+Hipertensi + CVD,Dual,75,1373.58,782.18
+Hipertensi + CVD,Dual,76,1373.58,782.18
+Hipertensi + CVD,Dual,77,1373.58,782.18
+Hipertensi + CVD,Dual,78,1373.58,782.18
+Hipertensi + CVD,Dual,79,1373.58,782.18
+Hipertensi + CVD,Dual,80,1373.58,782.18
+Hipertensi + CVD,Dual,81,1373.58,782.18
+Hipertensi + CVD,Dual,82,1373.58,782.18
+Hipertensi + CVD,Dual,83,1373.58,782.18
+Hipertensi + CVD,Dual,84,1373.58,782.18
+Hipertensi + CVD,Dual,85,1373.58,782.18
+Hipertensi + CVD,Dual,86,1373.58,782.18
+Hipertensi + CVD,Dual,87,1373.58,782.18
+Hipertensi + CVD,Dual,88,1373.58,782.18
+Hipertensi + CVD,Dual,89,1373.58,782.18
+Hipertensi + CVD,Dual,90,1370.35,784.61
+Hipertensi + CVD,Dual,91,1370.35,784.61
+Hipertensi + CVD,Dual,92,1370.35,784.61
+Hipertensi + CVD,Dual,93,1370.35,784.61
+Hipertensi + CVD,Dual,94,1370.35,784.61
+Hipertensi + CVD,Dual,95,1370.35,784.61
+Hipertensi + CVD,Dual,96,1370.35,784.61
+Hipertensi + CVD,Dual,97,1370.35,784.61
+Hipertensi + CVD,Dual,98,1370.35,784.61
+Hipertensi + CVD,Dual,99,1324.93,816.47
+Hipertensi + CVD,Dual,100,1324.93,816.47
+Hipertensi + CVD,Dual,101,1324.93,816.47
+Hipertensi + CVD,Dual,102,1324.93,816.47
+Hipertensi + CVD,Dual,103,1318.36,807.18
+Hipertensi + CVD,Dual,104,1318.36,807.18
+Hipertensi + CVD,Dual,105,1034.84,406.6
+Hipertensi + CVD,Dual,106,1034.84,406.6
+Hipertensi + CVD,Dual,107,1034.84,406.6
+Hipertensi + CVD,Dual,108,1034.84,406.6
+Hipertensi + CVD,Dual,109,1028.27,397.32
+Hipertensi + CVD,Dual,110,1028.27,397.32
+Hipertensi + CVD,Dual,111,1028.27,397.32
+Hipertensi + CVD,Dual,112,1028.27,397.32
+Hipertensi + CVD,Dual,113,1028.27,397.32
+Hipertensi + CVD,Dual,114,1028.27,397.32
+Hipertensi + CVD,Dual,115,1028.27,397.32
+Hipertensi + CVD,Dual,116,1028.27,397.32
+Hipertensi + CVD,Dual,117,1028.27,397.32
+Hipertensi + CVD,Dual,118,990.13,343.51
+Hipertensi + CVD,Dual,119,990.13,343.51
+Hipertensi + CVD,Dual,120,990.13,343.51
+Hipertensi + CVD,Dual,121,903.11,220.92
+Hipertensi + CVD,Dual,122,903.11,220.92
+Hipertensi + CVD,Dual,123,903.11,220.92
+Hipertensi + CVD,Dual,124,903.11,220.92
+Hipertensi + CVD,Dual,125,903.11,220.92
+Hipertensi + CVD,Dual,126,843.62,266.05
+Hipertensi + CVD,Dual,127,843.62,266.05
+Hipertensi + CVD,Dual,128,843.62,266.05
+Hipertensi + CVD,Dual,129,843.62,266.05
+Hipertensi + CVD,Dual,130,843.62,266.05
+Hipertensi + CVD,Dual,131,843.62,266.05
+Hipertensi + CVD,Dual,132,843.62,266.05
+Hipertensi + CVD,Dual,133,843.62,266.05
+Hipertensi + CVD,Dual,134,843.62,266.05
+Hipertensi + CVD,Dual,135,843.62,266.05
+Hipertensi + CVD,Dual,136,843.62,266.05
+Hipertensi + CVD,Dual,137,843.62,266.05
+Hipertensi + CVD,Dual,138,843.62,266.05
+Hipertensi + CVD,Dual,139,843.62,266.05
+Hipertensi + CVD,Dual,140,843.62,266.05
+Hipertensi + CVD,Dual,141,843.62,266.05
+Hipertensi + CVD,Dual,142,843.62,266.05
+Hipertensi + CVD,Dual,143,812.2,222.5
+Hipertensi + CVD,Dual,144,812.2,222.5
+Hipertensi + CVD,Dual,145,812.2,222.5
+Hipertensi + CVD,Dual,146,812.2,222.5
+Hipertensi + CVD,Dual,147,812.2,222.5
+Hipertensi + CVD,Dual,148,812.2,222.5
+Hipertensi + CVD,Dual,149,812.2,222.5
+Hipertensi + CVD,Dual,150,812.2,222.5
+Hipertensi + Hiperkolesterolemia,Dual,1,40520.93,3926.36
+Hipertensi + Hiperkolesterolemia,Dual,2,40520.93,3926.36
+Hipertensi + Hiperkolesterolemia,Dual,3,34588.33,5089.23
+Hipertensi + Hiperkolesterolemia,Dual,4,33348.8,4093.91
+Hipertensi + Hiperkolesterolemia,Dual,5,28414.39,3841.01
+Hipertensi + Hiperkolesterolemia,Dual,6,20993.14,2449.94
+Hipertensi + Hiperkolesterolemia,Dual,7,18627.3,2249.27
+Hipertensi + Hiperkolesterolemia,Dual,8,15996.11,3379.63
+Hipertensi + Hiperkolesterolemia,Dual,9,15790.81,3269.96
+Hipertensi + Hiperkolesterolemia,Dual,10,15208.74,3176.13
+Hipertensi + Hiperkolesterolemia,Dual,11,14940.04,3384.73
+Hipertensi + Hiperkolesterolemia,Dual,12,13660.88,1879.44
+Hipertensi + Hiperkolesterolemia,Dual,13,11343.78,4480.45
+Hipertensi + Hiperkolesterolemia,Dual,14,10862.38,4365.04
+Hipertensi + Hiperkolesterolemia,Dual,15,10462.28,4233.14
+Hipertensi + Hiperkolesterolemia,Dual,16,9935.34,3611.12
+Hipertensi + Hiperkolesterolemia,Dual,17,9935.34,3611.12
+Hipertensi + Hiperkolesterolemia,Dual,18,9935.34,3611.12
+Hipertensi + Hiperkolesterolemia,Dual,19,9294.34,3051.79
+Hipertensi + Hiperkolesterolemia,Dual,20,8767.95,2522.73
+Hipertensi + Hiperkolesterolemia,Dual,21,8767.95,2522.73
+Hipertensi + Hiperkolesterolemia,Dual,22,8767.95,2522.73
+Hipertensi + Hiperkolesterolemia,Dual,23,8282.07,2372.52
+Hipertensi + Hiperkolesterolemia,Dual,24,8282.07,2372.52
+Hipertensi + Hiperkolesterolemia,Dual,25,8002.29,2059.25
+Hipertensi + Hiperkolesterolemia,Dual,26,7881.0,2222.04
+Hipertensi + Hiperkolesterolemia,Dual,27,7860.32,2200.51
+Hipertensi + Hiperkolesterolemia,Dual,28,7331.3,2401.3
+Hipertensi + Hiperkolesterolemia,Dual,29,7251.2,2395.76
+Hipertensi + Hiperkolesterolemia,Dual,30,6705.85,1783.82
+Hipertensi + Hiperkolesterolemia,Dual,31,6705.85,1783.82
+Hipertensi + Hiperkolesterolemia,Dual,32,6705.85,1783.82
+Hipertensi + Hiperkolesterolemia,Dual,33,6485.12,1732.28
+Hipertensi + Hiperkolesterolemia,Dual,34,5910.6,1157.36
+Hipertensi + Hiperkolesterolemia,Dual,35,5867.79,1217.86
+Hipertensi + Hiperkolesterolemia,Dual,36,5867.79,1217.86
+Hipertensi + Hiperkolesterolemia,Dual,37,5468.32,1147.85
+Hipertensi + Hiperkolesterolemia,Dual,38,5468.32,1147.85
+Hipertensi + Hiperkolesterolemia,Dual,39,5343.88,1142.99
+Hipertensi + Hiperkolesterolemia,Dual,40,5304.0,1190.78
+Hipertensi + Hiperkolesterolemia,Dual,41,5304.0,1190.78
+Hipertensi + Hiperkolesterolemia,Dual,42,5304.0,1190.78
+Hipertensi + Hiperkolesterolemia,Dual,43,5304.0,1190.78
+Hipertensi + Hiperkolesterolemia,Dual,44,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,45,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,46,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,47,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,48,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,49,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,50,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,51,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,52,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,53,5133.87,986.39
+Hipertensi + Hiperkolesterolemia,Dual,54,4860.43,708.64
+Hipertensi + Hiperkolesterolemia,Dual,55,4860.43,708.64
+Hipertensi + Hiperkolesterolemia,Dual,56,4860.43,708.64
+Hipertensi + Hiperkolesterolemia,Dual,57,4860.43,708.64
+Hipertensi + Hiperkolesterolemia,Dual,58,4860.43,708.64
+Hipertensi + Hiperkolesterolemia,Dual,59,4860.43,708.64
+Hipertensi + Hiperkolesterolemia,Dual,60,4826.4,691.32
+Hipertensi + Hiperkolesterolemia,Dual,61,4826.4,691.32
+Hipertensi + Hiperkolesterolemia,Dual,62,4826.4,691.32
+Hipertensi + Hiperkolesterolemia,Dual,63,4826.4,691.32
+Hipertensi + Hiperkolesterolemia,Dual,64,4826.4,691.32
+Hipertensi + Hiperkolesterolemia,Dual,65,4826.4,691.32
+Hipertensi + Hiperkolesterolemia,Dual,66,4586.56,535.52
+Hipertensi + Hiperkolesterolemia,Dual,67,4586.56,535.52
+Hipertensi + Hiperkolesterolemia,Dual,68,4586.56,535.52
+Hipertensi + Hiperkolesterolemia,Dual,69,4586.56,535.52
+Hipertensi + Hiperkolesterolemia,Dual,70,4586.56,535.52
+Hipertensi + Hiperkolesterolemia,Dual,71,4586.56,535.52
+Hipertensi + Hiperkolesterolemia,Dual,72,4586.56,535.52
+Hipertensi + Hiperkolesterolemia,Dual,73,4404.71,385.38
+Hipertensi + Hiperkolesterolemia,Dual,74,4404.71,385.38
+Hipertensi + Hiperkolesterolemia,Dual,75,4404.71,385.38
+Hipertensi + Hiperkolesterolemia,Dual,76,4404.71,385.38
+Hipertensi + Hiperkolesterolemia,Dual,77,4394.24,380.24
+Hipertensi + Hiperkolesterolemia,Dual,78,4394.24,380.24
+Hipertensi + Hiperkolesterolemia,Dual,79,4240.48,281.86
+Hipertensi + Hiperkolesterolemia,Dual,80,4240.48,281.86
+Hipertensi + Hiperkolesterolemia,Dual,81,3945.61,461.02
+Hipertensi + Hiperkolesterolemia,Dual,82,3945.61,461.02
+Hipertensi + Hiperkolesterolemia,Dual,83,3945.61,461.02
+Hipertensi + Hiperkolesterolemia,Dual,84,3945.61,461.02
+Hipertensi + Hiperkolesterolemia,Dual,85,3945.61,461.02
+Hipertensi + Hiperkolesterolemia,Dual,86,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,87,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,88,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,89,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,90,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,91,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,92,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,93,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,94,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,95,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,96,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,97,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,98,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,99,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,100,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,101,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,102,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,103,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,104,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,105,3786.19,655.24
+Hipertensi + Hiperkolesterolemia,Dual,106,3615.37,477.67
+Hipertensi + Hiperkolesterolemia,Dual,107,3615.37,477.67
+Hipertensi + Hiperkolesterolemia,Dual,108,3526.73,412.03
+Hipertensi + Hiperkolesterolemia,Dual,109,3526.73,412.03
+Hipertensi + Hiperkolesterolemia,Dual,110,3526.73,412.03
+Hipertensi + Hiperkolesterolemia,Dual,111,3526.73,412.03
+Hipertensi + Hiperkolesterolemia,Dual,112,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,113,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,114,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,115,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,116,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,117,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,118,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,119,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,120,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,121,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,122,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,123,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,124,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,125,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,126,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,127,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,128,3277.68,417.03
+Hipertensi + Hiperkolesterolemia,Dual,129,3277.1,417.39
+Hipertensi + Hiperkolesterolemia,Dual,130,3235.37,446.39
+Hipertensi + Hiperkolesterolemia,Dual,131,3235.37,446.39
+Hipertensi + Hiperkolesterolemia,Dual,132,3235.37,446.39
+Hipertensi + Hiperkolesterolemia,Dual,133,3235.37,446.39
+Hipertensi + Hiperkolesterolemia,Dual,134,3235.37,446.39
+Hipertensi + Hiperkolesterolemia,Dual,135,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,136,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,137,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,138,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,139,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,140,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,141,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,142,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,143,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,144,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,145,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,146,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,147,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,148,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,149,3144.15,527.55
+Hipertensi + Hiperkolesterolemia,Dual,150,3144.15,527.55
+Hipertensi + CKD,Dual,1,65285.55,8475.75
+Hipertensi + CKD,Dual,2,58905.32,3888.55
+Hipertensi + CKD,Dual,3,49369.49,4291.08
+Hipertensi + CKD,Dual,4,47115.39,1170.8
+Hipertensi + CKD,Dual,5,44707.07,2897.66
+Hipertensi + CKD,Dual,6,39324.22,4283.75
+Hipertensi + CKD,Dual,7,34315.65,5577.33
+Hipertensi + CKD,Dual,8,32241.91,4418.87
+Hipertensi + CKD,Dual,9,31971.56,4123.5
+Hipertensi + CKD,Dual,10,29027.16,3320.91
+Hipertensi + CKD,Dual,11,27668.58,1875.73
+Hipertensi + CKD,Dual,12,26689.82,618.53
+Hipertensi + CKD,Dual,13,26044.28,965.37
+Hipertensi + CKD,Dual,14,24491.52,2416.65
+Hipertensi + CKD,Dual,15,23872.97,2451.42
+Hipertensi + CKD,Dual,16,23647.47,2694.88
+Hipertensi + CKD,Dual,17,22785.3,2241.6
+Hipertensi + CKD,Dual,18,21444.88,1300.53
+Hipertensi + CKD,Dual,19,21081.93,1592.56
+Hipertensi + CKD,Dual,20,20689.93,1768.5
+Hipertensi + CKD,Dual,21,20264.13,1930.63
+Hipertensi + CKD,Dual,22,19995.18,1552.5
+Hipertensi + CKD,Dual,23,18098.56,3103.04
+Hipertensi + CKD,Dual,24,17928.13,2933.36
+Hipertensi + CKD,Dual,25,17830.69,2896.3
+Hipertensi + CKD,Dual,26,17830.69,2896.3
+Hipertensi + CKD,Dual,27,17572.08,2828.32
+Hipertensi + CKD,Dual,28,16530.48,4016.6
+Hipertensi + CKD,Dual,29,16530.48,4016.6
+Hipertensi + CKD,Dual,30,16311.24,4317.71
+Hipertensi + CKD,Dual,31,16311.24,4317.71
+Hipertensi + CKD,Dual,32,15650.94,4150.98
+Hipertensi + CKD,Dual,33,15650.94,4150.98
+Hipertensi + CKD,Dual,34,15622.03,4187.96
+Hipertensi + CKD,Dual,35,15486.0,4362.92
+Hipertensi + CKD,Dual,36,15486.0,4362.92
+Hipertensi + CKD,Dual,37,15058.2,4342.04
+Hipertensi + CKD,Dual,38,14743.72,4014.2
+Hipertensi + CKD,Dual,39,14743.72,4014.2
+Hipertensi + CKD,Dual,40,14665.76,4013.79
+Hipertensi + CKD,Dual,41,14665.76,4013.79
+Hipertensi + CKD,Dual,42,14652.27,4030.23
+Hipertensi + CKD,Dual,43,14652.27,4030.23
+Hipertensi + CKD,Dual,44,14652.27,4030.23
+Hipertensi + CKD,Dual,45,14652.27,4030.23
+Hipertensi + CKD,Dual,46,14652.27,4030.23
+Hipertensi + CKD,Dual,47,14652.27,4030.23
+Hipertensi + CKD,Dual,48,14652.27,4030.23
+Hipertensi + CKD,Dual,49,14505.69,4037.13
+Hipertensi + CKD,Dual,50,14505.69,4037.13
+Hipertensi + CKD,Dual,51,14505.69,4037.13
+Hipertensi + CKD,Dual,52,14505.69,4037.13
+Hipertensi + CKD,Dual,53,14505.69,4037.13
+Hipertensi + CKD,Dual,54,14505.69,4037.13
+Hipertensi + CKD,Dual,55,14505.69,4037.13
+Hipertensi + CKD,Dual,56,14505.69,4037.13
+Hipertensi + CKD,Dual,57,14505.69,4037.13
+Hipertensi + CKD,Dual,58,14505.69,4037.13
+Hipertensi + CKD,Dual,59,14479.04,4043.75
+Hipertensi + CKD,Dual,60,14479.04,4043.75
+Hipertensi + CKD,Dual,61,14479.04,4043.75
+Hipertensi + CKD,Dual,62,14479.04,4043.75
+Hipertensi + CKD,Dual,63,14479.04,4043.75
+Hipertensi + CKD,Dual,64,14479.04,4043.75
+Hipertensi + CKD,Dual,65,14479.04,4043.75
+Hipertensi + CKD,Dual,66,14479.04,4043.75
+Hipertensi + CKD,Dual,67,14479.04,4043.75
+Hipertensi + CKD,Dual,68,14479.04,4043.75
+Hipertensi + CKD,Dual,69,13002.56,2377.23
+Hipertensi + CKD,Dual,70,13002.56,2377.23
+Hipertensi + CKD,Dual,71,12512.74,2006.86
+Hipertensi + CKD,Dual,72,12054.09,1837.7
+Hipertensi + CKD,Dual,73,12054.09,1837.7
+Hipertensi + CKD,Dual,74,12054.09,1837.7
+Hipertensi + CKD,Dual,75,12054.09,1837.7
+Hipertensi + CKD,Dual,76,12054.09,1837.7
+Hipertensi + CKD,Dual,77,12054.09,1837.7
+Hipertensi + CKD,Dual,78,12054.09,1837.7
+Hipertensi + CKD,Dual,79,12054.09,1837.7
+Hipertensi + CKD,Dual,80,12054.09,1837.7
+Hipertensi + CKD,Dual,81,12054.09,1837.7
+Hipertensi + CKD,Dual,82,12054.09,1837.7
+Hipertensi + CKD,Dual,83,12054.09,1837.7
+Hipertensi + CKD,Dual,84,12054.09,1837.7
+Hipertensi + CKD,Dual,85,12054.09,1837.7
+Hipertensi + CKD,Dual,86,12054.09,1837.7
+Hipertensi + CKD,Dual,87,12054.09,1837.7
+Hipertensi + CKD,Dual,88,12054.09,1837.7
+Hipertensi + CKD,Dual,89,12054.09,1837.7
+Hipertensi + CKD,Dual,90,12054.09,1837.7
+Hipertensi + CKD,Dual,91,12054.09,1837.7
+Hipertensi + CKD,Dual,92,12054.09,1837.7
+Hipertensi + CKD,Dual,93,12037.02,1859.7
+Hipertensi + CKD,Dual,94,12037.02,1859.7
+Hipertensi + CKD,Dual,95,12037.02,1859.7
+Hipertensi + CKD,Dual,96,12037.02,1859.7
+Hipertensi + CKD,Dual,97,12037.02,1859.7
+Hipertensi + CKD,Dual,98,12037.02,1859.7
+Hipertensi + CKD,Dual,99,12037.02,1859.7
+Hipertensi + CKD,Dual,100,12037.02,1859.7
+Hipertensi + CKD,Dual,101,12037.02,1859.7
+Hipertensi + CKD,Dual,102,12037.02,1859.7
+Hipertensi + CKD,Dual,103,12037.02,1859.7
+Hipertensi + CKD,Dual,104,11960.89,1773.54
+Hipertensi + CKD,Dual,105,11960.89,1773.54
+Hipertensi + CKD,Dual,106,11960.89,1773.54
+Hipertensi + CKD,Dual,107,11960.89,1773.54
+Hipertensi + CKD,Dual,108,11960.89,1773.54
+Hipertensi + CKD,Dual,109,11960.89,1773.54
+Hipertensi + CKD,Dual,110,11960.89,1773.54
+Hipertensi + CKD,Dual,111,11960.89,1773.54
+Hipertensi + CKD,Dual,112,11960.89,1773.54
+Hipertensi + CKD,Dual,113,11960.89,1773.54
+Hipertensi + CKD,Dual,114,11960.89,1773.54
+Hipertensi + CKD,Dual,115,11960.89,1773.54
+Hipertensi + CKD,Dual,116,11960.89,1773.54
+Hipertensi + CKD,Dual,117,11960.89,1773.54
+Hipertensi + CKD,Dual,118,11960.89,1773.54
+Hipertensi + CKD,Dual,119,11960.89,1773.54
+Hipertensi + CKD,Dual,120,11960.89,1773.54
+Hipertensi + CKD,Dual,121,11960.89,1773.54
+Hipertensi + CKD,Dual,122,11960.89,1773.54
+Hipertensi + CKD,Dual,123,11960.89,1773.54
+Hipertensi + CKD,Dual,124,11936.98,1769.23
+Hipertensi + CKD,Dual,125,11936.98,1769.23
+Hipertensi + CKD,Dual,126,11936.98,1769.23
+Hipertensi + CKD,Dual,127,11936.98,1769.23
+Hipertensi + CKD,Dual,128,11936.98,1769.23
+Hipertensi + CKD,Dual,129,11936.98,1769.23
+Hipertensi + CKD,Dual,130,11936.98,1769.23
+Hipertensi + CKD,Dual,131,11936.98,1769.23
+Hipertensi + CKD,Dual,132,11936.98,1769.23
+Hipertensi + CKD,Dual,133,11936.98,1769.23
+Hipertensi + CKD,Dual,134,11936.98,1769.23
+Hipertensi + CKD,Dual,135,11936.98,1769.23
+Hipertensi + CKD,Dual,136,11936.98,1769.23
+Hipertensi + CKD,Dual,137,11936.98,1769.23
+Hipertensi + CKD,Dual,138,11936.98,1769.23
+Hipertensi + CKD,Dual,139,11936.98,1769.23
+Hipertensi + CKD,Dual,140,11936.98,1769.23
+Hipertensi + CKD,Dual,141,11936.98,1769.23
+Hipertensi + CKD,Dual,142,11936.98,1769.23
+Hipertensi + CKD,Dual,143,11936.98,1769.23
+Hipertensi + CKD,Dual,144,11936.98,1769.23
+Hipertensi + CKD,Dual,145,11936.98,1769.23
+Hipertensi + CKD,Dual,146,11936.98,1769.23
+Hipertensi + CKD,Dual,147,11936.98,1769.23
+Hipertensi + CKD,Dual,148,11876.51,1761.17
+Hipertensi + CKD,Dual,149,11876.51,1761.17
+Hipertensi + CKD,Dual,150,11876.51,1761.17
+CVD + Hiperkolesterolemia,Dual,1,47356.03,10871.6
+CVD + Hiperkolesterolemia,Dual,2,41719.9,8027.76
+CVD + Hiperkolesterolemia,Dual,3,30391.33,1081.43
+CVD + Hiperkolesterolemia,Dual,4,27044.36,2148.47
+CVD + Hiperkolesterolemia,Dual,5,27044.36,2148.47
+CVD + Hiperkolesterolemia,Dual,6,22849.72,3483.24
+CVD + Hiperkolesterolemia,Dual,7,19962.72,4938.58
+CVD + Hiperkolesterolemia,Dual,8,15613.29,3824.17
+CVD + Hiperkolesterolemia,Dual,9,13594.43,1312.36
+CVD + Hiperkolesterolemia,Dual,10,12184.14,3056.31
+CVD + Hiperkolesterolemia,Dual,11,10514.16,1874.53
+CVD + Hiperkolesterolemia,Dual,12,8856.1,4219.36
+CVD + Hiperkolesterolemia,Dual,13,8362.46,4023.21
+CVD + Hiperkolesterolemia,Dual,14,7179.15,4594.09
+CVD + Hiperkolesterolemia,Dual,15,6720.66,4349.82
+CVD + Hiperkolesterolemia,Dual,16,6312.2,4273.43
+CVD + Hiperkolesterolemia,Dual,17,5986.28,3979.76
+CVD + Hiperkolesterolemia,Dual,18,5925.91,3928.89
+CVD + Hiperkolesterolemia,Dual,19,5161.4,3627.6
+CVD + Hiperkolesterolemia,Dual,20,4698.29,3538.46
+CVD + Hiperkolesterolemia,Dual,21,4698.29,3538.46
+CVD + Hiperkolesterolemia,Dual,22,4478.34,3332.55
+CVD + Hiperkolesterolemia,Dual,23,4356.22,3324.9
+CVD + Hiperkolesterolemia,Dual,24,3994.1,2898.24
+CVD + Hiperkolesterolemia,Dual,25,3513.3,2435.6
+CVD + Hiperkolesterolemia,Dual,26,3069.71,2011.7
+CVD + Hiperkolesterolemia,Dual,27,3057.84,2028.39
+CVD + Hiperkolesterolemia,Dual,28,2721.09,1811.67
+CVD + Hiperkolesterolemia,Dual,29,2681.96,1794.39
+CVD + Hiperkolesterolemia,Dual,30,2681.38,1795.18
+CVD + Hiperkolesterolemia,Dual,31,2681.38,1795.18
+CVD + Hiperkolesterolemia,Dual,32,2681.38,1795.18
+CVD + Hiperkolesterolemia,Dual,33,2669.64,1783.98
+CVD + Hiperkolesterolemia,Dual,34,2538.04,1736.32
+CVD + Hiperkolesterolemia,Dual,35,2192.56,1704.13
+CVD + Hiperkolesterolemia,Dual,36,2164.37,1707.66
+CVD + Hiperkolesterolemia,Dual,37,2164.37,1707.66
+CVD + Hiperkolesterolemia,Dual,38,2164.37,1707.66
+CVD + Hiperkolesterolemia,Dual,39,2147.18,1727.45
+CVD + Hiperkolesterolemia,Dual,40,1916.89,1438.11
+CVD + Hiperkolesterolemia,Dual,41,1916.89,1438.11
+CVD + Hiperkolesterolemia,Dual,42,1875.72,1388.07
+CVD + Hiperkolesterolemia,Dual,43,1623.43,1424.88
+CVD + Hiperkolesterolemia,Dual,44,1570.67,1443.65
+CVD + Hiperkolesterolemia,Dual,45,1570.67,1443.65
+CVD + Hiperkolesterolemia,Dual,46,1477.39,1326.81
+CVD + Hiperkolesterolemia,Dual,47,1477.39,1326.81
+CVD + Hiperkolesterolemia,Dual,48,1248.35,1445.37
+CVD + Hiperkolesterolemia,Dual,49,1248.35,1445.37
+CVD + Hiperkolesterolemia,Dual,50,1248.35,1445.37
+CVD + Hiperkolesterolemia,Dual,51,1248.35,1445.37
+CVD + Hiperkolesterolemia,Dual,52,1248.35,1445.37
+CVD + Hiperkolesterolemia,Dual,53,1248.35,1445.37
+CVD + Hiperkolesterolemia,Dual,54,1238.92,1432.04
+CVD + Hiperkolesterolemia,Dual,55,1119.36,1263.4
+CVD + Hiperkolesterolemia,Dual,56,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,57,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,58,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,59,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,60,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,61,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,62,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,63,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,64,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,65,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,66,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,67,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,68,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,69,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,70,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,71,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,72,1042.49,1316.72
+CVD + Hiperkolesterolemia,Dual,73,1025.0,1328.72
+CVD + Hiperkolesterolemia,Dual,74,1025.0,1328.72
+CVD + Hiperkolesterolemia,Dual,75,1025.0,1328.72
+CVD + Hiperkolesterolemia,Dual,76,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,77,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,78,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,79,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,80,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,81,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,82,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,83,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,84,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,85,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,86,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,87,993.99,1350.84
+CVD + Hiperkolesterolemia,Dual,88,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,89,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,90,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,91,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,92,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,93,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,94,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,95,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,96,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,97,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,98,987.89,1342.21
+CVD + Hiperkolesterolemia,Dual,99,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,100,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,101,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,102,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,103,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,104,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,105,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,106,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,107,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,108,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,109,985.43,1338.73
+CVD + Hiperkolesterolemia,Dual,110,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,111,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,112,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,113,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,114,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,115,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,116,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,117,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,118,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,119,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,120,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,121,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,122,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,123,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,124,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,125,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,126,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,127,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,128,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,129,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,130,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,131,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,132,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,133,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,134,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,135,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,136,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,137,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,138,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,139,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,140,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,141,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,142,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,143,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,144,983.5,1340.14
+CVD + Hiperkolesterolemia,Dual,145,983.46,1340.16
+CVD + Hiperkolesterolemia,Dual,146,983.46,1340.16
+CVD + Hiperkolesterolemia,Dual,147,983.46,1340.16
+CVD + Hiperkolesterolemia,Dual,148,983.46,1340.16
+CVD + Hiperkolesterolemia,Dual,149,983.46,1340.16
+CVD + Hiperkolesterolemia,Dual,150,983.46,1340.16
+CVD + CKD,Dual,1,63008.96,4132.68
+CVD + CKD,Dual,2,57934.49,1895.48
+CVD + CKD,Dual,3,42387.22,7965.11
+CVD + CKD,Dual,4,37124.6,5396.44
+CVD + CKD,Dual,5,36682.22,5697.75
+CVD + CKD,Dual,6,34056.22,3886.21
+CVD + CKD,Dual,7,30078.41,946.76
+CVD + CKD,Dual,8,27150.15,2034.13
+CVD + CKD,Dual,9,26094.94,3290.11
+CVD + CKD,Dual,10,25685.8,3790.07
+CVD + CKD,Dual,11,24016.81,3492.9
+CVD + CKD,Dual,12,22355.36,2275.85
+CVD + CKD,Dual,13,20821.37,2349.95
+CVD + CKD,Dual,14,20476.76,2153.9
+CVD + CKD,Dual,15,20403.99,2053.77
+CVD + CKD,Dual,16,19216.83,2828.86
+CVD + CKD,Dual,17,18292.45,1661.03
+CVD + CKD,Dual,18,17654.4,1064.69
+CVD + CKD,Dual,19,17229.04,1536.74
+CVD + CKD,Dual,20,16886.08,1315.55
+CVD + CKD,Dual,21,16441.11,1341.06
+CVD + CKD,Dual,22,16441.11,1341.06
+CVD + CKD,Dual,23,16373.72,1259.03
+CVD + CKD,Dual,24,15898.07,1722.15
+CVD + CKD,Dual,25,15866.66,1686.04
+CVD + CKD,Dual,26,15859.44,1695.37
+CVD + CKD,Dual,27,15853.33,1703.29
+CVD + CKD,Dual,28,15613.79,1444.28
+CVD + CKD,Dual,29,15613.79,1444.28
+CVD + CKD,Dual,30,15613.79,1444.28
+CVD + CKD,Dual,31,15613.79,1444.28
+CVD + CKD,Dual,32,15613.79,1444.28
+CVD + CKD,Dual,33,15401.78,1734.8
+CVD + CKD,Dual,34,15317.62,1703.87
+CVD + CKD,Dual,35,15300.92,1698.67
+CVD + CKD,Dual,36,14924.49,1353.69
+CVD + CKD,Dual,37,14816.18,1278.48
+CVD + CKD,Dual,38,14816.18,1278.48
+CVD + CKD,Dual,39,14618.74,1148.04
+CVD + CKD,Dual,40,14618.74,1148.04
+CVD + CKD,Dual,41,14616.39,1146.81
+CVD + CKD,Dual,42,14616.39,1146.81
+CVD + CKD,Dual,43,14616.39,1146.81
+CVD + CKD,Dual,44,14616.39,1146.81
+CVD + CKD,Dual,45,14616.39,1146.81
+CVD + CKD,Dual,46,14616.39,1146.81
+CVD + CKD,Dual,47,14616.39,1146.81
+CVD + CKD,Dual,48,14616.39,1146.81
+CVD + CKD,Dual,49,14616.39,1146.81
+CVD + CKD,Dual,50,14616.39,1146.81
+CVD + CKD,Dual,51,14616.39,1146.81
+CVD + CKD,Dual,52,14607.71,1142.33
+CVD + CKD,Dual,53,14607.71,1142.33
+CVD + CKD,Dual,54,14607.71,1142.33
+CVD + CKD,Dual,55,14607.71,1142.33
+CVD + CKD,Dual,56,14607.71,1142.33
+CVD + CKD,Dual,57,14607.71,1142.33
+CVD + CKD,Dual,58,14607.71,1142.33
+CVD + CKD,Dual,59,14607.71,1142.33
+CVD + CKD,Dual,60,14318.71,941.18
+CVD + CKD,Dual,61,14318.71,941.18
+CVD + CKD,Dual,62,14318.71,941.18
+CVD + CKD,Dual,63,14318.71,941.18
+CVD + CKD,Dual,64,14318.71,941.18
+CVD + CKD,Dual,65,14165.44,893.95
+CVD + CKD,Dual,66,14165.44,893.95
+CVD + CKD,Dual,67,14165.44,893.95
+CVD + CKD,Dual,68,14165.44,893.95
+CVD + CKD,Dual,69,13926.55,1210.2
+CVD + CKD,Dual,70,13926.55,1210.2
+CVD + CKD,Dual,71,13926.55,1210.2
+CVD + CKD,Dual,72,13926.55,1210.2
+CVD + CKD,Dual,73,13926.55,1210.2
+CVD + CKD,Dual,74,13926.55,1210.2
+CVD + CKD,Dual,75,13926.55,1210.2
+CVD + CKD,Dual,76,13926.55,1210.2
+CVD + CKD,Dual,77,13926.55,1210.2
+CVD + CKD,Dual,78,13926.55,1210.2
+CVD + CKD,Dual,79,13926.55,1210.2
+CVD + CKD,Dual,80,13926.55,1210.2
+CVD + CKD,Dual,81,13926.55,1210.2
+CVD + CKD,Dual,82,13926.55,1210.2
+CVD + CKD,Dual,83,13815.79,1186.38
+CVD + CKD,Dual,84,13815.79,1186.38
+CVD + CKD,Dual,85,13815.79,1186.38
+CVD + CKD,Dual,86,13815.79,1186.38
+CVD + CKD,Dual,87,13815.79,1186.38
+CVD + CKD,Dual,88,13815.79,1186.38
+CVD + CKD,Dual,89,13815.79,1186.38
+CVD + CKD,Dual,90,13815.79,1186.38
+CVD + CKD,Dual,91,13815.79,1186.38
+CVD + CKD,Dual,92,13815.79,1186.38
+CVD + CKD,Dual,93,13815.79,1186.38
+CVD + CKD,Dual,94,13815.79,1186.38
+CVD + CKD,Dual,95,13815.79,1186.38
+CVD + CKD,Dual,96,13815.79,1186.38
+CVD + CKD,Dual,97,13815.79,1186.38
+CVD + CKD,Dual,98,13815.79,1186.38
+CVD + CKD,Dual,99,13815.79,1186.38
+CVD + CKD,Dual,100,13815.79,1186.38
+CVD + CKD,Dual,101,13815.79,1186.38
+CVD + CKD,Dual,102,13815.79,1186.38
+CVD + CKD,Dual,103,13815.79,1186.38
+CVD + CKD,Dual,104,13815.79,1186.38
+CVD + CKD,Dual,105,13815.79,1186.38
+CVD + CKD,Dual,106,13815.79,1186.38
+CVD + CKD,Dual,107,13815.79,1186.38
+CVD + CKD,Dual,108,13815.79,1186.38
+CVD + CKD,Dual,109,13815.79,1186.38
+CVD + CKD,Dual,110,13815.79,1186.38
+CVD + CKD,Dual,111,13815.79,1186.38
+CVD + CKD,Dual,112,13778.09,1182.91
+CVD + CKD,Dual,113,13778.09,1182.91
+CVD + CKD,Dual,114,13778.09,1182.91
+CVD + CKD,Dual,115,13778.09,1182.91
+CVD + CKD,Dual,116,13778.09,1182.91
+CVD + CKD,Dual,117,13778.09,1182.91
+CVD + CKD,Dual,118,13778.09,1182.91
+CVD + CKD,Dual,119,13778.09,1182.91
+CVD + CKD,Dual,120,13778.09,1182.91
+CVD + CKD,Dual,121,13778.09,1182.91
+CVD + CKD,Dual,122,13753.63,1153.87
+CVD + CKD,Dual,123,13753.63,1153.87
+CVD + CKD,Dual,124,13753.63,1153.87
+CVD + CKD,Dual,125,13541.92,1427.83
+CVD + CKD,Dual,126,13118.13,1951.14
+CVD + CKD,Dual,127,13118.13,1951.14
+CVD + CKD,Dual,128,13118.13,1951.14
+CVD + CKD,Dual,129,13118.13,1951.14
+CVD + CKD,Dual,130,13118.13,1951.14
+CVD + CKD,Dual,131,13118.13,1951.14
+CVD + CKD,Dual,132,13118.13,1951.14
+CVD + CKD,Dual,133,12744.99,2465.34
+CVD + CKD,Dual,134,12744.99,2465.34
+CVD + CKD,Dual,135,12744.99,2465.34
+CVD + CKD,Dual,136,12744.99,2465.34
+CVD + CKD,Dual,137,12744.99,2465.34
+CVD + CKD,Dual,138,12744.99,2465.34
+CVD + CKD,Dual,139,12744.99,2465.34
+CVD + CKD,Dual,140,12744.99,2465.34
+CVD + CKD,Dual,141,12744.99,2465.34
+CVD + CKD,Dual,142,12160.5,3279.42
+CVD + CKD,Dual,143,12160.5,3279.42
+CVD + CKD,Dual,144,12160.5,3279.42
+CVD + CKD,Dual,145,12119.28,3258.65
+CVD + CKD,Dual,146,12119.28,3258.65
+CVD + CKD,Dual,147,12119.28,3258.65
+CVD + CKD,Dual,148,12119.28,3258.65
+CVD + CKD,Dual,149,12119.28,3258.65
+CVD + CKD,Dual,150,12119.28,3258.65
+Hiperkolesterolemia + CKD,Dual,1,71554.87,14917.22
+Hiperkolesterolemia + CKD,Dual,2,60021.01,3579.8
+Hiperkolesterolemia + CKD,Dual,3,51393.97,6493.33
+Hiperkolesterolemia + CKD,Dual,4,48340.47,5168.97
+Hiperkolesterolemia + CKD,Dual,5,35900.56,4921.41
+Hiperkolesterolemia + CKD,Dual,6,35543.06,4511.2
+Hiperkolesterolemia + CKD,Dual,7,34364.11,4024.69
+Hiperkolesterolemia + CKD,Dual,8,31260.9,3924.48
+Hiperkolesterolemia + CKD,Dual,9,27639.39,6731.84
+Hiperkolesterolemia + CKD,Dual,10,25284.23,6365.41
+Hiperkolesterolemia + CKD,Dual,11,24195.25,5914.1
+Hiperkolesterolemia + CKD,Dual,12,22879.68,4352.94
+Hiperkolesterolemia + CKD,Dual,13,22178.24,4308.6
+Hiperkolesterolemia + CKD,Dual,14,21351.86,3711.91
+Hiperkolesterolemia + CKD,Dual,15,19255.97,4625.5
+Hiperkolesterolemia + CKD,Dual,16,19143.97,4470.66
+Hiperkolesterolemia + CKD,Dual,17,18364.05,3900.56
+Hiperkolesterolemia + CKD,Dual,18,17857.13,3194.73
+Hiperkolesterolemia + CKD,Dual,19,17857.13,3194.73
+Hiperkolesterolemia + CKD,Dual,20,17556.42,2778.69
+Hiperkolesterolemia + CKD,Dual,21,17376.04,2958.06
+Hiperkolesterolemia + CKD,Dual,22,16944.84,3426.01
+Hiperkolesterolemia + CKD,Dual,23,16889.76,3435.69
+Hiperkolesterolemia + CKD,Dual,24,16775.98,3287.29
+Hiperkolesterolemia + CKD,Dual,25,16775.98,3287.29
+Hiperkolesterolemia + CKD,Dual,26,16264.46,2881.74
+Hiperkolesterolemia + CKD,Dual,27,16241.66,2909.57
+Hiperkolesterolemia + CKD,Dual,28,15949.32,2559.32
+Hiperkolesterolemia + CKD,Dual,29,15949.32,2559.32
+Hiperkolesterolemia + CKD,Dual,30,15949.32,2559.32
+Hiperkolesterolemia + CKD,Dual,31,15598.6,2168.71
+Hiperkolesterolemia + CKD,Dual,32,15598.6,2168.71
+Hiperkolesterolemia + CKD,Dual,33,15580.36,2149.58
+Hiperkolesterolemia + CKD,Dual,34,15580.36,2149.58
+Hiperkolesterolemia + CKD,Dual,35,15580.36,2149.58
+Hiperkolesterolemia + CKD,Dual,36,15414.15,2047.34
+Hiperkolesterolemia + CKD,Dual,37,15047.77,1711.42
+Hiperkolesterolemia + CKD,Dual,38,15047.77,1711.42
+Hiperkolesterolemia + CKD,Dual,39,15047.77,1711.42
+Hiperkolesterolemia + CKD,Dual,40,14567.61,2137.43
+Hiperkolesterolemia + CKD,Dual,41,14567.61,2137.43
+Hiperkolesterolemia + CKD,Dual,42,14567.61,2137.43
+Hiperkolesterolemia + CKD,Dual,43,14567.61,2137.43
+Hiperkolesterolemia + CKD,Dual,44,14050.94,1760.24
+Hiperkolesterolemia + CKD,Dual,45,14050.94,1760.24
+Hiperkolesterolemia + CKD,Dual,46,14050.94,1760.24
+Hiperkolesterolemia + CKD,Dual,47,14050.94,1760.24
+Hiperkolesterolemia + CKD,Dual,48,14050.94,1760.24
+Hiperkolesterolemia + CKD,Dual,49,14050.94,1760.24
+Hiperkolesterolemia + CKD,Dual,50,13985.39,1718.57
+Hiperkolesterolemia + CKD,Dual,51,13919.24,1680.67
+Hiperkolesterolemia + CKD,Dual,52,13919.24,1680.67
+Hiperkolesterolemia + CKD,Dual,53,13919.24,1680.67
+Hiperkolesterolemia + CKD,Dual,54,13919.24,1680.67
+Hiperkolesterolemia + CKD,Dual,55,13919.24,1680.67
+Hiperkolesterolemia + CKD,Dual,56,13919.24,1680.67
+Hiperkolesterolemia + CKD,Dual,57,13833.98,1800.26
+Hiperkolesterolemia + CKD,Dual,58,13833.98,1800.26
+Hiperkolesterolemia + CKD,Dual,59,13625.66,1639.73
+Hiperkolesterolemia + CKD,Dual,60,13625.66,1639.73
+Hiperkolesterolemia + CKD,Dual,61,13625.66,1639.73
+Hiperkolesterolemia + CKD,Dual,62,13625.66,1639.73
+Hiperkolesterolemia + CKD,Dual,63,13625.66,1639.73
+Hiperkolesterolemia + CKD,Dual,64,13625.66,1639.73
+Hiperkolesterolemia + CKD,Dual,65,13625.66,1639.73
+Hiperkolesterolemia + CKD,Dual,66,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,67,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,68,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,69,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,70,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,71,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,72,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,73,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,74,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,75,13625.57,1639.68
+Hiperkolesterolemia + CKD,Dual,76,13598.91,1620.46
+Hiperkolesterolemia + CKD,Dual,77,13598.91,1620.46
+Hiperkolesterolemia + CKD,Dual,78,13598.91,1620.46
+Hiperkolesterolemia + CKD,Dual,79,13597.65,1619.57
+Hiperkolesterolemia + CKD,Dual,80,13597.65,1619.57
+Hiperkolesterolemia + CKD,Dual,81,13505.62,1558.33
+Hiperkolesterolemia + CKD,Dual,82,13505.62,1558.33
+Hiperkolesterolemia + CKD,Dual,83,13505.62,1558.33
+Hiperkolesterolemia + CKD,Dual,84,13505.62,1558.33
+Hiperkolesterolemia + CKD,Dual,85,13324.13,1814.46
+Hiperkolesterolemia + CKD,Dual,86,13324.13,1814.46
+Hiperkolesterolemia + CKD,Dual,87,13324.13,1814.46
+Hiperkolesterolemia + CKD,Dual,88,13324.13,1814.46
+Hiperkolesterolemia + CKD,Dual,89,13241.77,1765.48
+Hiperkolesterolemia + CKD,Dual,90,13241.77,1765.48
+Hiperkolesterolemia + CKD,Dual,91,13241.77,1765.48
+Hiperkolesterolemia + CKD,Dual,92,13241.77,1765.48
+Hiperkolesterolemia + CKD,Dual,93,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,94,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,95,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,96,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,97,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,98,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,99,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,100,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,101,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,102,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,103,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,104,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,105,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,106,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,107,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,108,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,109,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,110,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,111,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,112,13060.05,2020.87
+Hiperkolesterolemia + CKD,Dual,113,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,114,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,115,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,116,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,117,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,118,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,119,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,120,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,121,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,122,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,123,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,124,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,125,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,126,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,127,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,128,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,129,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,130,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,131,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,132,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,133,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,134,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,135,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,136,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,137,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,138,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,139,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,140,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,141,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,142,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,143,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,144,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,145,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,146,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,147,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,148,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,149,12919.95,2218.02
+Hiperkolesterolemia + CKD,Dual,150,12919.95,2218.02
+DM2 + Hipertensi + CVD,Triple,1,56276.85,7676.22
+DM2 + Hipertensi + CVD,Triple,2,53145.94,4602.69
+DM2 + Hipertensi + CVD,Triple,3,49674.86,3882.52
+DM2 + Hipertensi + CVD,Triple,4,47969.17,1481.72
+DM2 + Hipertensi + CVD,Triple,5,44538.27,2671.34
+DM2 + Hipertensi + CVD,Triple,6,39241.51,1093.93
+DM2 + Hipertensi + CVD,Triple,7,36520.15,1751.51
+DM2 + Hipertensi + CVD,Triple,8,31948.68,3928.39
+DM2 + Hipertensi + CVD,Triple,9,28791.91,2396.99
+DM2 + Hipertensi + CVD,Triple,10,28697.21,2443.93
+DM2 + Hipertensi + CVD,Triple,11,26899.24,3187.64
+DM2 + Hipertensi + CVD,Triple,12,26590.44,2800.92
+DM2 + Hipertensi + CVD,Triple,13,23598.68,5383.45
+DM2 + Hipertensi + CVD,Triple,14,22775.48,4485.38
+DM2 + Hipertensi + CVD,Triple,15,21771.94,3602.86
+DM2 + Hipertensi + CVD,Triple,16,20175.94,4429.75
+DM2 + Hipertensi + CVD,Triple,17,20125.53,4407.62
+DM2 + Hipertensi + CVD,Triple,18,19738.89,4273.73
+DM2 + Hipertensi + CVD,Triple,19,19391.21,3913.78
+DM2 + Hipertensi + CVD,Triple,20,18223.03,5527.88
+DM2 + Hipertensi + CVD,Triple,21,17864.61,5214.22
+DM2 + Hipertensi + CVD,Triple,22,17807.13,5181.78
+DM2 + Hipertensi + CVD,Triple,23,17710.06,5129.46
+DM2 + Hipertensi + CVD,Triple,24,17710.06,5129.46
+DM2 + Hipertensi + CVD,Triple,25,17277.34,4774.36
+DM2 + Hipertensi + CVD,Triple,26,17260.86,4761.86
+DM2 + Hipertensi + CVD,Triple,27,17260.86,4761.86
+DM2 + Hipertensi + CVD,Triple,28,16793.74,4428.98
+DM2 + Hipertensi + CVD,Triple,29,16596.37,4290.37
+DM2 + Hipertensi + CVD,Triple,30,16189.23,4050.49
+DM2 + Hipertensi + CVD,Triple,31,15693.48,3649.85
+DM2 + Hipertensi + CVD,Triple,32,15361.51,3435.85
+DM2 + Hipertensi + CVD,Triple,33,14952.53,3247.01
+DM2 + Hipertensi + CVD,Triple,34,14952.53,3247.01
+DM2 + Hipertensi + CVD,Triple,35,14952.53,3247.01
+DM2 + Hipertensi + CVD,Triple,36,14662.85,3170.8
+DM2 + Hipertensi + CVD,Triple,37,14660.28,3170.35
+DM2 + Hipertensi + CVD,Triple,38,14660.28,3170.35
+DM2 + Hipertensi + CVD,Triple,39,14660.28,3170.35
+DM2 + Hipertensi + CVD,Triple,40,14660.28,3170.35
+DM2 + Hipertensi + CVD,Triple,41,14660.28,3170.35
+DM2 + Hipertensi + CVD,Triple,42,14455.34,3439.07
+DM2 + Hipertensi + CVD,Triple,43,14455.34,3439.07
+DM2 + Hipertensi + CVD,Triple,44,14455.34,3439.07
+DM2 + Hipertensi + CVD,Triple,45,14455.34,3439.07
+DM2 + Hipertensi + CVD,Triple,46,14449.37,3437.77
+DM2 + Hipertensi + CVD,Triple,47,14449.37,3437.77
+DM2 + Hipertensi + CVD,Triple,48,14449.37,3437.77
+DM2 + Hipertensi + CVD,Triple,49,14449.37,3437.77
+DM2 + Hipertensi + CVD,Triple,50,14449.37,3437.77
+DM2 + Hipertensi + CVD,Triple,51,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,52,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,53,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,54,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,55,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,56,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,57,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,58,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,59,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,60,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,61,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,62,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,63,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,64,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,65,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,66,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,67,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,68,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,69,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,70,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,71,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,72,14026.06,3398.26
+DM2 + Hipertensi + CVD,Triple,73,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,74,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,75,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,76,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,77,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,78,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,79,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,80,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,81,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,82,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,83,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,84,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,85,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,86,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,87,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,88,13899.2,3406.87
+DM2 + Hipertensi + CVD,Triple,89,13708.85,3632.51
+DM2 + Hipertensi + CVD,Triple,90,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,91,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,92,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,93,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,94,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,95,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,96,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,97,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,98,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,99,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,100,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,101,13389.12,3675.16
+DM2 + Hipertensi + CVD,Triple,102,13276.82,3800.01
+DM2 + Hipertensi + CVD,Triple,103,13276.82,3800.01
+DM2 + Hipertensi + CVD,Triple,104,13276.82,3800.01
+DM2 + Hipertensi + CVD,Triple,105,12757.62,4405.75
+DM2 + Hipertensi + CVD,Triple,106,12757.62,4405.75
+DM2 + Hipertensi + CVD,Triple,107,12294.66,3842.37
+DM2 + Hipertensi + CVD,Triple,108,12294.66,3842.37
+DM2 + Hipertensi + CVD,Triple,109,12294.66,3842.37
+DM2 + Hipertensi + CVD,Triple,110,12294.66,3842.37
+DM2 + Hipertensi + CVD,Triple,111,12294.66,3842.37
+DM2 + Hipertensi + CVD,Triple,112,12294.66,3842.37
+DM2 + Hipertensi + CVD,Triple,113,12294.66,3842.37
+DM2 + Hipertensi + CVD,Triple,114,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,115,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,116,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,117,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,118,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,119,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,120,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,121,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,122,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,123,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,124,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,125,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,126,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,127,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,128,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,129,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,130,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,131,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,132,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,133,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,134,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,135,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,136,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,137,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,138,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,139,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,140,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,141,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,142,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,143,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,144,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,145,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,146,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,147,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,148,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,149,12165.73,3837.05
+DM2 + Hipertensi + CVD,Triple,150,12165.73,3837.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,1,66702.98,3284.89
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,2,52328.55,2768.92
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,3,49897.74,857.01
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,4,45586.95,6326.73
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,5,41342.55,3323.94
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,6,33714.3,5165.1
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,7,30641.65,4154.25
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,8,28258.53,2423.83
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,9,27294.73,3077.79
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,10,27245.12,3064.2
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,11,24970.75,166.66
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,12,22288.56,1825.52
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,13,22288.56,1825.52
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,14,21019.58,1326.96
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,15,21019.58,1326.96
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,16,19785.54,2836.26
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,17,19016.88,2847.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,18,18562.92,3042.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,19,18562.92,3042.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,20,18210.91,3361.89
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,21,18210.91,3361.89
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,22,18210.91,3361.89
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,23,18210.91,3361.89
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,24,18210.91,3361.89
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,25,18210.91,3361.89
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,26,17167.26,4041.1
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,27,16389.77,4581.27
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,28,16389.77,4581.27
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,29,16389.77,4581.27
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,30,16389.77,4581.27
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,31,16032.93,4811.64
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,32,15714.94,5050.68
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,33,15714.94,5050.68
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,34,14650.43,5809.33
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,35,14650.43,5809.33
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,36,14650.43,5809.33
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,37,14643.17,5813.71
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,38,14556.09,5884.65
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,39,14094.56,6217.77
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,40,13400.01,6676.0
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,41,13372.95,6694.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,42,13372.95,6694.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,43,13372.95,6694.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,44,13278.24,6759.59
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,45,13278.24,6759.59
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,46,13278.24,6759.59
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,47,13278.24,6759.59
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,48,13278.24,6759.59
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,49,13278.24,6759.59
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,50,12638.92,6389.11
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,51,12447.18,6540.97
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,52,12281.65,6678.16
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,53,12281.65,6678.16
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,54,12281.65,6678.16
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,55,12281.65,6678.16
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,56,12281.65,6678.16
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,57,12281.65,6678.16
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,58,12279.29,6679.48
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,59,12279.29,6679.48
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,60,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,61,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,62,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,63,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,64,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,65,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,66,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,67,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,68,11593.8,5717.72
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,69,11156.04,5105.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,70,11156.04,5105.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,71,10466.64,5539.31
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,72,10466.64,5539.31
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,73,10466.64,5539.31
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,74,10466.64,5539.31
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,75,10466.64,5539.31
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,76,10466.64,5539.31
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,77,10466.64,5539.31
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,78,10415.78,5572.7
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,79,10353.09,5614.84
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,80,10353.09,5614.84
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,81,10353.09,5614.84
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,82,10353.09,5614.84
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,83,10353.09,5614.84
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,84,10353.09,5614.84
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,85,10348.6,5608.49
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,86,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,87,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,88,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,89,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,90,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,91,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,92,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,93,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,94,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,95,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,96,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,97,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,98,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,99,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,100,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,101,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,102,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,103,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,104,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,105,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,106,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,107,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,108,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,109,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,110,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,111,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,112,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,113,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,114,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,115,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,116,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,117,9553.44,4484.28
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,118,9343.79,4632.97
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,119,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,120,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,121,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,122,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,123,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,124,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,125,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,126,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,127,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,128,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,129,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,130,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,131,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,132,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,133,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,134,9343.69,4633.05
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,135,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,136,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,137,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,138,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,139,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,140,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,141,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,142,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,143,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,144,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,145,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,146,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,147,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,148,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,149,8805.71,3872.63
+DM2 + Hipertensi + Hiperkolesterolemia,Triple,150,8805.71,3872.63
+DM2 + Hipertensi + CKD,Triple,1,79979.83,5385.73
+DM2 + Hipertensi + CKD,Triple,2,68581.36,11318.07
+DM2 + Hipertensi + CKD,Triple,3,61097.19,7484.41
+DM2 + Hipertensi + CKD,Triple,4,56532.52,9647.36
+DM2 + Hipertensi + CKD,Triple,5,52709.54,7732.74
+DM2 + Hipertensi + CKD,Triple,6,50033.93,6292.51
+DM2 + Hipertensi + CKD,Triple,7,46165.48,9318.66
+DM2 + Hipertensi + CKD,Triple,8,40519.02,5397.37
+DM2 + Hipertensi + CKD,Triple,9,36676.16,9131.64
+DM2 + Hipertensi + CKD,Triple,10,35283.44,8408.83
+DM2 + Hipertensi + CKD,Triple,11,33084.86,6680.96
+DM2 + Hipertensi + CKD,Triple,12,32023.56,5896.5
+DM2 + Hipertensi + CKD,Triple,13,30945.0,6176.76
+DM2 + Hipertensi + CKD,Triple,14,30691.54,5992.79
+DM2 + Hipertensi + CKD,Triple,15,29907.08,5467.5
+DM2 + Hipertensi + CKD,Triple,16,28910.23,4777.65
+DM2 + Hipertensi + CKD,Triple,17,28069.84,4139.22
+DM2 + Hipertensi + CKD,Triple,18,26506.01,3360.02
+DM2 + Hipertensi + CKD,Triple,19,26086.72,3764.1
+DM2 + Hipertensi + CKD,Triple,20,24722.15,3583.44
+DM2 + Hipertensi + CKD,Triple,21,24722.15,3583.44
+DM2 + Hipertensi + CKD,Triple,22,23477.93,4257.05
+DM2 + Hipertensi + CKD,Triple,23,23371.49,4283.69
+DM2 + Hipertensi + CKD,Triple,24,23031.36,3913.37
+DM2 + Hipertensi + CKD,Triple,25,21365.23,4032.4
+DM2 + Hipertensi + CKD,Triple,26,21295.8,4009.49
+DM2 + Hipertensi + CKD,Triple,27,20963.29,4256.48
+DM2 + Hipertensi + CKD,Triple,28,20963.29,4256.48
+DM2 + Hipertensi + CKD,Triple,29,20963.29,4256.48
+DM2 + Hipertensi + CKD,Triple,30,20963.29,4256.48
+DM2 + Hipertensi + CKD,Triple,31,20669.52,3842.41
+DM2 + Hipertensi + CKD,Triple,32,20669.52,3842.41
+DM2 + Hipertensi + CKD,Triple,33,19961.38,4491.1
+DM2 + Hipertensi + CKD,Triple,34,19919.59,4533.4
+DM2 + Hipertensi + CKD,Triple,35,19919.59,4533.4
+DM2 + Hipertensi + CKD,Triple,36,19919.59,4533.4
+DM2 + Hipertensi + CKD,Triple,37,19919.59,4533.4
+DM2 + Hipertensi + CKD,Triple,38,19919.59,4533.4
+DM2 + Hipertensi + CKD,Triple,39,19737.28,4286.09
+DM2 + Hipertensi + CKD,Triple,40,19620.94,4128.95
+DM2 + Hipertensi + CKD,Triple,41,19620.94,4128.95
+DM2 + Hipertensi + CKD,Triple,42,19620.94,4128.95
+DM2 + Hipertensi + CKD,Triple,43,19562.42,4050.13
+DM2 + Hipertensi + CKD,Triple,44,19267.84,4368.28
+DM2 + Hipertensi + CKD,Triple,45,19267.84,4368.28
+DM2 + Hipertensi + CKD,Triple,46,19267.84,4368.28
+DM2 + Hipertensi + CKD,Triple,47,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,48,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,49,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,50,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,51,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,52,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,53,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,54,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,55,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,56,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,57,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,58,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,59,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,60,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,61,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,62,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,63,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,64,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,65,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,66,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,67,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,68,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,69,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,70,19255.35,4382.13
+DM2 + Hipertensi + CKD,Triple,71,19120.12,4413.69
+DM2 + Hipertensi + CKD,Triple,72,19060.95,4430.03
+DM2 + Hipertensi + CKD,Triple,73,19021.17,4441.86
+DM2 + Hipertensi + CKD,Triple,74,19021.17,4441.86
+DM2 + Hipertensi + CKD,Triple,75,19021.17,4441.86
+DM2 + Hipertensi + CKD,Triple,76,19021.17,4441.86
+DM2 + Hipertensi + CKD,Triple,77,19021.17,4441.86
+DM2 + Hipertensi + CKD,Triple,78,19021.17,4441.86
+DM2 + Hipertensi + CKD,Triple,79,19021.17,4441.86
+DM2 + Hipertensi + CKD,Triple,80,19021.17,4441.86
+DM2 + Hipertensi + CKD,Triple,81,18930.33,4319.51
+DM2 + Hipertensi + CKD,Triple,82,18930.33,4319.51
+DM2 + Hipertensi + CKD,Triple,83,18930.33,4319.51
+DM2 + Hipertensi + CKD,Triple,84,18930.33,4319.51
+DM2 + Hipertensi + CKD,Triple,85,18930.33,4319.51
+DM2 + Hipertensi + CKD,Triple,86,18930.33,4319.51
+DM2 + Hipertensi + CKD,Triple,87,18772.35,4107.63
+DM2 + Hipertensi + CKD,Triple,88,18772.35,4107.63
+DM2 + Hipertensi + CKD,Triple,89,18770.67,4105.39
+DM2 + Hipertensi + CKD,Triple,90,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,91,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,92,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,93,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,94,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,95,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,96,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,97,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,98,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,99,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,100,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,101,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,102,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,103,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,104,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,105,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,106,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,107,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,108,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,109,18358.0,4255.61
+DM2 + Hipertensi + CKD,Triple,110,18206.2,4045.27
+DM2 + Hipertensi + CKD,Triple,111,17628.24,3249.65
+DM2 + Hipertensi + CKD,Triple,112,17411.72,2954.64
+DM2 + Hipertensi + CKD,Triple,113,17411.72,2954.64
+DM2 + Hipertensi + CKD,Triple,114,17411.72,2954.64
+DM2 + Hipertensi + CKD,Triple,115,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,116,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,117,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,118,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,119,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,120,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,121,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,122,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,123,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,124,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,125,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,126,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,127,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,128,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,129,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,130,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,131,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,132,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,133,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,134,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,135,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,136,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,137,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,138,17271.73,3044.24
+DM2 + Hipertensi + CKD,Triple,139,17030.38,3129.43
+DM2 + Hipertensi + CKD,Triple,140,17030.38,3129.43
+DM2 + Hipertensi + CKD,Triple,141,16966.67,3041.53
+DM2 + Hipertensi + CKD,Triple,142,16966.67,3041.53
+DM2 + Hipertensi + CKD,Triple,143,16966.67,3041.53
+DM2 + Hipertensi + CKD,Triple,144,16966.67,3041.53
+DM2 + Hipertensi + CKD,Triple,145,16966.67,3041.53
+DM2 + Hipertensi + CKD,Triple,146,16966.67,3041.53
+DM2 + Hipertensi + CKD,Triple,147,16308.58,3432.92
+DM2 + Hipertensi + CKD,Triple,148,16308.58,3432.92
+DM2 + Hipertensi + CKD,Triple,149,16308.58,3432.92
+DM2 + Hipertensi + CKD,Triple,150,16308.58,3432.92
+DM2 + CVD + Hiperkolesterolemia,Triple,1,61189.44,2786.6
+DM2 + CVD + Hiperkolesterolemia,Triple,2,45034.66,14201.89
+DM2 + CVD + Hiperkolesterolemia,Triple,3,41967.46,10104.46
+DM2 + CVD + Hiperkolesterolemia,Triple,4,36829.84,4425.5
+DM2 + CVD + Hiperkolesterolemia,Triple,5,31151.28,11478.79
+DM2 + CVD + Hiperkolesterolemia,Triple,6,31151.28,11478.79
+DM2 + CVD + Hiperkolesterolemia,Triple,7,29666.1,10515.34
+DM2 + CVD + Hiperkolesterolemia,Triple,8,27785.44,9137.99
+DM2 + CVD + Hiperkolesterolemia,Triple,9,26304.34,8096.1
+DM2 + CVD + Hiperkolesterolemia,Triple,10,25553.85,9151.56
+DM2 + CVD + Hiperkolesterolemia,Triple,11,24502.6,8645.96
+DM2 + CVD + Hiperkolesterolemia,Triple,12,23544.13,7912.69
+DM2 + CVD + Hiperkolesterolemia,Triple,13,23443.19,8051.42
+DM2 + CVD + Hiperkolesterolemia,Triple,14,21025.8,9807.02
+DM2 + CVD + Hiperkolesterolemia,Triple,15,20446.31,9255.32
+DM2 + CVD + Hiperkolesterolemia,Triple,16,19779.32,8962.18
+DM2 + CVD + Hiperkolesterolemia,Triple,17,19273.29,8812.18
+DM2 + CVD + Hiperkolesterolemia,Triple,18,18235.33,7742.28
+DM2 + CVD + Hiperkolesterolemia,Triple,19,17871.74,7609.52
+DM2 + CVD + Hiperkolesterolemia,Triple,20,17871.74,7609.52
+DM2 + CVD + Hiperkolesterolemia,Triple,21,16861.94,6754.7
+DM2 + CVD + Hiperkolesterolemia,Triple,22,15485.21,6070.8
+DM2 + CVD + Hiperkolesterolemia,Triple,23,15415.05,6003.91
+DM2 + CVD + Hiperkolesterolemia,Triple,24,14780.94,5444.36
+DM2 + CVD + Hiperkolesterolemia,Triple,25,14757.92,5425.74
+DM2 + CVD + Hiperkolesterolemia,Triple,26,13859.47,4816.52
+DM2 + CVD + Hiperkolesterolemia,Triple,27,13813.93,4792.56
+DM2 + CVD + Hiperkolesterolemia,Triple,28,13399.65,4610.26
+DM2 + CVD + Hiperkolesterolemia,Triple,29,13399.65,4610.26
+DM2 + CVD + Hiperkolesterolemia,Triple,30,13260.44,4564.28
+DM2 + CVD + Hiperkolesterolemia,Triple,31,13260.44,4564.28
+DM2 + CVD + Hiperkolesterolemia,Triple,32,13260.44,4564.28
+DM2 + CVD + Hiperkolesterolemia,Triple,33,13058.09,4409.47
+DM2 + CVD + Hiperkolesterolemia,Triple,34,12532.87,4310.17
+DM2 + CVD + Hiperkolesterolemia,Triple,35,12532.87,4310.17
+DM2 + CVD + Hiperkolesterolemia,Triple,36,12532.87,4310.17
+DM2 + CVD + Hiperkolesterolemia,Triple,37,12505.28,4277.44
+DM2 + CVD + Hiperkolesterolemia,Triple,38,12505.28,4277.44
+DM2 + CVD + Hiperkolesterolemia,Triple,39,12505.28,4277.44
+DM2 + CVD + Hiperkolesterolemia,Triple,40,12505.28,4277.44
+DM2 + CVD + Hiperkolesterolemia,Triple,41,12383.55,4222.87
+DM2 + CVD + Hiperkolesterolemia,Triple,42,11924.69,4250.06
+DM2 + CVD + Hiperkolesterolemia,Triple,43,11924.69,4250.06
+DM2 + CVD + Hiperkolesterolemia,Triple,44,11924.69,4250.06
+DM2 + CVD + Hiperkolesterolemia,Triple,45,11924.69,4250.06
+DM2 + CVD + Hiperkolesterolemia,Triple,46,11552.74,3772.35
+DM2 + CVD + Hiperkolesterolemia,Triple,47,11282.77,3815.6
+DM2 + CVD + Hiperkolesterolemia,Triple,48,11273.95,3803.92
+DM2 + CVD + Hiperkolesterolemia,Triple,49,11273.95,3803.92
+DM2 + CVD + Hiperkolesterolemia,Triple,50,11273.95,3803.92
+DM2 + CVD + Hiperkolesterolemia,Triple,51,11200.7,3884.64
+DM2 + CVD + Hiperkolesterolemia,Triple,52,10722.02,3265.11
+DM2 + CVD + Hiperkolesterolemia,Triple,53,10460.38,3311.16
+DM2 + CVD + Hiperkolesterolemia,Triple,54,10392.68,3329.68
+DM2 + CVD + Hiperkolesterolemia,Triple,55,10392.68,3329.68
+DM2 + CVD + Hiperkolesterolemia,Triple,56,10392.68,3329.68
+DM2 + CVD + Hiperkolesterolemia,Triple,57,10392.68,3329.68
+DM2 + CVD + Hiperkolesterolemia,Triple,58,10392.68,3329.68
+DM2 + CVD + Hiperkolesterolemia,Triple,59,10392.68,3329.68
+DM2 + CVD + Hiperkolesterolemia,Triple,60,10392.68,3329.68
+DM2 + CVD + Hiperkolesterolemia,Triple,61,10238.86,3381.46
+DM2 + CVD + Hiperkolesterolemia,Triple,62,10238.86,3381.46
+DM2 + CVD + Hiperkolesterolemia,Triple,63,10165.52,3410.76
+DM2 + CVD + Hiperkolesterolemia,Triple,64,10165.52,3410.76
+DM2 + CVD + Hiperkolesterolemia,Triple,65,10165.52,3410.76
+DM2 + CVD + Hiperkolesterolemia,Triple,66,10165.52,3410.76
+DM2 + CVD + Hiperkolesterolemia,Triple,67,10165.52,3410.76
+DM2 + CVD + Hiperkolesterolemia,Triple,68,10165.52,3410.76
+DM2 + CVD + Hiperkolesterolemia,Triple,69,10165.52,3410.76
+DM2 + CVD + Hiperkolesterolemia,Triple,70,10165.52,3410.76
+DM2 + CVD + Hiperkolesterolemia,Triple,71,9948.71,3112.44
+DM2 + CVD + Hiperkolesterolemia,Triple,72,9847.54,3154.88
+DM2 + CVD + Hiperkolesterolemia,Triple,73,9847.54,3154.88
+DM2 + CVD + Hiperkolesterolemia,Triple,74,9847.54,3154.88
+DM2 + CVD + Hiperkolesterolemia,Triple,75,9775.14,3188.84
+DM2 + CVD + Hiperkolesterolemia,Triple,76,9775.14,3188.84
+DM2 + CVD + Hiperkolesterolemia,Triple,77,9775.14,3188.84
+DM2 + CVD + Hiperkolesterolemia,Triple,78,9654.6,3251.76
+DM2 + CVD + Hiperkolesterolemia,Triple,79,9654.6,3251.76
+DM2 + CVD + Hiperkolesterolemia,Triple,80,9654.6,3251.76
+DM2 + CVD + Hiperkolesterolemia,Triple,81,9614.2,3286.41
+DM2 + CVD + Hiperkolesterolemia,Triple,82,9614.2,3286.41
+DM2 + CVD + Hiperkolesterolemia,Triple,83,9614.2,3286.41
+DM2 + CVD + Hiperkolesterolemia,Triple,84,9614.2,3286.41
+DM2 + CVD + Hiperkolesterolemia,Triple,85,9614.2,3286.41
+DM2 + CVD + Hiperkolesterolemia,Triple,86,9614.2,3286.41
+DM2 + CVD + Hiperkolesterolemia,Triple,87,9614.2,3286.41
+DM2 + CVD + Hiperkolesterolemia,Triple,88,9614.2,3286.41
+DM2 + CVD + Hiperkolesterolemia,Triple,89,9598.8,3299.79
+DM2 + CVD + Hiperkolesterolemia,Triple,90,9598.8,3299.79
+DM2 + CVD + Hiperkolesterolemia,Triple,91,9598.8,3299.79
+DM2 + CVD + Hiperkolesterolemia,Triple,92,9598.8,3299.79
+DM2 + CVD + Hiperkolesterolemia,Triple,93,9598.8,3299.79
+DM2 + CVD + Hiperkolesterolemia,Triple,94,9598.8,3299.79
+DM2 + CVD + Hiperkolesterolemia,Triple,95,9598.8,3299.79
+DM2 + CVD + Hiperkolesterolemia,Triple,96,9598.8,3299.79
+DM2 + CVD + Hiperkolesterolemia,Triple,97,9478.28,3367.26
+DM2 + CVD + Hiperkolesterolemia,Triple,98,9478.28,3367.26
+DM2 + CVD + Hiperkolesterolemia,Triple,99,9386.69,3423.32
+DM2 + CVD + Hiperkolesterolemia,Triple,100,9386.69,3423.32
+DM2 + CVD + Hiperkolesterolemia,Triple,101,9386.69,3423.32
+DM2 + CVD + Hiperkolesterolemia,Triple,102,9386.69,3423.32
+DM2 + CVD + Hiperkolesterolemia,Triple,103,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,104,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,105,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,106,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,107,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,108,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,109,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,110,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,111,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,112,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,113,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,114,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,115,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,116,9110.3,3615.45
+DM2 + CVD + Hiperkolesterolemia,Triple,117,8848.49,3802.4
+DM2 + CVD + Hiperkolesterolemia,Triple,118,8848.49,3802.4
+DM2 + CVD + Hiperkolesterolemia,Triple,119,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,120,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,121,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,122,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,123,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,124,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,125,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,126,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,127,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,128,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,129,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,130,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,131,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,132,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,133,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,134,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,135,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,136,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,137,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,138,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,139,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,140,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,141,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,142,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,143,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,144,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,145,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,146,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,147,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,148,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,149,8730.6,3635.88
+DM2 + CVD + Hiperkolesterolemia,Triple,150,8730.6,3635.88
+DM2 + CVD + CKD,Triple,1,67517.85,9760.39
+DM2 + CVD + CKD,Triple,2,54918.45,6801.83
+DM2 + CVD + CKD,Triple,3,48903.58,7516.61
+DM2 + CVD + CKD,Triple,4,48311.69,6705.3
+DM2 + CVD + CKD,Triple,5,45252.14,4576.4
+DM2 + CVD + CKD,Triple,6,41594.31,2276.7
+DM2 + CVD + CKD,Triple,7,36489.47,3532.61
+DM2 + CVD + CKD,Triple,8,33917.08,2528.53
+DM2 + CVD + CKD,Triple,9,31644.27,1090.95
+DM2 + CVD + CKD,Triple,10,31423.38,1313.6
+DM2 + CVD + CKD,Triple,11,28842.14,3513.57
+DM2 + CVD + CKD,Triple,12,28328.4,3257.06
+DM2 + CVD + CKD,Triple,13,27227.88,3386.44
+DM2 + CVD + CKD,Triple,14,25943.16,2784.83
+DM2 + CVD + CKD,Triple,15,25624.09,2379.53
+DM2 + CVD + CKD,Triple,16,24775.24,2695.48
+DM2 + CVD + CKD,Triple,17,23588.16,2440.49
+DM2 + CVD + CKD,Triple,18,23142.41,2663.23
+DM2 + CVD + CKD,Triple,19,23075.83,2707.54
+DM2 + CVD + CKD,Triple,20,21854.15,2500.69
+DM2 + CVD + CKD,Triple,21,21595.81,2749.61
+DM2 + CVD + CKD,Triple,22,20882.87,2892.11
+DM2 + CVD + CKD,Triple,23,20882.87,2892.11
+DM2 + CVD + CKD,Triple,24,20045.11,1707.41
+DM2 + CVD + CKD,Triple,25,20045.11,1707.41
+DM2 + CVD + CKD,Triple,26,19886.86,1827.01
+DM2 + CVD + CKD,Triple,27,19886.86,1827.01
+DM2 + CVD + CKD,Triple,28,19886.86,1827.01
+DM2 + CVD + CKD,Triple,29,19606.17,2081.85
+DM2 + CVD + CKD,Triple,30,19332.72,2368.04
+DM2 + CVD + CKD,Triple,31,19332.72,2368.04
+DM2 + CVD + CKD,Triple,32,19332.72,2368.04
+DM2 + CVD + CKD,Triple,33,19157.65,2419.22
+DM2 + CVD + CKD,Triple,34,19157.65,2419.22
+DM2 + CVD + CKD,Triple,35,19157.65,2419.22
+DM2 + CVD + CKD,Triple,36,19157.65,2419.22
+DM2 + CVD + CKD,Triple,37,19077.53,2450.65
+DM2 + CVD + CKD,Triple,38,19077.53,2450.65
+DM2 + CVD + CKD,Triple,39,19077.53,2450.65
+DM2 + CVD + CKD,Triple,40,19077.53,2450.65
+DM2 + CVD + CKD,Triple,41,19077.53,2450.65
+DM2 + CVD + CKD,Triple,42,18850.46,2564.93
+DM2 + CVD + CKD,Triple,43,18850.46,2564.93
+DM2 + CVD + CKD,Triple,44,18789.81,2479.62
+DM2 + CVD + CKD,Triple,45,18789.81,2479.62
+DM2 + CVD + CKD,Triple,46,18368.15,2776.49
+DM2 + CVD + CKD,Triple,47,17820.79,2007.08
+DM2 + CVD + CKD,Triple,48,17700.05,2115.18
+DM2 + CVD + CKD,Triple,49,17700.05,2115.18
+DM2 + CVD + CKD,Triple,50,17700.05,2115.18
+DM2 + CVD + CKD,Triple,51,17700.05,2115.18
+DM2 + CVD + CKD,Triple,52,17700.05,2115.18
+DM2 + CVD + CKD,Triple,53,17700.05,2115.18
+DM2 + CVD + CKD,Triple,54,17700.05,2115.18
+DM2 + CVD + CKD,Triple,55,17700.05,2115.18
+DM2 + CVD + CKD,Triple,56,17700.05,2115.18
+DM2 + CVD + CKD,Triple,57,17700.05,2115.18
+DM2 + CVD + CKD,Triple,58,17671.38,2128.67
+DM2 + CVD + CKD,Triple,59,17671.38,2128.67
+DM2 + CVD + CKD,Triple,60,17671.38,2128.67
+DM2 + CVD + CKD,Triple,61,17671.38,2128.67
+DM2 + CVD + CKD,Triple,62,17621.05,2153.98
+DM2 + CVD + CKD,Triple,63,17621.05,2153.98
+DM2 + CVD + CKD,Triple,64,17621.05,2153.98
+DM2 + CVD + CKD,Triple,65,17621.05,2153.98
+DM2 + CVD + CKD,Triple,66,17621.05,2153.98
+DM2 + CVD + CKD,Triple,67,17621.05,2153.98
+DM2 + CVD + CKD,Triple,68,17406.73,2283.58
+DM2 + CVD + CKD,Triple,69,17326.73,2340.2
+DM2 + CVD + CKD,Triple,70,17326.73,2340.2
+DM2 + CVD + CKD,Triple,71,17262.63,2388.45
+DM2 + CVD + CKD,Triple,72,17262.63,2388.45
+DM2 + CVD + CKD,Triple,73,17262.63,2388.45
+DM2 + CVD + CKD,Triple,74,17262.63,2388.45
+DM2 + CVD + CKD,Triple,75,16867.91,2733.54
+DM2 + CVD + CKD,Triple,76,16867.91,2733.54
+DM2 + CVD + CKD,Triple,77,16867.91,2733.54
+DM2 + CVD + CKD,Triple,78,16858.91,2742.23
+DM2 + CVD + CKD,Triple,79,16858.91,2742.23
+DM2 + CVD + CKD,Triple,80,16858.91,2742.23
+DM2 + CVD + CKD,Triple,81,16858.91,2742.23
+DM2 + CVD + CKD,Triple,82,16858.91,2742.23
+DM2 + CVD + CKD,Triple,83,16858.91,2742.23
+DM2 + CVD + CKD,Triple,84,16858.91,2742.23
+DM2 + CVD + CKD,Triple,85,16858.91,2742.23
+DM2 + CVD + CKD,Triple,86,16725.26,2802.9
+DM2 + CVD + CKD,Triple,87,16725.26,2802.9
+DM2 + CVD + CKD,Triple,88,16725.26,2802.9
+DM2 + CVD + CKD,Triple,89,16725.26,2802.9
+DM2 + CVD + CKD,Triple,90,16725.26,2802.9
+DM2 + CVD + CKD,Triple,91,16725.26,2802.9
+DM2 + CVD + CKD,Triple,92,16725.26,2802.9
+DM2 + CVD + CKD,Triple,93,16725.26,2802.9
+DM2 + CVD + CKD,Triple,94,16725.26,2802.9
+DM2 + CVD + CKD,Triple,95,16725.26,2802.9
+DM2 + CVD + CKD,Triple,96,16725.26,2802.9
+DM2 + CVD + CKD,Triple,97,16725.26,2802.9
+DM2 + CVD + CKD,Triple,98,16725.26,2802.9
+DM2 + CVD + CKD,Triple,99,16725.26,2802.9
+DM2 + CVD + CKD,Triple,100,16725.26,2802.9
+DM2 + CVD + CKD,Triple,101,16725.26,2802.9
+DM2 + CVD + CKD,Triple,102,16725.26,2802.9
+DM2 + CVD + CKD,Triple,103,16725.26,2802.9
+DM2 + CVD + CKD,Triple,104,16725.26,2802.9
+DM2 + CVD + CKD,Triple,105,16725.26,2802.9
+DM2 + CVD + CKD,Triple,106,16725.26,2802.9
+DM2 + CVD + CKD,Triple,107,16725.26,2802.9
+DM2 + CVD + CKD,Triple,108,16725.26,2802.9
+DM2 + CVD + CKD,Triple,109,16725.26,2802.9
+DM2 + CVD + CKD,Triple,110,16725.26,2802.9
+DM2 + CVD + CKD,Triple,111,16725.26,2802.9
+DM2 + CVD + CKD,Triple,112,16725.26,2802.9
+DM2 + CVD + CKD,Triple,113,16725.26,2802.9
+DM2 + CVD + CKD,Triple,114,16725.26,2802.9
+DM2 + CVD + CKD,Triple,115,16725.26,2802.9
+DM2 + CVD + CKD,Triple,116,16725.26,2802.9
+DM2 + CVD + CKD,Triple,117,16725.26,2802.9
+DM2 + CVD + CKD,Triple,118,16725.26,2802.9
+DM2 + CVD + CKD,Triple,119,16725.26,2802.9
+DM2 + CVD + CKD,Triple,120,16725.26,2802.9
+DM2 + CVD + CKD,Triple,121,16725.26,2802.9
+DM2 + CVD + CKD,Triple,122,16725.26,2802.9
+DM2 + CVD + CKD,Triple,123,16646.49,2817.65
+DM2 + CVD + CKD,Triple,124,16646.49,2817.65
+DM2 + CVD + CKD,Triple,125,16265.13,3195.95
+DM2 + CVD + CKD,Triple,126,16265.13,3195.95
+DM2 + CVD + CKD,Triple,127,16265.13,3195.95
+DM2 + CVD + CKD,Triple,128,16265.13,3195.95
+DM2 + CVD + CKD,Triple,129,16265.13,3195.95
+DM2 + CVD + CKD,Triple,130,16139.82,3275.07
+DM2 + CVD + CKD,Triple,131,16139.82,3275.07
+DM2 + CVD + CKD,Triple,132,16139.82,3275.07
+DM2 + CVD + CKD,Triple,133,16139.82,3275.07
+DM2 + CVD + CKD,Triple,134,16139.82,3275.07
+DM2 + CVD + CKD,Triple,135,16139.82,3275.07
+DM2 + CVD + CKD,Triple,136,16139.82,3275.07
+DM2 + CVD + CKD,Triple,137,16139.82,3275.07
+DM2 + CVD + CKD,Triple,138,16139.82,3275.07
+DM2 + CVD + CKD,Triple,139,16139.82,3275.07
+DM2 + CVD + CKD,Triple,140,16139.82,3275.07
+DM2 + CVD + CKD,Triple,141,16139.82,3275.07
+DM2 + CVD + CKD,Triple,142,16139.82,3275.07
+DM2 + CVD + CKD,Triple,143,16139.82,3275.07
+DM2 + CVD + CKD,Triple,144,16139.82,3275.07
+DM2 + CVD + CKD,Triple,145,16139.82,3275.07
+DM2 + CVD + CKD,Triple,146,16139.82,3275.07
+DM2 + CVD + CKD,Triple,147,16139.82,3275.07
+DM2 + CVD + CKD,Triple,148,16139.82,3275.07
+DM2 + CVD + CKD,Triple,149,16139.82,3275.07
+DM2 + CVD + CKD,Triple,150,16139.82,3275.07
+DM2 + Hiperkolesterolemia + CKD,Triple,1,75788.77,8169.14
+DM2 + Hiperkolesterolemia + CKD,Triple,2,69334.9,5132.41
+DM2 + Hiperkolesterolemia + CKD,Triple,3,64437.48,1804.21
+DM2 + Hiperkolesterolemia + CKD,Triple,4,58886.85,2438.72
+DM2 + Hiperkolesterolemia + CKD,Triple,5,51194.3,3485.79
+DM2 + Hiperkolesterolemia + CKD,Triple,6,46359.7,4953.89
+DM2 + Hiperkolesterolemia + CKD,Triple,7,40742.09,1867.59
+DM2 + Hiperkolesterolemia + CKD,Triple,8,39174.89,618.78
+DM2 + Hiperkolesterolemia + CKD,Triple,9,38259.88,697.52
+DM2 + Hiperkolesterolemia + CKD,Triple,10,35539.73,3234.72
+DM2 + Hiperkolesterolemia + CKD,Triple,11,34742.51,2700.25
+DM2 + Hiperkolesterolemia + CKD,Triple,12,34742.51,2700.25
+DM2 + Hiperkolesterolemia + CKD,Triple,13,34467.36,2520.57
+DM2 + Hiperkolesterolemia + CKD,Triple,14,31890.03,653.76
+DM2 + Hiperkolesterolemia + CKD,Triple,15,30597.18,1091.77
+DM2 + Hiperkolesterolemia + CKD,Triple,16,27100.32,1474.07
+DM2 + Hiperkolesterolemia + CKD,Triple,17,27100.32,1474.07
+DM2 + Hiperkolesterolemia + CKD,Triple,18,27100.32,1474.07
+DM2 + Hiperkolesterolemia + CKD,Triple,19,26219.48,2008.55
+DM2 + Hiperkolesterolemia + CKD,Triple,20,25951.99,1903.77
+DM2 + Hiperkolesterolemia + CKD,Triple,21,25951.99,1903.77
+DM2 + Hiperkolesterolemia + CKD,Triple,22,25928.97,1907.42
+DM2 + Hiperkolesterolemia + CKD,Triple,23,25928.97,1907.42
+DM2 + Hiperkolesterolemia + CKD,Triple,24,25928.97,1907.42
+DM2 + Hiperkolesterolemia + CKD,Triple,25,25642.02,2245.14
+DM2 + Hiperkolesterolemia + CKD,Triple,26,25642.02,2245.14
+DM2 + Hiperkolesterolemia + CKD,Triple,27,25642.02,2245.14
+DM2 + Hiperkolesterolemia + CKD,Triple,28,25533.61,2252.19
+DM2 + Hiperkolesterolemia + CKD,Triple,29,25533.61,2252.19
+DM2 + Hiperkolesterolemia + CKD,Triple,30,25533.61,2252.19
+DM2 + Hiperkolesterolemia + CKD,Triple,31,25051.72,2839.72
+DM2 + Hiperkolesterolemia + CKD,Triple,32,25009.05,2836.95
+DM2 + Hiperkolesterolemia + CKD,Triple,33,24802.35,2593.76
+DM2 + Hiperkolesterolemia + CKD,Triple,34,24689.22,2740.09
+DM2 + Hiperkolesterolemia + CKD,Triple,35,24689.22,2740.09
+DM2 + Hiperkolesterolemia + CKD,Triple,36,24068.25,3564.3
+DM2 + Hiperkolesterolemia + CKD,Triple,37,24068.25,3564.3
+DM2 + Hiperkolesterolemia + CKD,Triple,38,23890.21,3805.06
+DM2 + Hiperkolesterolemia + CKD,Triple,39,23872.22,3786.65
+DM2 + Hiperkolesterolemia + CKD,Triple,40,23872.22,3786.65
+DM2 + Hiperkolesterolemia + CKD,Triple,41,23872.22,3786.65
+DM2 + Hiperkolesterolemia + CKD,Triple,42,23872.22,3786.65
+DM2 + Hiperkolesterolemia + CKD,Triple,43,22805.43,4303.44
+DM2 + Hiperkolesterolemia + CKD,Triple,44,22805.43,4303.44
+DM2 + Hiperkolesterolemia + CKD,Triple,45,22637.26,4521.56
+DM2 + Hiperkolesterolemia + CKD,Triple,46,22566.0,4441.61
+DM2 + Hiperkolesterolemia + CKD,Triple,47,22438.68,4608.93
+DM2 + Hiperkolesterolemia + CKD,Triple,48,22438.68,4608.93
+DM2 + Hiperkolesterolemia + CKD,Triple,49,22438.68,4608.93
+DM2 + Hiperkolesterolemia + CKD,Triple,50,22201.35,4507.12
+DM2 + Hiperkolesterolemia + CKD,Triple,51,22201.35,4507.12
+DM2 + Hiperkolesterolemia + CKD,Triple,52,22201.35,4507.12
+DM2 + Hiperkolesterolemia + CKD,Triple,53,22201.35,4507.12
+DM2 + Hiperkolesterolemia + CKD,Triple,54,22201.35,4507.12
+DM2 + Hiperkolesterolemia + CKD,Triple,55,22201.35,4507.12
+DM2 + Hiperkolesterolemia + CKD,Triple,56,22024.19,4465.63
+DM2 + Hiperkolesterolemia + CKD,Triple,57,21814.44,4235.65
+DM2 + Hiperkolesterolemia + CKD,Triple,58,21814.44,4235.65
+DM2 + Hiperkolesterolemia + CKD,Triple,59,21814.44,4235.65
+DM2 + Hiperkolesterolemia + CKD,Triple,60,21026.26,3899.52
+DM2 + Hiperkolesterolemia + CKD,Triple,61,20821.65,3811.06
+DM2 + Hiperkolesterolemia + CKD,Triple,62,20221.94,4637.75
+DM2 + Hiperkolesterolemia + CKD,Triple,63,20221.94,4637.75
+DM2 + Hiperkolesterolemia + CKD,Triple,64,20120.34,4594.61
+DM2 + Hiperkolesterolemia + CKD,Triple,65,20120.34,4594.61
+DM2 + Hiperkolesterolemia + CKD,Triple,66,20067.47,4543.58
+DM2 + Hiperkolesterolemia + CKD,Triple,67,20067.47,4543.58
+DM2 + Hiperkolesterolemia + CKD,Triple,68,20067.47,4543.58
+DM2 + Hiperkolesterolemia + CKD,Triple,69,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,70,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,71,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,72,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,73,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,74,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,75,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,76,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,77,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,78,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,79,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,80,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,81,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,82,19790.29,4287.48
+DM2 + Hiperkolesterolemia + CKD,Triple,83,19445.6,3999.83
+DM2 + Hiperkolesterolemia + CKD,Triple,84,19399.1,3964.02
+DM2 + Hiperkolesterolemia + CKD,Triple,85,19344.62,3923.04
+DM2 + Hiperkolesterolemia + CKD,Triple,86,19344.62,3923.04
+DM2 + Hiperkolesterolemia + CKD,Triple,87,19197.84,4130.54
+DM2 + Hiperkolesterolemia + CKD,Triple,88,19197.84,4130.54
+DM2 + Hiperkolesterolemia + CKD,Triple,89,19197.84,4130.54
+DM2 + Hiperkolesterolemia + CKD,Triple,90,19197.84,4130.54
+DM2 + Hiperkolesterolemia + CKD,Triple,91,19197.84,4130.54
+DM2 + Hiperkolesterolemia + CKD,Triple,92,19197.84,4130.54
+DM2 + Hiperkolesterolemia + CKD,Triple,93,19197.84,4130.54
+DM2 + Hiperkolesterolemia + CKD,Triple,94,19142.69,4093.98
+DM2 + Hiperkolesterolemia + CKD,Triple,95,19142.69,4093.98
+DM2 + Hiperkolesterolemia + CKD,Triple,96,19142.69,4093.98
+DM2 + Hiperkolesterolemia + CKD,Triple,97,19142.69,4093.98
+DM2 + Hiperkolesterolemia + CKD,Triple,98,19142.69,4093.98
+DM2 + Hiperkolesterolemia + CKD,Triple,99,19142.69,4093.98
+DM2 + Hiperkolesterolemia + CKD,Triple,100,19142.69,4093.98
+DM2 + Hiperkolesterolemia + CKD,Triple,101,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,102,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,103,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,104,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,105,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,106,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,107,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,108,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,109,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,110,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,111,18355.59,3619.25
+DM2 + Hiperkolesterolemia + CKD,Triple,112,18304.22,3570.56
+DM2 + Hiperkolesterolemia + CKD,Triple,113,18304.22,3570.56
+DM2 + Hiperkolesterolemia + CKD,Triple,114,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,115,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,116,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,117,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,118,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,119,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,120,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,121,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,122,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,123,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,124,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,125,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,126,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,127,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,128,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,129,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,130,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,131,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,132,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,133,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,134,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,135,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,136,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,137,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,138,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,139,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,140,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,141,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,142,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,143,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,144,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,145,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,146,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,147,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,148,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,149,18208.62,3530.31
+DM2 + Hiperkolesterolemia + CKD,Triple,150,18208.62,3530.31
+Hipertensi + CVD + Hiperkolesterolemia,Triple,1,55162.85,5097.88
+Hipertensi + CVD + Hiperkolesterolemia,Triple,2,48552.4,2839.06
+Hipertensi + CVD + Hiperkolesterolemia,Triple,3,30678.73,5622.14
+Hipertensi + CVD + Hiperkolesterolemia,Triple,4,29914.49,4605.03
+Hipertensi + CVD + Hiperkolesterolemia,Triple,5,26998.34,1692.25
+Hipertensi + CVD + Hiperkolesterolemia,Triple,6,21800.59,1527.04
+Hipertensi + CVD + Hiperkolesterolemia,Triple,7,21800.59,1527.04
+Hipertensi + CVD + Hiperkolesterolemia,Triple,8,18001.85,3333.53
+Hipertensi + CVD + Hiperkolesterolemia,Triple,9,16531.51,1691.51
+Hipertensi + CVD + Hiperkolesterolemia,Triple,10,15510.06,2565.82
+Hipertensi + CVD + Hiperkolesterolemia,Triple,11,14550.66,2328.6
+Hipertensi + CVD + Hiperkolesterolemia,Triple,12,13041.3,2872.86
+Hipertensi + CVD + Hiperkolesterolemia,Triple,13,11722.14,2901.89
+Hipertensi + CVD + Hiperkolesterolemia,Triple,14,10867.34,2426.35
+Hipertensi + CVD + Hiperkolesterolemia,Triple,15,10455.17,2384.55
+Hipertensi + CVD + Hiperkolesterolemia,Triple,16,10173.03,2083.38
+Hipertensi + CVD + Hiperkolesterolemia,Triple,17,9220.0,2828.49
+Hipertensi + CVD + Hiperkolesterolemia,Triple,18,8776.16,2273.17
+Hipertensi + CVD + Hiperkolesterolemia,Triple,19,8758.99,2294.49
+Hipertensi + CVD + Hiperkolesterolemia,Triple,20,8633.52,2145.3
+Hipertensi + CVD + Hiperkolesterolemia,Triple,21,7476.94,2177.77
+Hipertensi + CVD + Hiperkolesterolemia,Triple,22,7476.94,2177.77
+Hipertensi + CVD + Hiperkolesterolemia,Triple,23,7476.94,2177.77
+Hipertensi + CVD + Hiperkolesterolemia,Triple,24,7000.24,1890.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,25,7000.24,1890.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,26,7000.24,1890.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,27,7000.24,1890.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,28,6321.15,1599.07
+Hipertensi + CVD + Hiperkolesterolemia,Triple,29,6307.34,1618.34
+Hipertensi + CVD + Hiperkolesterolemia,Triple,30,6307.34,1618.34
+Hipertensi + CVD + Hiperkolesterolemia,Triple,31,6307.34,1618.34
+Hipertensi + CVD + Hiperkolesterolemia,Triple,32,5852.53,2255.77
+Hipertensi + CVD + Hiperkolesterolemia,Triple,33,5852.53,2255.77
+Hipertensi + CVD + Hiperkolesterolemia,Triple,34,5847.93,2253.18
+Hipertensi + CVD + Hiperkolesterolemia,Triple,35,5847.93,2253.18
+Hipertensi + CVD + Hiperkolesterolemia,Triple,36,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,37,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,38,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,39,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,40,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,41,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,42,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,43,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,44,5183.13,1852.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,45,5082.0,1749.92
+Hipertensi + CVD + Hiperkolesterolemia,Triple,46,5082.0,1749.92
+Hipertensi + CVD + Hiperkolesterolemia,Triple,47,5082.0,1749.92
+Hipertensi + CVD + Hiperkolesterolemia,Triple,48,5082.0,1749.92
+Hipertensi + CVD + Hiperkolesterolemia,Triple,49,4951.82,1903.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,50,4951.82,1903.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,51,4951.82,1903.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,52,4740.01,2196.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,53,4565.1,2439.81
+Hipertensi + CVD + Hiperkolesterolemia,Triple,54,4349.3,2271.4
+Hipertensi + CVD + Hiperkolesterolemia,Triple,55,4339.84,2263.26
+Hipertensi + CVD + Hiperkolesterolemia,Triple,56,4278.39,2211.65
+Hipertensi + CVD + Hiperkolesterolemia,Triple,57,4278.39,2211.65
+Hipertensi + CVD + Hiperkolesterolemia,Triple,58,4271.78,2220.96
+Hipertensi + CVD + Hiperkolesterolemia,Triple,59,4268.41,2218.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,60,4268.41,2218.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,61,4268.41,2218.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,62,4268.41,2218.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,63,4268.41,2218.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,64,4268.41,2218.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,65,4260.18,2211.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,66,4260.18,2211.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,67,4260.18,2211.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,68,4260.18,2211.48
+Hipertensi + CVD + Hiperkolesterolemia,Triple,69,4072.92,2070.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,70,4072.92,2070.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,71,4072.92,2070.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,72,4072.92,2070.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,73,4072.92,2070.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,74,4072.92,2070.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,75,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,76,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,77,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,78,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,79,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,80,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,81,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,82,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,83,4071.55,2072.27
+Hipertensi + CVD + Hiperkolesterolemia,Triple,84,3972.77,2007.92
+Hipertensi + CVD + Hiperkolesterolemia,Triple,85,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,86,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,87,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,88,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,89,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,90,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,91,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,92,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,93,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,94,3960.68,2000.57
+Hipertensi + CVD + Hiperkolesterolemia,Triple,95,3941.08,1984.9
+Hipertensi + CVD + Hiperkolesterolemia,Triple,96,3941.08,1984.9
+Hipertensi + CVD + Hiperkolesterolemia,Triple,97,3941.08,1984.9
+Hipertensi + CVD + Hiperkolesterolemia,Triple,98,3941.08,1984.9
+Hipertensi + CVD + Hiperkolesterolemia,Triple,99,3941.08,1984.9
+Hipertensi + CVD + Hiperkolesterolemia,Triple,100,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,101,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,102,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,103,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,104,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,105,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,106,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,107,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,108,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,109,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,110,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,111,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,112,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,113,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,114,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,115,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,116,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,117,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,118,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,119,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,120,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,121,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,122,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,123,3932.89,1979.87
+Hipertensi + CVD + Hiperkolesterolemia,Triple,124,3903.28,2021.62
+Hipertensi + CVD + Hiperkolesterolemia,Triple,125,3666.7,1853.69
+Hipertensi + CVD + Hiperkolesterolemia,Triple,126,3666.7,1853.69
+Hipertensi + CVD + Hiperkolesterolemia,Triple,127,3666.7,1853.69
+Hipertensi + CVD + Hiperkolesterolemia,Triple,128,3410.75,1764.02
+Hipertensi + CVD + Hiperkolesterolemia,Triple,129,3410.75,1764.02
+Hipertensi + CVD + Hiperkolesterolemia,Triple,130,3410.75,1764.02
+Hipertensi + CVD + Hiperkolesterolemia,Triple,131,3410.75,1764.02
+Hipertensi + CVD + Hiperkolesterolemia,Triple,132,3410.75,1764.02
+Hipertensi + CVD + Hiperkolesterolemia,Triple,133,3410.75,1764.02
+Hipertensi + CVD + Hiperkolesterolemia,Triple,134,3280.92,1722.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,135,3280.92,1722.33
+Hipertensi + CVD + Hiperkolesterolemia,Triple,136,3276.36,1721.2
+Hipertensi + CVD + Hiperkolesterolemia,Triple,137,3178.99,1702.8
+Hipertensi + CVD + Hiperkolesterolemia,Triple,138,3178.99,1702.8
+Hipertensi + CVD + Hiperkolesterolemia,Triple,139,3178.99,1702.8
+Hipertensi + CVD + Hiperkolesterolemia,Triple,140,3178.99,1702.8
+Hipertensi + CVD + Hiperkolesterolemia,Triple,141,3178.99,1702.8
+Hipertensi + CVD + Hiperkolesterolemia,Triple,142,3003.88,1665.85
+Hipertensi + CVD + Hiperkolesterolemia,Triple,143,3003.88,1665.85
+Hipertensi + CVD + Hiperkolesterolemia,Triple,144,3003.88,1665.85
+Hipertensi + CVD + Hiperkolesterolemia,Triple,145,3003.88,1665.85
+Hipertensi + CVD + Hiperkolesterolemia,Triple,146,3003.88,1665.85
+Hipertensi + CVD + Hiperkolesterolemia,Triple,147,3003.88,1665.85
+Hipertensi + CVD + Hiperkolesterolemia,Triple,148,3003.88,1665.85
+Hipertensi + CVD + Hiperkolesterolemia,Triple,149,3003.88,1665.85
+Hipertensi + CVD + Hiperkolesterolemia,Triple,150,3003.88,1665.85
+Hipertensi + CVD + CKD,Triple,1,62509.67,5129.64
+Hipertensi + CVD + CKD,Triple,2,62509.67,5129.64
+Hipertensi + CVD + CKD,Triple,3,57216.67,3027.97
+Hipertensi + CVD + CKD,Triple,4,50952.39,6158.08
+Hipertensi + CVD + CKD,Triple,5,46863.93,4262.94
+Hipertensi + CVD + CKD,Triple,6,42339.19,3646.22
+Hipertensi + CVD + CKD,Triple,7,39410.95,4534.77
+Hipertensi + CVD + CKD,Triple,8,34438.33,1240.99
+Hipertensi + CVD + CKD,Triple,9,31878.19,4395.92
+Hipertensi + CVD + CKD,Triple,10,30285.21,3500.04
+Hipertensi + CVD + CKD,Triple,11,29255.69,2662.87
+Hipertensi + CVD + CKD,Triple,12,28029.59,1649.84
+Hipertensi + CVD + CKD,Triple,13,26730.16,1776.86
+Hipertensi + CVD + CKD,Triple,14,26528.71,1798.38
+Hipertensi + CVD + CKD,Triple,15,26528.71,1798.38
+Hipertensi + CVD + CKD,Triple,16,23601.87,2104.74
+Hipertensi + CVD + CKD,Triple,17,23601.87,2104.74
+Hipertensi + CVD + CKD,Triple,18,22438.65,3442.32
+Hipertensi + CVD + CKD,Triple,19,22107.82,3428.88
+Hipertensi + CVD + CKD,Triple,20,22047.95,3353.17
+Hipertensi + CVD + CKD,Triple,21,20244.99,3291.45
+Hipertensi + CVD + CKD,Triple,22,19688.48,3724.17
+Hipertensi + CVD + CKD,Triple,23,19387.91,3304.45
+Hipertensi + CVD + CKD,Triple,24,18774.1,3916.06
+Hipertensi + CVD + CKD,Triple,25,18774.1,3916.06
+Hipertensi + CVD + CKD,Triple,26,18774.1,3916.06
+Hipertensi + CVD + CKD,Triple,27,17803.86,4355.89
+Hipertensi + CVD + CKD,Triple,28,17803.86,4355.89
+Hipertensi + CVD + CKD,Triple,29,17373.86,4639.53
+Hipertensi + CVD + CKD,Triple,30,17373.86,4639.53
+Hipertensi + CVD + CKD,Triple,31,17037.04,4250.03
+Hipertensi + CVD + CKD,Triple,32,16705.56,3885.65
+Hipertensi + CVD + CKD,Triple,33,16505.18,4031.32
+Hipertensi + CVD + CKD,Triple,34,16505.18,4031.32
+Hipertensi + CVD + CKD,Triple,35,16389.2,3912.49
+Hipertensi + CVD + CKD,Triple,36,16389.2,3912.49
+Hipertensi + CVD + CKD,Triple,37,16224.08,3749.19
+Hipertensi + CVD + CKD,Triple,38,16138.33,3667.39
+Hipertensi + CVD + CKD,Triple,39,15816.9,3381.91
+Hipertensi + CVD + CKD,Triple,40,15816.9,3381.91
+Hipertensi + CVD + CKD,Triple,41,15696.43,3284.74
+Hipertensi + CVD + CKD,Triple,42,15634.58,3237.2
+Hipertensi + CVD + CKD,Triple,43,15440.22,3099.17
+Hipertensi + CVD + CKD,Triple,44,14872.97,2736.1
+Hipertensi + CVD + CKD,Triple,45,14714.1,2666.89
+Hipertensi + CVD + CKD,Triple,46,14257.31,2398.09
+Hipertensi + CVD + CKD,Triple,47,14257.31,2398.09
+Hipertensi + CVD + CKD,Triple,48,14198.93,2335.95
+Hipertensi + CVD + CKD,Triple,49,14198.93,2335.95
+Hipertensi + CVD + CKD,Triple,50,14198.93,2335.95
+Hipertensi + CVD + CKD,Triple,51,14198.93,2335.95
+Hipertensi + CVD + CKD,Triple,52,14063.26,2196.72
+Hipertensi + CVD + CKD,Triple,53,14063.26,2196.72
+Hipertensi + CVD + CKD,Triple,54,14063.26,2196.72
+Hipertensi + CVD + CKD,Triple,55,14063.26,2196.72
+Hipertensi + CVD + CKD,Triple,56,14063.26,2196.72
+Hipertensi + CVD + CKD,Triple,57,14063.26,2196.72
+Hipertensi + CVD + CKD,Triple,58,13827.48,2133.86
+Hipertensi + CVD + CKD,Triple,59,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,60,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,61,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,62,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,63,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,64,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,65,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,66,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,67,13769.39,2126.13
+Hipertensi + CVD + CKD,Triple,68,13307.91,1629.03
+Hipertensi + CVD + CKD,Triple,69,13307.91,1629.03
+Hipertensi + CVD + CKD,Triple,70,13307.91,1629.03
+Hipertensi + CVD + CKD,Triple,71,13257.56,1698.57
+Hipertensi + CVD + CKD,Triple,72,13257.56,1698.57
+Hipertensi + CVD + CKD,Triple,73,13257.56,1698.57
+Hipertensi + CVD + CKD,Triple,74,13257.56,1698.57
+Hipertensi + CVD + CKD,Triple,75,13257.56,1698.57
+Hipertensi + CVD + CKD,Triple,76,13257.56,1698.57
+Hipertensi + CVD + CKD,Triple,77,13257.56,1698.57
+Hipertensi + CVD + CKD,Triple,78,13257.56,1698.57
+Hipertensi + CVD + CKD,Triple,79,12868.99,1616.87
+Hipertensi + CVD + CKD,Triple,80,12868.99,1616.87
+Hipertensi + CVD + CKD,Triple,81,12025.09,2026.35
+Hipertensi + CVD + CKD,Triple,82,12025.09,2026.35
+Hipertensi + CVD + CKD,Triple,83,12025.09,2026.35
+Hipertensi + CVD + CKD,Triple,84,12025.09,2026.35
+Hipertensi + CVD + CKD,Triple,85,12025.09,2026.35
+Hipertensi + CVD + CKD,Triple,86,11851.06,1782.37
+Hipertensi + CVD + CKD,Triple,87,11833.56,1797.73
+Hipertensi + CVD + CKD,Triple,88,11833.56,1797.73
+Hipertensi + CVD + CKD,Triple,89,11833.56,1797.73
+Hipertensi + CVD + CKD,Triple,90,11833.56,1797.73
+Hipertensi + CVD + CKD,Triple,91,11833.56,1797.73
+Hipertensi + CVD + CKD,Triple,92,11833.56,1797.73
+Hipertensi + CVD + CKD,Triple,93,11833.56,1797.73
+Hipertensi + CVD + CKD,Triple,94,11833.56,1797.73
+Hipertensi + CVD + CKD,Triple,95,11792.99,1819.38
+Hipertensi + CVD + CKD,Triple,96,11792.99,1819.38
+Hipertensi + CVD + CKD,Triple,97,11792.99,1819.38
+Hipertensi + CVD + CKD,Triple,98,11314.73,2290.96
+Hipertensi + CVD + CKD,Triple,99,11314.73,2290.96
+Hipertensi + CVD + CKD,Triple,100,11314.73,2290.96
+Hipertensi + CVD + CKD,Triple,101,10959.13,2698.66
+Hipertensi + CVD + CKD,Triple,102,10959.13,2698.66
+Hipertensi + CVD + CKD,Triple,103,10959.13,2698.66
+Hipertensi + CVD + CKD,Triple,104,10959.13,2698.66
+Hipertensi + CVD + CKD,Triple,105,10959.13,2698.66
+Hipertensi + CVD + CKD,Triple,106,10959.13,2698.66
+Hipertensi + CVD + CKD,Triple,107,10955.37,2703.13
+Hipertensi + CVD + CKD,Triple,108,10955.37,2703.13
+Hipertensi + CVD + CKD,Triple,109,10955.37,2703.13
+Hipertensi + CVD + CKD,Triple,110,10955.37,2703.13
+Hipertensi + CVD + CKD,Triple,111,10955.37,2703.13
+Hipertensi + CVD + CKD,Triple,112,10955.37,2703.13
+Hipertensi + CVD + CKD,Triple,113,10955.37,2703.13
+Hipertensi + CVD + CKD,Triple,114,10955.37,2703.13
+Hipertensi + CVD + CKD,Triple,115,10920.83,2705.72
+Hipertensi + CVD + CKD,Triple,116,10920.83,2705.72
+Hipertensi + CVD + CKD,Triple,117,10920.83,2705.72
+Hipertensi + CVD + CKD,Triple,118,10920.83,2705.72
+Hipertensi + CVD + CKD,Triple,119,10881.7,2752.0
+Hipertensi + CVD + CKD,Triple,120,10273.34,2024.25
+Hipertensi + CVD + CKD,Triple,121,10131.38,1870.7
+Hipertensi + CVD + CKD,Triple,122,10008.04,1745.09
+Hipertensi + CVD + CKD,Triple,123,9603.56,1435.52
+Hipertensi + CVD + CKD,Triple,124,9603.56,1435.52
+Hipertensi + CVD + CKD,Triple,125,9603.56,1435.52
+Hipertensi + CVD + CKD,Triple,126,9603.56,1435.52
+Hipertensi + CVD + CKD,Triple,127,9603.56,1435.52
+Hipertensi + CVD + CKD,Triple,128,9601.89,1434.42
+Hipertensi + CVD + CKD,Triple,129,9601.89,1434.42
+Hipertensi + CVD + CKD,Triple,130,9601.89,1434.42
+Hipertensi + CVD + CKD,Triple,131,9601.89,1434.42
+Hipertensi + CVD + CKD,Triple,132,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,133,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,134,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,135,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,136,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,137,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,138,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,139,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,140,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,141,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,142,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,143,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,144,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,145,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,146,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,147,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,148,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,149,9562.76,1489.73
+Hipertensi + CVD + CKD,Triple,150,9562.76,1489.73
+Hipertensi + Hiperkolesterolemia + CKD,Triple,1,58437.97,7026.18
+Hipertensi + Hiperkolesterolemia + CKD,Triple,2,47387.19,8360.87
+Hipertensi + Hiperkolesterolemia + CKD,Triple,3,42205.75,9394.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,4,38986.08,5426.04
+Hipertensi + Hiperkolesterolemia + CKD,Triple,5,38431.65,4891.55
+Hipertensi + Hiperkolesterolemia + CKD,Triple,6,34366.68,3383.35
+Hipertensi + Hiperkolesterolemia + CKD,Triple,7,32977.17,1967.89
+Hipertensi + Hiperkolesterolemia + CKD,Triple,8,32567.75,2007.04
+Hipertensi + Hiperkolesterolemia + CKD,Triple,9,29054.96,3399.12
+Hipertensi + Hiperkolesterolemia + CKD,Triple,10,28883.86,3304.09
+Hipertensi + Hiperkolesterolemia + CKD,Triple,11,28814.15,3206.55
+Hipertensi + Hiperkolesterolemia + CKD,Triple,12,27284.24,3483.21
+Hipertensi + Hiperkolesterolemia + CKD,Triple,13,26385.34,4250.9
+Hipertensi + Hiperkolesterolemia + CKD,Triple,14,25345.51,4858.78
+Hipertensi + Hiperkolesterolemia + CKD,Triple,15,23120.72,4546.57
+Hipertensi + Hiperkolesterolemia + CKD,Triple,16,22525.29,4990.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,17,22241.35,5123.85
+Hipertensi + Hiperkolesterolemia + CKD,Triple,18,19798.4,5030.37
+Hipertensi + Hiperkolesterolemia + CKD,Triple,19,19210.92,4687.12
+Hipertensi + Hiperkolesterolemia + CKD,Triple,20,17763.34,3474.95
+Hipertensi + Hiperkolesterolemia + CKD,Triple,21,17763.34,3474.95
+Hipertensi + Hiperkolesterolemia + CKD,Triple,22,17169.76,3756.4
+Hipertensi + Hiperkolesterolemia + CKD,Triple,23,17169.76,3756.4
+Hipertensi + Hiperkolesterolemia + CKD,Triple,24,16982.53,3492.4
+Hipertensi + Hiperkolesterolemia + CKD,Triple,25,15553.12,1886.93
+Hipertensi + Hiperkolesterolemia + CKD,Triple,26,15553.12,1886.93
+Hipertensi + Hiperkolesterolemia + CKD,Triple,27,15553.12,1886.93
+Hipertensi + Hiperkolesterolemia + CKD,Triple,28,13938.35,315.81
+Hipertensi + Hiperkolesterolemia + CKD,Triple,29,13938.35,315.81
+Hipertensi + Hiperkolesterolemia + CKD,Triple,30,13658.18,639.5
+Hipertensi + Hiperkolesterolemia + CKD,Triple,31,13242.47,391.74
+Hipertensi + Hiperkolesterolemia + CKD,Triple,32,12670.42,455.65
+Hipertensi + Hiperkolesterolemia + CKD,Triple,33,12670.42,455.65
+Hipertensi + Hiperkolesterolemia + CKD,Triple,34,12670.42,455.65
+Hipertensi + Hiperkolesterolemia + CKD,Triple,35,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,36,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,37,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,38,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,39,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,40,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,41,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,42,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,43,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,44,12448.22,762.64
+Hipertensi + Hiperkolesterolemia + CKD,Triple,45,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,46,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,47,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,48,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,49,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,50,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,51,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,52,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,53,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,54,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,55,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,56,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,57,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,58,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,59,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,60,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,61,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,62,12165.26,594.66
+Hipertensi + Hiperkolesterolemia + CKD,Triple,63,12031.71,597.71
+Hipertensi + Hiperkolesterolemia + CKD,Triple,64,12031.71,597.71
+Hipertensi + Hiperkolesterolemia + CKD,Triple,65,12031.71,597.71
+Hipertensi + Hiperkolesterolemia + CKD,Triple,66,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,67,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,68,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,69,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,70,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,71,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,72,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,73,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,74,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,75,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,76,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,77,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,78,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,79,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,80,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,81,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,82,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,83,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,84,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,85,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,86,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,87,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,88,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,89,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,90,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,91,12013.94,602.6
+Hipertensi + Hiperkolesterolemia + CKD,Triple,92,11962.51,658.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,93,11962.51,658.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,94,11962.51,658.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,95,11962.51,658.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,96,11962.51,658.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,97,11962.51,658.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,98,11962.51,658.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,99,11962.51,658.15
+Hipertensi + Hiperkolesterolemia + CKD,Triple,100,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,101,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,102,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,103,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,104,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,105,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,106,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,107,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,108,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,109,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,110,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,111,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,112,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,113,11889.83,564.08
+Hipertensi + Hiperkolesterolemia + CKD,Triple,114,11674.75,318.94
+Hipertensi + Hiperkolesterolemia + CKD,Triple,115,11674.75,318.94
+Hipertensi + Hiperkolesterolemia + CKD,Triple,116,11674.75,318.94
+Hipertensi + Hiperkolesterolemia + CKD,Triple,117,11674.75,318.94
+Hipertensi + Hiperkolesterolemia + CKD,Triple,118,11674.75,318.94
+Hipertensi + Hiperkolesterolemia + CKD,Triple,119,11674.75,318.94
+Hipertensi + Hiperkolesterolemia + CKD,Triple,120,11674.75,318.94
+Hipertensi + Hiperkolesterolemia + CKD,Triple,121,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,122,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,123,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,124,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,125,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,126,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,127,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,128,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,129,11463.55,615.41
+Hipertensi + Hiperkolesterolemia + CKD,Triple,130,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,131,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,132,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,133,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,134,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,135,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,136,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,137,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,138,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,139,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,140,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,141,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,142,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,143,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,144,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,145,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,146,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,147,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,148,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,149,11450.32,634.06
+Hipertensi + Hiperkolesterolemia + CKD,Triple,150,11450.32,634.06
+CVD + Hiperkolesterolemia + CKD,Triple,1,72406.5,4350.4
+CVD + Hiperkolesterolemia + CKD,Triple,2,59572.96,9558.41
+CVD + Hiperkolesterolemia + CKD,Triple,3,53010.26,7601.16
+CVD + Hiperkolesterolemia + CKD,Triple,4,46267.93,5444.32
+CVD + Hiperkolesterolemia + CKD,Triple,5,38800.33,4270.2
+CVD + Hiperkolesterolemia + CKD,Triple,6,33438.65,878.28
+CVD + Hiperkolesterolemia + CKD,Triple,7,32326.84,1679.16
+CVD + Hiperkolesterolemia + CKD,Triple,8,29850.22,3518.66
+CVD + Hiperkolesterolemia + CKD,Triple,9,26867.45,5041.88
+CVD + Hiperkolesterolemia + CKD,Triple,10,21839.31,5092.75
+CVD + Hiperkolesterolemia + CKD,Triple,11,21356.45,4410.4
+CVD + Hiperkolesterolemia + CKD,Triple,12,21066.3,4301.56
+CVD + Hiperkolesterolemia + CKD,Triple,13,20952.62,4372.71
+CVD + Hiperkolesterolemia + CKD,Triple,14,19681.06,4320.54
+CVD + Hiperkolesterolemia + CKD,Triple,15,18468.44,2961.86
+CVD + Hiperkolesterolemia + CKD,Triple,16,17736.59,1926.88
+CVD + Hiperkolesterolemia + CKD,Triple,17,17215.68,2383.95
+CVD + Hiperkolesterolemia + CKD,Triple,18,17215.68,2383.95
+CVD + Hiperkolesterolemia + CKD,Triple,19,16914.33,2705.31
+CVD + Hiperkolesterolemia + CKD,Triple,20,16914.33,2705.31
+CVD + Hiperkolesterolemia + CKD,Triple,21,15964.84,1650.94
+CVD + Hiperkolesterolemia + CKD,Triple,22,15757.32,1929.77
+CVD + Hiperkolesterolemia + CKD,Triple,23,15757.32,1929.77
+CVD + Hiperkolesterolemia + CKD,Triple,24,15337.01,1884.75
+CVD + Hiperkolesterolemia + CKD,Triple,25,15334.72,1881.81
+CVD + Hiperkolesterolemia + CKD,Triple,26,15282.04,1814.79
+CVD + Hiperkolesterolemia + CKD,Triple,27,14946.23,1405.39
+CVD + Hiperkolesterolemia + CKD,Triple,28,14401.52,1424.31
+CVD + Hiperkolesterolemia + CKD,Triple,29,14256.54,1495.71
+CVD + Hiperkolesterolemia + CKD,Triple,30,13256.95,1325.61
+CVD + Hiperkolesterolemia + CKD,Triple,31,13256.95,1325.61
+CVD + Hiperkolesterolemia + CKD,Triple,32,12901.11,1597.2
+CVD + Hiperkolesterolemia + CKD,Triple,33,12372.95,2159.36
+CVD + Hiperkolesterolemia + CKD,Triple,34,12372.95,2159.36
+CVD + Hiperkolesterolemia + CKD,Triple,35,12181.82,2195.51
+CVD + Hiperkolesterolemia + CKD,Triple,36,12181.82,2195.51
+CVD + Hiperkolesterolemia + CKD,Triple,37,12181.82,2195.51
+CVD + Hiperkolesterolemia + CKD,Triple,38,12112.67,2269.98
+CVD + Hiperkolesterolemia + CKD,Triple,39,11980.81,2416.64
+CVD + Hiperkolesterolemia + CKD,Triple,40,11857.49,2558.49
+CVD + Hiperkolesterolemia + CKD,Triple,41,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,42,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,43,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,44,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,45,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,46,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,47,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,48,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,49,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,50,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,51,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,52,11857.06,2559.0
+CVD + Hiperkolesterolemia + CKD,Triple,53,11603.5,2862.03
+CVD + Hiperkolesterolemia + CKD,Triple,54,11561.81,2862.99
+CVD + Hiperkolesterolemia + CKD,Triple,55,11471.21,2869.27
+CVD + Hiperkolesterolemia + CKD,Triple,56,11471.21,2869.27
+CVD + Hiperkolesterolemia + CKD,Triple,57,11295.99,2897.5
+CVD + Hiperkolesterolemia + CKD,Triple,58,11295.99,2897.5
+CVD + Hiperkolesterolemia + CKD,Triple,59,11295.99,2897.5
+CVD + Hiperkolesterolemia + CKD,Triple,60,11295.99,2897.5
+CVD + Hiperkolesterolemia + CKD,Triple,61,11262.05,2905.38
+CVD + Hiperkolesterolemia + CKD,Triple,62,11262.05,2905.38
+CVD + Hiperkolesterolemia + CKD,Triple,63,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,64,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,65,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,66,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,67,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,68,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,69,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,70,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,71,11044.33,2973.91
+CVD + Hiperkolesterolemia + CKD,Triple,72,10978.96,3039.12
+CVD + Hiperkolesterolemia + CKD,Triple,73,10978.96,3039.12
+CVD + Hiperkolesterolemia + CKD,Triple,74,10978.96,3039.12
+CVD + Hiperkolesterolemia + CKD,Triple,75,10978.96,3039.12
+CVD + Hiperkolesterolemia + CKD,Triple,76,10978.96,3039.12
+CVD + Hiperkolesterolemia + CKD,Triple,77,10978.96,3039.12
+CVD + Hiperkolesterolemia + CKD,Triple,78,10978.96,3039.12
+CVD + Hiperkolesterolemia + CKD,Triple,79,10978.96,3039.12
+CVD + Hiperkolesterolemia + CKD,Triple,80,10923.65,3095.37
+CVD + Hiperkolesterolemia + CKD,Triple,81,10923.65,3095.37
+CVD + Hiperkolesterolemia + CKD,Triple,82,10923.65,3095.37
+CVD + Hiperkolesterolemia + CKD,Triple,83,10923.65,3095.37
+CVD + Hiperkolesterolemia + CKD,Triple,84,10923.65,3095.37
+CVD + Hiperkolesterolemia + CKD,Triple,85,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,86,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,87,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,88,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,89,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,90,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,91,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,92,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,93,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,94,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,95,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,96,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,97,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,98,10829.94,2968.53
+CVD + Hiperkolesterolemia + CKD,Triple,99,10393.34,2385.77
+CVD + Hiperkolesterolemia + CKD,Triple,100,10393.34,2385.77
+CVD + Hiperkolesterolemia + CKD,Triple,101,10393.34,2385.77
+CVD + Hiperkolesterolemia + CKD,Triple,102,10393.34,2385.77
+CVD + Hiperkolesterolemia + CKD,Triple,103,10393.34,2385.77
+CVD + Hiperkolesterolemia + CKD,Triple,104,10393.34,2385.77
+CVD + Hiperkolesterolemia + CKD,Triple,105,10393.34,2385.77
+CVD + Hiperkolesterolemia + CKD,Triple,106,10384.56,2374.24
+CVD + Hiperkolesterolemia + CKD,Triple,107,10376.76,2364.0
+CVD + Hiperkolesterolemia + CKD,Triple,108,10376.76,2364.0
+CVD + Hiperkolesterolemia + CKD,Triple,109,10376.76,2364.0
+CVD + Hiperkolesterolemia + CKD,Triple,110,10376.76,2364.0
+CVD + Hiperkolesterolemia + CKD,Triple,111,10376.76,2364.0
+CVD + Hiperkolesterolemia + CKD,Triple,112,10376.76,2364.0
+CVD + Hiperkolesterolemia + CKD,Triple,113,10376.76,2364.0
+CVD + Hiperkolesterolemia + CKD,Triple,114,10376.76,2364.0
+CVD + Hiperkolesterolemia + CKD,Triple,115,9566.89,1368.67
+CVD + Hiperkolesterolemia + CKD,Triple,116,9263.1,1075.3
+CVD + Hiperkolesterolemia + CKD,Triple,117,9263.1,1075.3
+CVD + Hiperkolesterolemia + CKD,Triple,118,9263.1,1075.3
+CVD + Hiperkolesterolemia + CKD,Triple,119,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,120,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,121,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,122,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,123,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,124,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,125,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,126,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,127,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,128,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,129,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,130,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,131,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,132,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,133,8826.05,878.83
+CVD + Hiperkolesterolemia + CKD,Triple,134,8715.8,1016.97
+CVD + Hiperkolesterolemia + CKD,Triple,135,8715.8,1016.97
+CVD + Hiperkolesterolemia + CKD,Triple,136,8715.8,1016.97
+CVD + Hiperkolesterolemia + CKD,Triple,137,8715.8,1016.97
+CVD + Hiperkolesterolemia + CKD,Triple,138,8499.37,1038.87
+CVD + Hiperkolesterolemia + CKD,Triple,139,8499.37,1038.87
+CVD + Hiperkolesterolemia + CKD,Triple,140,8499.37,1038.87
+CVD + Hiperkolesterolemia + CKD,Triple,141,8499.37,1038.87
+CVD + Hiperkolesterolemia + CKD,Triple,142,8499.37,1038.87
+CVD + Hiperkolesterolemia + CKD,Triple,143,8482.29,1056.77
+CVD + Hiperkolesterolemia + CKD,Triple,144,8482.29,1056.77
+CVD + Hiperkolesterolemia + CKD,Triple,145,8251.9,1317.95
+CVD + Hiperkolesterolemia + CKD,Triple,146,8251.9,1317.95
+CVD + Hiperkolesterolemia + CKD,Triple,147,8251.9,1317.95
+CVD + Hiperkolesterolemia + CKD,Triple,148,8251.9,1317.95
+CVD + Hiperkolesterolemia + CKD,Triple,149,8251.9,1317.95
+CVD + Hiperkolesterolemia + CKD,Triple,150,8251.9,1317.95

@@ -2162,7 +2162,7 @@ def run_ga(
     # Track best solution ever found
     best_solution = population[0].copy()
     best_fitness = fitness(best_solution, guidelines, tdee=tdee)
-    fitness_history = []
+    
     
     # ════════════════════════════════════════════════════════════════════════
     # STEP 2 - MAIN GA LOOP
@@ -2173,6 +2173,8 @@ def run_ga(
         print(f"{'Gen':<5} | {'Best Fitness':<15} | {'Avg Fitness':<15}")
         print(f"{'-'*50}")
     
+    fitness_history = []
+
     for gen in range(generations):
         # Check deadline to prevent Vercel/frontend timeouts
         if deadline and time.time() > deadline:
@@ -2280,6 +2282,8 @@ def run_ga(
         print(f"{'='*50}\n")
     
     return best_solution, top_solutions, fitness_history
+
+
 
 # ═════════════════════════════════════════════════════════════════════════════
 # 6.1 RUN_GA_NUMPY - Optimized GA using numpy arrays (PERFORMANCE VERSION)
@@ -3072,7 +3076,7 @@ def generate_meal_options(
         Dict[slot_name: [option1, option2, option3], ...]
     
     Example:
-        best_sol, top_sols = run_ga(food_df, guidelines)
+        best_sol, top_sols, fitness_history = run_ga(food_df, guidelines)
         options = generate_meal_options(food_df, top_sols, max_options_per_slot=3)
     """
     

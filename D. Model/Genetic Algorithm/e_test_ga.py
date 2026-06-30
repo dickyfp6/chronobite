@@ -222,7 +222,7 @@ def get_simple_user_input(interactive=False):
         weight = 70.0
         height = 170.0
         activity_factor = 1.55
-        disease = ["dm2", "hypertension", "cvd"]
+        disease = ["cvd"]
         food_preferences = []  # Default preferences
     
     user_input = {
@@ -929,7 +929,7 @@ def test_ga_with_nutrition_service():
         print("STEP 5: Run Genetic Algorithm...")
         print("="*70)
         
-        best_solution, top_solutions, _ = run_ga(
+        best_solution, top_solutions, fitness_history = run_ga(
             food_df=food_df,
             guidelines=guidelines,
             tdee=tdee,
