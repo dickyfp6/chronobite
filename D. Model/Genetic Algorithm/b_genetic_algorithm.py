@@ -2003,7 +2003,7 @@ def _compute_grams_numpy(
         # Grid search atas main (step 5g supaya tidak terlalu lambat)
         for mg in range(int(main_min), int(m_max) + 1, 5):
             # side maksimal = main - 10, minimal side_min
-            s_upper = min(s_max, mg - 10.0)
+            s_upper = min(s_max, mg - 1.0)
             if s_upper < side_min:
                 continue
 
@@ -2017,7 +2017,7 @@ def _compute_grams_numpy(
             sg = float(round(max(side_min, min(s_upper, ideal_s))))
 
             # drink maksimal = side - 10, minimal drink_min
-            d_upper = min(d_max, sg - 10.0)
+            d_upper = min(d_max, sg - 1.0)
             if d_upper < drink_min:
                 continue
 

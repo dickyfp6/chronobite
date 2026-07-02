@@ -11,14 +11,20 @@ Tujuan: Membuat visualisasi untuk analisis data eksploratif (EDA) pada dataset f
 Menghasilkan 5 grafik:
 1. Distribusi jumlah item per kategori slot (consumption_label)
 2. Distribusi jumlah item per kelompok kategori USDA (food_group)
-3. Fill rate per atribut nutrisi (HC dan SC)
+3. Fill rate per atribut nutrisi (HC dan SC) -- dihitung dari dataset sebelum fillna
 4. Kelayakan batasan medis per kategori slot untuk masing-masing penyakit
 5. Heatmap distribusi jenis makanan vs cuisine
 """
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Dataset final (04_super_final.csv) untuk grafik distribusi, kelayakan medis, dan heatmap
 INPUT_FILE = os.path.normpath(os.path.join(CURRENT_DIR, "..", "A. Data", "Data Processed", "04_super_final.csv"))
-OUTPUT_DIR = os.path.normpath(os.path.join(CURRENT_DIR, "EDA Visualization"))
+
+# Dataset sebelum fillna (02_cleaned_dataset.csv setelah filter HC/SC) untuk fill rate
+INPUT_FILE_BEFORE_FILLNA = os.path.normpath(os.path.join(CURRENT_DIR, "..", "A. Data", "Data Processed", "02_cleaned_dataset.csv"))
+
+OUTPUT_DIR = os.path.normpath(os.path.join(CURRENT_DIR, "output"))
 
 HC = [
     "energy_kcal", "protein_g", "carbohydrate_g", "fat_g",
@@ -87,10 +93,22 @@ def chart_distribusi_food_group(df, output_dir, top_n=15):
     return counts
 
 
-def chart_fill_rate(df, total, output_dir):
-    """Chart 1: Fill rate per atribut nutrisi (HC dan SC)."""
-    hc_fill = pd.Series({c: (df[c] != 0).sum() / total * 100 for c in HC})
-    sc_fill = pd.Series({c: (df[c] != 0).sum() / total * 100 for c in SC})
+def chart_fill_rate(df_before_fillna, output_dir):
+    """Chart 1: Fill rate per atribut nutrisi (HC dan SC).
+    Dihitung dari dataset sebelum fillna (02_cleaned_dataset setelah filter HC/SC)
+    menggunakan notna() agar nilai nol asli tidak dihitung sebagai data kosong.
+    """
+    # Apply filter HC>=16 SC>=7 tanpa fillna terlebih dahulu
+    df_before_fillna["HC_count"] = df_before_fillna[HC].notna().sum(axis=1)
+    df_before_fillna["SC_count"] = df_before_fillna[SC].notna().sum(axis=1)
+    filtered = df_before_fillna[
+        (df_before_fillna["HC_count"] >= 16) &
+        (df_before_fillna["SC_count"] >= 7)
+    ].copy()
+    total = len(filtered)
+
+    hc_fill = pd.Series({c: filtered[c].notna().sum() / total * 100 for c in HC})
+    sc_fill = pd.Series({c: filtered[c].notna().sum() / total * 100 for c in SC})
     all_fill = pd.concat([hc_fill, sc_fill]).sort_values(ascending=False)
     colors = ["#E07B39" if c in HC else "#3B6F8F" for c in all_fill.index]
 
@@ -102,7 +120,7 @@ def chart_fill_rate(df, total, output_dir):
 
     ax.set_xlabel("Fill Rate (%)")
     ax.set_ylabel("Atribut Nutrisi")
-    ax.set_title("Persentase Keterisian Data (Fill Rate) per Atribut Nutrisi pada Dataset Final")
+    ax.set_title("Persentase Keterisian Data (Fill Rate) per Atribut Nutrisi pada Dataset Awal")
     ax.set_xlim(0, 110)
 
     legend_elements = [
@@ -221,8 +239,10 @@ def main():
     print("\n[3/5] Membuat grafik distribusi food_group...")
     chart_distribusi_food_group(df, OUTPUT_DIR)
 
-    print("\n[4/5] Membuat grafik fill rate nutrisi (HC & SC)...")
-    hc_fill, sc_fill = chart_fill_rate(df, total, OUTPUT_DIR)
+    print(f"\n[4/5] Membuat grafik fill rate nutrisi (HC & SC)...")
+    print(f"  Membaca dataset sebelum fillna: {INPUT_FILE_BEFORE_FILLNA}")
+    df_before_fillna = pd.read_csv(INPUT_FILE_BEFORE_FILLNA)
+    hc_fill, sc_fill = chart_fill_rate(df_before_fillna, OUTPUT_DIR)
     print(f"  Rata-rata fill rate HC: {hc_fill.mean():.1f}%")
     print(f"  Rata-rata fill rate SC: {sc_fill.mean():.1f}%")
 
