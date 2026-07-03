@@ -60,7 +60,7 @@ PROFILES = [
     {**_BASE, 'name': 'Hipertensi + Hiperkolesterolemia + CVD',  'disease': ['hypertension', 'cholesterol', 'cvd']},
 ]
 
-N_TRIALS = 100
+N_TRIALS = 30
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3. SETUP DATA — preload semua profil sekali saja
