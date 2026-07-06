@@ -1,0 +1,47 @@
+{
+  "user_params": {
+    "tdee": 2150.56,
+    "weight": 70.0,
+    "bbi": 54.0,
+    "age": 50,
+    "gender": "M",
+    "disease": ["dm2", "ckd"]
+  },
+  "meal_plan": {
+    "distribution": {
+      "breakfast": 510.76,
+      "lunch": 725.81,
+      "dinner": 618.29,
+      "snack": 295.70
+    },
+    "percentages": {
+      "breakfast": "23.75%",
+      "lunch": "33.75%",
+      "dinner": "28.75%",
+      "snack": "13.75%"
+    }
+  },
+  "guidelines": {
+    "constraints": {
+      "protein_g": {
+        "min": 52.44,
+        "max": 57.95,
+        "unit": "g",
+        "diseases": ["dm2", "ckd"]
+      },
+      "carbohydrate_g": {
+        "min": 236.83,
+        "max": 261.75,
+        "unit": "g",
+        "diseases": ["dm2", "ckd"]
+      },
+      "sodium_mg": {
+        "min": 0.0,
+        "max": 2000.0,
+        "unit": "mg",
+        "diseases": ["dm2", "ckd"]
+      }
+    },
+    "total_nutrients": 33
+  }
+}
