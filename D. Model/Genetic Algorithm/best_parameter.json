@@ -1,7 +1,0 @@
-{
-  "pop_size": 150,
-  "generations": 270,
-  "elite_ratio": 0.05,
-  "mutation_rate": 0.55,
-  "ls_iterations": 35
-}

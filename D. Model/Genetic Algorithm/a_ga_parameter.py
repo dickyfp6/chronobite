@@ -17,13 +17,13 @@
 # LS_PARAMS = {"iterations": 35}
 
 # New parameters (Optimized from Kaggle Tuning - Trial 147)
-GA_PARAMS = {
-    "generations": 150,
-    "pop_size": 200,
-    "elite_ratio": 0.3,
-    "mutation_rate": 0.4,
-}
-LS_PARAMS = {"iterations": 60}
+# GA_PARAMS = {
+#     "generations": 150,
+#     "pop_size": 200,
+#     "elite_ratio": 0.3,
+#     "mutation_rate": 0.4,
+# }
+# LS_PARAMS = {"iterations": 60}
 
 #K Kaggle Tuning Silfi 224
 # GA_PARAMS = {
@@ -46,3 +46,11 @@ LS_PARAMS = {"iterations": 60}
 #     "iterations": 35 
 # }
 
+# GA 30 Trials 3 Juli
+GA_PARAMS = {
+    "generations": 250,
+    "pop_size": 230,
+    "elite_ratio": 0.15,
+    "mutation_rate": 0.1,
+}
+LS_PARAMS = {"iterations": 80}

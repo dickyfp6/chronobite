@@ -1,9 +1,17 @@
 import sys
 import os
+import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt # type: ignore
 import seaborn as sns # type: ignore
+from datetime import datetime
+
+# ============================================================
+# KONFIGURASI RUN — ubah dua baris ini tiap kali mau run baru
+# ============================================================
+N_RUNS = 5                      # jumlah run per profile (dulu 3, sekarang 5)
+# ============================================================
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, '..'))         # evaluation folder
@@ -66,10 +74,15 @@ def main():
         print(f"[ERROR] Failed to initialize NutritionService: {e}")
         return
 
+    # Setiap run baru masuk ke folder sendiri (bertanggal + label),
+    # jadi hasil lama otomatis nggak ketimpa dan gampang dibandingin nanti.
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
     output_dir = os.path.join(current_dir, 'output', 'ga_26')
     os.makedirs(output_dir, exist_ok=True)
+    print(f"Hasil run ini akan disimpan di: {output_dir}")
     
     results_summary = []
+    raw_results = []  # simpan semua data mentah per-run, per-profile, untuk analisis ulang tanpa run lagi
     
     for i, profile in enumerate(PROFILES):
         print(f"\n[{i+1}/{len(PROFILES)}] Running GA for {profile['name']} profile...")
@@ -94,8 +107,8 @@ def main():
             run_n_total = []
             deviations_all_runs = []
             
-            for run_idx in range(3):
-                print(f"  -> Run {run_idx+1}/3...")
+            for run_idx in range(N_RUNS):
+                print(f"  -> Run {run_idx+1}/{N_RUNS}...")
                 menu_plan = ga_engine.generate_menu_plan(profile, tdee)
                 
                 if not menu_plan:
@@ -183,6 +196,19 @@ def main():
             mean_cs = np.mean(run_cs_rates)
             mean_dev = np.mean(run_avg_deviations)
             
+            # Simpan data mentah tiap run (bukan cuma rata-rata) — ini yang bikin
+            # perbandingan versi lama vs baru bisa dilakukan kapan saja tanpa run ulang GA
+            raw_results.append({
+                'profile': profile['name'],
+                'disease': profile['disease'],
+                'n_runs': N_RUNS,
+                'fitness_per_run': [float(x) for x in run_fitnesses],
+                'cs_rate_per_run': [float(x) for x in run_cs_rates],
+                'avg_deviation_per_run': [float(x) for x in run_avg_deviations],
+                'n_passed_per_run': [int(x) for x in run_n_passed],
+                'n_total_per_run': [int(x) for x in run_n_total],
+            })
+            
             results_summary.append({
                 'Profile': profile['name'],
                 'CS Rate': mean_cs,
@@ -235,6 +261,16 @@ def main():
     if results_summary:
         summary_df = pd.DataFrame(results_summary)
         summary_df.to_csv(os.path.join(output_dir, 'summary.csv'), index=False)
+        
+        # Simpan raw data lengkap + metadata run — ini yang dipakai kalau nanti
+        # mau bandingin versi ini vs versi lain tanpa run ulang
+        with open(os.path.join(output_dir, 'raw_results.json'), 'w') as f:
+            json.dump({
+                'n_runs': N_RUNS,
+                'n_profiles': len(PROFILES),
+                'results': raw_results
+            }, f, indent=2)
+        print(f"\nRaw data (per-run, bisa dianalisis ulang) disimpan di: raw_results.json")
         
         plt.figure(figsize=(10, 6))
         sns.barplot(data=summary_df, x='Profile', y='CS Rate', color='coral')

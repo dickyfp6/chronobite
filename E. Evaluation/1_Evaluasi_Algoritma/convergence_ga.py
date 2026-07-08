@@ -76,7 +76,7 @@ PROFILES = [
 ]
 
 # Pengulangan per profil untuk stabilitas rata-rata fitness_history
-N_REPEATS = 3
+N_REPEATS = 10
 
 
 def run_and_get_history(food_df, guidelines_ga, tdee):
@@ -229,8 +229,8 @@ def main():
         ax.plot(gens, mean_h, color=color, alpha=alpha, linewidth=1.2, label=label)
         legend_added.add(group)
 
-    ax.set_title('Kurva Konvergensi Genetic Algorithm + Local Search\n(26 Profil Penyakit, Rata-rata 3 Run)',
-                 fontsize=13)
+        ax.set_title('Kurva Konvergensi Genetic Algorithm + Local Search\n(26 Profil Penyakit, Rata-rata 10 Run)',
+             fontsize=13)
     ax.set_xlabel('Generasi', fontsize=11)
     ax.set_ylabel('Best Fitness Score (Lower is Better)', fontsize=11)
     ax.legend(title='Kelompok Penyakit', fontsize=10, title_fontsize=10)
@@ -272,8 +272,8 @@ def main():
         if count <= 6:
             ax.legend(fontsize=7, loc='upper right')
 
-    plt.suptitle('Konvergensi GA+LS per Kelompok Penyakit (Mean ± Std, 3 Run)',
-                 fontsize=13, y=1.01)
+        plt.suptitle('Konvergensi GA+LS per Kelompok Penyakit (Mean ± Std, 10 Run)',
+             fontsize=13, y=1.01)
     plt.tight_layout()
 
     chart2_path = os.path.join(output_dir, 'convergence_grouped.png')

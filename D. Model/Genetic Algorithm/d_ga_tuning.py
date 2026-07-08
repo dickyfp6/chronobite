@@ -1,10 +1,18 @@
 """
-d_ga_tuning.py — Optuna Hyperparameter Tuning GA + LS
+d_ga_tuning.py — Optuna Hyperparameter Tuning GA + LS (v5)
 ======================================================
 Objective  : Memaksimalkan CSR (Constraint Satisfaction Rate) — bukan fitness score
 Interface  : c_ga_interface (identik dengan evaluasi 26 profil)
 Profil     : 13 kasus yang divalidasi ahli gizi
-N Trials   : 100
+N Trials   : 30
+
+Catatan v5:
+  - Search space dipersempit (pop_size & generations maks 200, ls_iterations maks 65)
+    supaya kandidat parameter yang dihasilkan lebih ringan untuk deployment di website,
+    bukan cuma optimal untuk evaluasi offline.
+  - Rasio energi breakfast/dinner sudah di-swap (breakfast 23.75%, dinner 28.75%)
+    di b_genetic_algorithm.py sebelum tuning ini dijalankan, jadi hasil tuning v4
+    (search space lama) sudah tidak representatif lagi untuk parameter GA saat ini.
 
 Cara pakai di Kaggle:
   python "D. Model/Genetic Algorithm/d_ga_tuning.py"
@@ -116,12 +124,13 @@ def compute_csr(menu_plan, guideline_nutrients):
 # ─────────────────────────────────────────────────────────────────────────────
 def make_objective(all_data):
     def objective(trial):
-        # Search space
-        pop_size      = trial.suggest_int('pop_size',      50,  250, step=10)
-        generations   = trial.suggest_int('generations',   50,  300, step=10)
+        # Search space (v5 — dipersempit ke rentang yang lebih ringan untuk runtime,
+        # menyusul perubahan rasio energi breakfast/dinner)
+        pop_size      = trial.suggest_int('pop_size',      50,  200, step=10)
+        generations   = trial.suggest_int('generations',   50,  200, step=10)
         elite_ratio   = trial.suggest_float('elite_ratio', 0.05, 0.40, step=0.05)
         mutation_rate = trial.suggest_float('mutation_rate', 0.10, 0.70, step=0.05)
-        ls_iterations = trial.suggest_int('ls_iterations', 10,  80,  step=5)
+        ls_iterations = trial.suggest_int('ls_iterations', 10,  65,  step=5)
 
         # Override GA_PARAMS sementara untuk trial ini
         ga_param.GA_PARAMS['pop_size']      = pop_size
@@ -206,12 +215,12 @@ def main():
         print(f"  {k}: {v}")
 
     # Simpan CSV semua trial
-    output_csv = os.path.join(file_dir, 'tuning_results_v4.csv')
+    output_csv = os.path.join(file_dir, 'tuning_results_v5.csv')
     study.trials_dataframe().to_csv(output_csv, index=False)
     print(f"\nHasil semua trial : {output_csv}")
 
     # Simpan best params ke JSON
-    output_json = os.path.join(file_dir, 'best_params_v4.json')
+    output_json = os.path.join(file_dir, 'best_params_v5.json')
     with open(output_json, 'w') as f:
         json.dump({**best, 'mean_csr': round(best_csr, 2)}, f, indent=2)
     print(f"Best params JSON  : {output_json}")

@@ -24,7 +24,7 @@ INPUT_FILE = os.path.normpath(os.path.join(CURRENT_DIR, "..", "A. Data", "Data P
 # Dataset sebelum fillna (02_cleaned_dataset.csv setelah filter HC/SC) untuk fill rate
 INPUT_FILE_BEFORE_FILLNA = os.path.normpath(os.path.join(CURRENT_DIR, "..", "A. Data", "Data Processed", "02_cleaned_dataset.csv"))
 
-OUTPUT_DIR = os.path.normpath(os.path.join(CURRENT_DIR, "output"))
+OUTPUT_DIR = os.path.normpath(os.path.join(CURRENT_DIR, "EDA Visualization"))
 
 HC = [
     "energy_kcal", "protein_g", "carbohydrate_g", "fat_g",
@@ -95,27 +95,21 @@ def chart_distribusi_food_group(df, output_dir, top_n=15):
 
 def chart_fill_rate(df_before_fillna, output_dir):
     """Chart 1: Fill rate per atribut nutrisi (HC dan SC).
-    Dihitung dari dataset sebelum fillna (02_cleaned_dataset setelah filter HC/SC)
+    Dihitung dari seluruh dataset sebelum fillna (02_cleaned_dataset.csv, tanpa filter apa pun)
     menggunakan notna() agar nilai nol asli tidak dihitung sebagai data kosong.
     """
-    # Apply filter HC>=16 SC>=7 tanpa fillna terlebih dahulu
-    df_before_fillna["HC_count"] = df_before_fillna[HC].notna().sum(axis=1)
-    df_before_fillna["SC_count"] = df_before_fillna[SC].notna().sum(axis=1)
-    filtered = df_before_fillna[
-        (df_before_fillna["HC_count"] >= 16) &
-        (df_before_fillna["SC_count"] >= 7)
-    ].copy()
-    total = len(filtered)
+    total = len(df_before_fillna)
 
-    hc_fill = pd.Series({c: filtered[c].notna().sum() / total * 100 for c in HC})
-    sc_fill = pd.Series({c: filtered[c].notna().sum() / total * 100 for c in SC})
+    hc_fill = pd.Series({c: df_before_fillna[c].notna().sum() / total * 100 for c in HC})
+    sc_fill = pd.Series({c: df_before_fillna[c].notna().sum() / total * 100 for c in SC})
     all_fill = pd.concat([hc_fill, sc_fill]).sort_values(ascending=False)
     colors = ["#E07B39" if c in HC else "#3B6F8F" for c in all_fill.index]
 
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.barh(all_fill.index[::-1], all_fill.values[::-1], color=colors[::-1])
     ax.axvline(80, color="gray", linestyle="--", linewidth=1)
-    for i, (nutrient_name, val) in enumerate(all_fill[::-1].items()):
+    all_fill_rev = all_fill[::-1]
+    for i, (nutrient_name, val) in enumerate(all_fill_rev.items()):
         ax.text(val + 0.5, i, f"{val:.1f}%", va="center", fontsize=8)
 
     ax.set_xlabel("Fill Rate (%)")
