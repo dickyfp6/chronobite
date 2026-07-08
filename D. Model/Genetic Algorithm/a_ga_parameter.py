@@ -47,10 +47,19 @@
 # }
 
 # GA 30 Trials 3 Juli
+# GA_PARAMS = {
+#     "generations": 250,
+#     "pop_size": 230,
+#     "elite_ratio": 0.15,
+#     "mutation_rate": 0.1,
+# }
+# LS_PARAMS = {"iterations": 80}
+
+# GA 30 Trials New 8 Juli
 GA_PARAMS = {
-    "generations": 250,
-    "pop_size": 230,
-    "elite_ratio": 0.15,
-    "mutation_rate": 0.1,
+    "generations": 110,
+    "pop_size": 90,
+    "elite_ratio": 0.2,
+    "mutation_rate": 0.3,
 }
-LS_PARAMS = {"iterations": 80}
+LS_PARAMS = {"iterations": 30}

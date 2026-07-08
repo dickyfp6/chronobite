@@ -10,7 +10,7 @@ from datetime import datetime
 # ============================================================
 # KONFIGURASI RUN — ubah dua baris ini tiap kali mau run baru
 # ============================================================
-N_RUNS = 5                      # jumlah run per profile (dulu 3, sekarang 5)
+N_RUNS = 10                      # jumlah run per profile (dulu 3, sekarang 5)
 # ============================================================
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
