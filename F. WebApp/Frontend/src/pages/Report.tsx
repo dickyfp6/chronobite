@@ -1527,7 +1527,7 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  <div className="flex-1 min-h-0 bg-slate-100 p-4 flex items-center justify-center">
  <iframe
  src={previewUrl}
- className="h-full aspect-[1/1.414] max-w-full rounded-2xl border border-slate-200/80 shadow-sm bg-white"
+ className="w-full h-full rounded-2xl border border-slate-200/80 shadow-sm bg-white"
  title="PDF Preview"
  />
  </div>
