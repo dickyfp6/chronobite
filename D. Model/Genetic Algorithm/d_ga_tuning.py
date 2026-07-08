@@ -1,18 +1,21 @@
 """
-d_ga_tuning.py — Optuna Hyperparameter Tuning GA + LS (v5)
+d_ga_tuning.py — Optuna Hyperparameter Tuning GA + LS (v6 — FINAL)
 ======================================================
 Objective  : Memaksimalkan CSR (Constraint Satisfaction Rate) — bukan fitness score
 Interface  : c_ga_interface (identik dengan evaluasi 26 profil)
 Profil     : 13 kasus yang divalidasi ahli gizi
-N Trials   : 30
+N Trials   : 50
 
-Catatan v5:
-  - Search space dipersempit (pop_size & generations maks 200, ls_iterations maks 65)
-    supaya kandidat parameter yang dihasilkan lebih ringan untuk deployment di website,
-    bukan cuma optimal untuk evaluasi offline.
-  - Rasio energi breakfast/dinner sudah di-swap (breakfast 23.75%, dinner 28.75%)
-    di b_genetic_algorithm.py sebelum tuning ini dijalankan, jadi hasil tuning v4
-    (search space lama) sudah tidak representatif lagi untuk parameter GA saat ini.
+Catatan v6 (final):
+  - Search space diperlebar sedikit ke bawah (pop_size & generations min 30,
+    ls_iterations min 5) karena beberapa trial terbaik di v5 menyentuh batas
+    bawah rentang lama (pop/gen=50, ls=10), indikasi titik optimal mungkin
+    ada di luar rentang v5.
+  - Baseline yang di-enqueue diganti dari parameter lama (pop=200, gen=150, ls=60)
+    menjadi hasil terbaik v5 (Trial 11: pop=90, gen=110, ls=30, elite=0.20,
+    mutation=0.30), karena itu titik terbaik yang diketahui sejauh ini.
+  - N_TRIALS dinaikkan dari 30 ke 50 untuk eksplorasi yang lebih menyeluruh
+    pada rentang yang diperlebar.
 
 Cara pakai di Kaggle:
   python "D. Model/Genetic Algorithm/d_ga_tuning.py"
@@ -68,7 +71,7 @@ PROFILES = [
     {**_BASE, 'name': 'Hipertensi + Hiperkolesterolemia + CVD',  'disease': ['hypertension', 'cholesterol', 'cvd']},
 ]
 
-N_TRIALS = 30
+N_TRIALS = 50
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3. SETUP DATA — preload semua profil sekali saja
@@ -124,13 +127,13 @@ def compute_csr(menu_plan, guideline_nutrients):
 # ─────────────────────────────────────────────────────────────────────────────
 def make_objective(all_data):
     def objective(trial):
-        # Search space (v5 — dipersempit ke rentang yang lebih ringan untuk runtime,
-        # menyusul perubahan rasio energi breakfast/dinner)
-        pop_size      = trial.suggest_int('pop_size',      50,  200, step=10)
-        generations   = trial.suggest_int('generations',   50,  200, step=10)
+        # Search space (v6 — FINAL, diperlebar sedikit ke bawah karena v5
+        # menunjukkan beberapa trial terbaik menyentuh batas bawah lama)
+        pop_size      = trial.suggest_int('pop_size',      30,  200, step=10)
+        generations   = trial.suggest_int('generations',   30,  200, step=10)
         elite_ratio   = trial.suggest_float('elite_ratio', 0.05, 0.40, step=0.05)
         mutation_rate = trial.suggest_float('mutation_rate', 0.10, 0.70, step=0.05)
-        ls_iterations = trial.suggest_int('ls_iterations', 10,  65,  step=5)
+        ls_iterations = trial.suggest_int('ls_iterations', 5,  65,  step=5)
 
         # Override GA_PARAMS sementara untuk trial ini
         ga_param.GA_PARAMS['pop_size']      = pop_size
@@ -193,13 +196,13 @@ def main():
         pruner=MedianPruner(n_startup_trials=10, n_warmup_steps=3),
     )
 
-    # Baseline — parameter aktif saat ini
+    # Baseline — hasil terbaik v5 (Trial 11), bukan parameter lama yang berat
     study.enqueue_trial({
-        'pop_size':      200,
-        'generations':   150,
-        'elite_ratio':   0.30,
-        'mutation_rate': 0.40,
-        'ls_iterations': 60,
+        'pop_size':      90,
+        'generations':   110,
+        'elite_ratio':   0.20,
+        'mutation_rate': 0.30,
+        'ls_iterations': 30,
     })
 
     t_start = time.time()
@@ -215,12 +218,12 @@ def main():
         print(f"  {k}: {v}")
 
     # Simpan CSV semua trial
-    output_csv = os.path.join(file_dir, 'tuning_results_v5.csv')
+    output_csv = os.path.join(file_dir, 'tuning_results_v6.csv')
     study.trials_dataframe().to_csv(output_csv, index=False)
     print(f"\nHasil semua trial : {output_csv}")
 
     # Simpan best params ke JSON
-    output_json = os.path.join(file_dir, 'best_params_v5.json')
+    output_json = os.path.join(file_dir, 'best_params_v6.json')
     with open(output_json, 'w') as f:
         json.dump({**best, 'mean_csr': round(best_csr, 2)}, f, indent=2)
     print(f"Best params JSON  : {output_json}")

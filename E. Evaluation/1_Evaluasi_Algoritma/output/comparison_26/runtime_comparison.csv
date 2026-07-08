@@ -1,27 +1,27 @@
 Profile,Greedy Runtime (s),GA Runtime (s)
-Normal,0.7344,91.4267
-Diabetes Melitus Tipe 2,2.249,106.0835
-Hipertensi,1.7372,106.5637
-Penyakit Kardiovaskular,1.1437,88.3206
-Hiperkolesterolemia,1.1609,105.3135
-Penyakit Ginjal Kronis,1.4207,134.7324
-DM2 + Hipertensi,2.1247,115.0745
-DM2 + CVD,1.8102,107.0573
-DM2 + Hiperkolesterolemia,1.9387,74.3659
-DM2 + CKD,1.236,94.627
-Hipertensi + CVD,1.547,89.347
-Hipertensi + Hiperkolesterolemia,1.4559,95.9528
-Hipertensi + CKD,1.4666,104.7251
-CVD + Hiperkolesterolemia,0.9543,75.3215
-CVD + CKD,1.4845,125.8445
-Hiperkolesterolemia + CKD,1.4587,104.5718
-DM2 + Hipertensi + CVD,2.1017,105.3398
-DM2 + Hipertensi + Hiperkolesterolemia,2.412,103.4418
-DM2 + Hipertensi + CKD,1.8649,99.7001
-DM2 + CVD + Hiperkolesterolemia,1.7326,91.2542
-DM2 + CVD + CKD,1.9814,69.8059
-DM2 + Hiperkolesterolemia + CKD,1.2429,61.4537
-Hipertensi + CVD + Hiperkolesterolemia,1.019,72.2615
-Hipertensi + CVD + CKD,1.4936,99.7763
-Hipertensi + Hiperkolesterolemia + CKD,1.6626,90.0085
-CVD + Hiperkolesterolemia + CKD,0.9677,128.7366
+Normal,1.0881,28.1727
+Diabetes Melitus Tipe 2,1.7372,31.713
+Hipertensi,1.3417,27.6494
+Penyakit Kardiovaskular,1.1129,20.097
+Hiperkolesterolemia,1.1814,28.1181
+Penyakit Ginjal Kronis,1.2993,37.9116
+DM2 + Hipertensi,2.1279,30.911
+DM2 + CVD,1.9268,28.5582
+DM2 + Hiperkolesterolemia,1.9149,28.9391
+DM2 + CKD,1.8837,27.7681
+Hipertensi + CVD,1.4767,31.1529
+Hipertensi + Hiperkolesterolemia,1.3331,26.1577
+Hipertensi + CKD,1.4543,30.7602
+CVD + Hiperkolesterolemia,0.9702,28.4914
+CVD + CKD,1.2537,26.5214
+Hiperkolesterolemia + CKD,1.2398,30.9689
+DM2 + Hipertensi + CVD,1.7992,29.3486
+DM2 + Hipertensi + Hiperkolesterolemia,2.0566,32.2053
+DM2 + Hipertensi + CKD,1.7324,29.6022
+DM2 + CVD + Hiperkolesterolemia,1.7978,30.4871
+DM2 + CVD + CKD,1.758,31.8926
+DM2 + Hiperkolesterolemia + CKD,1.9322,37.8393
+Hipertensi + CVD + Hiperkolesterolemia,1.4512,28.8154
+Hipertensi + CVD + CKD,1.4636,32.914
+Hipertensi + Hiperkolesterolemia + CKD,1.594,32.2298
+CVD + Hiperkolesterolemia + CKD,1.3079,30.9606
