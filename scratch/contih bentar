@@ -1,0 +1,76 @@
+def calculate_nutrition_needs(self, user_input):
+    """
+    Main function: Calculate semua kebutuhan nutrisi user
+    ... (docstring disembunyikan untuk menghemat ruang) ...
+    """
+    
+    result = {
+        'success': False,
+        'user_input': user_input,
+        'anthropometrics': None,
+        'energy': None,
+        'guidelines': None,
+        'food_data': None,
+        'user_params': None,
+        'error': None
+    }
+    
+    try:
+        # 1. Extract & validate input
+        gender = user_input.get('gender', 'M')
+        age = int(user_input.get('age', 25))
+        weight = float(user_input.get('weight', 70))
+        height = float(user_input.get('height', 170))
+        activity_factor = float(user_input.get('activity_factor', 1.375))
+        disease = user_input.get('disease', 'normal')
+        
+        # ... (Validasi rentang usia, berat badan, dan format penyakit) ...
+        
+        # 2. Calculate anthropometrics (IMT, BBI, Kategori Usia)
+        bmi_calc = self.calculator.calculate_bmi(weight, height)
+        bbi = self.calculator.calculate_bbi(height, gender)
+        age_group = self.calculator.classify_age_group(age)
+        
+        # ... (Menyimpan data antropometri ke objek result) ...
+        
+        # 3. Calculate energy (BMR, TDEE)
+        weight_for_bmr = weight if bmi_calc['category'] == "Healthy Weight" else bbi
+        disease_status_for_bmr = 'normal' if set(disease) == {'normal'} else 'diseased'
+        bmr = self.calculator.calculate_bmr(weight_for_bmr, height, age, gender, disease_status_for_bmr)
+        tdee = self.calculator.calculate_tdee(bmr, activity_factor)
+        
+        # 4. Load & merge guidelines (Intersection Constraint untuk komplikasi penyakit)
+        user_params = {
+            'tdee': tdee,
+            'weight': weight,
+            'bbi': bbi
+        }
+        merged_guidelines = self.guideline_loader.merge_disease_guidelines(
+            disease, age, gender, user_params=user_params
+        )
+        
+        # ... (Penyesuaian batas kalori energi khusus penyakit jika diperlukan) ...
+        
+        # Get DRI untuk fallback (Pedoman nutrisi normal)
+        dri_row = self.guideline_loader.get_dri_by_age_gender(age, gender)
+        
+        # ... (Proses ekstraksi batas gizi, penentuan tipe HARD/SOFT constraint) ...
+        
+        # 5. Load food data dan penyesuaian filter preferensi makanan
+        food_df = self.guideline_loader.food_df
+        # ... (Filter pandas DataFrame) ...
+        
+        # 6. Calculate meal distribution
+        meal_distribution = self.calculator.calculate_meal_distribution(tdee)
+        
+        # ... (Menyimpan seluruh parameter final, status sukses, dan porsi makan) ...
+        
+        result['success'] = True
+        self.last_result = result
+        
+    except Exception as e:
+        result['error'] = str(e)
+        result['success'] = False
+    
+    # 7. Hasilkan JSON Profil Final (Input ke Algoritma Greedy)
+    return result
