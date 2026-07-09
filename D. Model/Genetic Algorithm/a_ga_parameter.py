@@ -56,10 +56,19 @@
 # LS_PARAMS = {"iterations": 80}
 
 # GA 30 Trials New 8 Juli
+# GA_PARAMS = {
+#     "generations": 110,
+#     "pop_size": 90,
+#     "elite_ratio": 0.2,
+#     "mutation_rate": 0.3,
+# }
+# LS_PARAMS = {"iterations": 30}
+
+# GA 50 Trials New 8 Juli Malam Trial 19
 GA_PARAMS = {
-    "generations": 110,
-    "pop_size": 90,
-    "elite_ratio": 0.2,
-    "mutation_rate": 0.3,
+    "generations": 90,
+    "pop_size": 120,
+    "elite_ratio": 0.1,
+    "mutation_rate": 0.55,
 }
-LS_PARAMS = {"iterations": 30}
+LS_PARAMS = {"iterations": 45}

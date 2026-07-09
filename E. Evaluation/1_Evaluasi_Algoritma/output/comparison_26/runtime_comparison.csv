@@ -1,27 +1,27 @@
 Profile,Greedy Runtime (s),GA Runtime (s)
-Normal,1.0881,28.1727
-Diabetes Melitus Tipe 2,1.7372,31.713
-Hipertensi,1.3417,27.6494
-Penyakit Kardiovaskular,1.1129,20.097
-Hiperkolesterolemia,1.1814,28.1181
-Penyakit Ginjal Kronis,1.2993,37.9116
-DM2 + Hipertensi,2.1279,30.911
-DM2 + CVD,1.9268,28.5582
-DM2 + Hiperkolesterolemia,1.9149,28.9391
-DM2 + CKD,1.8837,27.7681
-Hipertensi + CVD,1.4767,31.1529
-Hipertensi + Hiperkolesterolemia,1.3331,26.1577
-Hipertensi + CKD,1.4543,30.7602
-CVD + Hiperkolesterolemia,0.9702,28.4914
-CVD + CKD,1.2537,26.5214
-Hiperkolesterolemia + CKD,1.2398,30.9689
-DM2 + Hipertensi + CVD,1.7992,29.3486
-DM2 + Hipertensi + Hiperkolesterolemia,2.0566,32.2053
-DM2 + Hipertensi + CKD,1.7324,29.6022
-DM2 + CVD + Hiperkolesterolemia,1.7978,30.4871
-DM2 + CVD + CKD,1.758,31.8926
-DM2 + Hiperkolesterolemia + CKD,1.9322,37.8393
-Hipertensi + CVD + Hiperkolesterolemia,1.4512,28.8154
-Hipertensi + CVD + CKD,1.4636,32.914
-Hipertensi + Hiperkolesterolemia + CKD,1.594,32.2298
-CVD + Hiperkolesterolemia + CKD,1.3079,30.9606
+Normal,0.8585,23.6451
+Diabetes Melitus Tipe 2,0.7764,22.4039
+Hipertensi,0.7563,23.6519
+Penyakit Kardiovaskular,0.5571,25.2672
+Hiperkolesterolemia,1.415,56.4991
+Penyakit Ginjal Kronis,1.5936,60.6987
+DM2 + Hipertensi,2.2904,63.4199
+DM2 + CVD,2.2843,49.8004
+DM2 + Hiperkolesterolemia,2.0,55.674
+DM2 + CKD,2.0102,38.073
+Hipertensi + CVD,1.0455,31.6273
+Hipertensi + Hiperkolesterolemia,0.9627,28.5535
+Hipertensi + CKD,1.1127,31.0453
+CVD + Hiperkolesterolemia,0.6775,24.1407
+CVD + CKD,0.929,29.6587
+Hiperkolesterolemia + CKD,0.9512,36.2824
+DM2 + Hipertensi + CVD,1.1916,39.3994
+DM2 + Hipertensi + Hiperkolesterolemia,1.9158,51.6573
+DM2 + Hipertensi + CKD,2.0701,46.1281
+DM2 + CVD + Hiperkolesterolemia,1.958,52.2145
+DM2 + CVD + CKD,2.035,44.4254
+DM2 + Hiperkolesterolemia + CKD,1.5953,41.6523
+Hipertensi + CVD + Hiperkolesterolemia,1.0234,29.0522
+Hipertensi + CVD + CKD,1.0148,29.1766
+Hipertensi + Hiperkolesterolemia + CKD,0.7517,30.4583
+CVD + Hiperkolesterolemia + CKD,0.794,32.3935
