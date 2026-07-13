@@ -1,14 +1,24 @@
 // Calculate recommended daily intake untuk semua 34 nutrients
-export function calculateDailyNeeds(weight: number, height: number, age: number, gender: string, activity: string) {
+export function calculateDailyNeeds(weight: number, height: number, age: number, gender: string, activity: string, healthConditions: string[] = []) {
   let bmr = 0;
 
-  if (gender === 'male') {
-    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  const isHealthy = healthConditions.length === 0 || (healthConditions.length === 1 && healthConditions[0] === 'normal');
+
+  if (isHealthy) {
+    if (gender === 'male') {
+      bmr = 66.4730 + (13.7516 * weight) + (5.0033 * height) - (6.7550 * age);
+    } else {
+      bmr = 655.0955 + (9.5634 * weight) + (1.8496 * height) - (4.6756 * age);
+    }
   } else {
-    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    if (gender === 'male') {
+      bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+      bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
   }
 
-  const activityMultiplier = activity === 'light' ? 1.375 : activity === 'moderate' ? 1.55 : 1.725;
+  const activityMultiplier = activity === 'light' ? 1.4 : activity === 'moderate' ? 1.7 : 2.0;
   const calories = Math.round(bmr * activityMultiplier);
   const proteinG = Math.round(weight * 1.2);
   const carbsG = Math.round(calories * 0.5 / 4);

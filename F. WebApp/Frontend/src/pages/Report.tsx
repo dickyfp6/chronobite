@@ -270,7 +270,8 @@ export function Report({ userData, onRegisterDownloadPDF }: ReportProps) {
  userData.height!,
  userData.age!,
  userData.gender!,
- userData.activity!
+ userData.activity!,
+ userData.healthConditions
  ),
  [userData]
  );

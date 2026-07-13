@@ -55,6 +55,9 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
     ? (height < 160 ? baseWeight : baseWeight - (baseWeight * 0.10))
     : (height < 150 ? baseWeight : baseWeight - (baseWeight * 0.15));
 
+  const idealMin = (18.5 * (height / 100) ** 2).toFixed(1);
+  const idealMax = (24.9 * (height / 100) ** 2).toFixed(1);
+
   // 3. BMR Calculations
   const bmrHarrisBenedict = gender === 'male'
     ? 66.4730 + (13.7516 * weight) + (5.0033 * height) - (6.7550 * age)
@@ -205,15 +208,29 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
             {/* Activity Level Selector */}
             <div>
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Activity Level</label>
-              <select
-                value={activity}
-                onChange={(e: any) => setActivity(e.target.value as any)}
-                className="w-full px-4 py-2.5 rounded-2xl border border-border text-sm font-medium focus:outline-primary bg-secondary/35 cursor-pointer"
-              >
-                <option value="light">Light / Sedentary (1.4)</option>
-                <option value="moderate">Moderate / Active (1.7)</option>
-                <option value="heavy">Heavy / Vigorous (2.00)</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={activity}
+                  onChange={(e: any) => setActivity(e.target.value as any)}
+                  className="w-full px-4 py-2.5 pr-10 rounded-2xl border border-border text-sm font-semibold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-secondary/35 cursor-pointer appearance-none transition-all text-gray-800"
+                >
+                  <option value="light">Light</option>
+                  <option value="moderate">Moderate</option>
+                  <option value="heavy">Heavy</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+              
+              {/* Activity Description */}
+              <p className="text-xs text-gray-500 mt-2 ml-1 leading-relaxed transition-all duration-200 min-h-[32px]">
+                {activity === 'light' && 'Mostly sitting, minimal exercise'}
+                {activity === 'moderate' && 'Active lifestyle, regular exercise'}
+                {activity === 'heavy' && 'Very active, intense physical work'}
+              </p>
             </div>
           </div>
         </div>
@@ -254,9 +271,29 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
                 <span className="text-[10px] font-bold text-gray-450 uppercase tracking-wider block mb-0.5">Actual Weight</span>
                 <span className="text-xl font-bold text-gray-800 font-serif">{weight} kg</span>
               </div>
-              <div className="bg-white p-3 rounded-2xl border border-border/80 shadow-sm">
-                <span className="text-[10px] font-bold text-gray-450 uppercase tracking-wider block mb-0.5">Ideal Weight (BBI)</span>
-                <span className="text-xl font-bold text-gray-800 font-serif">{bbi.toFixed(1)} kg</span>
+              <div className="bg-white p-3 rounded-2xl border border-border/80 shadow-sm relative group cursor-pointer transition-all hover:border-primary/50">
+                <span className="text-[10px] font-bold text-gray-450 uppercase tracking-wider block mb-0.5">Ideal Weight</span>
+                <span className="text-xl font-bold text-primary font-serif">{bbi.toFixed(1)} <span className="text-sm font-sans font-normal text-gray-600">kg</span></span>
+                <span className="text-[10px] text-gray-400 font-medium block mt-0.5">({idealMin} - {idealMax} kg)</span>
+                
+                {/* Tooltip Hover */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 p-3 bg-white/95 backdrop-blur-md text-gray-800 text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none shadow-xl border border-border">
+                  <div className="font-bold text-gray-800 mb-1.5 border-b border-gray-100 pb-1.5 text-center uppercase tracking-wider text-[10px]">Healthy Weight Zone</div>
+                  <div className="flex justify-between items-center mb-1 text-[11px]">
+                    <span className="text-gray-500">Lower Bound:</span>
+                    <span className="font-semibold text-gray-800">{idealMin} kg</span>
+                  </div>
+                  <div className="flex justify-between items-center mb-1 text-[11px]">
+                    <span className="text-gray-500">Ideal Weight:</span>
+                    <span className="font-bold text-primary">{bbi.toFixed(1)} kg</span>
+                  </div>
+                  <div className="flex justify-between items-center mb-1.5 text-[11px]">
+                    <span className="text-gray-500">Upper Bound:</span>
+                    <span className="font-semibold text-gray-800">{idealMax} kg</span>
+                  </div>
+                  <div className="text-[9px] text-gray-400 leading-tight mt-2 text-center border-t border-gray-50 pt-1.5">This range corresponds to a normal BMI index (18.5 - 24.9).</div>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-white"></div>
+                </div>
               </div>
             </div>
 

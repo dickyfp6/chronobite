@@ -241,7 +241,8 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
  userData.height!,
  userData.age!,
  userData.gender!,
- userData.activity!
+ userData.activity!,
+ userData.healthConditions
  );
 
  const bmi = userData.weight / ((userData.height / 100) ** 2);
@@ -249,6 +250,10 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
  const isNormalBmi = bmi >= 18.5 && bmi < 25;
  const idealMin = (18.5 * (userData.height / 100) ** 2).toFixed(1);
  const idealMax = (24.9 * (userData.height / 100) ** 2).toFixed(1);
+ const baseWeight = userData.height - 100;
+ const bbi = userData.gender === 'male'
+   ? (userData.height < 160 ? baseWeight : baseWeight - (baseWeight * 0.10))
+   : (userData.height < 150 ? baseWeight : baseWeight - (baseWeight * 0.15));
  const healthConditions = userData.healthConditions.filter((condition) => condition !== 'normal');
  const hasDiseaseGuidelines = healthConditions.length > 0;
 
@@ -365,7 +370,7 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
  initial={{ opacity: 0, y: 10 }}
  animate={{ opacity: 1, y: 0 }}
  transition={{ delay: 0.15 }}
- className="bg-white/70 backdrop-blur-md rounded-3xl p-6 border border-border/80 shadow-xl shadow-primary/5 flex flex-col"
+ className="bg-white/70 backdrop-blur-md rounded-3xl p-6 border border-border/80 shadow-xl shadow-primary/5 flex flex-col relative z-10"
  >
  <div className="flex items-center gap-3 mb-5">
  <div className="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-primary ">
@@ -391,13 +396,33 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
  </span>
  </div>
 
- {!isNormalBmi && (
- <div className="rounded-2xl bg-secondary/35 border border-border/70 p-4 sm:w-[220px] flex-shrink-0">
- <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Ideal Range</p>
- <p className="text-base font-bold text-gray-900 mt-1 font-serif">{idealMin} kg - {idealMax} kg</p>
- <p className="text-xs text-gray-500 mt-2 font-normal leading-relaxed">{bmiInfo.note}</p>
- </div>
- )}
+  {!isNormalBmi && (
+  <div className="rounded-2xl bg-secondary/35 border border-border/70 p-4 sm:w-[220px] flex-shrink-0 relative group cursor-pointer hover:border-primary/50 transition-all">
+  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Ideal Weight</p>
+  <p className="text-2xl font-bold text-primary mt-1 font-serif">{bbi.toFixed(1)} <span className="text-sm font-sans font-normal text-gray-600">kg</span></p>
+  <p className="text-[11px] text-gray-500 mt-0.5 font-medium">({idealMin} - {idealMax} kg)</p>
+  <p className="text-[10px] text-gray-400 mt-2 leading-relaxed">{bmiInfo.note}</p>
+  
+  {/* Tooltip Hover */}
+  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 p-3 bg-white/95 backdrop-blur-md text-gray-800 text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none shadow-xl border border-border">
+    <div className="font-bold text-gray-800 mb-1.5 border-b border-gray-100 pb-1.5 text-center uppercase tracking-wider text-[10px]">Healthy Weight Zone</div>
+    <div className="flex justify-between items-center mb-1 text-[11px]">
+      <span className="text-gray-400">Lower Bound:</span>
+      <span className="font-bold text-gray-800">{idealMin} kg</span>
+    </div>
+    <div className="flex justify-between items-center mb-1 text-[11px]">
+      <span className="text-gray-400">Ideal Weight:</span>
+      <span className="font-bold text-primary">{bbi.toFixed(1)} kg</span>
+    </div>
+    <div className="flex justify-between items-center mb-1.5 text-[11px]">
+      <span className="text-gray-400">Upper Bound:</span>
+      <span className="font-bold text-gray-800">{idealMax} kg</span>
+    </div>
+    <div className="text-[9px] text-gray-400 leading-tight mt-2 text-center border-t border-gray-50 pt-1.5">This range corresponds to a normal BMI index (18.5 - 24.9).</div>
+    <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-white"></div>
+  </div>
+  </div>
+  )}
  </div>
  </motion.section>
 

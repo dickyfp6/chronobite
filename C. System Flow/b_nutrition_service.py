@@ -113,7 +113,7 @@ class NutritionService:
             age = int(user_input.get('age', 25))
             weight = float(user_input.get('weight', 70))
             height = float(user_input.get('height', 170))
-            activity_factor = float(user_input.get('activity_factor', 1.375))
+            activity_factor = float(user_input.get('activity_factor', 1.4))
             disease = user_input.get('disease', 'normal')
             food_preferences = user_input.get('food_preferences', [])
             

@@ -277,6 +277,7 @@ ACTIVITY_MAP = {
     "active": 1.7,
     "vigorous": 2.0,
     "very_active": 2.0,
+    "heavy": 2.0,
     # Also accept numeric strings directly
     "1.4": 1.4,
     "1.7": 1.7,
