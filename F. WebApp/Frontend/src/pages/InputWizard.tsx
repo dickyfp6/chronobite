@@ -140,12 +140,56 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  onUpdate({ foodPreferences: prefs });
  };
 
- return (
- <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-background to-secondary/30 px-4 sm:px-6 lg:px-8 pb-8 pt-0 lg:pt-8 flex items-start justify-center">
- <div className="w-full max-w-[1600px]">
+  return (
+  <div className="min-h-[calc(100vh-4rem)] relative bg-background px-4 sm:px-6 lg:px-8 pb-8 pt-0 lg:pt-8 flex items-start justify-center overflow-clip">
+  {/* Mature Background Texture */}
+  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+    {/* Base: soft warm-green gradient wash */}
+    <div className="absolute inset-0 bg-gradient-to-br from-[#f4f8f4] via-[#f8faf5] to-[#eef5ee]" />
+
+    {/* Fine crosshatch / linen grid */}
+    <div
+      className="absolute inset-0 opacity-[0.045]"
+      style={{
+        backgroundImage: `
+          linear-gradient(rgba(45,90,39,0.8) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(45,90,39,0.8) 1px, transparent 1px)
+        `,
+        backgroundSize: '32px 32px'
+      }}
+    />
+
+    {/* Diagonal accent lines (like luxury paper) */}
+    <div
+      className="absolute inset-0 opacity-[0.025]"
+      style={{
+        backgroundImage: `repeating-linear-gradient(
+          -45deg,
+          rgba(45,90,39,1) 0px,
+          rgba(45,90,39,1) 1px,
+          transparent 1px,
+          transparent 18px
+        )`
+      }}
+    />
+
+    {/* SVG noise grain overlay for paper/canvas texture */}
+    <svg className="absolute inset-0 w-full h-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
+      <filter id="wizard-noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+      </filter>
+      <rect width="100%" height="100%" filter="url(#wizard-noise)" />
+    </svg>
+
+    {/* Soft edge vignette */}
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_rgba(0,0,0,0.04)_100%)]" />
+  </div>
+
+  <div className="w-full max-w-[1600px] relative z-10">
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
  {/* Left Side: Interactive Vertical Stepper (sticky sub-navbar on mobile) */}
- <div className="sticky top-16 lg:top-24 z-30 lg:col-span-3 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible scrollbar-none gap-3 lg:gap-0 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-5 py-3 lg:py-5 bg-white/95 lg:bg-white/50 lg: backdrop-blur-md border-b border-border/50 lg:border lg:border-border/80 lg: rounded-none lg:rounded-3xl shadow-sm lg:shadow-lg lg:shadow-primary/5 ">
+ <div className="sticky top-16 z-30 lg:col-span-3 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible scrollbar-none gap-3 lg:gap-0 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-5 py-3 lg:py-5 bg-white/95 lg:bg-white/50 lg:backdrop-blur-md border-b border-border/50 lg:border lg:border-border/80 rounded-none lg:rounded-3xl shadow-sm lg:shadow-lg lg:shadow-primary/5">
  {(() => {
  const allSteps = [
  { id: 'profile-input-0', label: steps[0], summary: getStepSummary(0), isFuture: false, index: 0 },
@@ -181,7 +225,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  active
  ? 'bg-primary/10 text-primary border-primary/25 font-bold shadow-sm'
  : accessible
- ? 'hover:bg-white/80 :bg-slate-800/60 text-gray-700 cursor-pointer'
+ ? 'hover:bg-white/80 text-gray-700 cursor-pointer'
  : 'opacity-40 text-gray-400 cursor-not-allowed'
  }`}
  >
@@ -249,15 +293,20 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
 
  {/* Right Side: Active Step Card Container */}
  <div className="lg:col-span-9 flex flex-col gap-6">
- <motion.div
- key={step}
- initial={{ opacity: 0, x: 15 }}
- animate={{ opacity: 1, x: 0 }}
- exit={{ opacity: 0, x: -15 }}
- className="bg-white/70 backdrop-blur-md rounded-3xl p-6 sm:p-10 lg:p-12 border border-border/80 shadow-xl shadow-primary/5 min-h-[360px] flex flex-col justify-between"
- >
- {/* Form Contents */}
- <div className="flex-1">
+  <motion.div
+  key={step}
+  initial={{ opacity: 0, x: 15 }}
+  animate={{ opacity: 1, x: 0 }}
+  exit={{ opacity: 0, x: -15 }}
+  className="relative bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-10 lg:p-12 border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] min-h-[360px] flex flex-col justify-between overflow-clip group"
+  >
+  {/* Card Aesthetic Textures */}
+  <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full pointer-events-none opacity-60 transition-opacity duration-700 group-hover:opacity-100"></div>
+  <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-emerald-500/10 to-transparent rounded-tr-full pointer-events-none opacity-60 transition-opacity duration-700 group-hover:opacity-100"></div>
+  <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/20 pointer-events-none z-0"></div>
+
+  {/* Form Contents */}
+  <div className="flex-1 relative z-10">
  {step === 0 && (
  <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-12">
  {/* Gender Selection Section */}
@@ -279,6 +328,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  title={t.input.gender.male}
  selected={data.gender === 'male'}
  onClick={() => selectGender('male')}
+ backgroundImage="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80"
  />
  <IconCard
  icon={(props: any) => (
@@ -293,6 +343,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  title={t.input.gender.female}
  selected={data.gender === 'female'}
  onClick={() => selectGender('female')}
+ backgroundImage="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80"
  />
  </div>
  </div>
@@ -313,6 +364,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  description={t.input.activity.lightDesc}
  selected={data.activity === 'light'}
  onClick={() => selectActivity('light')}
+ backgroundImage="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80"
  />
  <IconCard
  icon={Activity}
@@ -320,6 +372,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  description={t.input.activity.moderateDesc}
  selected={data.activity === 'moderate'}
  onClick={() => selectActivity('moderate')}
+ backgroundImage="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=600&q=80"
  />
  <IconCard
  icon={Flame}
@@ -327,6 +380,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  description={t.input.activity.heavyDesc}
  selected={data.activity === 'heavy'}
  onClick={() => selectActivity('heavy')}
+ backgroundImage="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80"
  />
  </div>
  </div>
@@ -395,7 +449,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
               max="100"
               value={data.age}
               onChange={(e) => onUpdate({ age: parseInt(e.target.value) })}
-              className="flex-1 cursor-pointer"
+              className="flex-1 cursor-pointer dss-slider"
               style={{
                 background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 100%)`,
                 borderRadius: '9999px'
@@ -465,7 +519,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
               max="200"
               value={data.weight}
               onChange={(e) => onUpdate({ weight: parseFloat(e.target.value) })}
-              className="flex-1 cursor-pointer"
+              className="flex-1 cursor-pointer dss-slider"
               style={{
                 background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 100%)`,
                 borderRadius: '9999px'
@@ -535,7 +589,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
               max="300"
               value={data.height}
               onChange={(e) => onUpdate({ height: parseFloat(e.target.value) })}
-              className="flex-1 cursor-pointer"
+              className="flex-1 cursor-pointer dss-slider"
               style={{
                 background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 100%)`,
                 borderRadius: '9999px'
@@ -557,49 +611,24 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  <motion.div
  initial={{ opacity: 0, scale: 0.95 }}
  animate={{ opacity: 1, scale: 1 }}
- className="p-6 sm:p-8 rounded-2xl text-center border flex flex-col justify-center min-h-[180px] lg:min-h-[260px] w-full"
+ className="p-6 sm:p-8 rounded-2xl text-center shadow-lg transition-all duration-500 flex flex-col justify-center min-h-[180px] lg:min-h-[260px] w-full text-white"
  style={{
- borderColor: (() => {
+ backgroundColor: (() => {
  const bmi = data.weight / ((data.height / 100) ** 2);
- if (bmi >= 30) return '#cb2d2d';
- if (bmi >= 25) return '#c98a0c';
- if (bmi >= 18.5) return '#2d5a27';
- return '#c98a0c';
+ if (bmi >= 30) return '#dc2626'; // Red
+ if (bmi >= 25) return '#d97706'; // Amber/Orange
+ if (bmi >= 18.5) return '#059669'; // Emerald/Green
+ return '#d97706'; // Orange for Underweight
  })(),
- background: 'linear-gradient(to right, rgba(45,90,39,0.04), rgba(45,90,39,0.01))'
  }}
  >
- <p className="text-xs mb-1 font-semibold tracking-wider uppercase" style={{
- color: (() => {
- const bmi = data.weight / ((data.height / 100) ** 2);
- if (bmi >= 30) return '#a62424';
- if (bmi >= 25) return '#8c5f0a';
- if (bmi >= 18.5) return '#2d5a27';
- return '#8c5f0a';
- })()
- }}>
+ <p className="text-xs mb-1 font-medium tracking-wider uppercase text-white/90">
  Body Mass Index
  </p>
- <p className="text-4xl font-bold font-serif" style={{
- color: (() => {
- const bmi = data.weight / ((data.height / 100) ** 2);
- if (bmi >= 30) return '#a62424';
- if (bmi >= 25) return '#8c5f0a';
- if (bmi >= 18.5) return '#2d5a27';
- return '#8c5f0a';
- })()
- }}>
+ <p className="text-5xl lg:text-[64px] font-bold font-serif leading-none my-2 lg:my-4 text-white drop-shadow-sm">
  {(data.weight / ((data.height / 100) ** 2)).toFixed(1)}
  </p>
- <p className="mt-2 text-sm font-semibold" style={{
- color: (() => {
- const bmi = data.weight / ((data.height / 100) ** 2);
- if (bmi >= 30) return '#a62424';
- if (bmi >= 25) return '#8c5f0a';
- if (bmi >= 18.5) return '#2d5a27';
- return '#8c5f0a';
- })()
- }}>
+ <p className="mt-2 text-sm lg:text-lg font-semibold text-white/95">
  {(() => {
  const bmi = data.weight / ((data.height / 100) ** 2);
  if (bmi < 18.5) return 'Underweight (<18.5)';
@@ -660,6 +689,15 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  data.healthConditions.filter(c => c !== 'normal').length >= 3)
  }
  onClick={() => toggleHealthCondition(condition)}
+ backgroundImage={
+    condition === 'normal' ? 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80' : 
+    condition === 'dm2' ? 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80' : 
+    condition === 'hypertension' ? 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80' : 
+    condition === 'cvd' ? 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=600&q=80' : 
+    condition === 'cholesterol' ? 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=80' : 
+    condition === 'ckd' ? 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?auto=format&fit=crop&w=600&q=80' : 
+    undefined
+  }
  />
  );
  })}
@@ -773,25 +811,33 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  <button
  onClick={back}
  disabled={step === 0}
- className="flex-1 sm:flex-none px-4 py-2.5 justify-center rounded-2xl font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary :bg-slate-800 border border-border text-gray-700 flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm"
+ className={`group/back flex-1 sm:flex-none px-5 py-3 justify-center rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm ${
+   step === 0
+     ? 'bg-gray-50 text-gray-300 border border-gray-200/40 cursor-not-allowed shadow-none'
+     : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm hover:shadow active:scale-98 cursor-pointer'
+ }`}
  >
- <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+ <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover/back:-translate-x-1" />
  {t.input.back}
  </button>
 
  <button
- onClick={next}
- disabled={!canProceed()}
- className="flex-1 sm:flex-none px-4 py-2.5 justify-center bg-primary text-primary-foreground rounded-2xl font-semibold hover:bg-primary/95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-200 :bg-slate-800 disabled:text-gray-400 flex items-center justify-center gap-2 shadow-sm hover:shadow-md hover:shadow-primary/10 cursor-pointer text-xs sm:text-sm"
- >
- {step === 3 ? t.input.generate : t.input.next}
- {step < 3 && <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />}
- </button>
- </div>
- </motion.div>
- </div>
- </div>
- </div>
- </div>
- );
+  onClick={next}
+  disabled={!canProceed()}
+  className={`group/next flex-1 sm:flex-none px-6 py-3 justify-center rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm ${
+    canProceed()
+      ? 'bg-primary text-white border border-primary/20 shadow-md hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 cursor-pointer'
+      : 'bg-gray-150 text-gray-400 border border-gray-200/50 cursor-not-allowed shadow-none'
+  }`}
+  >
+  {step === 3 ? t.input.generate : t.input.next}
+  {step < 3 && <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover/next:translate-x-1" />}
+  </button>
+  </div>
+  </motion.div>
+  </div>
+  </div>
+  </div>
+  </div>
+  );
 }

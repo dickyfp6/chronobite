@@ -185,3 +185,42 @@ body.is-scrolling,
 .dark .is-scrolling {
   scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
 }
+
+/* Custom DSS Slider */
+.dss-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px; /* thicker track */
+  border-radius: 9999px;
+  outline: none;
+}
+.dss-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px; /* bigger thumb */
+  height: 26px;
+  border-radius: 50%;
+  background: #2d5a27;
+  border: 3px solid white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dss-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.35);
+}
+.dss-slider::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #2d5a27;
+  border: 3px solid white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dss-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.35);
+}
