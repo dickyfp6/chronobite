@@ -56,35 +56,36 @@ const conditionLabels: Record<string, string> = {
 function getBmiInfo(weight: number, height: number): BmiInfo {
  const bmi = weight / ((height / 100) ** 2);
  if (bmi < 18.5) {
- return {
- label: 'Underweight',
- badge: 'bg-yellow-100 text-yellow-800',
- text: 'text-yellow-700',
- note: 'Your ideal weight range for this height is in the normal BMI band.',
- };
+   return {
+     label: 'Underweight',
+     badge: 'bg-amber-100 text-amber-800',
+     text: 'text-amber-700',
+     note: 'Your ideal weight range for this height is in the normal BMI band.',
+   };
  }
- if (bmi < 25) {
- return {
- label: 'Normal weight',
- badge: 'bg-green-100 text-green-800',
- text: 'text-green-700',
- note: 'Your current weight is within the recommended healthy range.',
- };
+ if (bmi <= 24.9) {
+   return {
+     label: 'Normal weight',
+     badge: 'bg-green-100 text-green-800',
+     text: 'text-green-700',
+     note: 'Your current weight is within the recommended healthy range.',
+   };
  }
- if (bmi < 30) {
- return {
- label: 'Overweight',
- badge: 'bg-yellow-100 text-yellow-800',
- text: 'text-yellow-700',
- note: 'A healthier weight range for your height is shown below.',
- };
+ if (bmi <= 29.9) {
+   return {
+     label: 'Overweight',
+     badge: 'bg-orange-100 text-orange-800',
+     text: 'text-orange-700',
+     note: 'A healthier weight range for your height is shown below.',
+   };
  }
- return {
- label: 'Obesity',
- badge: 'bg-red-100 text-red-800',
- text: 'text-red-700',
- note: 'A healthier weight range for your height is shown below.',
- };
+ if (bmi <= 34.9) {
+   return { label: 'Obesity Class I', badge: 'bg-red-100 text-red-800', text: 'text-red-700', note: 'A healthier weight range for your height is shown below.' };
+ }
+ if (bmi <= 39.9) {
+   return { label: 'Obesity Class II', badge: 'bg-red-200 text-red-900', text: 'text-red-800', note: 'A healthier weight range for your height is shown below.' };
+ }
+ return { label: 'Obesity Class III', badge: 'bg-red-300 text-red-950', text: 'text-red-900', note: 'A healthier weight range for your height is shown below.' };
 }
 
 const conditionGuidelines: Record<string, string> = {
@@ -397,29 +398,38 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
  </div>
 
   {!isNormalBmi && (
-  <div className="rounded-2xl bg-secondary/35 border border-border/70 p-4 sm:w-[220px] flex-shrink-0 relative group cursor-pointer hover:border-primary/50 transition-all">
+  <div className="rounded-2xl bg-secondary/35 border border-border/70 p-4 sm:w-[240px] flex-shrink-0 relative group hover:z-50 cursor-pointer hover:border-primary/50 transition-all">
   <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Ideal Weight</p>
-  <p className="text-2xl font-bold text-primary mt-1 font-serif">{bbi.toFixed(1)} <span className="text-sm font-sans font-normal text-gray-600">kg</span></p>
-  <p className="text-[11px] text-gray-500 mt-0.5 font-medium">({idealMin} - {idealMax} kg)</p>
+  
+  <p className="text-2xl font-bold font-serif mt-1 flex items-baseline gap-1">
+    <span className="text-gray-400 text-base">{idealMin}</span>
+    <span className="text-gray-300 text-base">-</span>
+    <span className="text-primary">{bbi.toFixed(1)}</span>
+    <span className="text-gray-300 text-base">-</span>
+    <span className="text-gray-400 text-base">{idealMax}</span>
+    <span className="text-sm font-sans font-normal text-gray-500 ml-0.5">kg</span>
+  </p>
   <p className="text-[10px] text-gray-400 mt-2 leading-relaxed">{bmiInfo.note}</p>
   
   {/* Tooltip Hover */}
-  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 p-3 bg-white/95 backdrop-blur-md text-gray-800 text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none shadow-xl border border-border">
-    <div className="font-bold text-gray-800 mb-1.5 border-b border-gray-100 pb-1.5 text-center uppercase tracking-wider text-[10px]">Healthy Weight Zone</div>
+  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[220px] p-3 bg-white text-gray-800 text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none shadow-xl border border-gray-100">
+    <div className="font-bold text-gray-800 mb-2 border-b border-gray-100 pb-1.5 text-center uppercase tracking-wider text-[10px]">Healthy Weight Zone</div>
     <div className="flex justify-between items-center mb-1 text-[11px]">
-      <span className="text-gray-400">Lower Bound:</span>
-      <span className="font-bold text-gray-800">{idealMin} kg</span>
+      <span className="text-gray-500 font-medium">Lower Bound</span>
+      <span className="font-semibold text-gray-800">{idealMin} kg</span>
     </div>
-    <div className="flex justify-between items-center mb-1 text-[11px]">
-      <span className="text-gray-400">Ideal Weight:</span>
+    <div className="flex justify-between items-center mb-1 text-[11px] bg-primary/5 rounded px-1 -mx-1 py-0.5">
+      <span className="text-primary font-bold">Ideal Weight</span>
       <span className="font-bold text-primary">{bbi.toFixed(1)} kg</span>
     </div>
-    <div className="flex justify-between items-center mb-1.5 text-[11px]">
-      <span className="text-gray-400">Upper Bound:</span>
-      <span className="font-bold text-gray-800">{idealMax} kg</span>
+    <div className="flex justify-between items-center mb-1 text-[11px]">
+      <span className="text-gray-500 font-medium">Upper Bound</span>
+      <span className="font-semibold text-gray-800">{idealMax} kg</span>
     </div>
-    <div className="text-[9px] text-gray-400 leading-tight mt-2 text-center border-t border-gray-50 pt-1.5">This range corresponds to a normal BMI index (18.5 - 24.9).</div>
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-white"></div>
+    <div className="text-[9px] text-gray-400 leading-relaxed mt-2 text-center border-t border-gray-50 pt-2">
+      Values based on Broca's formula (Ideal) and normal BMI tolerance range (18.5 - 24.9).
+    </div>
+    <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-6 border-transparent border-b-white drop-shadow-sm"></div>
   </div>
   </div>
   )}

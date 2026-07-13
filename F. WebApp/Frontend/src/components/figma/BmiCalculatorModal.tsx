@@ -9,17 +9,22 @@ interface BmiCalculatorModalProps {
 export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps) {
   // Input states
   const [gender, setGender] = useState<'male' | 'female'>('male');
-  const [age, setAge] = useState<number>(30);
-  const [weight, setWeight] = useState<number>(70);
-  const [height, setHeight] = useState<number>(170);
+  const [age, setAge] = useState<number | string>(30);
+  const [weight, setWeight] = useState<number | string>(70);
+  const [height, setHeight] = useState<number | string>(170);
   const [healthStatus, setHealthStatus] = useState<'sehat' | 'sakit'>('sehat');
   const [activity, setActivity] = useState<'light' | 'moderate' | 'heavy'>('moderate');
 
   if (!isOpen) return null;
 
+  // Parse strings to numbers for calculations
+  const numAge = Number(age) || 0;
+  const numWeight = Number(weight) || 0;
+  const numHeight = Number(height) || 0;
+
   // 1. BMI Calculation
-  const heightInMeters = height / 100;
-  const bmi = heightInMeters > 0 ? weight / (heightInMeters * heightInMeters) : 0;
+  const heightInMeters = numHeight / 100;
+  const bmi = heightInMeters > 0 ? numWeight / (heightInMeters * heightInMeters) : 0;
 
   // BMI Category & Styling
   let bmiCategory = 'Healthy Weight';
@@ -31,41 +36,51 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
     bmiCategory = 'Underweight';
     bmiColor = 'text-amber-600 bg-amber-50 border-amber-200';
     bmiBarColor = 'bg-amber-500';
-    bmiPercent = Math.min((bmi / 18.5) * 30, 30);
-  } else if (bmi < 25) {
-    bmiCategory = 'Healthy Weight';
+    bmiPercent = Math.min((bmi / 18.5) * 20, 20);
+  } else if (bmi <= 24.9) {
+    bmiCategory = 'Normal';
     bmiColor = 'text-green-600 bg-green-50 border-green-200';
     bmiBarColor = 'bg-primary';
-    bmiPercent = 30 + ((bmi - 18.5) / 6.5) * 30;
-  } else if (bmi < 30) {
+    bmiPercent = 20 + ((bmi - 18.5) / 6.5) * 30;
+  } else if (bmi <= 29.9) {
     bmiCategory = 'Overweight';
     bmiColor = 'text-orange-600 bg-orange-50 border-orange-200';
     bmiBarColor = 'bg-orange-500';
-    bmiPercent = 60 + ((bmi - 25) / 5) * 20;
-  } else {
-    bmiCategory = 'Obesity';
+    bmiPercent = 50 + ((bmi - 25) / 5) * 25;
+  } else if (bmi <= 34.9) {
+    bmiCategory = 'Obesity Class I';
     bmiColor = 'text-red-600 bg-red-50 border-red-200';
     bmiBarColor = 'bg-red-500';
-    bmiPercent = Math.min(80 + ((bmi - 30) / 10) * 20, 100);
+    bmiPercent = Math.min(75 + ((bmi - 30) / 10) * 15, 90);
+  } else if (bmi <= 39.9) {
+    bmiCategory = 'Obesity Class II';
+    bmiColor = 'text-red-700 bg-red-100 border-red-300';
+    bmiBarColor = 'bg-red-600';
+    bmiPercent = Math.min(90 + ((bmi - 35) / 5) * 5, 95);
+  } else {
+    bmiCategory = 'Obesity Class III';
+    bmiColor = 'text-red-800 bg-red-200 border-red-400';
+    bmiBarColor = 'bg-red-700';
+    bmiPercent = 100;
   }
 
   // 2. BBI (Ideal Body Weight) using Broca's Formula
-  const baseWeight = height - 100;
+  const baseWeight = numHeight - 100;
   const bbi = gender === 'male'
-    ? (height < 160 ? baseWeight : baseWeight - (baseWeight * 0.10))
-    : (height < 150 ? baseWeight : baseWeight - (baseWeight * 0.15));
+    ? (numHeight < 160 ? baseWeight : baseWeight - (baseWeight * 0.10))
+    : (numHeight < 150 ? baseWeight : baseWeight - (baseWeight * 0.15));
 
-  const idealMin = (18.5 * (height / 100) ** 2).toFixed(1);
-  const idealMax = (24.9 * (height / 100) ** 2).toFixed(1);
+  const idealMin = (18.5 * (numHeight / 100) ** 2).toFixed(1);
+  const idealMax = (24.9 * (numHeight / 100) ** 2).toFixed(1);
 
   // 3. BMR Calculations
   const bmrHarrisBenedict = gender === 'male'
-    ? 66.4730 + (13.7516 * weight) + (5.0033 * height) - (6.7550 * age)
-    : 655.0955 + (9.5634 * weight) + (1.8496 * height) - (4.6756 * age);
+    ? 66.4730 + (13.7516 * numWeight) + (5.0033 * numHeight) - (6.7550 * numAge)
+    : 655.0955 + (9.5634 * numWeight) + (1.8496 * numHeight) - (4.6756 * numAge);
 
   const bmrMifflin = gender === 'male'
-    ? (10 * weight) + (6.25 * height) - (5 * age) + 5
-    : (10 * weight) + (6.25 * height) - (5 * age) - 161;
+    ? (10 * numWeight) + (6.25 * numHeight) - (5 * numAge) + 5
+    : (10 * numWeight) + (6.25 * numHeight) - (5 * numAge) - 161;
 
   const selectedBmr = healthStatus === 'sehat' ? bmrHarrisBenedict : bmrMifflin;
 
@@ -143,10 +158,9 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
                 <label className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5 whitespace-nowrap text-center">Age</label>
                 <input
                   type="number"
-                  min="1"
-                  max="120"
                   value={age}
-                  onChange={(e) => setAge(Math.max(1, parseInt(e.target.value) || 0))}
+                  onChange={(e) => setAge(e.target.value === '' ? '' : parseInt(e.target.value))}
+                  onBlur={() => setAge(Math.max(1, Math.min(120, Number(age) || 1)))}
                   className="w-full px-4 py-2 rounded-2xl border border-border text-sm font-medium focus:outline-primary bg-secondary/30 focus:bg-white transition-all text-center"
                 />
               </div>
@@ -154,10 +168,9 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
                 <label className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5 whitespace-nowrap text-center">Weight (kg)</label>
                 <input
                   type="number"
-                  min="1"
-                  max="300"
                   value={weight}
-                  onChange={(e) => setWeight(Math.max(1, parseFloat(e.target.value) || 0))}
+                  onChange={(e) => setWeight(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                  onBlur={() => setWeight(Math.max(1, Math.min(300, Number(weight) || 1)))}
                   className="w-full px-4 py-2 rounded-2xl border border-border text-sm font-medium focus:outline-primary bg-secondary/30 focus:bg-white transition-all text-center"
                 />
               </div>
@@ -165,10 +178,9 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
                 <label className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5 whitespace-nowrap text-center">Height (cm)</label>
                 <input
                   type="number"
-                  min="1"
-                  max="300"
                   value={height}
-                  onChange={(e) => setHeight(Math.max(1, parseFloat(e.target.value) || 0))}
+                  onChange={(e) => setHeight(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                  onBlur={() => setHeight(Math.max(1, Math.min(300, Number(height) || 1)))}
                   className="w-full px-4 py-2 rounded-2xl border border-border text-sm font-medium focus:outline-primary bg-secondary/30 focus:bg-white transition-all text-center"
                 />
               </div>
@@ -208,20 +220,22 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
             {/* Activity Level Selector */}
             <div>
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Activity Level</label>
-              <div className="relative">
+              <div className="relative group/select">
                 <select
                   value={activity}
                   onChange={(e: any) => setActivity(e.target.value as any)}
-                  className="w-full px-4 py-2.5 pr-10 rounded-2xl border border-border text-sm font-semibold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-secondary/35 cursor-pointer appearance-none transition-all text-gray-800"
+                  className="w-full px-4 py-2.5 pr-10 rounded-2xl border border-border text-sm font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-secondary/35 hover:bg-secondary/60 cursor-pointer appearance-none transition-all text-gray-800"
                 >
                   <option value="light">Light</option>
                   <option value="moderate">Moderate</option>
                   <option value="heavy">Heavy</option>
                 </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400 group-hover/select:text-primary transition-colors">
+                  <div className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center border border-border group-hover/select:border-primary/30 group-hover/select:animate-pulse">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
                 </div>
               </div>
               
@@ -254,45 +268,53 @@ export function BmiCalculatorModal({ isOpen, onClose }: BmiCalculatorModalProps)
               {/* Slider Gauge */}
               <div className="space-y-1">
                 <div className="h-2 w-full bg-gray-200 rounded-full relative overflow-hidden">
-                  <div className={`h-full rounded-full ${bmiBarColor}`} style={{ width: `${bmiPercent}%` }} />
+                  <div className={`h-full rounded-full ${bmiBarColor} transition-all duration-500`} style={{ width: `${bmiPercent}%` }} />
                 </div>
                 <div className="flex justify-between text-[9px] text-gray-400 font-bold px-0.5">
                   <span>Under (18.5)</span>
-                  <span>Normal (22.0)</span>
-                  <span>Over (25.0)</span>
-                  <span>Obese (30.0)</span>
+                  <span>Normal (25.0)</span>
+                  <span>Over (30.0)</span>
+                  <span>Obese (35.0+)</span>
                 </div>
               </div>
             </div>
 
             {/* Weight summary cards */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white p-3 rounded-2xl border border-border/80 shadow-sm">
-                <span className="text-[10px] font-bold text-gray-450 uppercase tracking-wider block mb-0.5">Actual Weight</span>
-                <span className="text-xl font-bold text-gray-800 font-serif">{weight} kg</span>
+            <div className="flex flex-row gap-2 sm:gap-3 w-full">
+              <div className="w-[35%] sm:flex-1 bg-white p-2.5 sm:p-3 rounded-2xl border border-border/80 shadow-sm flex flex-col justify-center items-center text-center">
+                <span className="text-[9px] sm:text-[10px] font-bold text-gray-450 uppercase tracking-wider block mb-0.5">Actual</span>
+                <span className="text-base sm:text-xl font-bold text-gray-800 font-serif">{numWeight} <span className="text-[10px] sm:text-sm font-sans font-normal text-gray-500">kg</span></span>
               </div>
-              <div className="bg-white p-3 rounded-2xl border border-border/80 shadow-sm relative group cursor-pointer transition-all hover:border-primary/50">
-                <span className="text-[10px] font-bold text-gray-450 uppercase tracking-wider block mb-0.5">Ideal Weight</span>
-                <span className="text-xl font-bold text-primary font-serif">{bbi.toFixed(1)} <span className="text-sm font-sans font-normal text-gray-600">kg</span></span>
-                <span className="text-[10px] text-gray-400 font-medium block mt-0.5">({idealMin} - {idealMax} kg)</span>
+              <div className="w-[65%] sm:flex-[1.2] bg-white p-2.5 sm:p-3 rounded-2xl border border-border/80 shadow-sm relative group hover:z-50 cursor-pointer transition-all hover:border-primary/50 flex flex-col justify-center items-center text-center">
+                <span className="text-[9px] sm:text-[10px] font-bold text-gray-450 uppercase tracking-wider block mb-0.5">Ideal Weight</span>
+                <span className="text-[13px] sm:text-xl font-bold font-serif whitespace-nowrap flex items-baseline justify-center gap-1 sm:gap-1.5 w-full">
+                  <span className="text-gray-400 text-[10px] sm:text-sm font-semibold">{idealMin}</span>
+                  <span className="text-gray-300 text-[10px] sm:text-sm">-</span>
+                  <span className="text-primary">{bbi.toFixed(1)}</span>
+                  <span className="text-gray-300 text-[10px] sm:text-sm">-</span>
+                  <span className="text-gray-400 text-[10px] sm:text-sm font-semibold">{idealMax}</span>
+                  <span className="text-[9px] sm:text-xs font-sans font-normal text-gray-500 ml-0.5">kg</span>
+                </span>
                 
                 {/* Tooltip Hover */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 p-3 bg-white/95 backdrop-blur-md text-gray-800 text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none shadow-xl border border-border">
-                  <div className="font-bold text-gray-800 mb-1.5 border-b border-gray-100 pb-1.5 text-center uppercase tracking-wider text-[10px]">Healthy Weight Zone</div>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[220px] p-3 bg-white text-gray-800 text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none shadow-xl border border-gray-100">
+                  <div className="font-bold text-gray-800 mb-2 border-b border-gray-100 pb-1.5 text-center uppercase tracking-wider text-[10px]">Healthy Weight Zone</div>
                   <div className="flex justify-between items-center mb-1 text-[11px]">
-                    <span className="text-gray-500">Lower Bound:</span>
+                    <span className="text-gray-500 font-medium">Lower Bound</span>
                     <span className="font-semibold text-gray-800">{idealMin} kg</span>
                   </div>
-                  <div className="flex justify-between items-center mb-1 text-[11px]">
-                    <span className="text-gray-500">Ideal Weight:</span>
+                  <div className="flex justify-between items-center mb-1 text-[11px] bg-primary/5 rounded px-1 -mx-1 py-0.5">
+                    <span className="text-primary font-bold">Ideal Weight</span>
                     <span className="font-bold text-primary">{bbi.toFixed(1)} kg</span>
                   </div>
-                  <div className="flex justify-between items-center mb-1.5 text-[11px]">
-                    <span className="text-gray-500">Upper Bound:</span>
+                  <div className="flex justify-between items-center mb-1 text-[11px]">
+                    <span className="text-gray-500 font-medium">Upper Bound</span>
                     <span className="font-semibold text-gray-800">{idealMax} kg</span>
                   </div>
-                  <div className="text-[9px] text-gray-400 leading-tight mt-2 text-center border-t border-gray-50 pt-1.5">This range corresponds to a normal BMI index (18.5 - 24.9).</div>
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-white"></div>
+                  <div className="text-[9px] text-gray-400 leading-relaxed mt-2 text-center border-t border-gray-50 pt-2">
+                    Values based on Broca's formula (Ideal) and normal BMI tolerance range (18.5 - 24.9).
+                  </div>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-6 border-transparent border-b-white drop-shadow-sm"></div>
                 </div>
               </div>
             </div>

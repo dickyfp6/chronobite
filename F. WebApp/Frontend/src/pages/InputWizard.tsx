@@ -603,11 +603,11 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  {(() => {
  const bmi = data.weight / ((data.height / 100) ** 2);
  if (bmi < 18.5) return 'Underweight (<18.5)';
- if (bmi < 25) return 'Normal weight (18.5–24.9)';
- if (bmi < 30) return 'Overweight (25–29.9)';
- if (bmi < 35) return 'Obesity Class I (30–34.9)';
- if (bmi < 40) return 'Obesity Class II (35–39.9)';
- return 'Obesity Class III (≥40)';
+ if (bmi <= 24.9) return 'Normal (18.5–24.9)';
+ if (bmi <= 29.9) return 'Overweight (25.0–29.9)';
+ if (bmi <= 34.9) return 'Obesity Class I (30.0–34.9)';
+ if (bmi <= 39.9) return 'Obesity Class II (35.0–39.9)';
+ return 'Obesity Class III (≥40.0)';
  })()}
  </p>
  </motion.div>
