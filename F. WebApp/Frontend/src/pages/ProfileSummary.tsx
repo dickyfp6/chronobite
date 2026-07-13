@@ -472,18 +472,20 @@ export function ProfileSummary({ userData, onBack, onContinue, onAnalysisComplet
  </div>
  )}
 
- <div className="rounded-2xl bg-secondary/35 border border-border/70 overflow-hidden">
- <button
- type="button"
- onClick={() => setShowOtherNutrients(!showOtherNutrients)}
- className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 :bg-slate-900/60 transition-colors text-left focus:outline-none cursor-pointer"
- >
- <div>
- <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Other nutrient limits</p>
- <p className="text-[10px] text-gray-450 mt-0.5">Click to view additional nutrient limits and guidelines</p>
- </div>
- <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-350 ${showOtherNutrients ? 'transform rotate-180' : ''}`} />
- </button>
+  <div className="rounded-2xl bg-secondary/35 border border-border/70 overflow-hidden hover:border-primary/40 hover:shadow-sm transition-all duration-300 group">
+  <button
+  type="button"
+  onClick={() => setShowOtherNutrients(!showOtherNutrients)}
+  className="w-full flex items-center justify-between p-4 hover:bg-primary/5 transition-all text-left focus:outline-none cursor-pointer"
+  >
+  <div>
+  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider group-hover:text-primary transition-colors">Other nutrient limits</p>
+  <p className="text-[10px] text-gray-400 group-hover:text-gray-600 mt-0.5 transition-colors">Click to view additional nutrient limits and guidelines</p>
+  </div>
+  <div className={`w-8 h-8 rounded-full bg-white/80 flex items-center justify-center border border-border/60 shadow-sm group-hover:border-primary/30 group-hover:bg-white group-hover:shadow-md transition-all duration-300 ${showOtherNutrients ? 'bg-primary/10 border-primary/20 text-primary' : 'text-gray-500'}`}>
+  <ChevronDown className={`w-4 h-4 transition-all duration-300 ${showOtherNutrients ? 'transform rotate-180 text-primary' : 'group-hover:translate-y-0.5 text-gray-500'}`} />
+  </div>
+  </button>
 
  {showOtherNutrients && (
  <div className="px-4 pb-4 pt-1 border-t border-border/40 ">
