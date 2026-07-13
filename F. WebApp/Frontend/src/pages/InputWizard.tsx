@@ -760,7 +760,7 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  src={item.image}
  alt={title}
  className={`h-full w-full object-cover transition-all duration-500 group-hover:scale-105 ${
- isSelected ? 'scale-100 filter-none opacity-100' : 'filter grayscale contrast-[1.1] opacity-75 group-hover:filter-none group-hover:opacity-100'
+ isSelected ? 'scale-100 filter-none opacity-100' : 'filter grayscale contrast-[1.1] opacity-75'
  }`}
  />
  {/* Dark Overlay */}
