@@ -615,10 +615,10 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
  style={{
  backgroundColor: (() => {
  const bmi = data.weight / ((data.height / 100) ** 2);
- if (bmi >= 30) return '#dc2626'; // Red
- if (bmi >= 25) return '#d97706'; // Amber/Orange
- if (bmi >= 18.5) return '#059669'; // Emerald/Green
- return '#d97706'; // Orange for Underweight
+ if (bmi >= 30) return '#991b1b'; // Dark Red
+ if (bmi >= 25) return '#b45309'; // Dark Orange
+ if (bmi >= 18.5) return '#2d5a27'; // Primary Green (Website Color)
+ return '#b45309'; // Dark Orange for Underweight
  })(),
  }}
  >
