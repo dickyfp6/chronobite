@@ -443,18 +443,32 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
-            <input
-              type="range"
-              min="18"
-              max="100"
-              value={data.age}
-              onChange={(e) => onUpdate({ age: parseInt(e.target.value) })}
-              className="flex-1 cursor-pointer dss-slider"
-              style={{
-                background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 100%)`,
-                borderRadius: '9999px'
-              }}
-            />
+            <div className="relative flex-1 flex items-center group">
+              <input
+                type="range"
+                min="18"
+                max="100"
+                value={data.age}
+                onChange={(e) => onUpdate({ age: parseInt(e.target.value) })}
+                className="w-full cursor-pointer dss-slider peer"
+                style={{
+                  background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 ${((data.age - 18) / (100 - 18)) * 100}%, #d2dfd5 100%)`,
+                  borderRadius: '9999px'
+                }}
+              />
+              <div 
+                className="absolute -top-11 flex flex-col items-center opacity-0 peer-hover:opacity-100 peer-active:opacity-100 transition-opacity duration-200 pointer-events-none z-10 drop-shadow-md"
+                style={{
+                  left: `calc(${((data.age - 18) / (100 - 18)) * 100}% + ${13 - (((data.age - 18) / (100 - 18)) * 26)}px)`,
+                  transform: 'translateX(-50%)'
+                }}
+              >
+                <div className="bg-white px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm border border-gray-100">
+                  {data.age}
+                </div>
+                <div className="w-2 h-2 bg-white rotate-45 -mt-1.5 border-r border-b border-gray-100"></div>
+              </div>
+            </div>
             <button
               onClick={() => onUpdate({ age: Math.min(100, data.age + 1) })}
               className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
@@ -513,18 +527,32 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
-            <input
-              type="range"
-              min="30"
-              max="200"
-              value={data.weight}
-              onChange={(e) => onUpdate({ weight: parseFloat(e.target.value) })}
-              className="flex-1 cursor-pointer dss-slider"
-              style={{
-                background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 100%)`,
-                borderRadius: '9999px'
-              }}
-            />
+            <div className="relative flex-1 flex items-center group">
+              <input
+                type="range"
+                min="30"
+                max="200"
+                value={data.weight}
+                onChange={(e) => onUpdate({ weight: parseFloat(e.target.value) })}
+                className="w-full cursor-pointer dss-slider peer"
+                style={{
+                  background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 ${((data.weight - 30) / (200 - 30)) * 100}%, #d2dfd5 100%)`,
+                  borderRadius: '9999px'
+                }}
+              />
+              <div 
+                className="absolute -top-11 flex flex-col items-center opacity-0 peer-hover:opacity-100 peer-active:opacity-100 transition-opacity duration-200 pointer-events-none z-10 drop-shadow-md"
+                style={{
+                  left: `calc(${((data.weight - 30) / (200 - 30)) * 100}% + ${13 - (((data.weight - 30) / (200 - 30)) * 26)}px)`,
+                  transform: 'translateX(-50%)'
+                }}
+              >
+                <div className="bg-white px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm border border-gray-100">
+                  {data.weight}
+                </div>
+                <div className="w-2 h-2 bg-white rotate-45 -mt-1.5 border-r border-b border-gray-100"></div>
+              </div>
+            </div>
             <button
               onClick={() => onUpdate({ weight: Math.min(200, data.weight + 1) })}
               className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
@@ -583,18 +611,32 @@ export function InputWizard({ data, onUpdate, onComplete }: InputWizardProps) {
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
-            <input
-              type="range"
-              min="100"
-              max="300"
-              value={data.height}
-              onChange={(e) => onUpdate({ height: parseFloat(e.target.value) })}
-              className="flex-1 cursor-pointer dss-slider"
-              style={{
-                background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 100%)`,
-                borderRadius: '9999px'
-              }}
-            />
+            <div className="relative flex-1 flex items-center group">
+              <input
+                type="range"
+                min="100"
+                max="300"
+                value={data.height}
+                onChange={(e) => onUpdate({ height: parseFloat(e.target.value) })}
+                className="w-full cursor-pointer dss-slider peer"
+                style={{
+                  background: `linear-gradient(to right, #2d5a27 0%, #558550 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 ${((data.height - 100) / (300 - 100)) * 100}%, #d2dfd5 100%)`,
+                  borderRadius: '9999px'
+                }}
+              />
+              <div 
+                className="absolute -top-11 flex flex-col items-center opacity-0 peer-hover:opacity-100 peer-active:opacity-100 transition-opacity duration-200 pointer-events-none z-10 drop-shadow-md"
+                style={{
+                  left: `calc(${((data.height - 100) / (300 - 100)) * 100}% + ${13 - (((data.height - 100) / (300 - 100)) * 26)}px)`,
+                  transform: 'translateX(-50%)'
+                }}
+              >
+                <div className="bg-white px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm border border-gray-100">
+                  {data.height}
+                </div>
+                <div className="w-2 h-2 bg-white rotate-45 -mt-1.5 border-r border-b border-gray-100"></div>
+              </div>
+            </div>
             <button
               onClick={() => onUpdate({ height: Math.min(300, data.height + 1) })}
               className="w-8 h-8 rounded-full bg-secondary hover:bg-muted :bg-slate-700 text-primary transition-all flex items-center justify-center shadow-sm hover:shadow cursor-pointer select-none shrink-0"
