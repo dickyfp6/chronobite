@@ -69,6 +69,7 @@ class GreedyOptimizer:
         self.constraint_bag = constraint_bag
         self.similarity_checker = SimilarityChecker()
         self.selected_items = []
+        self.seen_names = []
         self.cumulative_nutrients = {}
         self.current_tdee = 2000.0
         self._init_cumulative_tracking()
@@ -90,6 +91,7 @@ class GreedyOptimizer:
         self.food_db = food_database.copy()
         self.constraint_bag = constraint_bag
         self.selected_items = []
+        self.seen_names = []
         self.current_tdee = 2000.0
         self._init_cumulative_tracking()
         
@@ -352,7 +354,7 @@ class GreedyOptimizer:
         """
         # Combine exclusion lists (only use global if requested)
         if use_global_exclusion:
-            global_excluded = [item.food_name for item in self.selected_items] + current_meal_excluded
+            global_excluded = [item.food_name for item in self.selected_items] + getattr(self, 'seen_names', []) + current_meal_excluded
         else:
             global_excluded = current_meal_excluded
         
@@ -405,6 +407,10 @@ class GreedyOptimizer:
             if len(final_candidates) >= 3:
                 break
         
+        for cand in final_candidates:
+            if hasattr(self, 'seen_names'):
+                self.seen_names.append(cand.get('food_name', ''))
+                
         return final_candidates
     
     # ================================================================
@@ -547,7 +553,7 @@ class GreedyOptimizer:
         
         # 3. Drink Candidate Selection & initial portion calculation
         drink_candidates_per_100g = self.generate_candidates_for_course(
-            'Drink', drink_target, [], use_global_exclusion=False
+            'Drink', drink_target, [], use_global_exclusion=True
         )
         drink_per_100g = drink_candidates_per_100g[0] if drink_candidates_per_100g else None
         drink_portion = self.optimize_portion(drink_per_100g, drink_target, 'Drink') if drink_per_100g else 0.0
@@ -765,6 +771,7 @@ class GreedyOptimizer:
         self.current_tdee = tdee
         self._init_cumulative_tracking()
         self.selected_items = []
+        self.seen_names = []
         
         # Calculate meal targets in kcal
         breakfast_target = tdee * MEAL_DISTRIBUTION['breakfast']
