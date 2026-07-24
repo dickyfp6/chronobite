@@ -214,6 +214,76 @@ def chart_heatmap_cuisine(df, output_dir):
 
     return ct
 
+def tabel_statistik_nutrisi_utama(df, output_dir):
+    """Tabel 4.13 (a): Statistik deskriptif nutrisi utama pada dataset final."""
+    nutrisi_cols = {
+        "energy_kcal": "Energi (kkal)",
+        "protein_g": "Protein (g)",
+        "carbohydrate_g": "Karbohidrat (g)",
+        "fat_g": "Lemak Total (g)",
+        "fiber_g": "Serat (g)",
+        "sodium_mg": "Sodium (mg)",
+        "sugar_g": "Gula (g)",
+    }
+
+    stat = df[list(nutrisi_cols.keys())].describe().T[["mean", "std", "min", "50%", "max"]]
+    stat.columns = ["Mean", "Std", "Min", "Median", "Maks"]
+    stat.index = [nutrisi_cols[c] for c in stat.index]
+    stat = stat.round(2)
+
+    out_path = os.path.join(output_dir, "tabel_4_13a_statistik_nutrisi_utama.csv")
+    stat.to_csv(out_path)
+    print(f"[OK] Tersimpan: {out_path}")
+    print(stat)
+
+    # Grafik pendukung: boxplot distribusi nutrisi utama
+    fig, ax = plt.subplots(figsize=(10, 6))
+    df[list(nutrisi_cols.keys())].rename(columns=nutrisi_cols).boxplot(ax=ax, rot=30)
+    ax.set_title("Distribusi Nilai Nutrisi Utama pada Dataset Final")
+    ax.set_ylabel("Nilai")
+
+    plt.tight_layout()
+    fig_path = os.path.join(output_dir, "4_3_2_boxplot_nutrisi_utama.png")
+    plt.savefig(fig_path, dpi=150)
+    plt.close()
+    print(f"[OK] Tersimpan: {fig_path}")
+
+    return stat
+
+
+def tabel_statistik_energi_sodium_slot(df, output_dir):
+    """Tabel 4.13 (b): Statistik energi dan sodium per kategori slot waktu makan."""
+    order = ["Snack", "Main Course", "Side Dish", "Drink"]
+
+    stat = df.groupby("consumption_label")[["energy_kcal", "sodium_mg"]].agg(["mean", "median"]).round(2)
+    stat.columns = ["Energi Mean (kkal)", "Energi Median (kkal)", "Sodium Mean (mg)", "Sodium Median (mg)"]
+    stat = stat.reindex(order)
+
+    out_path = os.path.join(output_dir, "tabel_4_13b_statistik_slot.csv")
+    stat.to_csv(out_path)
+    print(f"[OK] Tersimpan: {out_path}")
+    print(stat)
+
+    # Grafik pendukung: bar chart energi & sodium per slot (berdampingan)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    axes[0].bar(stat.index, stat["Energi Mean (kkal)"], color="#3B6F8F")
+    axes[0].set_title("Rata-rata Energi per Kategori Slot")
+    axes[0].set_ylabel("Energi (kkal)")
+    axes[0].set_xlabel("Kategori Slot")
+
+    axes[1].bar(stat.index, stat["Sodium Mean (mg)"], color="#E07B39")
+    axes[1].set_title("Rata-rata Sodium per Kategori Slot")
+    axes[1].set_ylabel("Sodium (mg)")
+    axes[1].set_xlabel("Kategori Slot")
+
+    plt.tight_layout()
+    fig_path = os.path.join(output_dir, "4_3_2_bar_energi_sodium_slot.png")
+    plt.savefig(fig_path, dpi=150)
+    plt.close()
+    print(f"[OK] Tersimpan: {fig_path}")
+
+    return stat
 
 def main():
     print("=" * 60)
@@ -226,6 +296,12 @@ def main():
     df = pd.read_csv(INPUT_FILE)
     total = len(df)
     print(f"Total item: {total}")
+
+    print("\n[EXTRA] Membuat Tabel 4.13: statistik nutrisi utama...")
+    tabel_statistik_nutrisi_utama(df, OUTPUT_DIR)
+
+    print("\n[EXTRA] Membuat Tabel 4.13: statistik energi & sodium per slot...")
+    tabel_statistik_energi_sodium_slot(df, OUTPUT_DIR)
 
     print("\n[2/5] Membuat grafik distribusi kategori slot...")
     chart_distribusi_slot(df, OUTPUT_DIR)
